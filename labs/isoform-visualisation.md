@@ -49,9 +49,7 @@ For the gene *RAB11FIP5* you will now hopefully have generated your own data tha
 If everything worked you will now have:
 
  * One or two BAM files with short reads mapped to the genome using HISAT2 and/or STAR 
-
  * One GTF file containing different isoforms of *RAB11FIP5* assembled with Cufflinks and/or Stringtie based on the short reads that mapped to the genome
- 
  * One BAM file with **Trinity** assembled transcripts mapped to the genome
 
 
@@ -72,10 +70,9 @@ You can download all BAM files and GTF files for all samples from uppmax from he
 ## Importing reference based isoform info to the genome
 
 In addition, we provide result files for *all* reads that were mapped to the genome. These mappings were used for 
-reference based assembly of isoforms across the entire genome. There is a GTF file with the final merged isoform  
-information from all 12 samples.  
+reference based assembly of isoforms across the entire genome. There is a GTF file with the final merged isoform information from all 12 samples here  
 
-You can download all BAM files and GTF files for all samples from uppmax from here `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/isoform/otherData/refBasedAssembly/Genome`. 
+`/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/isoform/otherData/refBasedAssembly/Genome/GTFfiles/`. 
 
 ## Importing the peptide track for the *RAB11FIP5* gene and the genome                                                           
 
@@ -91,7 +88,9 @@ From the name of the BED file (human_A431_global-TDA-FDR1pc_green-known_red-nove
 
 # Importing the Pac bio reads mapped to the genome                                                         
 
-You can use a web browser to access the BAM file containing all PacBio reads mapped to the genome  from uppmax `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/isoform/otherData/).
+You can download the BAM file containing all PacBio reads mapped to the genome from uppmax
+
+`/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/isoform/otherData/pacbio/bamfile/`.
 
 How do the PacBio reads from full length transcripts compare to the transcripts assembled from short reads?
 

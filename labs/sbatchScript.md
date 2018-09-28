@@ -5,14 +5,13 @@ title:  'Index'
 
 # Sbatch script  
  
- ## How to start a sbatch script
- to start a sbatch script on uppmax you  type
+### To start a sbatch script on uppmax you type
  
     sbatch fileName.sbatch   
     
  
  
-## An example of a sbatch file 
+### An example of a sbatch file 
  
  
     #! /bin/bash -l

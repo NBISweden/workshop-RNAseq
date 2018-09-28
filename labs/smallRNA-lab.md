@@ -40,10 +40,8 @@ All data and scripts required for this exercise can be found in
 
 This includes:
 
-- 6 fastq files with the raw reads from the small RNA sequencing (in the subdirectory fastq).
- 
+- 5 fastq files with the raw reads from the small RNA sequencing (in the subdirectory fastq).
 - Precomputed bam files with the sequencing data mapped to the entire Drosophila genome, which can be used for browsing in IGV (in the subdirectory mapped_to_genome).
-
 - A gff file with the coordiates of all mircoRNAs on the Drosophila genome. (Use the file dme_mirbase_FORMAT2016.gff3 in the subdirectory mirbase).
 
 Copy these files in the directory you will use for this exercise. On UPPMAX you can use the following command:
@@ -107,7 +105,7 @@ We can now summarize the mapped reads to see which microRNAs are expressed in th
 
 Press space to scroll down into the file and q to exit the viewer. 
 
-We are only interested in the reads mapping to known microRNA loci in [mirBase](http://www.mirbase.org), which is the "official" data base of microRNAs in many different species. The file ``/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/smallRNA/mirbase/dme_mirbase_FORMAT2016.gff3`` contains the locations of all microRNAs on the fly genome. Use ``less`` to have a look at this file. [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) is a useful program for counting reads mapping to different genomic regions. Run it like this, for all sam file at once:
+We are only interested in the reads mapping to known microRNA loci in [miRBase](http://www.mirbase.org), which is the "official" data base of microRNAs in many different species. The file ``/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/smallRNA/mirbase/dme_mirbase_FORMAT2016.gff3`` contains the locations of all microRNAs on the fly genome. Use ``less`` to have a look at this file. [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) is a useful program for counting reads mapping to different genomic regions. Run it like this, for all sam file at once:
 
 	featureCounts -t miRNA -g Name -O -s 1 -M -a <mirbasefile> -o <outfile> <samfiles> 
 

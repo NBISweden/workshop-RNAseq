@@ -46,7 +46,8 @@ These data sets are described more in this [paper](http://genome.cshlp.org/conte
 ## Short summary of the long reads
 
 This data set contains three PacBio reads for the gene RAB11FIP5, extracted from a full-length RNA sequencing data set released by PacBio in 2014.
-For more info go [here](http://blog.pacificbiosciences.com/2014/10/data-release-whole-human-transcriptome.html).
+For more info go [here](https://www.pacb.com/blog/data-release-whole-human-transcriptome/).
+
 
 
 ## Short summary of the peptide data

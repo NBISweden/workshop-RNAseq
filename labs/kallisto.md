@@ -6,7 +6,7 @@ layout: default
 
 ## Transcript-level quantification with Kallisto
 
-*Kallisto* is an "alignment free" RNA-seq quantification method that runs very fast with a small memory footprint, so that it can be run on most laptops. It is a command-line program that can be downloaded as binary executables for Linux or Mac, or in source code format. For a first insight into the program, read [here](https://liorpachter.wordpress.com/2015/05/10/near-optimal-rna-seq-quantification-with-kallisto/) and for the recently published article, see [here](http://www.nature.com/nbt/journal/vaop/ncurrent/full/nbt.3519.html). There is also a preprint [here](http://arxiv.org/abs/1505.02710).
+*Kallisto* is an "alignment free" RNA-seq quantification method that runs very fast with a small memory footprint, so that it can be run on most laptops. It is a command-line program that can be downloaded as binary executables for Linux or Mac, or in source code format. For a first insight into the program, read [here](https://liorpachter.wordpress.com/2015/05/10/near-optimal-rna-seq-quantification-with-kallisto/) and for the published article, see [here](http://www.nature.com/nbt/journal/vaop/ncurrent/full/nbt.3519.html). There is also a preprint [here](http://arxiv.org/abs/1505.02710).
 
 Kallisto is geared towards quantification on the transcript (isoform) level, rather than the gene level (although the latter can also be done by post-processing Kallisto output.) However, read assignment to transcript isoforms cannot (in general) be done unambiguously, so there is an intrinsic "quantification noise" or variability in this process. Kallisto can thus be run either in a single step (which is very fast) or in "bootstrap" mode (which takes longer, but can be done on several processors in parallel) in order to get uncertainty estimates for the expression levels - a kind of error bars for the quantification process. Running with bootstraps is mandatory if you want to perform differential expression analysis of isoforms with Sleuth (see below). 
 
@@ -24,7 +24,7 @@ Since it takes some time to prepare the data, we have pre-computed Kallisto resu
 
 ## [Only for info, you do not need to do this!] Preparing Sleuth input with Kallisto
 
-Sleuth was designed to work on output from Kallisto (rather than count tables, like DESeq2, or BAM files, like CuffDiff2), so we need to run Kallisto first. (Note that the outputs from other RNA-seq quantifiers like [Salmon](https://github.com/COMBINE-lab/salmon) or [Sailfish](https://github.com/kingsfordgroup/sailfish) can also be used with Sleuth via the new [wasabi](https://github.com/COMBINE-lab/wasabi) package.)
+Sleuth was designed to work on output from Kallisto (rather than count tables, like DESeq2, or BAM files, like CuffDiff2), so we need to run Kallisto first. (Note that the outputs from other RNA-seq quantifiers like [Salmon](https://github.com/COMBINE-lab/salmon) or [Sailfish](https://github.com/kingsfordgroup/sailfish) can also be used with Sleuth via the [wasabi](https://github.com/COMBINE-lab/wasabi) package.)
 
 Kallisto is run directly on FASTQ files. We start by downloading the Kallisto software. It can be installed with pip, if you use that (in which case replace all references to "kallisto/kallisto" below with just "kallisto", as the executable will already be in your PATH), but we can also download it:
 
@@ -62,7 +62,7 @@ In this example, we put "-t 4" so we can use up to four processors in the bootst
 
     kallisto/kallisto quant -i hsGRCh38_kallisto <FILE1>.fastq <FILE2>.fastq -o <OUTPUT_DIR_NAME>
 
-Running Kallisto on all the 12 samples with 100 bootstraps may take an hour or so, depending on your machine and settings. The time on a MacBook Pro with four threads and 16 Gb of RAM was ... minutes.
+Running Kallisto on all the 12 samples with 100 bootstraps may take an hour or so, depending on your machine and settings. 
 
 ## Running Sleuth
 
@@ -104,9 +104,9 @@ Now it's time to fill in metadata about the samples. We can use a similar assign
 
     s2c <- data.frame(path=kal_dirs, sample=samples, timepoint = rep(c("ctrl", "t2h", "t6h", "t24h"), each=3), stringsAsFactors=FALSE)
 
-Again, if there were other experimental factors involved, these could have been modelled here as well. If you want to look at such an example, you might want to refer to the [beta version of this exercise](http://scilifelab.github.io/courses/rnaseq/labs/kallisto) that was given in October 2015. In that version, we did not use A431 data but rather a prostate cancer data set where the two experimental factors were (1) the individual that the sample came from, (2) tumor or normal tissue.
+Again, if there were other experimental factors involved, these could have been modelled here as well.
 		
-Back to the present data! The next command will read the Kallisto output files, connect them with metadata, and set up a linear model for analyzing the expression data.
+The next command will read the Kallisto output files, connect them with metadata, and set up a linear model for analyzing the expression data.
  
 		so <- sleuth_prep(s2c, ~timepoint, target_mapping = t2g)
 
@@ -121,5 +121,5 @@ Now we should be able to visualize the results:
 	
 There are lots of things to look at here - explore according to your interests! Some things you might try are e.g. the PCA and sample heatmap options in the map menu, the test table in the analyses menu (which contains a ranked list of the differentially expressed genes), or the gene view in the same menu.
 
-If you want to delve further into time series analysis with Sleuth (after all, we have just compared two time points here, whereas we have four in all), you might want to read this [excellent blog post](http://nxn.se/post/134227694720/timecourse-analysis-with-sleuth) by Valentine Svensson. Note that Sleuth is still under development, so some of the commands may be a bit different.
+If you want to delve further into time series analysis with Sleuth (after all, we have just compared two time points here, whereas we have four in all), you might want to read this [excellent blog post](http://www.nxn.se/valent/timecourse-analysis-with-sleuth) by Valentine Svensson. Note that Sleuth is still under development, so some of the commands may be a bit different.
 

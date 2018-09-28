@@ -180,8 +180,8 @@ the function, and run it again with the argument alpha set to
 different values. Discuss with an instructor if you are unsure how to
 interpret the plot.
 
-If time allows, have a look at the [RNA-seq analysis workflow example](http://www.bioconductor.org/help/workflows/rnaseqGene/) on the BioConductor web site.
-There is a section called [Visually exploring the dataset](http://www.bioconductor.org/help/workflows/rnaseqGene/#eda) on exploratory analysis of count data after regularized log transformation. This section shows how to make several plots that are useful for exploring RNA-seq data sets. If you don't have time to go through it now, try these commands and admire the resulting plots:
+If time allows, have a look at the [RNA-seq analysis workflow example](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html) on the BioConductor web site.
+There is a section called [Visually exploring the dataset](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html#eda) on exploratory analysis of count data after regularized log transformation. This section shows how to make several plots that are useful for exploring RNA-seq data sets. If you don't have time to go through it now, try these commands and admire the resulting plots:
 
 	## Apply regularized-log transform to counts
 	rld <- rlogTransformation(ds)
@@ -209,7 +209,7 @@ There is a section called [Visually exploring the dataset](http://www.bioconduct
 
 The algorithms used by DESeq2 are described in the papers by
 [Anders and Huber (2010)](http://genomebiology.com/content/11/10/R106) and
-[Love et al. (2014)](http://biorxiv.org/content/early/2014/05/27/002832).
+[Love et al. (2014)](https://doi.org/10.1186/s13059-014-0550-8).
 
 They have also published descriptions of how to use their tools in *Nature Protocols*: [Anders et al. (2013)](http://www.ncbi.nlm.nih.gov/pubmed/23975260)
 
