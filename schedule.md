@@ -7,7 +7,7 @@ title:  'Schedule'
 
 Click the heading of a topic to see the lecture slides or lab instructions.
 
-#####**Wednesday 14th**    
+#####  **Wednesday 14th**    
 Room: NA326  
 **09.00-09.15** Lecture: General introduction (Jeanette Tångrot)  
 **09.15-10.15** [Lecture: RNA-seq introduction](slides/Introduction_RNA.pdf) (Jeanette Tångrot)  
@@ -19,7 +19,7 @@ Coffee
 **14.00-17.00** [Exercise:](labs/index) Suggested exercises are sections **Quality control laboratory** and **Mapping reads** (Roy Francis, Paulo Czarnewski, Viktor Jonsson, Dag Ahrén)  
   
   
-#####**Thursday 15th**  
+#####  **Thursday 15th**  
 Room: NA326  
 **09:00-10.00** [Lecture: Differential expression analysis](slides/DiffExp.pdf) (Dag Ahrén)  
 Coffee  
@@ -31,7 +31,7 @@ Coffee
 **18.00-20.00** Course dinner  
   
   
-#####**Friday 16th**  
+#####  **Friday 16th**  
 Room: NA332  
 **09.00-10.00** [Lecture: Short read assembly](slides/Transcriptome_assembly.pdf) (Lucile Soler)  
 Coffee  
