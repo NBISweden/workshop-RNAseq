@@ -43,7 +43,7 @@ Before doing any other analysis on mapped RNA-seq reads it is always important t
 *	[Tutorial for RNA seq Quality Control](QC_lab)   
 
 ### Small RNA analysis
-When working with small RNA RNA-seq reads, this case miRNA, there are some analysis that are different  This will be covered in this labs.  
+When working with small RNA RNA-seq reads, this case miRNA, there are some analysis that are different. This will be covered in this lab.  
 
 *	[Tutorial for small RNA analysis](smallRNA-lab)
 
@@ -58,22 +58,28 @@ Several tools, such as DESeq and edgeR, start from read counts per gene and use 
 *	[Tutorial for differential expression analysis using DEseq2](DEseq2)
 *	[Tutorial for differential expression analysis using Sleuth](kallisto)
 *	[Tutorial for differential expression analysis using multi variate analysis in SIMCA](Simca_tutorial)
- 
-## Beta labs 
+
+### Gene set analysis
+
+We will perform gene-set analysis on the output from the tutorial on Differential expression analysis of RNA-seq data using DESeq.
+
+*	[Tutorial for gene set analysis](GSA_tutorial)  
+
+
+### Beta labs 
 There are some labs that are more close to the cutting edge of analysis and therefore are not as well tested as the ones above. These are tools that have high potential and will most likely, if they hold, will be moved to the mature labs.
  
 *	[Single cell RNA PCA and clustering](PCA_clustering_single_cell)    
-*	[Gene set analysis](GSA_tutorial)  
 
  
-## UPPMAX
+### UPPMAX
  
  One example of a sbatch script
  
  *  [sbatch scripts](sbatchScript)   
   
  
-## Caveat
+### Caveat
 
 We will try to keep these tutorials up to date. If you find any errors or things that you think should be updated please contact Johan (johan.reimegard@scilifelab.se) 
   		
