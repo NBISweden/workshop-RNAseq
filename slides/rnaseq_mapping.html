@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Short Read Mapping</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Roy Francis | 23-Oct-2018" />
+    <meta name="keywords" content="rnaseq, bioinformatics, course" />
+    <link href="libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+    <script src="libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+    <script src="libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+    <link id="font-awesome-1-attachment" rel="attachment" href="libs/font-awesome-5.0.13/fonts/fontawesome-webfont.ttf"/>
+    <link rel="stylesheet" href="assets\talk.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Short Read Mapping
+## RNA-Seq Analysis Workshop
+### <b>Roy Francis</b> | 23-Oct-2018
+
+---
+
+layout: true
+
+&lt;link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto:400,700" rel="stylesheet"&gt;
+&lt;link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"&gt;
+
+---
+name: contents
+class: spaced
+
+
+
+
+
+
+
+## Contents
+
+- [Workflow](#workflow)
+- [Mapping](#mapping-intro)
+- [Aligners](#aligners)
+- [Alignment](#alignment)
+- [Visualisation](#vis-tview)
+- [Quantification](#quant-counts)
+- [Summary](#summary)
+
+---
+name: workflow
+
+## Workflow
+
+![](images_mapping/rnaseq_workflow.svg)
+
+---
+name: mapping-intro
+
+## Mapping
+
+![](images_mapping/rnaseq_transcription.svg)
+
+---
+name: mapping-intro
+
+## Mapping
+
+![](images_mapping/rnaseq_mapping.svg)
+
+- Aligning reads back to a reference sequence
+- Mapping to genome vs transcriptome
+- Splice-aware alignment (genome)
+
+---
+name: aligners
+
+## Aligners
+
+**Considerations**
+
+- Speed
+- Accuracy
+- Resources
+- Settings
+- Purpose (General/Specific)
+- Support &amp; Community
+
+**Features**
+
+- Reference index
+- Read pair alignment
+- Consider base quality scores
+- Sophisticated indexing to decrease CPU and memory usage
+- Resolving multi-mappers
+  - Report first X alignments and flag read as multi-mapping
+- Use known annotations (junctions)
+- 2-pass approach 
+
+---
+name: aligner-speed
+
+## Aligners | Speed
+
+.pull-left-50[
+![](images_mapping/compare-aligners-speed.jpg)
+]
+
+.pull-right-50[
+|Program|Time_Min|Memory_GB|
+|-------|--------|---------|
+|HISATx1|22.7|4.3|
+|HISATx2|47.7|4.3|
+|HISAT|26.7|4.3|
+|STAR|25|28|
+|STARx2|50.5|28|
+|GSNAP|291.9|20.2|
+|TopHat2|1170|4.3|
+]
+
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Baruzzo, Giacomo, *et al*. "Simulation-based comprehensive benchmarking of RNA-seq aligners." [Nature methods 14.2 (2017): 135](https://www.nature.com/articles/nmeth.4106)&lt;/span&gt;
+]
+
+---
+name: aligner-accuracy
+
+## Aligners | Accuracy
+
+.size-80[![](images_mapping/compare-aligners-quality.jpg)]
+
+.size-40[![](images_mapping/accuracy.svg)]
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [STAR](https://github.com/alexdobin/STAR),  [HiSat2](https://ccb.jhu.edu/software/hisat2/index.shtml), [GSNAP](http://research-pub.gene.com/gmap/), [Novoalign](http://www.novocraft.com/products/novoalign/) (Commercial)
+
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Baruzzo, Giacomo, *et al*. "Simulation-based comprehensive benchmarking of RNA-seq aligners." [Nature methods 14.2 (2017): 135](https://www.nature.com/articles/nmeth.4106)&lt;/span&gt;
+]
+
+---
+name: mapping-required
+
+## Mapping
+
+- Reads (FASTQ)
+
+```
+@ST-E00274:179:HHYMLALXX:8:1101:1641:1309 1:N:0:NGATGT
+NCATCGTGGTATTTGCACATCTTTTCTTATCAAATAAAAAGTTTAACCTACTCAGTTATGCGCATACGTTTTTTGATGG
++
+#AAAFAFA&lt;-AFFJJJAFA-FFJJJJFFFAJJJJ-&lt;FFJJJ-A-F-7--FA7F7-----FFFJFA&lt;FFFFJ&lt;AJ--FF-
+```
+
+`@instrument:runid:flowcellid:lane:tile:xpos:ypos read:isfiltered:controlnumber:sampleid`
+
+- Reference Genome/Transcriptome (FASTA)
+
+```
+&gt;1 dna:chromosome chromosome:GRCz10:1:1:58871917:1 REF
+GATCTTAAACATTTATTCCCCCTGCAAACATTTTCAATCATTACATTGTCATTTCCCCTC
+CAAATTAAATTTAGCCAGAGGCGCACAACATACGACCTCTAAAAAAGGTGCTGTAACATG
+```
+
+- Annotation (GTF/GFF)
+
+```
+#!genome-build GRCz10
+#!genebuild-last-updated 2016-11
+4       ensembl_havana  gene    6732    52059   .       -       .       gene_id "ENSDARG00000104632"; gene_version "2"; gene_name "rerg"; gene_source "ensembl_havana"; gene_biotype "protein_coding"; havana_gene "OTTDARG00000044080"; havana_gene_version "1";
+```
+
+`chr source feature start end score strand frame attribute`
+
+.citation[
+&lt;i class="fas fa-link"&gt;&lt;/i&gt; Illumina read name [format](http://support.illumina.com/content/dam/illumina-support/help/BaseSpaceHelp_v2/Content/Vault/Informatics/Sequencing_Analysis/BS/swSEQ_mBS_FASTQFiles.htm), GTF [format](https://www.ensembl.org/info/website/upload/gff.html)
+]
+
+---
+name: alignment
+
+## Alignment
+
+- SAM/BAM (Sequence Alignment Map format)
+
+```
+ST-E00274:188:H3JWNCCXY:4:1102:32431:49900      163     1       1       60      8S139M4S      =       385     535     TATTTAGAGATCTTAAACATCCATTCCCCCTGCAAACATTTTCAATCATTACATTGTCATTTTCCCTCCAAATTAAATTTAGCCAGAGGCGCACAACATACGACCTCTAAAAAAGGTGCTGGAACATGTACCTATATGCAGCACCACCATC     AAAFAFFAFFFFJ7FFFFJ&lt;JAFA7F-&lt;AJ7JJ&lt;FFFJ--&lt;FAJF&lt;7&lt;7FAFJ-&lt;AFA&lt;-JJJ-AF-AJ-FF&lt;F--A&lt;FF&lt;-7777-7JA-77A---F-7AAFF-FJA--77FJ&lt;--77)))7&lt;JJA&lt;J77&lt;-------&lt;7--))7)))7-    NM:i:4   MD:Z:12T0T40C58T25      AS:i:119        XS:i:102        XA:Z:17,-53287490,4S33M4D114M,11;     MQ:i:60 MC:Z:151M       RG:Z:ST-E00274_188_H3JWNCCXY_4
+```
+
+`query flag ref pos mapq cigar mrnm mpos tlen seq qual opt`
+
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; SAM file [format](http://www.htslib.org/doc/sam.html)&lt;/span&gt;
+]
+
+---
+
+## Alignment formats
+
+|Format|Size_GB|
+|------|-------|
+|SAM|7.4|
+|BAM|1.9|
+|CRAM lossless Q|1.4|
+|CRAM 8 bins Q|0.8|
+|CRAM no Q|0.26|
+
+---
+name: vis-tview
+
+## Visualisation | `tview`
+
+`samtools tview alignment.bam genome.fasta`
+
+![](images_mapping/tview.png)
+
+---
+name: vis-igv
+
+## Visualisation | IGV
+
+![](images_mapping/igv.png)
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [IGV](http://software.broadinstitute.org/software/igv/), [UCSC Genome Browser](https://genome.ucsc.edu/)
+
+---
+name: vis-seqmonk
+
+## Visualisation | SeqMonk
+
+![](images_mapping/seqmonk.jpg)
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [SeqMonk](https://www.bioinformatics.babraham.ac.uk/projects/seqmonk/)
+
+---
+name: quant-counts
+
+## Quantification | Counts
+
+.pull-left-50[
+- Read counts = gene expression
+- Reads can be quantified on any feature (gene, transcript, exon etc)
+- Intersection on gene models
+- Gene/Transcript level
+
+![](images_mapping/rnaseq_counts.svg)
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [featureCounts](http://bioinf.wehi.edu.au/featureCounts/), [HTSeq](https://github.com/simon-anders/htseq)
+]
+
+--
+
+.pull-right-50[
+.size-85[.center[![](images_mapping/rnaseq_union.svg)]]
+]
+
+---
+name: quant-pcr-multi
+
+## Quantification
+
+**PCR duplicates**
+
+- Ignore for RNA-Seq data
+- Computational deduplication (Don't!)
+- Use PCR-free library-prep kits
+- Use UMIs during library-prep
+
+**Multi-mapping**
+
+- Added (.medium[BEDTools multicov])
+- Discard (.medium[featureCounts, HTSeq])
+- Distribute counts (.medium[Cufflinks])
+- Rescue
+  - Probabilistic assignment (.medium[Rcount, Cufflinks])
+  - Prioritise features (.medium[Rcount])
+  - Probabilistic assignment with EM (.medium[RSEM])
+  
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Fu, Yu, *et al*. "Elimination of PCR duplicates in RNA-seq and small RNA-seq using unique molecular identifiers." [BMC genomics 19.1 (2018): 531](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-018-4933-1)&lt;/span&gt;
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Parekh, Swati, *et al*. "The impact of amplification on differential expression analyses by RNA-seq." [Scientific reports 6 (2016): 25533](https://www.nature.com/articles/srep25533)&lt;/span&gt;
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Klepikova, Anna V., *et al*. "Effect of method of deduplication on estimation of differential gene expression using RNA-seq." [PeerJ 5 (2017): e3091](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5357343/)&lt;/span&gt;
+]
+
+---
+name: quantification-abundance
+
+## Quantification | Abundance
+
+- Count methods
+  - Provide no inference on isoforms
+  - Cannot accurately measure fold change
+&lt;!--.size-60[![](images/rnaseq_count_issues.svg)]--&gt;
+- Probabilistic assignment
+  - Deconvolute ambiguous mappings
+  - Transcript-level
+  - cDNA reference
+
+**Kallisto, Salmon**
+
+- Direct from FastQ to counts
+- Ultra-fast &amp; alignment-free
+- Uses transcriptome reference
+- Subsampling &amp; quantification confidence
+- Transcript-level estimates improves gene-level estimates
+- Kallisto/Salmon &gt; transcript-counts &gt; `tximport()` &gt; gene-counts
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [RSEM](https://deweylab.github.io/RSEM/), [Kallisto](https://pachterlab.github.io/kallisto/), [Salmon](https://combine-lab.github.io/salmon/), [Cufflinks2](http://cole-trapnell-lab.github.io/cufflinks/)
+
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Soneson, Charlotte, *et al*. "Differential analyses for RNA-seq: transcript-level estimates improve gene-level inferences." [F1000Research 4 (2015)](https://f1000research.com/articles/4-1521/v2)&lt;/span&gt;
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Zhang, Chi, *et al*. "Evaluation and comparison of computational tools for RNA-seq isoform quantification." [BMC genomics 18.1 (2017): 583](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-017-4002-1)&lt;/span&gt;
+]
+
+---
+name: long-read
+
+## Long-Read RNA-Seq
+
+- PacBio, Nanopore etc
+- Long reads, full transcripts
+- High error rate
+- Expensive
+
+![](images_mapping/compare-longread-mappers.png)
+
+* Results are comparable with MinION data.
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [GMAP](http://research-pub.gene.com/gmap/), [BBMap](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/), [STAR](https://github.com/alexdobin/STAR)
+
+
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Krizanovic, Kresimir, *et al*. "Evaluation of tools for long read RNA-seq splice-aware alignment." [Bioinformatics 34.5 (2017): 748-754](https://academic.oup.com/bioinformatics/article/34/5/748/4562330)&lt;/span&gt;
+]
+
+---
+name: summary
+class: spaced
+
+## Summary
+
+- STAR, HISAT2 and GSNAP are good general purpose aligners
+- Use HISAT2 if RAM is limited
+- Consider using 2-pass mapping
+- Be stringent with junction discovery criteria
+- Map to genome for annotation/discovery
+- For well known transcriptomes, Kallisto/Salmon offers ultra-fast quantification
+- For long reads, GMAP and BBMap are good choice of aligners
+
+---
+name: end-slide
+class: end-slide
+
+# Thank you! Questions?
+
+&lt;p style="text-align: left; font-size: small;"&gt;
+Built on : &lt;i class='fa fa-calendar' aria-hidden='true'&gt;&lt;/i&gt; 23-Oct-2018 at &lt;i class='fa fa-clock-o' aria-hidden='true'&gt;&lt;/i&gt; 18:30:01
+&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;b&gt;2018&lt;/b&gt; Roy Francis | [SciLifeLab](https://www.scilifelab.se/) | [NBIS](https://nbis.se/)
+    </textarea>
+<script src="assets/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "4:3",
+"highlightLanguage": "r",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
