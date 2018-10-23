@@ -38,17 +38,17 @@ And some function calls
 
 To find out how to use a function, type its name preceded by a question mark::
 
-	> ? sin
+	> ?sin
 
 This will bring up some help documentation for the function. You can
-use the arrow keys to scroll the help text up and down. Press q to get
+use the arrow keys to scroll the help text up and down. Press *q* to get
 back to the R prompt.
 
 Now try this:
 	
 	> a <- 10
 
-This command created an object called a. Objects are an important
+This command created an object called *a*. Objects are an important
 concept in R (as in many other programming languages), and we will be
 creating more of them in the RNA-seq exercises. We can inspect an
 object by just typing its name:
@@ -63,7 +63,7 @@ We can also change the value of an object that we’ve created:
 	[1] 20
 
 The object *a* created above is a vector with a single element. To
-create a vector with several elements, you can use the function *c*:
+create a vector with several elements, you can use the function `c()`:
 
 
 	> b <- c(1, 2, 10)
@@ -75,7 +75,7 @@ Or the colon operator::
 	> 1:10
 	[1]  1  2  3  4  5  6  7  8  9 10
 
-A matrix can be created with the function *cbind*:
+A matrix can be created with the function `cbind()`:
 
 	> b <- cbind(1:10, 101:110)
 	> b
@@ -100,13 +100,12 @@ We can then use indices to access selected elements of the matrix:
 	> b[c(5,8), 2]
 	[1] 105 108
 
-To end your R session, use the functions *quit* or *q*:
+To end your R session, use the functions `quit()` or `q()`:
  
 	> q()
 	Save workspace image? [y/n/c]: n
 
-If you wish, you can save a workspace image. This means that the state of your R session is written to a file, which will be loaded the next time
-you start R in the same working directory. This is good if you want to continue the session at a later time. If not, just answer *n* (for no).
+If you wish, you can save a workspace image. This means that the state of your R session is written to a file, which will be loaded the next time you start R in the same working directory. This is good if you want to continue the session at a later time. If not, just answer *n* (for no).
 
 You can find manuals for R and more information on the [R web site](http://www.r-project.org/).
 
@@ -127,19 +126,19 @@ To install a CRAN package in R, use the install.packages() function. This simple
 
 	> install.packages("gplots")
 
-After installation, the package is stored in a location on your computer called the R package library. Packages are loaded from this library using the function *library*:
+After installation, the package is stored in a location on your computer called the R package library. Packages are loaded from this library using the function `library()`:
 
 	> library("gplots")
 
-One useful function in the *gplots* package is *heatmap.2*, which plots heatmaps with dendrograms. Since we have installed and loaded the *gplots* package, we can now use this function. Let's try it with a matrix of random, normally distributed values:
+One useful function in the *gplots* package is `heatmap.2()`, which plots heatmaps with dendrograms. Since we have installed and loaded the *gplots* package, we can now use this function. Let's try it with a matrix of random, normally distributed values:
 
-	> heatmap.2( matrix(rnorm(180), ncol=6) )
+	> heatmap.2(matrix(rnorm(180),ncol=6))
 
-Note that you only need to install a package once. The next time you start R, you can run *library("gplots")* directly, because the package has already been installed. If you upgrade to a new version of R, you may have to reinstall packages.
+Note that you only need to install a package once. The next time you start R, you can run `library("gplots")` directly, because the package has already been installed. If you upgrade to a new version of R, you may have to reinstall packages.
 
 ### Installing packages from BioConductor
 
-To install packages from BioConductor, you first have to load a function *biocLite.R* from BioConductor and then use that function to install the packages.
+To install packages from BioConductor, you first have to load a function `biocLite()` from BioConductor and then use that function to install the packages.
 That is done in two lines of code:
 
 	> source("https://bioconductor.org/biocLite.R")
@@ -166,11 +165,11 @@ First, we install and load the regular (stable) version of the *ggplot2* package
 	> install.packages("ggplot2")
 	> library(ggplot2)
 
-To see which packages are loaded, and their versions, use the function *sessionInfo*:
+To see which packages are loaded, and their versions, use the function `sessionInfo()`:
 
 	> sessionInfo()
 
-Note the version number of *ggplot2* reported by *sessionInfo*.
+Note the version number of *ggplot2* reported by `sessionInfo()`.
 
 There is no entirely safe way to unload packages in R, so to work with a different package version, it is safest to quit and restart R. To quit:
 
@@ -192,7 +191,7 @@ Now we can load and work with the the development version of *ggplot2*:
 	> library(ggplot2)
 	> sessionInfo()
 
-Check the output from *sessionInfo* to verify that you now get a different version number for *ggplot2*!
+Check the output from `sessionInfo()` to verify that you now get a different version number for *ggplot2*!
 
 When finished working with development versions, do:
 
