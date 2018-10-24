@@ -1,0 +1,420 @@
+/* CSS style for RNASeq presentation */
+/* Xaringen, remark.js                  */
+/* 2018 Roy Francis                     */
+
+:root {
+  --primary-color: #0093BD;
+  --border-color: #e8e8e8;
+  --text-color: #1A1A1A;
+  --code-bg-color: #f4f4f4;
+  --code-inline-color: #d72b3f;
+}
+
+/* FONTS -------------------------------------------------------------------- */
+
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700|Roboto:400,700');
+
+@font-face {
+font-family: 'Lato', 'Roboto', 'DIN', 'Helvetica', sanserif;
+}
+
+/* body font family 90% black */
+body,p,h1,h2,h3,h4,h5,h6 { 
+  font-family: 'Lato', 'Roboto', 'DIN', 'Helvetica', sanserif;
+  color: var(--text-color);
+}
+
+/* title font family, weight and size 60% black*/
+h1 {
+  font-weight: 800;
+  font-size: 200% !important;
+  margin-top: 0.9em;
+  margin-bottom: 0.9em;
+}
+
+h2 {
+  font-weight: 600;
+  font-size: 150% !important;
+  color: var(--primary-color);
+  margin-top: 0.7em;
+  margin-bottom: 0.8em;
+}
+
+h3 {
+  font-weight: 600;
+  font-size: 125% !important;
+  margin-top: 0.7em;
+  margin-bottom: 0.6em;
+}
+
+h4 {
+  font-weight: 600;
+  font-size: 100% !important;
+  margin-top: 0.7em;
+  margin-bottom: 0.5em;
+}
+
+h5 {
+  font-weight: 600;
+  font-size: 90% !important;
+  margin-top: 0.6em;
+  margin-bottom: 0.4em;
+}
+
+h6 {
+  font-weight: 600;
+  font-size: 80% !important;
+  margin-top: 0.6em;
+  margin-bottom: 0.4em;
+}
+
+/* code font*/
+.remark-code{
+  font-size: 80% !important;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+}
+
+/* block code */
+.hljs-github .hljs {
+  background: var(--code-bg-color);
+}
+
+/* code inline */
+.remark-inline-code{
+  background: var(--code-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  margin-right: 2px;
+  padding: 2px 3px 1px;
+  font-size: 80% !important;
+  color: var(--code-inline-color);
+}
+
+/* new font classes */
+.vlarge { font-size: 200% }
+.large { font-size: 130% }
+.medium { font-size: 85% }
+.small { font-size: 70% }
+.vsmall { font-size: 50% }
+.highlight {color: var(--primary-color);}
+.altcol {color: #a8b0bb;}
+.citation {
+  font-size: 50%;
+  line-height: 15px;
+  position: fixed;
+  bottom: 5px;
+  margin-right: 6em;
+  display: block;
+  padding-left: 1.3em;
+  text-indent: -1.3em;
+}
+
+/* spaced para style */
+.spaced {
+    line-height: 150%;
+}
+
+/* links */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--primary-color);
+  opacity: 0.6;
+  text-decoration: underline;
+}
+
+/* MARGINS ------------------------------------------------------------------ */
+
+/* list margin */
+ul {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+
+/* pre margin */
+pre {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+
+/* p margin */
+p {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+
+/* COVER SLIDES ------------------------------------------------------------- */
+
+/* title slide image */
+.title-slide {
+  background-image: url(cover.jpg);
+  background-size: cover;
+  vertical-align: bottom !important; 
+  text-align: left !important;
+  padding-bottom: 3em;
+}
+
+/* end slide image */
+.end-slide {
+  background-image: url(end.jpg);
+  background-size: cover;
+  vertical-align: bottom !important; 
+  text-align: left !important;
+  padding-bottom: 4em;
+  
+}
+
+/* logo right */
+.title-slide.remark-slide-content:before{
+  position: absolute;
+  content:url(logo.svg);
+  /* height:96px; */
+  width:300px;
+  padding-top: 0px;
+  /* -webkit-filter: drop-shadow(1px 1px 3px grey); */
+  /* filter: drop-shadow(1px 1px 3px grey); */
+}
+
+.end-slide.remark-slide-content:before{
+  content: "";
+}
+
+/* title slide image */
+.title-slide h1 {
+  text-align: left;
+  font-weight: 600;
+  border-bottom-style: solid;
+  border-bottom-color: var(--primary-color);
+  padding-bottom: 0.3em;
+  margin-bottom: 0.3em;
+  color: var(--primary-color);
+}
+
+.title-slide h2 {
+  text-align: left;
+  font-weight: 500;
+  color: #808080;
+  margin-bottom: 0.5em;
+  margin-top: 0.3em;
+}
+
+.title-slide h3 {
+  font-size: 120% !important;
+  text-align: left;
+  font-weight: 500;
+  margin-bottom: 0em;
+  margin-top: 0.1em;
+}
+
+/* hide slide number on cover slide */
+.title-slide .remark-slide-number {
+  display: none;
+}
+
+/* hide slide number on end slide */
+.end-slide .remark-slide-number {
+  display: none;
+}
+
+/* reduce size of slide number */
+.remark-slide-number {
+  font-size: 50%;
+}
+
+/* IMAGES ------------------------------------------------------------------- */
+
+/* set images to 100% width */
+img, video, iframe {
+  max-width: 99%;
+  max-height: 99%;
+  /* margin: 8px; */
+}
+
+/* image styling */
+.round-border {
+  border-radius: 3px;
+}
+.drop-shadow {
+  box-shadow: 1px 1px 5px grey;
+  -webkit-box-shadow: 1px 1px 5px grey;
+  -moz-box-shadow: 1px 1px 5px grey;
+}
+
+/* logo every slide top right */
+.remark-slide-content:before {
+  content: url(logo.svg);
+  width: 180px;
+  float: right;
+  right: 4em;
+  top: 1em;
+  margin-top: 1.1em;
+}
+
+/* image size classes */
+.size-95 {display:block; max-width: 95%;}
+.size-90 {display:block; max-width: 90%;}
+.size-85 {display:block; max-width: 85%;}
+.size-80 {display:block; max-width: 80%;}
+.size-75 {display:block; max-width: 75%;}
+.size-70 {display:block; max-width: 70%;}
+.size-65 {display:block; max-width: 65%;}
+.size-60 {display:block; max-width: 60%;}
+.size-55 {display:block; max-width: 55%;}
+.size-50 {display:block; max-width: 50%;}
+.size-45 {display:block; max-width: 45%;}
+.size-40 {display:block; max-width: 40%;}
+.size-35 {display:block; max-width: 35%;}
+.size-30 {display:block; max-width: 30%;}
+.size-25 {display:block; max-width: 25%;}
+.size-20 {display:block; max-width: 20%;}
+.size-15 {display:block; max-width: 15%;}
+.size-10 {display:block; max-width: 10%;}
+
+/* TABLES ------------------------------------------------------------------- */
+
+/* table even shading */
+.pagedtable .even {
+    background-color: #F2F2F2;
+}
+
+/* DT table font size */
+.dataTables_wrapper{
+  font-size: 0.7em;
+}
+
+/* kableExtra font size */
+.table{
+  font-size: 0.8em;
+}
+
+/* COLUMNS ------------------------------------------------------------------- */
+
+.pull-center{
+  width: 100%;
+}
+
+/* float 50%-50% width */
+.pull-right-50 {
+  width: 49%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-50 {
+  width: 49%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+
+/* float 30% 70% width */
+.pull-right-30 {
+  width: 29%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-right-70 {
+  width: 69%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-30 {
+  width: 29%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-70 {
+  width: 69%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+
+/* float 40% 60% width */
+.pull-right-40 {
+  width: 39%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-right-60 {
+  width: 59%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-40 {
+  width: 39%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-60 {
+  width: 59%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+
+/* float 45% 55% width */
+.pull-right-45 {
+  width: 44%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-right-55 {
+  width: 54%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-45 {
+  width: 44%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-55 {
+  width: 54%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+
+/* SLIDE PROGRESS BAR -------------------------------------------------------- */
+
+/*.remark-slide-number {
+  position: inherit;
+}
+
+.remark-slide-number .progress-bar-container {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  display: block;
+  left: 0;
+  right: 0;
+}
+
+.remark-slide-number .progress-bar {
+  height: 100%;
+  background-color: var(--primary-color);
+}
+*/
+
+/* MARKDOWN TABLE STYLE ------------------------------------------------------ */
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+th,td {padding: 8px; text-align: left;}
+

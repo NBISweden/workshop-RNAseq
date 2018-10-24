@@ -12,13 +12,13 @@ Room: NA326
 **09.00-09.15** Lecture: General introduction (Jeanette Tångrot)  
 **09.15-10.15** [Lecture: RNA-seq introduction](slides/not_yet_available.pdf) (Jeanette Tångrot)  
 Coffee  
-**10.30-11.15** [Lecture: RNA-seq quality control](slides/not_yet_available.pdf) (Roy Francis)  
-**11.15-12.00** [Lecture: Short read mapping programs](slides/not_yet_available.pdf) (Roy Francis)  
+**10.30-11.15** Lecture: RNA-seq quality control ([HTML](slides/rnaseq_qc.html), [PDF](slides/rnaseq_qc.pdf)) (Roy Francis)  
+**11.15-12.00** Lecture: Short read mapping programs ([HTML](slides/rnaseq_mapping.html), [PDF](slides/rnaseq_mapping.pdf)) (Roy Francis)  
 **12.00-13.00** Lunch at Universum  
 **13.00-14.00** [Lecture: Data management](slides/not_yet_available.pdf) (Niclas Jareborg)  
 **14.00-17.00** [Exercise:](labs/index) Suggested exercises are sections **Quality control laboratory** and **Mapping reads** (Roy Francis, Paulo Czarnewski, Viktor Jonsson, Dag Ahrén)  
-  
-  
+
+
 #####  **Thursday 15th**  
 Room: NA326  
 **09:00-10.00** [Lecture: Differential expression analysis](slides/not_yet_available.pdf) (Dag Ahrén)  
@@ -29,8 +29,8 @@ Coffee
 **13:00-14.00** Lecture: RNA-seq pipeline (Phil Ewels)   
 **14.00-17.00** [Exercise:](labs/index) Suggested exercises are sections **Differential expression analysis** and **Gene set analysis** (Jeanette Tångrot, Paulo Czarnewski, Phil Ewels, Viktor Jonsson)  
 **18.00-** Course dinner  
-  
-  
+
+
 #####  **Friday 16th**  
 Room: NA332  
 **09.00-10.00** [Lecture: Short read assembly](slides/) (Lucile Soler)  
@@ -42,5 +42,3 @@ Coffee
 Coffee  
 **15.15-16.00** [Lecture: Summary](slides/not_yet_available.pdf) (Jeanette Tångrot)  
 **16.00-16.15** Hand in feedback and [evaluation of the course](evaluation)  
-
-

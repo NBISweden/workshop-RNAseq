@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>RNA-Seq Quality Control</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Roy Francis | 23-Oct-2018" />
+    <meta name="keywords" content="rnaseq, bioinformatics, course" />
+    <link href="libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+    <script src="libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+    <script src="libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+    <link id="font-awesome-1-attachment" rel="attachment" href="libs/font-awesome-5.0.13/fonts/fontawesome-webfont.ttf"/>
+    <script src="libs/htmlwidgets-1.2/htmlwidgets.js"></script>
+    <script src="libs/plotly-binding-4.8.0/plotly.js"></script>
+    <script src="libs/typedarray-0.1/typedarray.min.js"></script>
+    <script src="libs/jquery-1.11.3/jquery.min.js"></script>
+    <link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+    <script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+    <link href="libs/plotly-htmlwidgets-css-1.39.2/plotly-htmlwidgets.css" rel="stylesheet" />
+    <script src="libs/plotly-main-1.39.2/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="assets\talk.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# RNA-Seq Quality Control
+## RNA-Seq Analysis Workshop
+### <b>Roy Francis</b> | 23-Oct-2018
+
+---
+
+layout: true
+
+&lt;link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto:400,700" rel="stylesheet"&gt;
+&lt;link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"&gt;
+
+---
+name: contents
+class: spaced
+
+
+
+
+
+
+
+## Contents
+
+* [Workflow](#workflow)
+* [RNA extraction](#rna-extraction)
+* [Read QC](#read-qc)
+* [Alignment QC](#alignment-qc-overview)
+* [Quantification QC](#quantification-qc)
+* [Exploratory](#exploratory-heatmap)
+* [Batch correction](#batch-correction)
+* [Spike-Ins](#spike-in)
+
+---
+name: workflow
+class: spaced
+
+## Workflow
+
+.size-70[![](images/workflow.svg)]
+
+---
+name: exp-design
+class: spaced
+
+## Experimental design
+
+.pull-left-50[
+- Balanced design
+- Technical replicates not necessary (.medium[.altcol[Marioni *et al.*, 2008]])
+- Biological replicates: 6 - 12 (.medium[.altcol[Schurch *et al.*, 2016]])
+- ENCODE consortium
+- Previous publications
+- Power analysis
+]
+
+.pull-right-50[
+.size-90[![](images/batch-effect.svg)]
+]
+
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Busby, Michele A., *et al.* "Scotty: a web tool for designing RNA-Seq experiments to measure differential gene expression." [Bioinformatics 29.5 (2013): 656-657](https://academic.oup.com/bioinformatics/article/29/5/656/252753)&lt;/span&gt;
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Marioni, John C., *et al.* "RNA-seq: an assessment of technical reproducibility and comparison with gene expression arrays." [Genome research (2008)](https://genome.cshlp.org/content/18/9/1509.long)&lt;/span&gt;
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Schurch, Nicholas J., *et al.* "How many biological replicates are needed in an RNA-seq experiment and which differential expression tool should you use?." [Rna (2016)](http://rnajournal.cshlp.org/content/early/2016/03/30/rna.053959.115.abstract)&lt;/span&gt;
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Zhao, Shilin, *et al.* "RnaSeqSampleSize: real data based sample size estimation for RNA sequencing." [BMC bioinformatics 19.1 (2018): 191](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2191-5)&lt;/span&gt;
+]
+
+---
+name: rna-extraction
+class: spaced
+
+## RNA extraction
+
+.pull-left-50[
+- Sample processing and storage
+- RNA quality/quantity
+- RIN values (Strong effect)
+- DNAse treatment
+- RNA type
+- Contamination/Cross-contamination
+- Batch effect
+- Extraction method bias (GC bias)
+]
+
+.pull-right-50[
+.size-75[![](images/degradation.jpg)]
+]
+
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Romero, Irene Gallego, *et al*. "RNA-seq: impact of RNA degradation on transcript quantification." [BMC biology 12.1 (2014): 42](https://bmcbiol.biomedcentral.com/articles/10.1186/1741-7007-12-42)&lt;/span&gt;
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Kim, Young-Kook, *et al*. "Short structured RNAs with low GC content are selectively lost during extraction from a small number of cells." [Molecular cell 46.6 (2012): 893-895](https://www.cell.com/molecular-cell/fulltext/S1097-2765(12)00481-9).&lt;/span&gt;
+]
+
+---
+name: library-prep
+class: spaced
+
+## Library prep
+
+.pull-left-50[
+- PolyA selection
+- rRNA depletion
+- Size selection
+- PCR amplification (.medium[See section PCR duplicates])
+- Stranded (directional) libraries
+  - Accurately identify sense/antisense transcript
+  - Resolve overlapping genes
+- Exome capture
+- Library normalisation
+- Batch effect
+]
+
+.pull-right-50[
+![](images/rnaseq_library_prep.svg)
+]
+
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Zhao, Shanrong, et al. "Comparison of stranded and non-stranded RNA-seq transcriptome profiling and investigation of gene overlap." [BMC genomics 16.1 (2015): 675](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4559181/)&lt;/span&gt;
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Levin, Joshua Z., et al. "Comprehensive comparative analysis of strand-specific RNA sequencing methods." [Nature methods 7.9 (2010): 709](https://www.nature.com/articles/nmeth.1491)&lt;/span&gt;
+]
+
+---
+name: read-qc
+
+## Read QC
+
+- Number of reads
+- Per base sequence quality
+- Per sequence quality score
+- Per base sequence content
+- Per sequence GC content
+- Per base N content
+- Sequence length distribution
+- Sequence duplication levels
+- Overrepresented sequences
+- Adapter content
+- Kmer content
+
+&lt;img src="images/qc.jpg" style="height:250px; position:fixed; right:0px; bottom: 0px; margin-right: 100px; margin-bottom: 310px;"&gt;
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/), [MultiQC](http://multiqc.info/)
+
+https://sequencing.qcfail.com/
+
+![](images/qcfail.jpg)
+
+---
+name: read-qc-2
+
+## Read QC | PBSQ, PSQS
+
+.size-90[.vsmall[**Per base sequence quality**] ![](images/pbsq.jpg)]
+.size-90[.vsmall[**Per sequence quality scores**] ![](images/psqs.jpg)]
+
+---
+name: read-qc-3
+
+## Read QC | PBSC, PSGC
+
+.size-90[.vsmall[**Per base sequence content**] ![](images/pbsc.jpg)]
+.size-90[.vsmall[**Per sequence GC content**] ![](images/psgc.jpg)]
+
+---
+name: read-qc-4
+
+## Read QC | SDL, AC
+
+.size-90[.vsmall[**Sequence duplication level**] ![](images/sdl.jpg)]
+.size-90[.vsmall[**Adapter content**] ![](images/ac.jpg)]
+
+---
+name: fastqc
+
+## FastQC
+
+.size-75[[![](images/fastqc_good.png)](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/good_sequence_short_fastqc.html)]
+
+.size-75[[![](images/fastqc_bad.png)](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/bad_sequence_fastqc.html)]
+
+---
+name: trimming
+
+## Trimming
+
+.pull-left-50[
+- Trim IF necessary
+  - Synthetic bases can be an issue for SNP calling
+  - Insert size distribution may be more important for assemblers
+- Trim/Clip/Filter reads
+- Remove adapter sequences
+- Trim reads by quality
+- Sliding window trimming
+- Filter by min/max read length
+  - Remove reads less than ~22nt
+- Demultiplexing/Splitting
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [Cutadapt](https://github.com/marcelm/cutadapt/), [fastp](https://github.com/OpenGene/fastp), [Skewer](https://github.com/relipmoc/skewer), [Prinseq](http://prinseq.sourceforge.net/)
+]
+
+.pull-right-50[
+![](images/rnaseq_read_through.svg)
+]
+
+---
+name: alignment-qc-overview
+class: spaced
+
+## Alignment QC
+
+- Number of reads mapped/unmapped/paired etc
+- Uniquely mapped
+- Insert size distribution
+- Coverage
+- Gene body coverage
+- Biotype counts / Chromosome counts
+- Counts by region: gene/intron/non-genic
+- Sequencing saturation
+- Strand specificity
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; STAR (final log file), samtools stats, bamtools stats, [QoRTs](https://hartleys.github.io/QoRTs/), [RSeQC](http://rseqc.sourceforge.net/), [Qualimap](http://qualimap.bioinfo.cipf.es/)
+
+---
+name: alignment-qc-qorts
+
+## Alignment QC | QoRTs
+
+![](images/qorts.png)
+
+---
+name: alignment-qc-star
+
+## Alignment QC | STAR Log
+
+MultiQC can be used to summarise and plot STAR log files.
+
+![](images/star_alignment_plot.svg)
+
+---
+name: samtools-stats
+
+## BAM QC | samtools
+
+`samtools stats file.bam`
+
+```
+SN      raw total sequences:    522095280
+SN      filtered sequences:     0
+SN      sequences:      522095280
+SN      is sorted:      1
+SN      1st fragments:  261047640
+SN      last fragments: 261047640
+SN      reads mapped:   514139025
+SN      reads mapped and paired:        510035006
+SN      reads unmapped: 7956255
+SN      reads properly paired:  460249078
+SN      reads paired:   522095280
+SN      reads duplicated:       60151694
+SN      reads MQ0:      54098384
+SN      reads QC failed:        0
+SN      non-primary alignments: 15023188
+SN      total length:   78437013272
+SN      bases mapped:   77238941462
+SN      bases mapped (cigar):   74139898333
+SN      bases trimmed:  0
+SN      bases duplicated:       9022025650
+SN      mismatches:     1695194781
+SN      error rate:     2.286481e-02
+SN      average length: 150
+SN      maximum length: 151
+SN      average quality:        37.6
+...
+```
+
+---
+name: bamtools-stats
+
+## BAM QC | bamtools
+
+`bamtools stats file.bam`
+
+```
+**********************************************
+Stats for BAM file(s):
+**********************************************
+
+Total reads:       537118468
+Mapped reads:      529162213    (98.5187%)
+Forward strand:    270376825    (50.3384%)
+Reverse strand:    266741643    (49.6616%)
+Failed QC:         0    (0%)
+Duplicates:        61425418     (11.4361%)
+Paired-end reads:  537118468    (100%)
+'Proper-pairs':    465991264    (86.7576%)
+Both pairs mapped: 524501668    (97.651%)
+Read 1:            268374707
+Read 2:            268743761
+Singletons:        4660545      (0.867694%)
+
+```
+
+---
+name: alignment-qc-qorts-features
+
+## Alignment QC | Features
+
+QoRTs was run on all samples and summarised using MultiQC.
+
+![](images/qorts_alignments.svg)
+
+---
+name: alignment-qc-1
+
+## Alignment QC
+
+.pull-left-50[
+**Soft clipping**
+![](images/clipping_good.png)
+]
+
+.pull-right-50[
+**Gene body coverage**
+![](images/gene-body-coverage.png)
+]
+
+---
+name: alignment-qc-2
+
+## Alignment QC
+
+.pull-left-50[
+**Insert size**
+![](images/inner_distance.png)
+]
+
+.pull-right-50[
+**Saturation curve**
+![](images/saturation.png)
+]
+
+---
+name: multiqc
+
+## MultiQC
+
+[![](images/multiqc.png)](https://multiqc.info/examples/rna-seq/multiqc_report.html)
+
+---
+name: pcr-duplicates
+
+## Quantification | PCR duplicates
+
+- Ignore for RNA-Seq data
+- Computational deduplication (Don't!)
+- Use PCR-free library-prep kits
+- Use UMIs
+
+.size-70[![](images/pcr-duplicates.png)]
+
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Fu, Yu, *et al*. "Elimination of PCR duplicates in RNA-seq and small RNA-seq using unique molecular identifiers." [BMC genomics 19.1 (2018): 531](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-018-4933-1)&lt;/span&gt;
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Parekh, Swati, *et al*. "The impact of amplification on differential expression analyses by RNA-seq." [Scientific reports 6 (2016): 25533](https://www.nature.com/articles/srep25533)&lt;/span&gt;
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Klepikova, Anna V., *et al*. "Effect of method of deduplication on estimation of differential gene expression using RNA-seq." [PeerJ 5 (2017): e3091](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5357343/)&lt;/span&gt;
+]
+
+---
+name: quantification-qc
+
+## Quantification QC
+
+```
+ENSG00000000003    140   242   188   143   287   344   438   280   253
+ENSG00000000005    0     0     0     0     0     0     0     0     0
+ENSG00000000419    69    98    77    55    52    94    116   79    69
+ENSG00000000457    56    75    104   79    157   205   183   178   153
+ENSG00000000460    33    27    23    19    27    42    69    44    40
+ENSG00000000938    7     38    13    17    35    76    53    37    24
+ENSG00000000971    545   878   694   636   647   216   492   798   323
+ENSG00000001036    79    154   74    80    128   167   220   147   72
+```
+
+.pull-left-50[
+- Pairwise correlation between samples must be high (&gt;0.9)
+
+.size-60[![](images/correlation.png)]
+
+]
+
+.pull-right-50[
+- Count QC using RNASeqComp
+
+.size-80[![](images/rnaseqcomp.gif)]
+
+]
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [RNASeqComp](https://bioconductor.org/packages/release/bioc/html/rnaseqcomp.html)
+
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Teng, Mingxiang, *et al*. "A benchmark for RNA-seq quantification pipelines." [Genome biology 17.1 (2016): 74](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0940-1)&lt;/span&gt;
+]
+
+---
+name: exploratory-heatmap
+
+## Exploratory | Heatmap
+
+- Remove lowly expressed genes
+- Transform raw counts to VST, VOOM, RLOG, TPM etc
+- Sample-sample distance/correlation clustering heatmap
+
+
+
+&lt;img src="rnaseq_qc_files/figure-html/unnamed-chunk-5-1.svg" style="display: block; margin: auto auto auto 0;" /&gt;
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [`pheatmap()`](https://github.com/raivokolde/pheatmap)
+
+---
+name: exploratory-mds
+
+## Exploratory | MDS
+
+<div id="htmlwidget-b54682782821eb3d062a" style="width:750px;height:500px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b54682782821eb3d062a">{"x":{"visdat":{"7428fa1798e":["function () ","plotlyVisDat"]},"cur_data":"7428fa1798e","attrs":{"7428fa1798e":{"x":{},"y":{},"z":{},"text":{},"hoverinfo":"text","colors":["#A6CEE3","#1F78B4","#B2DF8A","#33A02C","#FB9A99","#E31A1C","#FDBF6F","#FF7F00"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d","mode":"markers","color":{},"inherit":true}},"layout":{"width":750,"height":500,"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"V1"},"yaxis":{"title":"V2"},"zaxis":{"title":"V3"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[-5.33185049177959,-7.92209817002156,-8.77692340480147],"y":[0.0432736817716184,-1.26280672685875,-1.86761681936745],"z":[1.04060988518825,-1.41087805672964,-2.80687594167858],"text":["<b>ID: <\/b>121T10571_121<br /><b>NGS ID: <\/b>P8304_117","<b>ID: <\/b>121T10571_123<br /><b>NGS ID: <\/b>P8304_119","<b>ID: <\/b>121T10571_124<br /><b>NGS ID: <\/b>P8304_120"],"hoverinfo":["text","text","text"],"type":"scatter3d","mode":"markers","name":"121T10571_12","marker":{"color":"rgba(166,206,227,1)","line":{"color":"rgba(166,206,227,1)"}},"textfont":{"color":"rgba(166,206,227,1)"},"error_y":{"color":"rgba(166,206,227,1)"},"error_x":{"color":"rgba(166,206,227,1)"},"line":{"color":"rgba(166,206,227,1)"},"frame":null},{"x":[-5.73550373147591,-6.21011122708704,-7.35383060771142,-6.59073194911667],"y":[-6.23950665019801,-6.50430598496082,-6.51161261887537,-5.34119076269499],"z":[7.24464218182632,7.38236724522226,6.0494637371315,5.38523664148418],"text":["<b>ID: <\/b>134_T6443_11_1<br /><b>NGS ID: <\/b>P8304_113","<b>ID: <\/b>134_T6443_11_2<br /><b>NGS ID: <\/b>P8304_114","<b>ID: <\/b>134_T6443_11_3<br /><b>NGS ID: <\/b>P8304_115","<b>ID: <\/b>134_T6443_11_4<br /><b>NGS ID: <\/b>P8304_116"],"hoverinfo":["text","text","text","text"],"type":"scatter3d","mode":"markers","name":"134_T6443_11","marker":{"color":"rgba(31,120,180,1)","line":{"color":"rgba(31,120,180,1)"}},"textfont":{"color":"rgba(31,120,180,1)"},"error_y":{"color":"rgba(31,120,180,1)"},"error_x":{"color":"rgba(31,120,180,1)"},"line":{"color":"rgba(31,120,180,1)"},"frame":null},{"x":[-4.6497016412439,-5.10088962658455,-6.00012520521127,-4.41802453955813],"y":[3.09565456848034,1.18448065666745,2.63713128689337,0.792488532872201],"z":[1.84057242738463,1.06376484620365,0.0898534016981559,3.4308686704621],"text":["<b>ID: <\/b>153_ST132_131<br /><b>NGS ID: <\/b>P8304_101","<b>ID: <\/b>153_ST132_132<br /><b>NGS ID: <\/b>P8304_102","<b>ID: <\/b>153_ST132_133<br /><b>NGS ID: <\/b>P8304_103","<b>ID: <\/b>153_ST132_134<br /><b>NGS ID: <\/b>P8304_104"],"hoverinfo":["text","text","text","text"],"type":"scatter3d","mode":"markers","name":"153_ST132_13","marker":{"color":"rgba(178,223,138,1)","line":{"color":"rgba(178,223,138,1)"}},"textfont":{"color":"rgba(178,223,138,1)"},"error_y":{"color":"rgba(178,223,138,1)"},"error_x":{"color":"rgba(178,223,138,1)"},"line":{"color":"rgba(178,223,138,1)"},"frame":null},{"x":[-5.88085854951221,-7.76790916625506,-6.25504507611664,-8.3764530117268],"y":[2.28585250238002,1.36384290506196,2.03080210880601,0.732589724202596],"z":[2.53910291233844,-0.247836766653928,1.897953832452,-0.233518938722922],"text":["<b>ID: <\/b>24_TD9169_081<br /><b>NGS ID: <\/b>P8304_109","<b>ID: <\/b>24_TD9169_082<br /><b>NGS ID: <\/b>P8304_110","<b>ID: <\/b>24_TD9169_083<br /><b>NGS ID: <\/b>P8304_111","<b>ID: <\/b>24_TD9169_084<br /><b>NGS ID: <\/b>P8304_112"],"hoverinfo":["text","text","text","text"],"type":"scatter3d","mode":"markers","name":"24_TD9169_08","marker":{"color":"rgba(51,160,44,1)","line":{"color":"rgba(51,160,44,1)"}},"textfont":{"color":"rgba(51,160,44,1)"},"error_y":{"color":"rgba(51,160,44,1)"},"error_x":{"color":"rgba(51,160,44,1)"},"line":{"color":"rgba(51,160,44,1)"},"frame":null},{"x":[-3.88932422329194,-0.0729461302680156],"y":[-1.69996167204044,1.77387505239342],"z":[1.96344736048856,5.74550696017447],"text":["<b>ID: <\/b>29_T1942_083<br /><b>NGS ID: <\/b>P8304_123","<b>ID: <\/b>29_T1942_084<br /><b>NGS ID: <\/b>P8304_124"],"hoverinfo":["text","text"],"type":"scatter3d","mode":"markers","name":"29_T1942_08","marker":{"color":"rgba(251,154,153,1)","line":{"color":"rgba(251,154,153,1)"}},"textfont":{"color":"rgba(251,154,153,1)"},"error_y":{"color":"rgba(251,154,153,1)"},"error_x":{"color":"rgba(251,154,153,1)"},"line":{"color":"rgba(251,154,153,1)"},"frame":null},{"x":[-10.2163172144276,-10.596078285728,-10.2353954116357,-9.33007941422633],"y":[-0.490190092826988,-2.26662762461056,-0.333539418783384,-0.0554168358930101],"z":[-8.46229337166764,-8.5409366265751,-8.94003110723548,-8.17218218493106],"text":["<b>ID: <\/b>61_T1538_071<br /><b>NGS ID: <\/b>P8304_105","<b>ID: <\/b>61_T1538_072<br /><b>NGS ID: <\/b>P8304_106","<b>ID: <\/b>61_T1538_073<br /><b>NGS ID: <\/b>P8304_107","<b>ID: <\/b>61_T1538_074<br /><b>NGS ID: <\/b>P8304_108"],"hoverinfo":["text","text","text","text"],"type":"scatter3d","mode":"markers","name":"61_T1538_07","marker":{"color":"rgba(227,26,28,1)","line":{"color":"rgba(227,26,28,1)"}},"textfont":{"color":"rgba(227,26,28,1)"},"error_y":{"color":"rgba(227,26,28,1)"},"error_x":{"color":"rgba(227,26,28,1)"},"line":{"color":"rgba(227,26,28,1)"},"frame":null},{"x":[21.8493946916054,22.7364624888557,22.8684179809813,23.401941446664],"y":[-5.14341595704935,-6.83851698747042,-14.3376040568602,-8.02483675387452],"z":[1.5998970735274,0.863612874314833,-7.37316041937378,-1.33865318696138],"text":["<b>ID: <\/b>TD11549_17_O1<br /><b>NGS ID: <\/b>P8304_125","<b>ID: <\/b>TD11549_17_O2<br /><b>NGS ID: <\/b>P8304_126","<b>ID: <\/b>TD11549_17_O3<br /><b>NGS ID: <\/b>P8304_127","<b>ID: <\/b>TD11549_17_O4<br /><b>NGS ID: <\/b>P8304_128"],"hoverinfo":["text","text","text","text"],"type":"scatter3d","mode":"markers","name":"TD11549_17_O","marker":{"color":"rgba(253,191,111,1)","line":{"color":"rgba(253,191,111,1)"}},"textfont":{"color":"rgba(253,191,111,1)"},"error_y":{"color":"rgba(253,191,111,1)"},"error_x":{"color":"rgba(253,191,111,1)"},"line":{"color":"rgba(253,191,111,1)"},"frame":null},{"x":[14.4253959187119,13.2889594437547,10.7843904183293,11.3552346888775],"y":[15.1368414992242,12.1873998562284,13.2999768462921,10.3529397410905],"z":[1.81496155659233,-0.3728142071169,-0.865737731812759,-1.18694306702993],"text":["<b>ID: <\/b>TD11558_17_L1<br /><b>NGS ID: <\/b>P8304_129","<b>ID: <\/b>TD11558_17_L2<br /><b>NGS ID: <\/b>P8304_130","<b>ID: <\/b>TD11558_17_L3<br /><b>NGS ID: <\/b>P8304_131","<b>ID: <\/b>TD11558_17_L4<br /><b>NGS ID: <\/b>P8304_132"],"hoverinfo":["text","text","text","text"],"type":"scatter3d","mode":"markers","name":"TD11558_17_L","marker":{"color":"rgba(255,127,0,1)","line":{"color":"rgba(255,127,0,1)"}},"textfont":{"color":"rgba(255,127,0,1)"},"error_y":{"color":"rgba(255,127,0,1)"},"error_x":{"color":"rgba(255,127,0,1)"},"line":{"color":"rgba(255,127,0,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":[]}</script>
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [`cmdscale()`](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/cmdscale.html), [plotly](https://plot.ly/r/)
+
+---
+name: batch-correction
+
+## Batch correction
+
+- Estimate variation explained by variables (.medium[PVCA])
+
+.size-70[![](images/pvca.png)]
+
+- Find confounding effects as surrogate variables (.medium[SVA])
+- Model known batches in the LM/GLM model
+- Correct known batches (.medium[ComBat])(Harsh!)
+- Interactively evaluate batch effects and correction (.medium[BatchQC])
+
+&lt;i class="fas fa-toolbox"&gt;&lt;/i&gt; [SVA](http://bioconductor.org/packages/release/bioc/html/sva.html), [PVCA](https://bioconductor.org/packages/release/bioc/html/pvca.html), [BatchQC](http://bioconductor.org/packages/release/bioc/html/BatchQC.html)
+
+.citation[
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Liu, Qian, and Marianthi Markatou. "Evaluation of methods in removing batch effects on RNA-seq data." [Infectious Diseases and Translational Medicine 2.1 (2016): 3-9](http://www.tran-med.com/article/2016/2411-2917-2-1-3.html)&lt;/span&gt;
+&lt;span style="display:block;"&gt;&lt;i class="fas fa-link"&gt;&lt;/i&gt; Manimaran, Solaiappan, et al. "BatchQC: interactive software for evaluating sample and batch effects in genomic data." [Bioinformatics 32.24 (2016): 3836-3838](https://academic.oup.com/bioinformatics/article/32/24/3836/2525651)&lt;/span&gt;
+]
+
+---
+name: spike-in
+
+## Spike-In
+
+.pull-left-50[
+* Add synthetic RNA into samples as control
+* Usually added before library prep
+* Useful for
+  * Estimating sensitivity
+  * Estimating accuracy
+  * Detecting biases
+  * Normalisation
+  * Absolute quantification
+  * Comparing datasets
+* [ERCC RNA Spike-In Mix](https://www.thermofisher.com/order/catalog/product/4456740)/[Exiqon Small RNA Spike-In](https://www.exiqon.com/mirna-NGS)
+]
+
+.pull-right-50[
+![](images/ercc.png)
+]
+
+---
+name: summary
+class: spaced
+
+## Summary
+
+- Sound experimental design to avoid confounding
+- Plan carefully about lib prep, sequencing etc based on experimental objective
+- Biological replicates may be more important than paired-end reads or long reads
+- Discard low quality bases, reads, genes and samples
+- Verify that tools and methods align with data assumptions
+- Experiment with multiple pipelines and tools
+- QC! QC everything at every step
+
+.large[&lt;i class="fas fa-link"&gt;&lt;/i&gt; Conesa, Ana, *et al.* "A survey of best practices for RNA-seq data analysis." [Genome biology 17.1 (2016): 13](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0881-8)]
+
+---
+name: end-slide
+class: end-slide
+
+# Thank you! Questions?
+
+&lt;p style="text-align: left; font-size: small;"&gt;
+Built on : &lt;i class='fa fa-calendar' aria-hidden='true'&gt;&lt;/i&gt; 23-Oct-2018 at &lt;i class='fa fa-clock-o' aria-hidden='true'&gt;&lt;/i&gt; 18:50:26
+&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;b&gt;2018&lt;/b&gt; Roy Francis | [SciLifeLab](https://www.scilifelab.se/) | [NBIS](https://nbis.se/)
+    </textarea>
+<script src="assets/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "4:3",
+"highlightLanguage": "r",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
