@@ -19,11 +19,11 @@ We will check before the workshop that all students have logged in and done this
   
 4.   Download IGV on your own computer and make sure that you have hg19 genome available. The data we will work with is from human and we will visualise the results in the IGV genome browser. IGV can be downloaded from the broad institute ([https://www.broadinstitute.org/igv/](https://www.broadinstitute.org/igv/)).
   
-5.  Install R on your own computer (the latest version), instructions can be found [here](https://scilifelab.github.io/courses/r_programming/1703/precourse).
+5.  Install R on your own computer (the latest version), instructions can be found [here](R_intro).
   
 6.  Install Rstudio on your own computer to run all your commands (This is optional). Rstudio is a very powerful GUI for structuring your R code in a good way.  
 
-8.  If you feel that you need to touch up on your R-skills before the course start, we recommend that you go through some basic tutorials before the course starts. A list of useful tutorials can be found [here](https://scilifelab.github.io/courses/r_programming/1703/precourse).  
+8.  If you feel that you need to touch up on your R-skills before the course start, we recommend that you go through some basic tutorials before the course starts. A list of useful tutorials can be found [here](R_intro#R_tutorials).
   
 7.  In R, install the latest version of DEseq2 (This is optional). We will work with this program during the workshop and it takes a while to install so if you can do it before you will not have to waste time installing during the exercise time. More instructions how to install the package can be found here [https://bioconductor.org/packages/release/bioc/html/DESeq2.html](https://bioconductor.org/packages/release/bioc/html/DESeq2.html).  
 
