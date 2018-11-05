@@ -14,7 +14,7 @@ title:  'Precourse Material'
   
 2.   If you still feel uncertain how to work in a terminal, please take time to do the first three parts in the “Unix tutorial for beginners” that can be found here [http://www.ee.surrey.ac.uk/Teaching/Unix/](http://www.ee.surrey.ac.uk/Teaching/Unix/) before the workshop starts. Otherwise you will not be able to take in the practical parts.  
   
-3.   Make sure that you can read and write in the workshop folder by creating a file or folder in the `/proj/g20180125/completed` folder. If you cannot write to the folder, the most likely reason is that you have not requested acess to the workshop project via [SUPR](https://supr.snic.se/). OBS! It may take an hour or so from the time your access is approved before you can actually write to the folder.  
+3.   Make sure that you can read and write in the workshop folder by creating a file or folder in the `/proj/g2018025/completed` folder. If you cannot write to the folder, the most likely reason is that you have not requested acess to the workshop project via [SUPR](https://supr.snic.se/). OBS! It may take an hour or so from the time your access is approved before you can actually write to the folder.  
 We will check before the workshop that all students have logged in and done this, so do not forget!  
   
 4.   Download IGV on your own computer and make sure that you have hg19 genome available. The data we will work with is from human and we will visualise the results in the IGV genome browser. IGV can be downloaded from the broad institute ([https://www.broadinstitute.org/igv/](https://www.broadinstitute.org/igv/)).
