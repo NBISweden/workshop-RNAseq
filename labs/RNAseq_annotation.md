@@ -85,7 +85,7 @@ interproscan.sh -i longest_orfs_mod1.pep -t p -dp -pa -appl Pfam,ProDom-2006.1,S
 ***Why? What is the error message displaying?***
  <br />
 
-If you did not have a look at the longest_orfs.pep, please have look and find a solution to
+If you did not have a look at the longest_orfs_mod1.pep, please have look and find a solution to
 make interproscan run.
 
 
