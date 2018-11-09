@@ -52,9 +52,14 @@ TransDecoder identifies likely coding sequences based on the following steps:
 module load bioinfo-tools
 module load TransDecoder
 TransDecoder.LongOrfs -t transcripts_stringtie.fa
+```
+Now we need to modify the output of Transdecoder being (transcripts_stringtie.fa.transdecoder_dir/longest_orfs.pep), indeed Transdecoder create new id for the protein it extracts and then it is impossible to link the name of the proteins with the id in the gtf file.
+You need to do :
 
 ```
-The file that will be used in the rest of the tutorial is in Trinity.fasta.transdecoder_dir/longest_orfs.pep
+sed -e 's/\.p[0-9]*//g' transcripts_stringtie.fa.transdecoder_dir/longest_orfs.pep > longest_orfs_mod1.pep
+```
+
 
 ## Interproscan approach
  Interproscan combines a number of searches for conserved motifs and curated data sets of protein clusters etc. This step may take fairly long time. It is recommended to paralellize it for huge amount of data by doing analysis of chunks of tens or hundreds proteins.
@@ -74,7 +79,7 @@ Launch Interproscan with the option -h if you want have a look about all the par
 module load InterProScan
 
 module load perl
-interproscan.sh -i transcripts_stringtie.fa.transdecoder_dir/longest_orfs.pep -t p -dp -pa -appl Pfam,ProDom-2006.1,SuperFamily-1.75,PIRSF-3.02 --goterms --iprlookup
+interproscan.sh -i longest_orfs_mod1.pep -t p -dp -pa -appl Pfam,ProDom-2006.1,SuperFamily-1.75,PIRSF-3.02 --goterms --iprlookup
 ```
 
 ***Why? What is the error message displaying?***
@@ -93,7 +98,7 @@ Interproscan is really selective on the fasta input data, there should not be an
 
 You need to delet the * at in the sequences, you can do :
 ```
-sed -e 's/*//g' transcripts_stringtie.fa.transdecoder_dir/longest_orfs.pep > longest_orfs_stringtie_interpro.fa
+sed -e 's/*//g' longest_orfs_mod1.pep > longest_orfs_compatible_interpro.fa
 
 ```
 </details>
@@ -114,7 +119,7 @@ A 'full' Blast analysis can run for several days and consume several GB of Ram. 
 To run Blast on your data, use the Ncbi Blast+ package against a Drosophila-specific database (included in the folder we have provided for you, under **~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa**) - of course, any other NCBI database would also work:
 ```
 module load blast/2.7.1+
-blastp -db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -query longest_orfs_stringtie_interpro.fa -outfmt 6 -out blast.out -num_threads 8
+blastp -db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -query longest_orfs_compatible_interpro.fa -outfmt 6 -out blast.out -num_threads 8
 ```
 Against the Drosophila-specific database, the blast search takes about 2 secs per protein request - depending on how many sequences you have submitted, you can make a fairly deducted guess regarding the running time.
 
@@ -122,7 +127,9 @@ Against the Drosophila-specific database, the blast search takes about 2 secs pe
 
 Now you should be able to use the following script:
 ```
-~/RNAseq_assembly_annotation/GAAS/annotation/Tools/bin/gff3_sp_manage_functional_annotation.pl -f transcripts.gtf -b blast.out --db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -i longest_orfs_stringtie_interpro.fa.tsv -o finalOutputDir
+export PERL5LIB=$PERL5LIB:~/RNAseq_assembly_annotation/GAAS/annotation/
+module load BioPerl
+~/RNAseq_assembly_annotation/GAAS/annotation/Tools/bin/gff3_sp_manage_functional_annotation.pl -f transcripts.gtf -b blast.out --db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -i longest_orfs_compatible_interpro.fa.tsv -o finalOutputDir
 ```
 That will add the name attribute to the "gene" feature and the description attribute (corresponding to the product information) to the "mRNA" feature into you annotation file. This script may be used for other purpose like to modify the ID value by something more convenient.
 The improved annotation is a file named "codingGeneFeatures.gff" inside the finalOutputDir.
