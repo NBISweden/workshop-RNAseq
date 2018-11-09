@@ -105,30 +105,6 @@ The analysis shoud take 2-3 secs per protein request - depending on how many seq
 You will obtain 3 result files with the following extension '.gff3', '.tsv' and '.xml'. Explanation of these output are available [>>here<<](https://github.com/ebi-pf-team/interproscan/wiki/OutputFormats).
 
 
-### load the retrieved functional information in your assembly file:
-
-When you want to use transcript information in an annotation you can either use a fasta file or a gff file. The advantage of the gff file is to be able to merge different functional annotation into it.
-
-Here we are going to create a gff file from the gtf file of stringtie and then add the interproscan annotation to it. We will also reformat the gff so it will be processed properly in the next steps.
-
-```
-export PERL5LIB=$PERL5LIB:~/RNAseq_assembly_annotation/GAAS/annotation/
-module load BioPerl
-~/RNAseq_assembly_annotation/GAAS/annotation/Tools/bin/gxf_to_gff3.pl -g transcripts.gtf -o transcripts.gff3
-sed -i 's/transcript/mRNA/g' transcripts.gff3
-```
-
-You could write scripts of your own to merge interproscan output into your annotation. But some genome annotation tools (like [Maker](http://gmod.org/wiki/MAKER) in that case) comes with utility scripts that can take InterProscan output and add it to a gff annotation file (you need to load maker).
-
-- ipr\_update\_gff: adds searchable tags to the gene and mRNA features in the GFF3 files.
-
-```
-module load maker/3.01.2-beta
-ipr_update_gff transcripts.gff3 longest_orfs_stringtie_interpro.fa.tsv > stringtie_with_interpro.gff
-```
-Where a match is found, the new file will now include features called Dbxref and/or Ontology_term in the gene and transcript feature field (9th column).
-
-
 ## BLAST approach
 Blast searches provide an indication about potential homology to known proteins.
 A 'full' Blast analysis can run for several days and consume several GB of Ram. Consequently, for a huge amount of data it is recommended to parallelize this step doing analysis of chunks of tens or hundreds proteins. This approach can be used to give a name to the genes and a function to the transcripts.
@@ -146,7 +122,7 @@ Against the Drosophila-specific database, the blast search takes about 2 secs pe
 
 Now you should be able to use the following script:
 ```
-~/RNAseq_assembly_annotation/GAAS/annotation/Tools/bin/gff3_sp_manage_functional_annotation.pl -f transcripts.gff3 -b blast.out --db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -i longest_orfs_stringtie_interpro.fa.tsv -o finalOutputDir
+~/RNAseq_assembly_annotation/GAAS/annotation/Tools/bin/gff3_sp_manage_functional_annotation.pl -f transcripts.gtf -b blast.out --db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -i longest_orfs_stringtie_interpro.fa.tsv -o finalOutputDir
 ```
 That will add the name attribute to the "gene" feature and the description attribute (corresponding to the product information) to the "mRNA" feature into you annotation file. This script may be used for other purpose like to modify the ID value by something more convenient.
 The improved annotation is a file named "codingGeneFeatures.gff" inside the finalOutputDir.
