@@ -116,7 +116,6 @@ export PERL5LIB=$PERL5LIB:~/RNAseq_assembly_annotation/GAAS/annotation/
 module load BioPerl
 ~/RNAseq_assembly_annotation/GAAS/annotation/Tools/bin/gxf_to_gff3.pl -g transcripts.gtf -o transcripts.gff3
 sed -i 's/transcript/mRNA/g' transcripts.gff3
-
 ```
 
 You could write scripts of your own to merge interproscan output into your annotation. But some genome annotation tools (like [Maker](http://gmod.org/wiki/MAKER) in that case) comes with utility scripts that can take InterProscan output and add it to a gff annotation file (you need to load maker).
@@ -148,7 +147,6 @@ Against the Drosophila-specific database, the blast search takes about 2 secs pe
 Now you should be able to use the following script:
 ```
 ~/RNAseq_assembly_annotation/GAAS/annotation/Tools/bin/gff3_sp_manage_functional_annotation.pl -f stringtie_with_interpro.gff -b blast.out --db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -i longest_orfs_stringtie_interpro.fa.tsv -o finalOutputDir
-
 ```
 That will add the name attribute to the "gene" feature and the description attribute (corresponding to the product information) to the "mRNA" feature into you annotation file. This script may be used for other purpose like to modify the ID value by something more convenient.
 The improved annotation is a file named "codingGeneFeatures.gff" inside the finalOutputDir.
