@@ -143,30 +143,12 @@ blastp -db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dme
 ```
 Against the Drosophila-specific database, the blast search takes about 2 secs per protein request - depending on how many sequences you have submitted, you can make a fairly deducted guess regarding the running time.
 
-### Process the blast outout with Annie
-The Blast outputs must be processed to retrieve the information of the closest protein (best e-value) found by Blast. This work will be done using [annie](https://github.com/genomeannotation/annie).
-
-First download annie:
-```
-cd ~/RNAseq_assembly_annotation/
-git clone https://github.com/genomeannotation/Annie.git
-```
-Then you should load python:
-```
-module load python/3.5.0
-```
-Now go back to where you are running the functional annotation analyses and launch annie:
-```
-~/RNAseq_assembly_annotation/Annie/annie.py -b blast.out -db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -ipr longest_orfs_stringtie_interpro.fa.tsv -g transcripts.gff3 -o stringtie_annotation.annie
-```
-
-Annie writes in a 3-column table format file, providing gene name and mRNA product information. The purpose of annie is relatively simple. It recovers the information in the sequence header of the uniprot fasta file, from the best sequence found by Blast (the lowest e-value).
-
 ### load the retrieved information in your annotation file:
 
 Now you should be able to use the following script:
 ```
-~/RNAseq_assembly_annotation/GAAS/annotation/Tools/bin/maker_gff3manager_JD_v8.pl -f stringtie_with_interpro.gff -b stringtie_annotation.annie -o finalOutputDir
+~/RNAseq_assembly_annotation/GAAS/annotation/Tools/bin/gff3_sp_manage_functional_annotation.pl -f stringtie_with_interpro.gff -b blast.out --db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -i longest_orfs_stringtie_interpro.fa.tsv -o finalOutputDir
+
 ```
 That will add the name attribute to the "gene" feature and the description attribute (corresponding to the product information) to the "mRNA" feature into you annotation file. This script may be used for other purpose like to modify the ID value by something more convenient.
 The improved annotation is a file named "codingGeneFeatures.gff" inside the finalOutputDir.
