@@ -170,10 +170,7 @@ Looking at your results, are you happy with the default values of Stringtie (whi
 
 ```
 module load bioinfo-tools
-module load perl
-module load perl_modules
 module load trinity/2.4.0
-module load java/sun_jdk1.8.0_92
 module load samtools
 
 Trinity --seqType fq --max_memory 32G --left ~/RNAseq_assembly_annotation/assembly_annotation/raw_computes/ERR305399_1.fastq.gz --right ~/RNAseq_assembly_annotation/assembly_annotation/raw_computes/ERR305399_2.fastq.gz --CPU 5 --output trinity --SS_lib_type RF
