@@ -29,20 +29,20 @@ One of the first thing to do when one want to annotate a transcriptome with trin
 
 If you want to know how to prepare the database, you can look at the following lines (again you do not need to run it) :
 
-*module load bioinfo-tools 
+*module load bioinfo-tools* 
 
-module load trinotate
+*module load trinotate*
 
-/sw/apps/bioinfo/trinotate/3.1.1/rackham/admin/Build_Trinotate_Boilerplate_SQLite_db.pl Trinotate
+*/sw/apps/bioinfo/trinotate/3.1.1/rackham/admin/Build_Trinotate_Boilerplate_SQLite_db.pl Trinotate*
 
-Then there is few step to prepare the protein database for blast searches by:
+*Then there is few step to prepare the protein database for blast searches by:*
 
-makeblastdb -in uniprot_sprot.pep -dbtype prot
+*makeblastdb -in uniprot_sprot.pep -dbtype prot*
 
-And uncompress and prepare the Pfam database for use with 'hmmscan' like so:
+*And uncompress and prepare the Pfam database for use with 'hmmscan':*
 
-gunzip Pfam-A.hmm.gz
-hmmpress Pfam-A.hmm*
+*gunzip Pfam-A.hmm.gz*
+*hmmpress Pfam-A.hmm*
 
 ##	Determining longest Open Reading Frames (ORF)
 
