@@ -162,7 +162,7 @@ Trinotate Trinotate.sqlite report > trinotate_annotation_report.xls
 ```
 You can have a look at the parameters if you want to select by evalue or Pfam cutoff.
 
-The output is a 17 columns tabulated file, you can read more about it [here](https://github.com/Trinotate/Trinotate.github.io/wiki/Loading-generated-results-into-a-Trinotate-SQLite-Database-and-Looking-the-Output-Annotation-Report).
+The output is a 14 columns tabulated file, you can read more about it [here](https://github.com/Trinotate/Trinotate.github.io/wiki/Loading-generated-results-into-a-Trinotate-SQLite-Database-and-Looking-the-Output-Annotation-Report).
 
 Have a look at the results, you can retrieve them on your computer to have a better view at it.
 what do you see? How many transcripts are annotated? What kind of information do you get?
