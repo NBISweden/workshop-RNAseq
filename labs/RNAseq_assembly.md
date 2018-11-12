@@ -218,6 +218,7 @@ For the guided assembly results
 You need first to extract the transcript sequences from the gtf transcript file :
 
 ```
+module load BioPerl
 ~/RNAseq_assembly_annotation/GAAS/annotation/Tools/bin/gff3_sp_extract_sequences.pl --cdna -g transcripts.gtf -f ~/RNAseq_assembly_annotation/assembly_annotation/chromosome/chr4.fa -o transcripts_stringtie.fa
 
 ```
