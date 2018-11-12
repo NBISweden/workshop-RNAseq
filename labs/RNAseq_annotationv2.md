@@ -29,7 +29,7 @@ One of the first thing to do when one want to annotate a transcriptome with trin
 
 If you want to know how to prepare the database, you can look at the following lines (again you do not need to run it) :
 
-_module load bioinfo-tools 
+__module load bioinfo-tools 
 
 module load trinotate
 
@@ -42,7 +42,7 @@ makeblastdb -in uniprot_sprot.pep -dbtype prot
 And uncompress and prepare the Pfam database for use with 'hmmscan' like so:
 
 gunzip Pfam-A.hmm.gz
-hmmpress Pfam-A.hmm_
+hmmpress Pfam-A.hmm__
 
 ##	Determining longest Open Reading Frames (ORF)
 
