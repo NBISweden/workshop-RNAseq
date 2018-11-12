@@ -21,10 +21,12 @@ This section contains information on how to map reads to a reference genome. In 
  
 *	[Mapping reads to a reference and converting the results to BAM format](mapping_reads) 
 
-### 3. Transcript assembly
+### 3. Transcript assembly and annotation
 
-This section contains information regarding how to assemble short reads into transcripts.
+This section contains information regarding how to assemble short reads into transcripts and how to do a functional annotation of the transcripts.
 
+*	[Transcriptome assembly](RNAseq_assembly)
+*	[Transcriptome annotation](RNAseq_annotationv2)
 *	[Reference guided assembly](isoform-lab)  
 *	[*De novo* assembly](isoform-denovo)
 
