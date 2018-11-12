@@ -1,6 +1,6 @@
 ---
 layout: default
-title:  'Exercise - Functional annotation of transcript'
+title:  'Exercise - Functional annotation of transcripts'
 ---
 
 # Functional annotation
