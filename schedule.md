@@ -9,8 +9,8 @@ Click the heading of a topic to see the lecture slides or lab instructions.
 
 #####  **Wednesday 14th**    
 Room: NA326  
-**09.00-09.15** Lecture: General introduction (Jeanette Tångrot)  
-**09.15-10.15** [Lecture: RNA-seq introduction](slides/not_yet_available.pdf) (Jeanette Tångrot)  
+**09.00-09.15** [Lecture: General introduction](slides/NBIS_geral_inro.pdf) (Jeanette Tångrot)  
+**09.15-10.15** [Lecture: RNA-seq introduction](slides/RNAseq_introduction.pdf) (Jeanette Tångrot)  
 Coffee  
 **10.30-11.15** Lecture: RNA-seq quality control ([HTML](slides/rnaseq_qc.html), [PDF](slides/rnaseq_qc.pdf)) (Roy Francis)  
 **11.15-12.00** Lecture: Short read mapping programs ([HTML](slides/rnaseq_mapping.html), [PDF](slides/rnaseq_mapping.pdf)) (Roy Francis)  
@@ -34,9 +34,9 @@ Coffee
 #####  **Friday 16th**  
 Room: NA332  
 **09.00-09.30** [Lecture: Genome annotation and short read assembly](slides/RNAseq_assembly_Umea.pdf) (Lucile Soler)   
-**09:30-12:00** [Exercise:Short read assembly](labs/RNAseq_assembly.md)  (Lucile Soler, Jeanette Tångrot, Dag Ahrén)  including coffee
+**09:30-12:00** [Exercise:Short read assembly](labs/RNAseq_assembly.md)  (Lucile Soler, Jeanette Tångrot, Dag Ahrén)  including coffee  
 **12.00-13.00** Lunch at Universum  
-**13.30-14.00** [Lecture: Functional annotation of transcripts](slides/FunctionalAnnotRNA_Umea.pdf) (Lucile Soler) 
+**13.30-14.00** [Lecture: Functional annotation of transcripts](slides/FunctionalAnnotRNA_Umea.pdf) (Lucile Soler)  
 **14.00-15.00** [Exercise:Functional annotation of transcripts](labs/RNAseq_annotationv2.md) (Lucile Soler, Jeanette Tångrot, Dag Ahrén)  
 Coffee  
 **15.15-16.00** [Lecture: Summary](slides/not_yet_available.pdf) (Jeanette Tångrot)  
