@@ -21,7 +21,7 @@ Coffee
 
 #####  **Thursday 15th**  
 Room: NA326  
-**09:00-10.00** [Lecture: Differential expression analysis](slides/not_yet_available.pdf) (Dag Ahrén)  
+**09:00-10.00** [Lecture: Differential expression analysis](slides/DiffExpUmea.pdf) (Dag Ahrén)  
 Coffee  
 **10.15-11.00** [Lecture: Gene-set analysis and data integration](slides/GSA_and_data_integration.pdf) (Viktor Jonsson)   
 **11.00-12.00** [Exercise:](labs/index) Suggested exercises are sections **Differential expression analysis** and **Gene set analysis** (Jeanette Tångrot, Paulo Czarnewski, Dag Ahrén, Viktor Jonsson)  
