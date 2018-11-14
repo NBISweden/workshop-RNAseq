@@ -15,7 +15,7 @@ Coffee
 **10.30-11.15** Lecture: RNA-seq quality control ([HTML](slides/rnaseq_qc.html), [PDF](slides/rnaseq_qc.pdf)) (Roy Francis)  
 **11.15-12.00** Lecture: Short read mapping programs ([HTML](slides/rnaseq_mapping.html), [PDF](slides/rnaseq_mapping.pdf)) (Roy Francis)  
 **12.00-13.00** Lunch at Universum  
-**13.00-14.00** [Lecture: Data management](slides/not_yet_available.pdf) (Niclas Jareborg)  
+**13.00-14.00** [Lecture: Data management](slides/2018-11-13_Data_Management_for_courses.pdf) (Niclas Jareborg)  
 **14.00-17.00** [Exercise:](labs/index) Suggested exercises are sections **Quality control laboratory** and **Mapping reads** (Roy Francis, Paulo Czarnewski, Viktor Jonsson, Dag Ahrén)  
 
 
