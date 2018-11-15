@@ -37,7 +37,6 @@ Room: NA332
 **09:30-12:00** [Exercise:Short read assembly](labs/RNAseq_assembly.md)  (Lucile Soler, Jeanette Tångrot, Dag Ahrén)  including coffee  
 **12.00-13.00** Lunch at Universum  
 **13.30-14.00** [Lecture: Functional annotation of transcripts](slides/FunctionalAnnotRNA_Umea.pdf) (Lucile Soler)  
-**14.00-15.00** [Exercise:Functional annotation of transcripts](labs/RNAseq_annotationv2.md) (Lucile Soler, Jeanette Tångrot, Dag Ahrén)  
-Coffee  
-**15.15-16.00** [Lecture: Summary](slides/not_yet_available.pdf) (Jeanette Tångrot)  
+**14.00-15.00** [Exercise:Functional annotation of transcripts](labs/RNAseq_annotationv2.md) (Lucile Soler, Jeanette Tångrot, Dag Ahrén) including coffee   
+**15.45-16.00** [Lecture: Summary](slides/not_yet_available.pdf) (Jeanette Tångrot)  
 **16.00-16.15** Hand in feedback and [evaluation of the course](evaluation)  
