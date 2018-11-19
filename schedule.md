@@ -26,7 +26,7 @@ Coffee
 **10.15-11.00** [Lecture: Gene-set analysis and data integration](slides/GSA_and_data_integration.pdf) (Viktor Jonsson)   
 **11.00-12.00** [Exercise:](labs/index) Suggested exercises are sections **Differential expression analysis** and **Gene set analysis** (Jeanette Tångrot, Paulo Czarnewski, Dag Ahrén, Viktor Jonsson)  
 **12.00-13.00** Lunch at Universum  
-**13:00-14.00** Lecture: RNA-seq pipeline (Phil Ewels)   
+**13:00-14.00** [Lecture: RNA-seq pipeline](slides/Phil_Ewels-NBIS_RNA-seq_course.pdf)  (Phil Ewels)  
 **14.00-17.00** [Exercise:](labs/index) Suggested exercises are sections **Differential expression analysis** and **Gene set analysis** (Jeanette Tångrot, Paulo Czarnewski, Phil Ewels, Viktor Jonsson)  
 **18.00-** Course dinner  
 
