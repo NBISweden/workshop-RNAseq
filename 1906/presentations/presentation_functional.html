@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Functional analyses</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Roy Francis | 02-Jun-2019" />
+    <meta name="keywords" content="bioinformatics, course, scilifelab, nbis" />
+    <link href="libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <link id="font-awesome-1-attachment" rel="attachment" href="libs/font-awesome-5.1.0/fonts/fontawesome-webfont.ttf"/>
+    <link rel="stylesheet" href="assets/presentation.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Functional analyses
+## Workshop on RNA-Seq
+### <b>Roy Francis</b> | 02-Jun-2019
+
+---
+
+exclude: true
+count: false
+
+
+&lt;link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;amp;subset=latin-ext" rel="stylesheet"&gt;
+&lt;link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"&gt;
+
+
+
+
+
+&lt;!-- ------------ Only edit title, subtitle &amp; author above this ------------ --&gt;
+
+
+
+---
+name: content
+class: spaced
+
+## Contents
+
+* [Introduction](#intro)
+* [Gene sets](#geneset)
+* [Gene set analyses](#gsa)
+* [Gene set enrichment analyses](#gsea)
+
+---
+name: intro
+
+## Introduction
+
+```
+  ensembl_gene_id  baseMean log2FoldChange       pvalue    padj
+1 ENSG00000000003 490.01721      0.9145204 3.661641e-17 0.00376
+2 ENSG00000000419 817.78066     -0.1894651 6.001737e-02 0.04354
+3 ENSG00000000457  82.07877      0.3307639 1.207585e-01 0.00005
+4 ENSG00000000460 356.07160     -1.8636578 4.096103e-51 0.00025
+5 ENSG00000001036 919.60675     -0.3482723 3.922539e-05 0.19231
+6 ENSG00000001084 529.59397     -0.6764194 8.192621e-13 0.06244
+```
+
+--
+
+&gt; Is there a pattern in my list of DEGs?
+
+--
+
+- Do my DEGs work together?
+- Are they involved in a biological process?
+- Are they involved in a pathway?
+- Reduce gene lists to terms
+- Pick interesting genes based on function
+- Less prone to false-positives on the gene-level
+- Interpretation of genome-wide results
+
+---
+name: terminology
+
+## Terminology
+
+- Functional analyses
+- Functional annotation
+- Gene set analyses (GSA)
+- Gene-set enrichment analyses (GSEA)
+- GO analyses
+- Gene list enrichment analyses
+- Over-representation analyses
+- hypergeometric test (fisher's exact test)
+...
+
+---
+name: geneset
+
+## Gene sets
+
+.pull-left-40[
+- Curated sets of genes
+- [Gene ontology (GO)](http://geneontology.org/)
+- [KEGG](https://www.genome.jp/kegg/)
+- [Reactome](https://reactome.org/)
+- [MolSigDB](http://software.broadinstitute.org/gsea/msigdb/index.jsp)
+- [Enrichr](http://amp.pharm.mssm.edu/Enrichr/#stats)
+]
+
+.pull-right-60[
+.size-90[![](./images/db.png)]
+]
+
+---
+name: go
+
+## Gene sets • GO
+
+.pull-left-50[
+- Three categories: Biological process, Molecular function, Cellular component
+- Displayed as a network graph
+- Genes are shared between multiple terms
+
+![](./images/go-network.jpg)
+]
+
+.pull-right-50[
+- Almost hierarchical
+- Terms get detailed down the hierarchy
+- A term can have multiple parents
+
+![](./images/go.png)
+]
+
+---
+name: kegg
+
+## Gene sets • Pathways
+
+* KEGG, Reactome etc.
+
+![](./images/kegg.png)
+
+---
+name: gsa
+
+## Gene set analyses (GSA)
+
+* Requires cut-off
+* Omits any expression metric
+* Good to test overlap of signif genes in two comparisons
+* Computationally fast
+
+.size-90[![](./images/ora.png)]
+
+---
+name: gsa-2
+
+## GSA input
+
+```
+  ensembl_gene_id  baseMean log2FoldChange       pvalue    padj
+1 ENSG00000000003 490.01721      0.9145204 3.661641e-17 0.00376
+2 ENSG00000000419 817.78066     -0.1894651 6.001737e-02 0.04354
+3 ENSG00000000457  82.07877      0.3307639 1.207585e-01 0.06244
+4 ENSG00000000460 356.07160     -1.8636578 4.096103e-51 0.12002
+5 ENSG00000001036 919.60675     -0.3482723 3.922539e-05 0.19231
+6 ENSG00000001084 529.59397     -0.6764194 8.192621e-13 0.00005
+```
+
+Input set: `ENSG00000000003, ENSG00000000419, ENSG00000001084`  
+Universe: `ENSG00000000003, ENSG00000000419, ENSG00000000457, ENSG00000000460, ENSG00000001036, ENSG00000001084`  
+
+---
+name: gsea
+
+## Gene set enrichment analyses (GSEA)
+
+* All genes are used
+* Ranked by an expression metric/gene-level statistic
+
+![](./images/gsea.jpg)
+
+---
+name: gsea-2
+
+## GSEA input
+
+```
+  ensembl_gene_id  baseMean log2FoldChange       pvalue    padj
+1 ENSG00000000003 490.01721      0.9145204 3.661641e-17 0.00376
+2 ENSG00000000419 817.78066     -0.1894651 6.001737e-02 0.04354
+3 ENSG00000000457  82.07877      0.3307639 1.207585e-01 0.06244
+4 ENSG00000000460 356.07160     -1.8636578 4.096103e-51 0.12002
+5 ENSG00000001036 919.60675     -0.3482723 3.922539e-05 0.19231
+6 ENSG00000001084 529.59397     -0.6764194 8.192621e-13 0.00005
+```
+
+* Input is a set of labelled ranked expression metrics.
+
+
+```
+## ENSG00000000003 ENSG00000000457 ENSG00000000419 ENSG00000001036 
+##       0.9145204       0.3307639      -0.1894651      -0.3482723 
+## ENSG00000001084 ENSG00000000460 
+##      -0.6764194      -1.8636578
+```
+
+---
+name: tools
+
+## Tools
+
+### R packages
+
+topGO, goana, goseq, topKEGG, kegga, enrichR, piano, clusterProfiler, Pathview, fgsea, gprofileR
+
+### Online
+
+[DAVID](https://david.ncifcrf.gov/), [GOrilla](http://cbl-gorilla.cs.technion.ac.il/), [Enrichr](https://amp.pharm.mssm.edu/Enrichr/), [Revigo](http://revigo.irb.hr/), [Webgestalt](http://webgestalt.org/), [Panther](http://pantherdb.org/), [Tair](https://www.arabidopsis.org/tools/go_term_enrichment.jsp)
+
+### Downloadable
+
+[GSEA](http://software.broadinstitute.org/gsea/index.jsp), [ErmineJ](https://erminej.msl.ubc.ca/), [Ingenity Pathway analyses](https://www.qiagenbioinformatics.com/products/ingenuity-pathway-analysis/)
+
+---
+name: cons
+
+## Considerations
+
+* Pay attention to gene IDs
+* Bias in gene sets
+* Confusing gene set names
+* Consider gene set size
+* Adjust for multiple testing
+* Large number of highly overlapping gene-sets (representing a similar biological theme) can bias interpretation and take attention from other biological themes that are represented by fewer gene-sets
+
+---
+name: ack
+
+## Acknowledgements
+
+* Slides by Leif Wigge
+
+---
+name: end_slide
+class: end-slide, middle
+count: false
+
+# Thank you. Questions?
+
+
+
+.end-text[
+&lt;p&gt;R version 3.5.2 (2018-12-20)&lt;br&gt;&lt;p&gt;Platform: x86_64-pc-linux-gnu (64-bit)&lt;/p&gt;&lt;p&gt;OS: Ubuntu 18.04.2 LTS&lt;/p&gt;&lt;br&gt;
+
+&lt;hr&gt;
+
+&lt;span class="small"&gt;Built on : &lt;i class='fa fa-calendar' aria-hidden='true'&gt;&lt;/i&gt; 02-Jun-2019 at &lt;i class='fa fa-clock-o' aria-hidden='true'&gt;&lt;/i&gt; 11:12:05&lt;/span&gt;  
+
+&lt;b&gt;2019&lt;/b&gt; • [SciLifeLab](https://www.scilifelab.se/) • [NBIS](https://nbis.se/)
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="assets/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "4:3",
+"highlightLanguage": "r",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

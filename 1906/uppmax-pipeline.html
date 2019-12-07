@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Martin Dahlö" />
+
+
+<title>UPPMAX Pipeline</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">UPPMAX Pipeline</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+<h4 class="author">Martin Dahlö</h4>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<div class="instruction">
+<p><i class="fas fa-exclamation-circle"></i> In syntax examples, the dollar sign (<code>$</code>) is not to be typed into the command-line. The dollar sign is usually an indicator that the text following it should be typed in a terminal window.</p>
+</div>
+<div id="connecting-to-uppmax" class="section level1">
+<h1><span class="header-section-number">1</span> Connecting to UPPMAX</h1>
+<p>The first step of this lab is to open a ssh connection to UPPMAX. You will need a ssh program to do this:</p>
+<p>On Linux: it is included by default, named <strong>Terminal</strong>. On OSX: it is included by default, named <strong>Terminal</strong>. On Windows: <a href="http://bit.ly/19yaQOM">Google MobaXterm</a> and download it.</p>
+<p>Fire up the available ssh program and enter the following (replace <strong>username</strong> with your uppmax user name). <code>-Y</code> means that X-forwarding is activated on the connection, which means graphical data can be transmitted if a program requests it, i.e. programs can use a graphical user interface (GUI) if they want to.</p>
+<pre><code>$ ssh -Y username@rackham.uppmax.uu.se</code></pre>
+<p>and give your password when prompted. As you type, nothing will show on screen. No stars, no dots. It is supposed to be that way. Just type the password and press <kbd>enter</kbd>, it will be fine.</p>
+<p>Now your screen should look something like this:</p>
+<pre><code>dahlo@dahlo-xps ~ $ ssh -Y dahlo@rackham.uppmax.uu.se
+Last login: Fri May 18 15:03:59 2018 from micro046.icm.uu.se
+ _   _ ____  ____  __  __    _    __  __
+| | | |  _ \|  _ \|  \/  |  / \   \ \/ /   | System:    rackham4
+| | | | |_) | |_) | |\/| | / _ \   \  /    | User:      dahlo
+| |_| |  __/|  __/| |  | |/ ___ \  /  \    | 
+ \___/|_|   |_|   |_|  |_/_/   \_\/_/\_\   | 
+
+###############################################################################
+
+        User Guides: http://www.uppmax.uu.se/support/user-guides
+        FAQ: http://www.uppmax.uu.se/support/faq
+
+        Write to support@uppmax.uu.se, if you have questions or comments.
+
+
+dahlo@rackham4 ~ $ </code></pre>
+</div>
+<div id="booking-a-node" class="section level1">
+<h1><span class="header-section-number">2</span> Booking a node</h1>
+<div class="instruction">
+<p><strong><i class="fas fa-exclamation-circle"></i> Run this only if you canceled your job before lunch</strong></p>
+</div>
+<p>Usually you would do most of the work in this lab directly on one of the login nodes at uppmax, but we have arranged for you to have one core each to avoid disturbances. This was covered briefly in the lecture notes.</p>
+<pre><code>$ salloc -A g2019011 -t 04:00:00 -p core -n 1 --no-shell --reservation=g2019011_1 &amp;</code></pre>
+<p>check which node you got (replace <strong>username</strong> with your uppmax user name)</p>
+<pre><code>$ squeue -u username</code></pre>
+<p>should look something like this</p>
+<pre><code>dahlo@rackham2 work $ squeue -u dahlo
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+           3132376      core       sh    dahlo  R       0:04      1 r292
+dahlo@rackham2 work $ </code></pre>
+<p>where <strong>r292</strong> is the name of the node I got (yours will probably be different). Note the numbers in the Time column. They show for how long the job has been running. When it reaches the time limit you requested (7 hours in this case) the session will shut down, and you will lose all unsaved data. Connect to this node from within uppmax.</p>
+<pre><code>$ ssh -Y r292 </code></pre>
+<p><i class="fas fa-lightbulb"></i> There is a uppmax specific tool called <code>jobinfo</code> that supplies the same kind of information as <code>squeue</code> that you can use as well (<code>$ jobinfo -u username</code>).</p>
+</div>
+<div id="copying-files" class="section level1">
+<h1><span class="header-section-number">3</span> Copying files</h1>
+<p>To be able to do parts of this lab, you will need some files. To avoid all the course participants editing the same file all at once, undoing each other’s edits, each participant will get their own copy of the needed files. The files are located in the folder <code>/sw/share/compstore/courses/ngsintro/uppmax_pipeline_exercise/data</code>.</p>
+<p>Next, copy the lab files from this folder. <code>-r</code> means recursively, which means all the files including sub-folders of the source folder. Without it, only files directly in the source folder would be copied, NOT sub-folders and files in sub-folders.</p>
+<p><i class="fas fa-lightbulb"></i> Remember to use tab-complete to avoid typos and too much writing.</p>
+<p>Ex.</p>
+<pre><code>$ cp -r &lt;source&gt; &lt;destination&gt;
+$ cp -r /sw/share/compstore/courses/ngsintro/uppmax_pipeline_exercise/data /proj/g2019011/nobackup/&lt;username&gt;/uppmax_pipeline_exercise</code></pre>
+<p>Have a look in <code>/proj/g2019011/nobackup/&lt;username&gt;/uppmax_pipeline_exercise</code>:</p>
+<pre><code>$ cd /proj/g2019011/nobackup/&lt;username&gt;/uppmax_pipeline_exercise
+$ ll</code></pre>
+<p>If you see files, the copying was successful.</p>
+</div>
+<div id="running-dummy-pipelines" class="section level1">
+<h1><span class="header-section-number">4</span> Running dummy pipelines</h1>
+<p>Most of the work you will do in the future will be about running multiple programs after each other. This can be done manually, with you sitting by the computer and typing commands, waiting for them to finish, then start the next program. But what happens if the first program finished sometime during the night? You will not be there to start the next program, and the computer will stand idle until you have time to start the program. To avoid this, scripts can be used.</p>
+<p>First, we’ll do an analysis manually without scripts, just to get the hang of it. Then we’ll start writing scripts for it!</p>
+<div id="load-the-module" class="section level3">
+<h3><span class="header-section-number">4.0.1</span> Load the module</h3>
+<p>In this exercise, we’ll pretend that we are running analyses. This will give you a peek at what running programs in linux is like, and get you ready for the real stuff during the week!</p>
+<p>The first thing you usually do is to load the modules for the programs you want to run. During this exercise we’ll only run my dummy scripts that don’t actually do any analysis, so they don’t have a module of their own. What we can do instead is to manually do what module loading usually does: to modify the <code>$PATH</code> variable.</p>
+<p>The <code>$PATH</code> variable specifies directories where the computer should look for programs whenever you type a command. For instance, when you type,</p>
+<pre><code>$ nano</code></pre>
+<p>how does the computer know which program to start? You gave it the name ‘nano’, but that could refer to any file named nano in the computer, yet it starts the correct one every time. The answer is that it looks in the directories stored in the $PATH variable and start the first program it finds that is named <code>nano</code>.</p>
+<p>To see which directories that are available by default, type</p>
+<pre><code>$ echo $PATH</code></pre>
+<p>It should give you something like this, a list of directories, separated by colon signs:</p>
+<pre><code>$ echo $PATH
+/home/dahlo/perl//bin/:/home/dahlo/.pyenv/shims:/home/dahlo/.pyenv/bin:
+/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:
+/sbin:/opt/thinlinc/bin:/sw/uppmax/bin:/home/dahlo/usr/bin</code></pre>
+<p>Try loading a module, and then look at the <code>$PATH</code> variable again. You’ll see that there are a few extra directories there now, after the module has been loaded.</p>
+<pre><code>$ module load bioinfo-tools samtools/1.6
+$ echo $PATH
+/sw/apps/bioinfo/samtools/1.6/rackham/bin:/home/dahlo/perl/bin:/home/dahlo/.pyenv/shims:
+/home/dahlo/.pyenv/bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:
+/usr/sbin:/sbin:/opt/thinlinc/bin:/sw/uppmax/bin:/home/dahlo/usr/bin</code></pre>
+<p>To pretend that we are loading a module, instead of actually loading a module for them, we’ll manually do what the module system would have done. We will just add a the directory containing my dummy scripts to the <code>$PATH</code> variable, and it will be like we loaded the module for them. Now, when we type the name of one of my scripts, the computer will look in all the directories specified in the <code>$PATH</code> variable, which now includes the location where i keep my scripts. The computer will now find programs named as my scripts are and it will run them.</p>
+<pre><code>$ export PATH=$PATH:/sw/share/compstore/courses/ngsintro/uppmax_pipeline_exercise/dummy_scripts</code></pre>
+<p>This will set the $PATH variable to whatever it is at the moment, and add a directory at the end of it. Note the lack of a dollar sign infront of the variable name directly after “export”. You don’t use dollar signs when <strong>assigning</strong> values to variables, and you always use dollar signs when <strong>getting</strong> values from variables.</p>
+<p><i class="fas fa-exclamation-circle"></i> The export command affects only the terminal you type it in. If you have 2 terminals open, only the terminal you typed it in will have a modified path. If you close that terminal and open a new one, it will not have the modified path.</p>
+<p>Enough with variables now. Let’s try the scripts out!</p>
+</div>
+<div id="running-the-programs" class="section level2">
+<h2><span class="header-section-number">4.1</span> Running the programs</h2>
+<p>Let’s pretend that we want to run an exome analysis. You will learn how to do this for real later this week. This kind of analysis usually has the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Filter out low quality reads.</li>
+<li>Align the reads to a reference genome.</li>
+<li>Find all the SNPs in the data.</li>
+</ol>
+<p>To simulate this, I have written 3 programs:</p>
+<ul>
+<li>filter_reads</li>
+<li>align_reads</li>
+<li>find_snps</li>
+</ul>
+<p>To find out how to run the programs type</p>
+<pre><code>$ &lt;program name&gt; -h</code></pre>
+<pre><code>or
+$ &lt;program name&gt; --help</code></pre>
+<p>This is useful to remember, since most programs has this function. If you do this for the filter program, you get</p>
+<pre><code>$ filter_reads -h
+Usage: filter_reads -i &lt;input file&gt; -o &lt;output file&gt; [-c &lt;cutoff&gt;]
+
+Example runs:
+
+# Filter the reads in &lt;input&gt; using the default cutoff value. Save filtered reads to &lt;output&gt;
+filter_reads -i &lt;input&gt; -o &lt;output&gt;
+Ex.
+filter_reads -i my_reads.rawdata.fastq -o my_reads.filtered.fastq
+
+# Filter the reads in &lt;input&gt; using a more relaxed cutoff value. Save filtered reads to &lt;output&gt;
+filter_reads --input &lt;input&gt; --output &lt;output&gt; --cutoff 30
+Ex.
+filter_reads --input ../../my_reads.rawdata.fastq --output /home/dahlo/results/my_reads.filtered.fastq --cutoff 30
+
+
+Options:
+  -h, --help            show this help message and exit
+  -i INPUT, --input=INPUT
+                        The path to your unfiltered reads file.
+  -o OUTPUT, --output=OUTPUT
+                        The path where to put the results of the filtering.
+  -c CUTOFF, --cutoff=CUTOFF
+                        The cutoff value for quality. Reads below this value
+                        will be filtered (default: 35).
+</code></pre>
+<p>This help text tells you that the program has to be run a certain way. The options <code>-i</code> and <code>-o</code> are mandatory, since they are explicitly written. The hard brackets <code>[ ]</code> around <code>-c &lt;cutoff&gt;</code> means that the cutoff value is NOT mandatory. They can be specified if the user wishes to change the cutoff from the default values.</p>
+<p>Further down, in the “Options:” section, each of the options are explained more in detail. You can also see that each option can be specified in two way, a short and a long format. The cutoff value can be specified either by the short <code>-c</code>, or the long <code>--cutoff</code>. It doesn’t matter which format you choose, it’s completely up to you, which ever you feel more comfortable with.</p>
+<p>Right, so now you know how to figure out how to run programs (just type the program name, followed by a <code>-h</code> or <code>--help</code>). Try doing a complete exome sequencing analysis, following the steps below.</p>
+<p>First, go to the exome directory in the lab directory that you copied to your folder in step 2 in this lab:</p>
+<pre><code>$ cd /proj/g2019011/nobackup/&lt;username&gt;/uppmax_pipeline_exercise/exomeSeq</code></pre>
+<p>In there you will find a folder called <code>raw_data</code>, containing a fastq file: <code>my_reads.rawdata.fastq</code>. This file contains the raw data that you will analyse.</p>
+<ul>
+<li>Filter the raw data using the program <code>filter_reads</code>, to get rid of low quality reads.</li>
+<li>Align the filtered reads with the program <code>align_reads</code>, to the human reference genome located here:</li>
+</ul>
+<pre><code>/sw/data/uppnex/reference/Homo_sapiens/hg19/concat_rm/Homo_sapiens.GRCh37.57.dna_rm.concat.fa</code></pre>
+<ul>
+<li>Find SNPs in your aligned data with the program <code>find_snps</code>.</li>
+</ul>
+<p>To find SNPs we have to have a reference to compare our data with. The same reference genome as you aligned to is the one to use.</p>
+<p>Do one step at a time, and check the <code>--help</code> of the programs to find out how they are to be run. Remember to name your files logically so that you don’t confuse them with each other.</p>
+<p>Most pipelines work in a way where the output of the current program is the input of the next program in the pipeline. In this pipeline, raw data gets filtered, the filtered data gets aligned, and the aligned data gets searched for SNPs. The intermediate steps are usually not interesting after you have reached the end of the pipeline. Then, only the raw data and the final result is important.</p>
+</div>
+</div>
+<div id="scripting-a-dummy-pipeline" class="section level1">
+<h1><span class="header-section-number">5</span> Scripting a dummy pipeline</h1>
+<p>To run the pipeline in a script, just do exactly as you just did, but write the exact same commands to a file instead of directly to the terminal. When you run the script, the computer will run the script one line at a time, until it reaches the end of the file. Just like you did manually in the previous step.</p>
+<p>The simplest way to work with scripts is to have 2 terminals open. One will have “nano” started where you write your script file, and the other will be on the command line where you can test your commands to make sure they work before you put them in the script. When you are sure a command works, you copy/paste it to the terminal with the script file in it.</p>
+<p>Start writing you script with nano:</p>
+<pre><code>$ cd /proj/g2019011/nobackup/&lt;username&gt;/uppmax_pipeline_exercise/exomeSeq
+$ nano exome_analysis_script.sh</code></pre>
+<p>The <code>.sh</code> ending is commonly used for <strong>sh</strong>ell scripts which is what we are creating. The default shell at UPPMAX is as we know called bash, so whenever we write <code>sh</code> the computer will use bash. If the default shell at UPPMAX would change for some reason, mayby to zsh or any other type of shell, <code>sh</code> would point the the new shell instead.</p>
+<div class="figure">
+<img src="files/uppmax-pipeline/dualTerminals.png" />
+
+</div>
+<p>Since our memory is far from perfect, try to <strong>always comment your scripts</strong>. The comments are rows that start with a hash sign, # These lines will not be interpreted as a command to be run, they will just be skipped. They are only meant for humans to read, and they are real lifesavers when you are reading old scripts you have forgotten what they do. Commands are hard for humans to read, so try to write a couple of words explaining what the command below does. You’ll be thankful later!</p>
+<p>When you are finished with your script, you can test run it. To do that, use the program sh:</p>
+<pre><code>$ sh exome_analysis_script.sh</code></pre>
+<p>If you got everything right, you should see the whole pipeline being executed without you having to start each program manually. If something goes wrong, look at the output and try to figure out which step in the pipeline that get the error, and solve it. A tip is to read the error list from the top-down. An error early in the pipeline will most likely cause a multitude of error further down the pipeline, so your best bet is to start from the top.</p>
+<p>Solve the problem, try the script again, until it works.</p>
+<p>The real beauty of scripts is that they can be re-run really easily. Maybe you have to change a variable or option in one of the early steps of the pipeline, just do it and re-run the whole thing.</p>
+</div>
+<div id="submitting-a-dummy-pipeline" class="section level1">
+<h1><span class="header-section-number">6</span> Submitting a dummy pipeline</h1>
+<p>The whole point with computer centres like UPPMAX is that you can run multiple programs at the same time to speed things up. To do this efficiently you will have to submit jobs to the queue system. As you saw in yesterdays exercise, it is ordinary shell scripts that you submit to the queue system, with a couple of extra options in the beginning. So to be able to submit our script to the queue system, the only thing we have to do is to add the queue system options in the beginning of the script.</p>
+<p>The options needed by the queue are, as we learned yesterday:</p>
+<ul>
+<li>Who is paying for the job?</li>
+<li>How long time will the job need?</li>
+<li>How many cores does the job need?</li>
+</ul>
+<p>SLURM is also a bit strict when it comes formalities. It requires that you specify which program should be used to run the submitted script file. The standard program for this is bash, but we have to specify it on the first line of the script non the less.</p>
+<p>This is done by having the first line in the script looking link this:</p>
+<pre><code>#!/bin/bash -l</code></pre>
+<p>This is how Linux knows which program should open a file, since it does not care about the file ending like Windows commonly does (<code>.ppt</code>, <code>.pdf</code>, <code>.html</code> might be familiar file endings). The <code>#!</code> indicates that the next words will be the path to the program that should open the file. It could be <code>#!/bin/bash</code>, or <code>#!/bin/python</code>, or any other path to a executable program.</p>
+<p>The <code>-l</code> after bash is a flag that tells bash that the script should be treated as a login shell, so everything behaves as when you are logged in. Without it commands like <code>module</code> and some other would not work. If it’s not a login shell, it’s running as a script, and then it does not need to bother making the interface human friendly so it will skip things to make it start faster and consume less resources.</p>
+<p>The next couple of rows will contain all the options you want to give SLURM:</p>
+<pre><code>#!/bin/bash -l
+#SBATCH -A g2019011
+#SBATCH -t 00:05:00
+#SBATCH -p core</code></pre>
+<p>SLURM options always start with <code>#SBATCH</code> followed by a flag (<code>-A</code> for account, <code>-t</code> for time, <code>-p</code> for partition) and the value for that flag. Your script should now look something like this (ignore the old project id and path to the scripts):</p>
+<div class="figure">
+<img src="files/uppmax-pipeline/slurmScript.png" />
+
+</div>
+<p>To submit this script to the queue:</p>
+<pre><code>$ sbatch exome_analysis_script.sh</code></pre>
+</div>
+<div id="rnaseq-analysis" class="section level1">
+<h1><span class="header-section-number">7</span> RNAseq Analysis</h1>
+<p>The next step is to do a complete RNAseq analysis. The steps involved start off just like the exome analysis, but has a few extra steps. The goal of this part is to successfully run the pipeline using the queue system. To do this, you must construct the commands for each step, combine them in a script, include the SLURM options, and submit it. Much like what we did in the previous step, but with some complications.</p>
+<p>Typical RNAseq analysis consists of multiple samples / time points:</p>
+<ul>
+<li>Filter the reads for each sample.</li>
+<li>Align the filtered reads for each sample to the same reference genome as before.</li>
+<li>Do a differential expression analysis by comparing multiple samples.</li>
+</ul>
+<p>The difficulty here is that you have not just 1 sample, you have 3 of them. And they all need to be filtered and aligned separately, and then compared to each other. The program that does the differential expression analysis in this exercise is called <code>diff_exp</code> and is located in the same directory as the previous scripts.</p>
+<p><i class="fas fa-lightbulb"></i> The samples are filtered and aligned individually.</p>
+<p>For the really fast ones: Continue with this tutorial on <a href="advanced-linux.html">Advanced Linux</a> if you still have time left on the lab. Or just having a slow night at the hotel.</p>
+<p><strong>End of document</strong></p>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

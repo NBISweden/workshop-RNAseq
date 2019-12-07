@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Martin Dahlö" />
+
+
+<title>UPPMAX Introduction</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">UPPMAX Introduction</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+<h4 class="author">Martin Dahlö</h4>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<div class="instruction">
+<p><i class="fas fa-exclamation-circle"></i> In syntax examples, the dollar sign (<code>$</code>) is not to be typed into the command-line. The dollar sign is usually an indicator that the text following it should be typed in a terminal window.</p>
+</div>
+<div id="connecting-to-uppmax" class="section level1">
+<h1><span class="header-section-number">1</span> Connecting to UPPMAX</h1>
+<p>The first step of this lab is to open a ssh connection to UPPMAX. You will need a ssh program to do this:</p>
+<p>On Linux: it is included by default, named <strong>Terminal</strong>. On OSX: it is included by default, named <strong>Terminal</strong>. On Windows: <a href="http://bit.ly/19yaQOM">Google MobaXterm</a> and download it.</p>
+<p>Fire up the available ssh program and enter the following (replace <strong>username</strong> with your uppmax user name). -Y means that X-forwarding is activated on the connection, which means graphical data can be transmitted if a program requests it, i.e. programs can use a graphical user interface (GUI) if they want to.</p>
+<pre><code>$ ssh -Y username@rackham.uppmax.uu.se</code></pre>
+<p>and give your password when prompted. As you type, nothing will show on screen. No stars, no dots. It is supposed to be that way. Just type the password and press <kbd>enter</kbd>, it will be fine.</p>
+<p>Now your screen should look something like this:</p>
+<pre><code>dahlo@dahlo-xps ~ $ ssh -Y dahlo@rackham.uppmax.uu.se
+Last login: Fri May 18 15:03:59 2018 from micro046.icm.uu.se
+ _   _ ____  ____  __  __    _    __  __
+| | | |  _ \|  _ \|  \/  |  / \   \ \/ /   | System:    rackham4
+| | | | |_) | |_) | |\/| | / _ \   \  /    | User:      dahlo
+| |_| |  __/|  __/| |  | |/ ___ \  /  \    | 
+ \___/|_|   |_|   |_|  |_/_/   \_\/_/\_\   | 
+
+###############################################################################
+
+        User Guides: http://www.uppmax.uu.se/support/user-guides
+        FAQ: http://www.uppmax.uu.se/support/faq
+
+        Write to support@uppmax.uu.se, if you have questions or comments.
+
+
+dahlo@rackham4 ~ $ 
+</code></pre>
+</div>
+<div id="booking-a-node" class="section level1">
+<h1><span class="header-section-number">2</span> Booking a node</h1>
+<div class="instruction">
+<p><strong><i class="fas fa-exclamation-circle"></i> Run this only if you canceled your job before lunch</strong></p>
+</div>
+<p>Usually you would do most of the work in this lab directly on one of the login nodes at uppmax, but we have arranged for you to have one core each to avoid disturbances. This was covered briefly in the lecture notes.</p>
+<pre><code>$ salloc -A g2019011 -t 04:00:00 -p core -n 1 --no-shell --reservation=g2019011_1 &amp;</code></pre>
+<p>check which node you got (replace <strong>username</strong> with your uppmax user name)</p>
+<pre><code>$ squeue -u username</code></pre>
+<p>should look something like this</p>
+<pre><code>dahlo@rackham2 work $ squeue -u dahlo
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+           3132376      core       sh    dahlo  R       0:04      1 r292
+dahlo@rackham2 work $ </code></pre>
+<p>where <strong>r292</strong> is the name of the node I got (yours will probably be different). Note the numbers in the Time column. They show for how long the job has been running. When it reaches the time limit you requested (7 hours in this case) the session will shut down, and you will lose all unsaved data. Connect to this node from within uppmax.</p>
+<pre><code>$ ssh -Y r292 </code></pre>
+<p><i class="fas fa-lightbulb"></i> There is a uppmax specific tool called <code>jobinfo</code> that supplies the same kind of information as <code>squeue</code> that you can use as well (<code>$ jobinfo -u username</code>).</p>
+</div>
+<div id="copying-files" class="section level1">
+<h1><span class="header-section-number">3</span> Copying files</h1>
+<p>To be able to do parts of this lab, you will need some files. To avoid all the course participants editing the same file all at once, undoing each other’s edits, each participant will get their own copy of the needed files. The files are located in the folder <code>/sw/share/compstore/courses/ngsintro/uppmax_tutorial</code>.</p>
+<p>Next, copy the lab files from this folder. <code>-r</code> means recursively, which means all the files including sub-folders of the source folder. Without it, only files directly in the source folder would be copied, NOT sub-folders and files in sub-folders.</p>
+<p><i class="fas fa-lightbulb"></i> Remember to use tab-complete to avoid typos and too much writing.</p>
+<p>Ex.</p>
+<pre><code>$ cp -r &lt;source&gt; &lt;destination&gt;
+$ cp -r /sw/share/compstore/courses/ngsintro/uppmax_tutorial /proj/g2019011/nobackup/&lt;username&gt;</code></pre>
+<p>Have a look in <strong>/proj/g2019011/nobackup/&lt;username&gt;/uppmax_tutorial</strong>:</p>
+<pre><code>$ cd /proj/g2019011/nobackup/&lt;username&gt;/uppmax_tutorial
+
+$ ll
+total 128K
+drwxrwxr-x 2 dahlo dahlo 2,0K May 18 16:21 .
+drwxrwxr-x 4 dahlo dahlo 2,0K May 18 15:34 ..
+-rwxrwxr-x 1 dahlo dahlo 1,2K May 18 16:21 data.bam
+-rw-rw-r-- 1 dahlo dahlo  232 May 18 16:21 job_template
+$ </code></pre>
+</div>
+<div id="running-a-program" class="section level1">
+<h1><span class="header-section-number">4</span> Running a program</h1>
+<p>Among the files that were copied is data.bam. Bam is a popular format to store aligned sequence data, but since it is a, so called, binary format it doesn’t look that good if you are human. Try it using less:</p>
+<pre><code>$ less data.bam</code></pre>
+<div class="figure">
+<img src="files/uppmax-intro/bam_binary.png" />
+
+</div>
+<p>Not so pretty. Luckily for us, there is a program called <strong>samtools</strong> (<a href="http://www.htslib.org/" class="uri">http://www.htslib.org/</a>) that is made for reading bam files. To use it on uppmax we must first load the module for <strong>samtools</strong>. Try starting samtools before loading the module:</p>
+<pre><code>$ samtools
+-bash: samtools: command not found</code></pre>
+<p>That did not work, try it again after loading the module:</p>
+<pre><code>$ module load bioinfo-tools samtools/1.6
+$ samtools
+
+Program: samtools (Tools for alignments in the SAM format)
+Version: 1.6 (using htslib 1.6)
+
+Usage:   samtools &lt;command&gt; [options]
+
+Commands:
+  -- Indexing
+     dict           create a sequence dictionary file
+     faidx          index/extract FASTA
+     index          index alignment
+
+  -- Editing
+     calmd          recalculate MD/NM tags and &#39;=&#39; bases
+     fixmate        fix mate information
+     reheader       replace BAM header
+     rmdup          remove PCR duplicates
+     targetcut      cut fosmid regions (for fosmid pool only)
+     addreplacerg   adds or replaces RG tags
+     markdup        mark duplicates
+
+  -- File operations
+     collate        shuffle and group alignments by name
+     cat            concatenate BAMs
+     merge          merge sorted alignments
+     mpileup        multi-way pileup
+     sort           sort alignment file
+     split          splits a file by read group
+     quickcheck     quickly check if SAM/BAM/CRAM file appears intact
+     fastq          converts a BAM to a FASTQ
+     fasta          converts a BAM to a FASTA
+
+  -- Statistics
+     bedcov         read depth per BED region
+     depth          compute the depth
+     flagstat       simple stats
+     idxstats       BAM index stats
+     phase          phase heterozygotes
+     stats          generate stats (former bamcheck)
+
+  -- Viewing
+     flags          explain BAM flags
+     tview          text alignment viewer
+     view           SAM&lt;-&gt;BAM&lt;-&gt;CRAM conversion
+     depad          convert padded BAM to unpadded BAM</code></pre>
+<p><strong><i class="fas fa-exclamation-circle"></i> All modules are unloaded when you disconnect from UPPMAX, so you will have to load the modules again every time you log in. If you load a module in a terminal window, it will not affect the modules you have loaded in another terminal window, even if both terminals are connected to UPPMAX. Each terminal is independent of the others.</strong></p>
+<p>To use samtools to view a BAM file, use the following line:</p>
+<pre><code>$ samtools view -h data.bam
+@HD VN:1.0  SO:coordinate
+@SQ SN:chr1 LN:249250621
+@SQ SN:chr10    LN:135534747
+@SQ SN:chr11    LN:135006516
+@SQ SN:chr12    LN:133851895
+@SQ SN:chr13    LN:115169878
+@SQ SN:chr14    LN:107349540
+@SQ SN:chr15    LN:102531392
+@SQ SN:chr16    LN:90354753</code></pre>
+<p><code>-h</code> also print the bam file’s <strong>header</strong>, which is the rows starting with <code>@</code> signs in the beginning of the file. These lines contain so called <strong>metadata</strong>; information about the data stored in the file. It contain things like which program was used to generate the bam file and which chromosomes are present in the file. Try running the command without the <code>-h</code> to see the difference.</p>
+<p>The not-binary version (ASCII, or text version) of a bam file is called a <strong>SAM</strong> file, which was just printed directly into the terminal window. The sam file is not to much use for us printed in the terminal window, aesthetics aside. It is probably much better to have the sam file saved as an actual file, something that is very easy to do. Any text that is printed to the terminal can be saved to a file instead of the terminal window using a ‘crocodile mouth’, <code>&gt;</code>.</p>
+<p>Ex.</p>
+<pre><code>$ programname arguments &gt; outfile</code></pre>
+<p>which will launch a program named <strong>programname</strong>, supply it with the argument <strong>arguments</strong>, and write any output that would have been printed to the screen to the file <strong>outfile</strong> instead.</p>
+<p>To use this on samtools:</p>
+<pre><code>$ samtools view -h data.bam &gt; data.sam</code></pre>
+<p>Look at the created file:</p>
+<pre><code>$ ll</code></pre>
+<p>The sam file is now human readable. Try viewing it with <code>less</code>:</p>
+<pre><code>$ less data.sam</code></pre>
+<p>You can also edit the file with <code>nano</code>:</p>
+<pre><code>$ nano data.sam</code></pre>
+<p>Try deleting the whole last line in the file, save it, and exit <code>nano</code>.</p>
+</div>
+<div id="modules" class="section level1">
+<h1><span class="header-section-number">5</span> Modules</h1>
+<p>To view which module you have loaded at the moment, type</p>
+<pre><code>$ module list
+
+Currently Loaded Modules:
+  1) uppmax   2) bioinfo-tools   3) samtools/1.6</code></pre>
+<p>Let’s say that you want to make sure you are using the latest version samtools. Look at which version you have loaded at the moment (samtools/1.6).</p>
+<p>Now type</p>
+<pre><code>$ module avail</code></pre>
+<p>to see which programs are available at UPPMAX. Can you find samtools in the list? Which is the latest version of samtools available at UPPMAX?</p>
+<p>To change which samtools module you have loaded, you have to unload the the module you have loaded and then load the other module. To unload a module, use</p>
+<pre><code>$ module unload &lt;module name&gt;</code></pre>
+<p>Look in the list from <code>$ module list</code> to see the name of the module you want to unload. When the old module is unloaded, load <code>samtools/0.1.18</code> (or try with the latest samtools module!).</p>
+</div>
+<div id="submitting-a-job" class="section level1">
+<h1><span class="header-section-number">6</span> Submitting a job</h1>
+<p>Not all jobs are as small as converting this tiny bam file to a sam file. Usually the bam files are several gigabytes, and can take hours to convert to sam files. You will not have reserved nodes waiting for you to do something either, so running programs is done by submitting a job to the queue system. What you submit to the queue system is a script file that will be executed as soon as it reaches the front of the queue. The scripting language used in these scripts is <strong>bash</strong>, which is the same language as you usually use in a terminal i.e. everything so far in the lecture and lab has been in the bash language (<code>cd</code>, <code>ls</code>, <code>cp</code>, <code>mv</code>, etc.).</p>
+<p>Have a look at <strong>job_template</strong> in your <strong>uppmax_tutorial</strong> folder.</p>
+<pre><code>$ less job_template
+
+
+#! /bin/bash -l
+#SBATCH -A g2013052
+#SBATCH -p core
+#SBATCH -J Template_script
+#SBATCH -t 01:00:00
+
+# load some modules
+module load bioinfo-tools
+
+# go to some directory
+cd /proj/g2013052/nobackup/
+
+# do something
+echo Hello world!</code></pre>
+<p>Edit this file to make the job convert <strong>data.bam</strong> to a sam file named <strong>jobData.sam</strong>. Remember how the queue works? Try to approximate the runtime of the job (almost instant in this case) and increase it by ~50%, and use that time approximation when writing your script file. Longer jobs will wait longer in the queue because it is harder to fit them into gaps in the queue! Also remember to change the project ID to match this course occasion.</p>
+<p>Remember, just write the command you would run if you were sitting by the computer, i.e. load the correct modules, go to the correct folder, and run samtools the right way.</p>
+<p>Submit your job using <code>sbatch</code>:</p>
+<pre><code>$ sbatch job_template</code></pre>
+</div>
+<div id="viewing-the-queue" class="section level1">
+<h1><span class="header-section-number">7</span> Viewing the queue</h1>
+<p>If you want to know how your jobs are doing in the queue, you can check their status with <code>$ squeue -u username</code> or <code>$ jobinfo -u username</code>.</p>
+<p>Rewrite the previous sbatch file so that you book 3 days of time, and to use a node instead of a core. This will cause your job to stand in the queue for a bit longer, so that we can have a look at it while it is queuing. Submit it to the queue and run <strong>jobinfo</strong>.</p>
+<pre><code>$ jobinfo -u &lt;username&gt;
+
+CLUSTER: rackham
+Running jobs:
+   JOBID PARTITION                      NAME     USER        ACCOUNT ST          START_TIME  TIME_LEFT  NODES CPUS NODELIST(REASON)
+ 3134399   devcore                               dahlo       g2019011  R 2018-05-18T16:32:54      59:25      1    1 r483
+
+Nodes in use:                            462
+Nodes in devel, free to use:               2
+Nodes in other partitions, free to use:    4
+Nodes available, in total:               468
+
+Nodes in test and repair:                 13
+Nodes, otherwise out of service:           5
+Nodes, all in total:                     486
+
+Waiting jobs:
+   JOBID    POS PARTITION                      NAME     USER        ACCOUNT ST          START_TIME   TIME_LEFT PRIORITY CPUS NODELIST(REASON)     FEATURES DEPENDENCY
+ 3134401    221      core           Template_script    dahlo       g2019011 PD                 N/A     1:00:00   100000    1           (None)       (null)
+
+Waiting bonus jobs:</code></pre>
+<p>If you look under the heading <strong>“Waiting jobs:”</strong> you’ll see a list of all the jobs you have in the queue that have not started yet. The most interesting column here is the <strong>POS</strong> column, which tells you which position in the queue you have (221 in my example). When you reach the first place, your job will start as soon as there are the resources you have asked for.</p>
+<p>In our case, we are not really interested in running this job at all. Let’s cancel it instead. This can be done with the command <code>scancel</code>.</p>
+<p>Syntax:</p>
+<pre><code>$ scancel &lt;job id&gt;</code></pre>
+<p>You see the job id number in the output from <code>jobinfo</code> or <code>squeue</code>.</p>
+<pre><code>$ scancel 3134401</code></pre>
+</div>
+<div id="interactive" class="section level1">
+<h1><span class="header-section-number">8</span> Interactive</h1>
+<p>Sometimes it is more convenient to work interactively on a node instead of submitting your work as a job. Since you will not have the reservations we have during the course, you will have to book a node using the <code>interactive</code> command.</p>
+<p>Syntax:</p>
+<pre><code>$ interactive -A &lt;project id&gt; -t &lt;time&gt; -p &lt;node or core&gt;</code></pre>
+<p>This will create a booking for you which has a higher priority than the jobs submitted with <code>sbatch</code>. That means that they will start faster, but only if the booking is shorter than 12 hours. If the booking is longer than 12 hours, it will get the standard priority. When the job starts you will be transferred to the node you got automatically. No need to look which node you got using sbatch and then <a href="ssh:ing" class="uri">ssh:ing</a> to it.</p>
+<p>Try closing down your current session on the reserved node you connected to in the beginning of the lab by typing exit. Then make a new booking using interactive:</p>
+<pre><code>$ interactive -A g2019011 -t 02:00:00 -p core</code></pre>
+<p>Congratulations, you are now ready to be let loose on the cluster!</p>
+</div>
+<div id="extra-if-you-finish-too-fast" class="section level1">
+<h1><span class="header-section-number">9</span> Extra, if you finish too fast</h1>
+<div id="the-devel-queue" class="section level2">
+<h2><span class="header-section-number">9.1</span> The devel queue</h2>
+<p>If it is a really big job, it might be in the queue for a day or two before it starts, so it is important to know that the first thing it does is not crashing because you made a typo on line 7. One way to test this is to open a new connection to uppmax, and line by line try your code. Copy-paste (<kbd>ctrl+shift+c</kbd> and <kbd>ctrl+shift+v</kbd> in the terminal window) to make sure it’s really the code in the script you are trying.</p>
+<p>If your script is longer than a couple of lines, this approach can be tiring. There are 12 nodes at uppmax that are dedicated to do quick test runs, which have a separate queue called <strong>devel</strong>. They are available for use more or less all the time since not very many are using them. To avoid people abusing the free nodes for their analysis, there is a <strong>1 hour time limit</strong> for jobs on them. To submit jobs to this short testing queue, change <code>-p</code> to devel instead of node or core, and make sure <code>-t</code> is set to <strong>maximum 01:00:00</strong>. Try submitting the samtools sbatch file we used earlier to the devel queue and run it again.</p>
+</div>
+<div id="information-about-finished-jobs" class="section level2">
+<h2><span class="header-section-number">9.2</span> Information about finished jobs</h2>
+<p>If you want information about jobs you have run in the past, you can use the tool <code>finishedjobinfo</code>. It will print information about the jobs you have run lately.</p>
+<p>Fun things to look for in this information is <strong>jobstate</strong> which will tell you if the program reported any error while running. If so, jobstate will be <strong>FAILED</strong> and you could suspect that something didn’t go according to the plan, and you should check the output from that job run (the slurm-.out file) and see if you can solve the error.</p>
+<p>Other good things to look for could be:</p>
+<ul>
+<li><strong>maxmemory_in_GiB</strong>: tells you how much memory the program used at most.</li>
+<li><strong>runtime</strong>: tells you how long time the program ran before it finished/failed</li>
+</ul>
+</div>
+<div id="time-and-space" class="section level2">
+<h2><span class="header-section-number">9.3</span> Time and space</h2>
+<p>Remember the commands <code>uquota</code> (show how much of your storage space you are using) and <code>projinfo</code> (shows you how much of your allocated time you have used) from the lecture? Try running them and see how you are doing.</p>
+<p>For the fast ones: <a href="uppmax-pipeline.html">Uppmax pipeline exercise</a> - This optional material will teach you the basics in creating pipelines. Continue with this if you finish the current lab ahead of time, or whenever you want.</p>
+<p><strong>End of document</strong></p>
+</div>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

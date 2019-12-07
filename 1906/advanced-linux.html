@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Martin Dahlö" />
+
+
+<title>Advanced Linux</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Advanced Linux</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+<h4 class="author">Martin Dahlö</h4>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<div class="instruction">
+<p><i class="fas fa-exclamation-circle"></i> In syntax examples, the dollar sign (<code>$</code>) is not to be typed into the command-line. The dollar sign is usually an indicator that the text following it should be typed in a terminal window.</p>
+</div>
+<div id="ownership-permissions" class="section level1">
+<h1><span class="header-section-number">1</span> Ownership &amp; Permissions</h1>
+<p>As Linux can be a multi-user environment it is important that files and directories can have different owners and permissions to keep people from editing or executing your files.</p>
+<div id="owners" class="section level2">
+<h2><span class="header-section-number">1.1</span> Owners</h2>
+<p>The permissions are defined separately for <strong>users</strong>, <strong>groups</strong> and <strong>others</strong>.</p>
+<p>The <strong>user</strong> is the username of the person who owns the file. By default the user who creates a file will become its owner.</p>
+<p>The <strong>group</strong> is a group of users that co-own the file. They will all have the same permissions to the file. This is useful in any project where a group of people are working together.</p>
+<p>The <strong>others</strong> is quite simply everyone else’s permissions.</p>
+</div>
+<div id="permissions" class="section level2">
+<h2><span class="header-section-number">1.2</span> Permissions</h2>
+<p>There are four permissions that a file or directory can have. Note the one character designations/flags, <code>r</code>,<code>w</code>,<code>x</code> and <code>-</code>.</p>
+<p>In all cases, if the file or directory has the flag it means that it is enabled.</p>
+<p><strong>Read: r</strong></p>
+<ul>
+<li>File: Whether the file can be opened and read.</li>
+<li>Directory: Whether the contents of the directory can be listed.</li>
+</ul>
+<p><strong>Write: w</strong></p>
+<ul>
+<li>File: Whether the file can be modified. Note that for renaming or deleting a file you need additional directory permissions.</li>
+<li>Directory: Whether the files in the directory can be renamed or deleted.</li>
+</ul>
+<p><strong>Execute: x</strong></p>
+<ul>
+<li>File: Whether the file can be executed as a program or shell script.</li>
+<li>Directory: Whether the directory can be entered through <code>cd</code>.</li>
+</ul>
+<p><strong>No permissions: -</strong></p>
+</div>
+</div>
+<div id="interpreting-the-permissions-of-files-and-directories" class="section level1">
+<h1><span class="header-section-number">2</span> Interpreting the permissions of files and directories</h1>
+<p>Start your terminal, log onto UPPMAX (check with squeue which core you had and ssh onto it, if for some reason your core is gone)</p>
+<pre><code># ONLY IF YOU DON&#39;T ALREADY HAVE AN ACTIVE ALLOCATION SINCE BEFORE
+$ salloc -A g2019011 -t 04:30:00 -p core --no-shell --reservation=g2019011_1 &amp;</code></pre>
+<p>Make an empty directory we can work in and make a file.</p>
+<pre><code>$ cd /proj/g2019011/nobackup/&lt;username&gt;
+$ mkdir advlinux
+$ cd advlinux
+$ touch  filename
+$ ls -lh
+total 0
+ -rw-r--r-- 1 S_D staff 0B Sep 21 13:54 filename</code></pre>
+<p><code>-lh</code> means long and human readable, displaying more information about the files or directories in an human understandable format.</p>
+<p>The first segment, <code>-rw-r--r--</code>, describes the ownerships and permissions of our newly created file. The very first character, in this case <code>-</code>, shows the files type. It can be any of these:</p>
+<p><strong>d</strong> = directory<br />
+<strong>-</strong> = regular file<br />
+<strong>l</strong> = symbolic link<br />
+<strong>s</strong> = Unix domain socket<br />
+<strong>p</strong> = named pipe<br />
+<strong>c</strong> = character device file<br />
+<strong>b</strong> = block device file</p>
+<p>As expected the file we have just created is a regular file. Ignore the types other than directory, regular and symbolic link as they are outside the scope of this course.</p>
+<p>The next nine characters, in our case <code>rw-r--r--</code>, can be divided into three groups consisting of three characters in order from left to right. In our case <code>rw- r-- and r--</code>. The first group designates the <strong>users</strong> permissions, the second the <strong>groups</strong> permissions and the third the <strong>others</strong> permissions. As you may have guessed the within group permissions are ordered, the first always designates read permissions, the second write and the third executability.</p>
+<p>This translates our files permissions to say this:</p>
+<pre><code>-rw-r--r--</code></pre>
+<p>“It is a regular file. The user has read &amp; write permission, but not execute. The group has read permission but not write and execute. Everyone else (other), have read permission but not write and execute.”</p>
+<p>As another example, let’s create a directory.</p>
+<pre><code>$ mkdir directoryname
+$ ls -lh
+total 0
+drwxr-xr-x  2 S_D  staff    68B Sep 21 14:41 directoryname
+-rw-r--r--  1 S_D  staff     0B Sep 21 13:54 filename</code></pre>
+<p>As you can see the first character correctly identifies it as <code>d</code>, a directory, and all user groups have <code>x</code>, execute permissions, to enter the directory by default.</p>
+</div>
+<div id="editing-ownership-permissions" class="section level1">
+<h1><span class="header-section-number">3</span> Editing Ownership &amp; Permissions</h1>
+<p>The command to set file permission is <code>chmod</code> which means “<strong>CH</strong>ange <strong>MOD</strong>e”. Only the owner can set file permissions.</p>
+<ol style="list-style-type: decimal">
+<li>First you decide which group you want to set permissions for.</li>
+</ol>
+<p>User, <strong>u</strong>, group, <strong>g</strong>, other, <strong>o</strong>, or all three, <strong>a</strong>.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Next you either add, <strong>+</strong>, remove, <strong>-</strong>, or wipe out previous and add new, <strong>=</strong>, permissions.<br />
+</li>
+<li>Then you specify the kind of permission: <strong>r</strong>,<strong>w</strong>,<strong>x</strong>, or <strong>-</strong>.</li>
+</ol>
+<p>Lets revisit our example file and directory to test this.</p>
+<pre><code>$ ls -lh
+total 0
+drwxr-xr-x  2 S_D  staff    68B Sep 21 14:41 directoryname
+-rw-r--r--  1 S_D  staff     0B Sep 21 13:54 filename
+$ chmod a=x filename
+$ ls -lh
+total 0
+drwxr-xr-x  2 S_D  staff    68B Sep 21 14:41 directoryname
+---x--x--x  1 S_D  staff     0B Sep 21 13:54 filename</code></pre>
+<p>As you can see this affected all three, <code>a</code>, it wiped the previous permissions, <code>=</code>, and added an executable permission, <code>x</code>, to all three groups.</p>
+<p>Try some others both on the file and directory to get the hang of it.</p>
+<pre><code>$ chmod g+r filename
+$ chmod u-x filename
+$ chmod ug=rx filename
+$ chmod a=- filename
+$ chmod a+w directoryname</code></pre>
+<p><i class="fas fa-clipboard-list"></i> In no more than two commands, get the file permissions from <code>----------</code> to <code>-rw-rw--wx</code>. Notice also that we here gave everyone writing permission to the file, that means that ANYONE can write to the file. Not very safe.</p>
+</div>
+<div id="symbolic-links---files" class="section level1">
+<h1><span class="header-section-number">4</span> Symbolic links - Files</h1>
+<p>Much like a windows user has a shortcut on his desktop to WorldOfWarcraft.exe, being able to create links to files or directories is good to know in Linux. An important thing to remember about symbolic links is that they are not updated, so if you or someone else moves or removes the original file/directory the link will stop working.</p>
+<p>Lets remove our old file and directory. (Notice: <code>rm -r *</code> removes all folder and subfolders from where you are standing. Make sure you are standing in our advlinux/ directory.)</p>
+<pre><code>$ rm -r *</code></pre>
+<p>Now that the directory is empty lets make a new folder and a new file in that folder.</p>
+<pre><code>$ mkdir stuff
+$ touch stuff/linkfile</code></pre>
+<p>Lets put some information into the file, just put some text, anything, like “slartibartfast” or something.</p>
+<pre><code>$ nano stuff/linkfile</code></pre>
+<p>Now lets create a link to this file in our original folder. <code>ln</code>stands for link and <code>-s</code> makes it symbolic. The other options are not in the scope of this course.</p>
+<pre><code>$ ln -s stuff/linkfile
+$ ls -l
+total 8
+lrwxr-xr-x  1 S_D  staff    14B Sep 21 15:38 linkfile -&gt; stuff/linkfile
+drwxr-xr-x  3 S_D  staff   102B Sep 21 15:36 stuff</code></pre>
+<p>Notice that we see the type of the file is <code>l</code>, for symbolic link, and that we have a pointer after the links name for where the link goes, <code>-&gt; stuff/linkfile</code>.</p>
+<p><i class="fas fa-clipboard-list"></i> Change the information in the file using the link file, then check the information in the original file. Did editing the information in the link change the information in the original?</p>
+<p><i class="fas fa-clipboard-list"></i> Change the information using the original file, then checking the link will result in the same result. The files are connected.</p>
+<p><i class="fas fa-clipboard-list"></i> Now move or delete the original file. What happens to the link? What information is there now if you open the link?</p>
+<p><i class="fas fa-clipboard-list"></i> Now create a new file in <code>stuff/</code> with exactly the same name that your link file is pointing too with new information in it. Is the link re-activated to the new file? (You can investigate this by seeing if the new information is seen when opening the link file).</p>
+</div>
+<div id="symbolic-links---directories" class="section level1">
+<h1><span class="header-section-number">5</span> Symbolic links - Directories</h1>
+<p>Now let’s create a link to a directory. Lets clean our workspace.</p>
+<pre><code>$ rm -r *</code></pre>
+<p>Now let’s create a directory three, arbitrarily, directories away.</p>
+<pre><code>$ mkdir -p one/two/three</code></pre>
+<p>Now let’s enter the directory and create some files there.</p>
+<pre><code>$ cd one/two/three
+$ touch a b c d e
+$ ls -lh
+total 0
+-rw-r--r--  1 S_D  staff     0B Sep 21 16:11 a
+-rw-r--r--  1 S_D  staff     0B Sep 21 16:11 b
+-rw-r--r--  1 S_D  staff     0B Sep 21 16:11 c
+-rw-r--r--  1 S_D  staff     0B Sep 21 16:11 d
+-rw-r--r--  1 S_D  staff     0B Sep 21 16:11 e</code></pre>
+<p>Return to our starting folder and create a symbolic link to folder three</p>
+<pre><code>$ cd ../../..
+$ ln -s one/two/three
+$ ls -lh
+total 8
+drwxr-xr-x  3 S_D  staff   102B Sep 21 16:11 one
+lrwxr-xr-x  1 S_D  staff    13B Sep 21 16:13 three -&gt; one/two/three</code></pre>
+<p>Once again we see that it is correctly identified as a symbolic link, l, that its default name is the same as the directory it is pointing too, same as the files link had the same name as the file by default previously, and that we have the additional pointer after the links name showing us where it’s going.</p>
+<p><i class="fas fa-clipboard-list"></i> Perform <code>ls</code> and <code>cd</code> on the link. Does it act just as if you were standing in directory two/ performing the very same actions on three/? While having entered the link directory with <code>cd</code>, go back one step using <code>cd ..</code>, where do you end up? Moving, deleting or renaming the directory would, just like in the case with the file, break the link.</p>
+</div>
+<div id="grep---searching-for-text" class="section level1">
+<h1><span class="header-section-number">6</span> Grep - Searching for text</h1>
+<p>If you have a very large file, perhaps so large that opening it in program would be very hard on your computer. It could be a file containing biological data, it could be a logfile of a transfer where we want check for any errors. No matter the reason a handy tool to know the existence of is the <code>grep</code> command.</p>
+<p>What grep does is search for a specific string in one or many files. Case sensitive/insensitive or regular expressions work as well.</p>
+<p>Lets start, as always, by cleaning our directory.</p>
+<pre><code>$ rm -r *</code></pre>
+<p>Then let’s create a file with some text in it that we can grep around with. I have supplied some great text below.</p>
+<pre><code>$ nano textfile 
+
+Cats sleep anywhere, any table, any chair.
+Top of piano, window-ledge, in the middle, on the edge.
+Open draw, empty shoe, anybody&#39;s lap will do.
+Fitted in a cardboard box, in the cupboard with your frocks.
+Anywhere! They don&#39;t care! Cats sleep anywhere.</code></pre>
+<p>Now let’s see how the grep command works. The syntax is:</p>
+<pre><code>grep &quot;string&quot; filename/filepattern</code></pre>
+<p>Some examples for you to try and think about:</p>
+<pre><code>$ grep &quot;Cat&quot; textfile
+$ grep &quot;cat&quot; textfile</code></pre>
+<p>As you can see the last one did not return any results. Add a <code>-i</code> for case insensitive search.</p>
+<pre><code>$ grep -i &quot;cat&quot; textfile</code></pre>
+<p>Now let’s copy the file and check both of them together by matching a pattern for the filenames.</p>
+<pre><code>$ cp textfile textcopy
+$ grep &quot;Cat&quot; text*</code></pre>
+<p>The <code>*</code> will ensure that any file starting with <strong>text</strong> and then anything following will be searched. This example would perhaps be more real if we had several text files with different texts and we were looking for a specific string from any of them.</p>
+<p><i class="fas fa-clipboard-list"></i> Copy the file sample_1.sam to your folder using the command below</p>
+<pre><code>$ cp /sw/share/compstore/courses/ngsintro/linux_additional-files/sample_1.sam .</code></pre>
+<p><i class="fas fa-clipboard-list"></i> Use grep to search in the file for a specific string of nucleotides, for example:</p>
+<pre><code>$ grep &quot;TACCACCGAAATCTGTGCAGAGGAGAACGCAGCTCCGCCCTCGCGGTGCTCTCCGGGTCTGTGCTGAGGAG&quot; sample_1.sam</code></pre>
+<p><i class="fas fa-clipboard-list"></i> Try with shorter sequences. When do you start getting lots of hits? This file is only a fraction of a genome, you would have gotten many times more hits doing this to a complete many GB large sam file.</p>
+<p><i class="fas fa-clipboard-list"></i> Use <code>grep</code> to find all lines with chr1 in them. This output is too much to be meaningful. Send it to a file (<code>&gt;</code>) where you have now effectively stored all the chromosome 1 information.</p>
+</div>
+<div id="piping" class="section level1">
+<h1><span class="header-section-number">7</span> Piping</h1>
+<p>A useful tool in linux environment is the use of pipes. What they essentially do is connect the first command to the second command and the second command to the third command etc for as many commands as you want or need.</p>
+<p>This is often used in UPPMAX jobs and other analysis as there are three major benefits. The first is that you do not have to stand in line to get a core or a node twice. The second is that you do not generate intermediary data which will clog your storage, you go from start file to result. The third is that it may actually be faster.</p>
+<p>The pipe command has this syntax</p>
+<pre><code>command 1 | command 2</code></pre>
+<p>The <code>|</code> is the pipe symbol(on mac keyboard <kbd>alt+7</kbd>), signifying that whatever output usually comes out of command 1 should instead be directly sent to command 2 and output in the manner that command 2 outputs.</p>
+<p>In a hypothetical situation you have a folder with hundreds of files and you know the file you are looking for is very large but you can’t remember its name. Let’s do a <code>ls -lh</code> and pipe the output to be sorted by file size. <code>-n</code> means we are sorting numerically and not alphabetically, <code>-k 5</code> says “look at the fifth column of output”, which happens to be the file size of <code>ls</code> command.</p>
+<pre><code>$ ls -lh | sort -k 5 -n</code></pre>
+<p>An example use would be to align a file and directly send the now aligned file to be converted into a different format that may be required for another part of the analysis.</p>
+<p>The next step requires us to use a bioinformatics software called <code>samtools</code>. To be able to use this program we first have to load the module for it. We will cover this in the UPPMAX lectures, so if you are a bit too fast for you own good, you will just have to type this command:</p>
+<pre><code>$ module load bioinfo-tools samtools</code></pre>
+<p>Here is an example where we convert the samfile to a bamfile (<code>-Sb</code> literally means the input is <strong>S</strong>am and to output in <strong>b</strong>am) and pipe it to immediately get sorted, not even creating the unsorted bamfile intermediary. Notice that samtools is made to take the single <code>-</code> after samtools sort as the position of the piped data from samtools view.</p>
+<pre><code>$ samtools view -bS sample_1.sam | samtools sort - -o outbam</code></pre>
+<p>This should have generated a file called <code>outbam.bam</code> in your current folder. We will have some more examples of pipes in the next section.</p>
+</div>
+<div id="word-count" class="section level1">
+<h1><span class="header-section-number">8</span> Word Count</h1>
+<p>Word count, or <code>wc</code>, is a useful command for counting the number of occurrences of a word in a file. This is easiest explained with an example. Let’s return to our sample_1.sam.</p>
+<pre><code>$ wc sample_1.sam
+233288 3666760 58105794 sample_1.sam</code></pre>
+<p>This can be interpreted like this:</p>
+<p>Number of lines = 233288<br />
+Number of words = 3666760<br />
+Number of characters = 58105794</p>
+<p>To make this more meaningful, let’s use the pipes and grep command seen previously to see how many lines and how many times the string of nucleotides “CATCATCAT” exist in the file.</p>
+<pre><code>$ grep &quot;CATCATCAT&quot; sample_1.sam | wc
+60  957 15074</code></pre>
+<p>To see only the line count you can add <code>-l</code> after <code>wc</code> and to count only characters <code>-m</code>.</p>
+<p><i class="fas fa-clipboard-list"></i> Output only the amount of lines that have “chr1” in them from sample_1.sam.<br />
+<i class="fas fa-clipboard-list"></i> Count the lines that have “CATCATCAT” in them from outbam.bam</p>
+</div>
+<div id="extra-material-1" class="section level1">
+<h1><span class="header-section-number">9</span> Extra material 1</h1>
+<p>These are some harder tasks, so don’t worry about it if you didn’t have time to do it.</p>
+<p>Lets look at grep and use some regular expressions <a href="http://www.cheatography.com/davechild/cheat-sheets/regular-expressions/" class="uri">http://www.cheatography.com/davechild/cheat-sheets/regular-expressions/</a></p>
+<p><strong><i class="fas fa-clipboard-list"></i> Task1:</strong> Using sample_1.sam find all lines that start with “@” and put them in a file called “at.txt”.<br />
+<strong><i class="fas fa-clipboard-list"></i> Task2:</strong> Find all the lines that end with at least 3 numbers from at.txt. (hint: remember, <strong>sometimes</strong> you have to escape <code>{}</code> with <code>\\{\\}</code>)</p>
+</div>
+<div id="extra-material-2" class="section level1">
+<h1><span class="header-section-number">10</span> Extra material 2</h1>
+<p><code>sed</code> is a handy tool to replace strings in files <a href="http://www.grymoire.com/Unix/Sed.html" class="uri">http://www.grymoire.com/Unix/Sed.html</a>.</p>
+<p><i class="fas fa-clipboard-list"></i> You have realized that all the chromosomes have been misnamed as “chr3” when they should be “chr4”. Use <code>sed</code> to replace “chr3” with “chr4” in sample_1.sam and output it to sample_2.sam.</p>
+<p>Some food for though: The solution to this replaces the first instance on each line of chr3, what if we have multiple instances? What if we had wanted to replace “chr1”, this would effect chr10-19 as well! There are many things to consider :).</p>
+</div>
+<div id="extra-material-3" class="section level1">
+<h1><span class="header-section-number">11</span> Extra material 3</h1>
+<p>Bash loops are great for moving or renaming multiple files as well as many many other uses. Create a couple of files as seen below</p>
+<pre><code>$ touch one.bam two.sam three.bam four.sam five.bam six.sam</code></pre>
+<p><i class="fas fa-clipboard-list"></i> All the files are actually in BAM format. What a crazy mistake! Create a bash loop that changes all files ending in .sam to end with .bam instead.</p>
+<p>Three hints:</p>
+<p>1.The bash loop syntax is this:</p>
+<pre><code>$ for _variable_ in _pattern_; do _command with $variable_; done</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>To rename file1 to file2 you write this:</li>
+</ol>
+<pre><code>$ mv file1 file2</code></pre>
+<p>which effectively is the same thing as</p>
+<pre><code>$ cp file1 file 2
+$ rm file1</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Ponder how this can be used to your advantage:</li>
+</ol>
+<pre><code>$ i=filename
+$ echo ${i/name}stuff
+filestuff</code></pre>
+<p>Good luck and have fun! :)</p>
+<p>If you get completely lost on some of the questions and there is nobody around to answer, here is an <a href="advanced-linux-answers.html">answer sheet</a> :)</p>
+<p><strong>End of document</strong></p>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

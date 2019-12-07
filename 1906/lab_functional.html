@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Roy Francis • 03-Jun-2019" />
+
+
+<title>Functional analyses</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Functional analyses</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+<h4 class="author"><b>Roy Francis</b> • 03-Jun-2019</h4>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<div id="loading-data" class="section level1">
+<h1><span class="header-section-number">1</span> Loading data</h1>
+<div class="instruction">
+<p><i class="fas fa-exclamation-circle"></i> The files needed during this exercise are provided as URLs. The files can be saved as a text file in your working directory under a directory labelled <code>data</code> to follow the tutorial exactly as written. Alternatively, you can provide the URL directly to the <code>read.table()</code> function like this <code>read.table('url-to-file.txt',header=TRUE)</code>.</p>
+</div>
+<p>Loading packages.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(clusterProfiler)
+<span class="kw">library</span>(org.Hs.eg.db)
+<span class="kw">library</span>(ggpubr)
+<span class="kw">library</span>(pathview)</code></pre></div>
+</div>
+<p>Now we read in the data. The differential gene expression results are here: <code>https://raw.githubusercontent.com/NBISweden/course_rnaseq_slu/master/data/deg-time_t24_vs_t0.txt</code>. We are only using one of the results/comparisons in this workflow for demonstration purposes.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">deg &lt;-<span class="st"> </span><span class="kw">read.delim</span>(<span class="st">&quot;./data/deg-time_t24_vs_t0.txt&quot;</span>,<span class="dt">header=</span><span class="ot">TRUE</span>,<span class="dt">stringsAsFactors=</span>F)
+<span class="co"># remove rows with NAs</span>
+deg &lt;-<span class="st"> </span><span class="kw">na.omit</span>(deg)
+<span class="co"># remove duplicated entrez genes</span>
+deg &lt;-<span class="st"> </span>deg[<span class="op">!</span><span class="kw">duplicated</span>(deg<span class="op">$</span>entrezgene),]
+<span class="kw">head</span>(deg)</code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ensembl_gene_id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["baseMean"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["log2FoldChange"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["lfcSE"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["stat"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["pvalue"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["padj"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["entrezgene"],"name":[8],"type":["int"],"align":["right"]},{"label":["external_gene_name"],"name":[9],"type":["chr"],"align":["left"]},{"label":["chromosome_name"],"name":[10],"type":["chr"],"align":["left"]},{"label":["start_position"],"name":[11],"type":["int"],"align":["right"]},{"label":["end_position"],"name":[12],"type":["int"],"align":["right"]},{"label":["strand"],"name":[13],"type":["int"],"align":["right"]},{"label":["gene_biotype"],"name":[14],"type":["chr"],"align":["left"]},{"label":["description"],"name":[15],"type":["chr"],"align":["left"]}],"data":[{"1":"ENSG00000000003","2":"490.01721","3":"0.9145204","4":"0.10857089","5":"8.423256","6":"3.661641e-17","7":"2.099898e-16","8":"7105","9":"TSPAN6","10":"X","11":"100627109","12":"100639991","13":"-1","14":"protein_coding","15":"tetraspanin 6 [Source:HGNC Symbol;Acc:HGNC:11858]","_rn_":"1"},{"1":"ENSG00000000419","2":"817.78066","3":"-0.1894651","4":"0.10074363","5":"-1.880666","6":"6.001737e-02","7":"8.207619e-02","8":"8813","9":"DPM1","10":"20","11":"50934867","12":"50958555","13":"-1","14":"protein_coding","15":"dolichyl-phosphate mannosyltransferase subunit 1, catalytic [Source:HGNC Symbol;Acc:HGNC:3005]","_rn_":"2"},{"1":"ENSG00000000457","2":"82.07877","3":"0.3307639","4":"0.21317634","5":"1.551598","6":"1.207585e-01","7":"1.553904e-01","8":"57147","9":"SCYL3","10":"1","11":"169849631","12":"169894267","13":"-1","14":"protein_coding","15":"SCY1 like pseudokinase 3 [Source:HGNC Symbol;Acc:HGNC:19285]","_rn_":"3"},{"1":"ENSG00000000460","2":"356.07160","3":"-1.8636578","4":"0.12392426","5":"-15.038684","6":"4.096103e-51","7":"9.088735e-50","8":"55732","9":"C1orf112","10":"1","11":"169662007","12":"169854080","13":"1","14":"protein_coding","15":"chromosome 1 open reading frame 112 [Source:HGNC Symbol;Acc:HGNC:25565]","_rn_":"4"},{"1":"ENSG00000001036","2":"919.60675","3":"-0.3482723","4":"0.08469666","5":"-4.111996","6":"3.922539e-05","7":"8.775748e-05","8":"2519","9":"FUCA2","10":"6","11":"143494811","12":"143511690","13":"-1","14":"protein_coding","15":"alpha-L-fucosidase 2 [Source:HGNC Symbol;Acc:HGNC:4008]","_rn_":"5"},{"1":"ENSG00000001084","2":"529.59397","3":"-0.6764194","4":"0.09449978","5":"-7.157893","6":"8.192621e-13","7":"3.602776e-12","8":"2729","9":"GCLC","10":"6","11":"53497341","12":"53616970","13":"-1","14":"protein_coding","15":"glutamate-cysteine ligase catalytic subunit [Source:HGNC Symbol;Acc:HGNC:4311]","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<p>The idea behind functional analyses is to find out there is a pattern to your list of differentially expressed genes (DEGs). Are they completely random? Or do they work together in a pathway or are they involved in a common biological function? There are numerous tools out there for this purpose that differ slightly in algorithm and variation in methods used. Here are a few:</p>
+<table>
+<thead>
+<tr class="header">
+<th>R-packages</th>
+<th>Comments</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>topGO</td>
+<td>GO</td>
+</tr>
+<tr class="even">
+<td>goana</td>
+<td>GO</td>
+</tr>
+<tr class="odd">
+<td>goseq</td>
+<td>GO, KEGG, Gene length bias correction</td>
+</tr>
+<tr class="even">
+<td>topKEGG</td>
+<td>KEGG</td>
+</tr>
+<tr class="odd">
+<td>kegga</td>
+<td>KEGG</td>
+</tr>
+<tr class="even">
+<td>enrichR</td>
+<td>GO, KEGG, many others</td>
+</tr>
+<tr class="odd">
+<td>piano</td>
+<td>GO, KEGG, GSEA, many others, enrichment consensus</td>
+</tr>
+<tr class="even">
+<td>ClusterProfiler</td>
+<td>GO, KEGG, GSEA, many others, nice plots!</td>
+</tr>
+<tr class="odd">
+<td>Pathview</td>
+<td>Nice visualization for KEGG pathways</td>
+</tr>
+<tr class="even">
+<td>fgsea</td>
+<td>GSEA</td>
+</tr>
+<tr class="odd">
+<td>gProfileR</td>
+<td>ORA</td>
+</tr>
+</tbody>
+</table>
+<p>We will use an R package called clusterProfiler. <a href="https://bioconductor.org/packages/release/bioc/vignettes/clusterProfiler/inst/doc/clusterProfiler.html">clusterProfiler</a> is an R package that supports gene enrichment and gene set enrichment analyses. It also has useful visualisation functions.</p>
+</div>
+<div id="gene-enrichment" class="section level1">
+<h1><span class="header-section-number">2</span> Gene enrichment</h1>
+<p>The most common functional analyses carried out post differential-gene-expression is a gene enrichment test. The idea is to identify if our set of differentially expressed genes are significantly over-represented in a pre-defined set of genes that biologically function together. These pre-defined sets of genes are maintained in a database such as <a href="http://geneontology.org/">Gene ontology</a>, <a href="https://reactome.org/">Reactome</a>, <a href="https://www.genome.jp/kegg/">Kegg</a> etc. This is usually an over-representation test like the hypergeometric test. The input needed for such a test is simply a character list of differentially expressed genes, the total list of genes tested during differential expression and a database of gene sets.</p>
+<p>The hypergeometric test works roughly like this:</p>
+<p>You have 2000 differentially expressed genes of which 50 genes are associated with the term <strong>Cell death</strong>. The percentage of differentially expressed genes involved with <strong>Cell death</strong> is 2000/50=40%. But, we also need to considered what is the background expected percentage. There are 15000 genes in total of which 100 genes are defined in the term <strong>Cell death</strong>. The percentage of all genes involved with Cell death is 100/15000=0.006%. Therefore, our list of differentially expressed genes show an obvious enrichment of Cell death genes over the background.</p>
+<p>Here is how to run a fisher test using the same data.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">50</span>,<span class="dv">50</span>,<span class="dv">1950</span>,<span class="dv">14900</span>),<span class="dt">nrow=</span><span class="dv">2</span>,<span class="dt">dimnames=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;de&quot;</span>,<span class="st">&quot;not_de&quot;</span>),<span class="kw">c</span>(<span class="st">&quot;in_gs&quot;</span>,<span class="st">&quot;not_in_gs&quot;</span>)))
+d</code></pre></div>
+<pre><code>##        in_gs not_in_gs
+## de        50      1950
+## not_de    50     14900</code></pre>
+</div>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fisher.test</span>(d,<span class="dt">alternative=</span><span class="st">&quot;greater&quot;</span>)</code></pre></div>
+<pre><code>## 
+##  Fisher&#39;s Exact Test for Count Data
+## 
+## data:  d
+## p-value &lt; 2.2e-16
+## alternative hypothesis: true odds ratio is greater than 1
+## 95 percent confidence interval:
+##  5.37456     Inf
+## sample estimates:
+## odds ratio 
+##   7.639257</code></pre>
+</div>
+<p>We will used R package clusterProfiler for over-representation analyses. Prepare named vectors with DEGs and background genes.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(clusterProfiler)
+deg1 &lt;-<span class="st"> </span>deg[deg<span class="op">$</span>padj<span class="op">&lt;</span><span class="fl">0.05</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">abs</span>(deg<span class="op">$</span>log2FoldChange)<span class="op">&gt;</span><span class="dv">1</span>,]
+
+<span class="co"># differentially expressed genes ids</span>
+degs &lt;-<span class="st"> </span><span class="kw">as.character</span>(deg1<span class="op">$</span>entrezgene)
+<span class="co"># all gene ids</span>
+bgs &lt;-<span class="st"> </span><span class="kw">as.character</span>(deg<span class="op">$</span>entrezgene)</code></pre></div>
+</div>
+<div id="go" class="section level2">
+<h2><span class="header-section-number">2.1</span> GO</h2>
+<p>Then we run the enrichment analyses on GO database using the function <code>enrichGO()</code>. Notice that we have provided entrez gene IDs of differentially expressed genes (<code>names(g)</code>), entrez gene IDs of all DE tested genes (<code>names(bg)</code>) as the universe. Further we indicate that the human database is to be used and the sub-ontology of GO such as CC, BP or MF.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ego_cc &lt;-<span class="st"> </span><span class="kw">enrichGO</span>(<span class="dt">gene=</span>degs,<span class="dt">universe=</span>bgs,<span class="dt">OrgDb=</span>org.Hs.eg.db,<span class="dt">ont=</span><span class="st">&quot;CC&quot;</span>,
+                    <span class="dt">pvalueCutoff=</span><span class="fl">0.01</span>,<span class="dt">qvalueCutoff=</span><span class="fl">0.05</span>,<span class="dt">readable=</span><span class="ot">TRUE</span>)
+ego_bp &lt;-<span class="st"> </span><span class="kw">enrichGO</span>(<span class="dt">gene=</span>degs,<span class="dt">universe=</span>bgs,<span class="dt">OrgDb=</span>org.Hs.eg.db,<span class="dt">ont=</span><span class="st">&quot;BP&quot;</span>,
+                    <span class="dt">pvalueCutoff=</span><span class="fl">0.01</span>,<span class="dt">qvalueCutoff=</span><span class="fl">0.05</span>,<span class="dt">readable=</span><span class="ot">TRUE</span>)
+ego_mf &lt;-<span class="st"> </span><span class="kw">enrichGO</span>(<span class="dt">gene=</span>degs,<span class="dt">universe=</span>bgs,<span class="dt">OrgDb=</span>org.Hs.eg.db,<span class="dt">ont=</span><span class="st">&quot;MF&quot;</span>,
+                    <span class="dt">pvalueCutoff=</span><span class="fl">0.01</span>,<span class="dt">qvalueCutoff=</span><span class="fl">0.05</span>,<span class="dt">readable=</span><span class="ot">TRUE</span>)</code></pre></div>
+</div>
+<p>This returns an <code>enrichResult</code> class object.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(ego_cc)</code></pre></div>
+<pre><code>## [1] &quot;enrichResult&quot;
+## attr(,&quot;package&quot;)
+## [1] &quot;DOSE&quot;</code></pre>
+</div>
+<p>We can peek into the results. To save the results as a text table, it must be converted into a <code>data.frame</code>.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(ego_cc)</code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ID"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Description"],"name":[2],"type":["chr"],"align":["left"]},{"label":["GeneRatio"],"name":[3],"type":["chr"],"align":["left"]},{"label":["BgRatio"],"name":[4],"type":["chr"],"align":["left"]},{"label":["pvalue"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["p.adjust"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["qvalue"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["geneID"],"name":[8],"type":["chr"],"align":["left"]},{"label":["Count"],"name":[9],"type":["int"],"align":["right"]}],"data":[{"1":"GO:0000793","2":"condensed chromosome","3":"92/3005","4":"186/11154","5":"3.631734e-11","6":"2.382418e-08","7":"2.305195e-08","8":"NCAPD2/BRCA1/NCAPH2/SPDL1/RAD51/STAG3/SMC1A/NDE1/MLH1/SPAG5/RIF1/NDC80/SEH1L/ZW10/AURKA/BIRC5/PES1/CENPM/DMC1/RANGAP1/SUV39H1/AKAP8/NCAPG/NUP107/CSNK1A1/SMC4/CENPA/CENPF/STAG1/NCAPH/ZWINT/CENPK/HJURP/NUP85/CENPB/KNSTRN/SGO1/TUBG1/TOP2A/CCNB1/SMC2/KNL1/CENPO/CENPE/BRCA2/BRD4/KIF2C/NUF2/FANCD2/CDCA5/NCAPG2/ADD3/MKI67/INCENP/CHEK1/NCAPD3/CENPU/SPC25/CENPH/SKA1/NIFK/BUB1B/RSPH1/SPC24/SMC6/SGO2/CLASP2/TOPBP1/MAD2L1/NOL6/SKA3/ANAPC16/CENPN/CENPV/PLK1/CDT1/MIS12/BUB1/CENPX/ZWILCH/CKAP5/AURKB/RRS1/KNTC1/ERCC6L/H2AFX/SYCP2/BLM/CHAMP1/CENPW/SYCE1L/PINX1","9":"92","_rn_":"GO:0000793"},{"1":"GO:0030684","2":"preribosome","3":"42/3005","4":"69/11154","5":"3.190275e-09","6":"1.046410e-06","7":"1.012492e-06","8":"LAS1L/UTP18/NOP58/WDR3/RRP15/NOP14/PES1/NOP56/RIOK3/FBL/FTSJ3/BYSL/RRP9/EBNA1BP2/HEATR1/UTP20/RRP36/RIOK1/EMG1/KRI1/PPAN/NIP7/WDR74/WDR36/LTV1/IMP4/WDR12/UTP4/PDCD11/SRFBP1/RRP1B/RRP1/NOL6/BMS1/TSR1/RRS1/UTP11/NOC2L/MAK16/WDR46/PWP2/EIF6","9":"42","_rn_":"GO:0030684"},{"1":"GO:0000779","2":"condensed chromosome, centromeric region","3":"58/3005","4":"109/11154","5":"4.913065e-09","6":"1.074323e-06","7":"1.039501e-06","8":"NCAPD2/SPDL1/SMC1A/NDE1/SPAG5/NDC80/SEH1L/ZW10/AURKA/BIRC5/CENPM/RANGAP1/NCAPG/NUP107/CSNK1A1/CENPA/CENPF/ZWINT/CENPK/HJURP/NUP85/CENPB/KNSTRN/SGO1/CCNB1/KNL1/CENPO/CENPE/KIF2C/NUF2/INCENP/NCAPD3/CENPU/SPC25/CENPH/SKA1/BUB1B/SPC24/SGO2/CLASP2/MAD2L1/SKA3/ANAPC16/CENPN/CENPV/PLK1/CDT1/MIS12/BUB1/CENPX/ZWILCH/CKAP5/AURKB/KNTC1/ERCC6L/CHAMP1/CENPW/PINX1","9":"58","_rn_":"GO:0000779"},{"1":"GO:0000777","2":"condensed chromosome kinetochore","3":"52/3005","4":"98/11154","5":"3.442497e-08","6":"5.645695e-06","7":"5.462699e-06","8":"SPDL1/SMC1A/NDE1/SPAG5/NDC80/SEH1L/ZW10/BIRC5/CENPM/RANGAP1/NUP107/CSNK1A1/CENPA/CENPF/ZWINT/CENPK/HJURP/NUP85/KNSTRN/SGO1/CCNB1/KNL1/CENPO/CENPE/KIF2C/NUF2/INCENP/CENPU/SPC25/CENPH/SKA1/BUB1B/SPC24/SGO2/CLASP2/MAD2L1/SKA3/ANAPC16/CENPN/CENPV/PLK1/CDT1/MIS12/BUB1/CENPX/ZWILCH/CKAP5/KNTC1/ERCC6L/CHAMP1/CENPW/PINX1","9":"52","_rn_":"GO:0000777"},{"1":"GO:0098687","2":"chromosomal region","3":"123/3005","4":"305/11154","5":"1.891776e-07","6":"2.482010e-05","7":"2.401560e-05","8":"NCAPD2/NUP160/SPDL1/RAD51/POLD1/STAG3/SIRT2/SMC1A/NDE1/MCM2/MCM6/SPAG5/XRCC5/KIF22/RIF1/NDC80/SEH1L/ORC1/ZW10/AURKA/BIRC5/MSH2/CENPM/DMC1/MCM5/RANGAP1/TELO2/SUV39H1/CENPI/OIP5/MCM4/DOT1L/NCAPG/NUP98/PTGES3/NUP107/MCM3/TTK/CSNK1A1/CENPA/CENPF/STAG1/DCLRE1B/HELLS/CENPL/ZWINT/CENPK/HJURP/SNAI1/NUP85/CENPB/XRCC3/HAT1/KNSTRN/SGO1/DNMT1/PCNA/CCNB1/CDCA8/NAT10/DSCC1/KNL1/CENPO/DNA2/CENPE/BRCA2/WRAP53/KIF2C/NUF2/PARP1/CDCA5/INCENP/CHEK1/NCAPD3/CENPU/SPC25/SUV39H2/CENPH/SKA1/BUB1B/HIST1H4H/MIS18A/RECQL4/SPC24/SMC6/H3F3A/SGO2/CLASP2/MAD2L1/TERT/ORC5/SKA3/ANAPC16/CENPN/MCM7/CENPV/PLK1/CDT1/MIS12/FEN1/BUB1/CENPX/CDK1/ESCO2/MTBP/NABP1/ZWILCH/ATR/CKAP5/ERCC4/AURKB/ALYREF/KNTC1/RAD51D/ERCC6L/CENPP/H2AFX/BLM/HIST4H4/CHAMP1/CENPW/PRKDC/PINX1","9":"123","_rn_":"GO:0098687"},{"1":"GO:0000775","2":"chromosome, centromeric region","3":"79/3005","4":"182/11154","5":"1.038077e-06","6":"1.134965e-04","7":"1.098177e-04","8":"NCAPD2/NUP160/SPDL1/STAG3/SMC1A/NDE1/SPAG5/KIF22/NDC80/SEH1L/ZW10/AURKA/BIRC5/CENPM/RANGAP1/SUV39H1/CENPI/OIP5/NCAPG/NUP98/NUP107/TTK/CSNK1A1/CENPA/CENPF/STAG1/HELLS/CENPL/ZWINT/CENPK/HJURP/SNAI1/NUP85/CENPB/KNSTRN/SGO1/DNMT1/CCNB1/CDCA8/DSCC1/KNL1/CENPO/CENPE/KIF2C/NUF2/CDCA5/INCENP/NCAPD3/CENPU/SPC25/SUV39H2/CENPH/SKA1/BUB1B/MIS18A/SPC24/SGO2/CLASP2/MAD2L1/SKA3/ANAPC16/CENPN/CENPV/PLK1/CDT1/MIS12/BUB1/CENPX/ESCO2/MTBP/ZWILCH/CKAP5/AURKB/KNTC1/ERCC6L/CENPP/CHAMP1/CENPW/PINX1","9":"79","_rn_":"GO:0000775"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<p>These results can be visualised using barplots or scatterplots.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggpubr)
+p1 &lt;-<span class="st"> </span><span class="kw">barplot</span>(ego_cc,<span class="dt">showCategory=</span><span class="dv">10</span>,<span class="dt">title=</span><span class="st">&quot;CC&quot;</span>)
+p2 &lt;-<span class="st"> </span><span class="kw">barplot</span>(ego_bp, <span class="dt">showCategory=</span><span class="dv">10</span>,<span class="dt">title=</span><span class="st">&quot;BP&quot;</span>)
+p3 &lt;-<span class="st"> </span><span class="kw">barplot</span>(ego_mf, <span class="dt">showCategory=</span><span class="dv">10</span>,<span class="dt">title=</span><span class="st">&quot;MF&quot;</span>)
+<span class="kw">ggarrange</span>(p1,p2,p3,<span class="dt">nrow=</span><span class="dv">3</span>,<span class="dt">ncol=</span><span class="dv">1</span>)</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-13-1.svg" width="768" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>The figure shows the top 10 terms in the three sub-ontologies CC, MF and BP. X-axis denotes the number of DEGs in the term. Colour denotes the adjusted p-value of the term.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggpubr)
+p1 &lt;-<span class="st"> </span><span class="kw">dotplot</span>(ego_cc,<span class="dt">showCategory=</span><span class="dv">10</span>,<span class="dt">title=</span><span class="st">&quot;CC&quot;</span>)
+p2 &lt;-<span class="st"> </span><span class="kw">dotplot</span>(ego_bp, <span class="dt">showCategory=</span><span class="dv">10</span>,<span class="dt">title=</span><span class="st">&quot;BP&quot;</span>)
+p3 &lt;-<span class="st"> </span><span class="kw">dotplot</span>(ego_mf, <span class="dt">showCategory=</span><span class="dv">10</span>,<span class="dt">title=</span><span class="st">&quot;MF&quot;</span>)
+<span class="kw">ggarrange</span>(p1,p2,p3,<span class="dt">nrow=</span><span class="dv">3</span>,<span class="dt">ncol=</span><span class="dv">1</span>)</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-14-1.svg" width="768" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>This figure is showing similar information as the barplots. The x-axis now shows ratio of DEGs to number of genes in term. Size denotes counts of DEGs in the term and colour denotes adjusted p-value.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">emapplot</span>(ego_cc,<span class="dt">vertex.label.font=</span><span class="dv">6</span>)</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-15-1.svg" width="672" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>The enrichment map shows a network graph of GO terms. The size of the nodes denote number of DEGs in that term. The links denote shared genes between terms. The thickness of the lines signify the number of shared genes. Colours again denote adjusted p-value of the enrichment test.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bg &lt;-<span class="st"> </span>deg<span class="op">$</span>log2FoldChange
+<span class="kw">names</span>(bg) &lt;-<span class="st"> </span><span class="kw">as.character</span>(deg<span class="op">$</span>entrezgene)
+
+<span class="kw">cnetplot</span>(ego_cc,<span class="dt">foldChange=</span>bg)</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-16-1.svg" width="768" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>The gene-concept network graph shows the terms as well as the genes. The gene nodes are coloured by it’s fold-change. We have provided the fold-change information for each gene additionally.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">heatplot</span>(ego_cc,<span class="dt">foldChange=</span>bg)</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-17-1.svg" width="672" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>The heatmap plot shows a heatmap of the GO terms and genes shared between them. Each point is coloured by the fold-change value of that gene.</p>
+</div>
+<div id="kegg" class="section level2">
+<h2><span class="header-section-number">2.2</span> KEGG</h2>
+<p>Gene enrichment can also be run on KEGG database. This return pathway IDs which can be explored further.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ek &lt;-<span class="st"> </span><span class="kw">enrichKEGG</span>(<span class="dt">gene=</span>degs,<span class="dt">organism=</span><span class="st">&#39;hsa&#39;</span>,<span class="dt">pvalueCutoff=</span><span class="fl">0.05</span>)
+<span class="kw">head</span>(ek)</code></pre></div>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["ID"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Description"],"name":[2],"type":["chr"],"align":["left"]},{"label":["GeneRatio"],"name":[3],"type":["chr"],"align":["left"]},{"label":["BgRatio"],"name":[4],"type":["chr"],"align":["left"]},{"label":["pvalue"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["p.adjust"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["qvalue"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["geneID"],"name":[8],"type":["chr"],"align":["left"]},{"label":["Count"],"name":[9],"type":["int"],"align":["right"]}],"data":[{"1":"hsa03030","2":"DNA replication","3":"26/1291","4":"36/7860","5":"1.522975e-13","6":"4.812602e-11","7":"4.328456e-11","8":"23649/5982/5424/4171/4175/10714/4174/5427/5422/4173/10535/3978/5425/5985/4172/5111/5983/1763/54107/5984/4176/2237/246243/57804/5426/5557","9":"26","_rn_":"hsa03030"},{"1":"hsa04110","2":"Cell cycle","3":"53/1291","4":"124/7860","5":"2.623162e-12","6":"4.144595e-10","7":"3.727651e-10","8":"10926/1870/8243/4171/4175/5933/4998/23594/7042/8318/990/8317/4616/4174/1869/4173/898/51343/595/1027/4172/1871/896/7272/991/10274/7043/9088/7533/1032/1028/5111/891/1019/9700/4609/890/1111/64682/701/993/4085/5001/4176/5347/699/983/545/9134/51434/7027/1874/5591","9":"53","_rn_":"hsa04110"},{"1":"hsa03460","2":"Fanconi anemia pathway","3":"25/1291","4":"54/7860","5":"2.559637e-07","6":"2.696151e-05","7":"2.424919e-05","8":"672/5888/4292/29089/9894/3280/91442/83990/675/55215/2177/146956/7398/84126/201254/5429/545/2072/7156/2187/2188/2175/57697/641/22909","9":"25","_rn_":"hsa03460"},{"1":"hsa03410","2":"Base excision repair","3":"18/1291","4":"33/7860","5":"5.852975e-07","6":"4.623850e-05","7":"4.158693e-05","8":"3980/10039/5424/7374/10714/5427/3978/5425/55247/10038/5111/79661/142/54107/27343/2237/57804/5426","9":"18","_rn_":"hsa03410"},{"1":"hsa03430","2":"Mismatch repair","3":"14/1291","4":"23/7860","5":"1.826801e-06","6":"1.154539e-04","7":"1.038392e-04","8":"5982/5424/4292/10714/4436/3978/5425/5985/2956/5111/5983/5984/9156/57804","9":"14","_rn_":"hsa03430"},{"1":"hsa03008","2":"Ribosome biogenesis in eukaryotes","3":"36/1291","4":"105/7860","5":"5.416446e-06","6":"2.852661e-04","7":"2.565685e-04","8":"51096/55341/51602/10885/6949/57455/10528/10940/2091/55131/23560/55127/10171/83732/10799/10436/54552/1736/5901/29107/134430/55226/92856/84916/4931/166378/23160/26354/84135/65083/9790/51367/54913/5822/3692/283106","9":"36","_rn_":"hsa03008"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<p>All visualisation functions run previously also work on KEGG results. Feel free to plot and explore these results.</p>
+</div>
+<div id="online-tools" class="section level2">
+<h2><span class="header-section-number">2.3</span> Online tools</h2>
+<p>Below you can find a list with the most commonly used online enrichment tools. Each one differs a bit on what they can do.</p>
+<table style="width:22%;">
+<colgroup>
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>link</th>
+<th>Database</th>
+<th>Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Enrichr</td>
+<td><a href="http://amp.pharm.mssm.edu/Enrichr/" class="uri">http://amp.pharm.mssm.edu/Enrichr/</a></td>
+<td>GO, KEGG, TF, many others</td>
+<td>Extensive libraries</td>
+</tr>
+<tr class="even">
+<td>GOrilla</td>
+<td><a href="http://cbl-gorilla.cs.technion.ac.il" class="uri">http://cbl-gorilla.cs.technion.ac.il</a></td>
+<td>GO</td>
+<td>Support for REVIGO</td>
+</tr>
+<tr class="odd">
+<td>REVIGO</td>
+<td><a href="http://revigo.irb.hr" class="uri">http://revigo.irb.hr</a></td>
+<td>GO</td>
+<td>Summarises redundancy</td>
+</tr>
+<tr class="even">
+<td>DAVID</td>
+<td><a href="https://david.ncifcrf.gov" class="uri">https://david.ncifcrf.gov</a></td>
+<td>GO, KEGG, TF, many others</td>
+<td>*Not updated</td>
+</tr>
+<tr class="odd">
+<td>KEGG</td>
+<td><a href="https://www.genome.jp/kegg/" class="uri">https://www.genome.jp/kegg/</a></td>
+<td>KEGG</td>
+<td>Shows the pathways</td>
+</tr>
+<tr class="even">
+<td>Reactome</td>
+<td><a href="https://www.reactome.org" class="uri">https://www.reactome.org</a></td>
+<td>KEGG-like</td>
+<td>Shows the pathways/reactions</td>
+</tr>
+<tr class="odd">
+<td>Panther</td>
+<td><a href="http://www.pantherdb.org/about.jsp" class="uri">http://www.pantherdb.org/about.jsp</a></td>
+<td>GO</td>
+<td>Evolutionary conserved GO annotation</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="gsea" class="section level1">
+<h1><span class="header-section-number">3</span> GSEA</h1>
+<p>Gene set enrichment analyses (GSEA) uses p-values or log2 fold-changes for all genes from the differential expression results, to identify if gene sets work together in a coordinated manner. The primary difference with gene enrichment test is that there no cut-off or threshold to identify differentially expressed genes. All genes are considered along with a metric. One advantage is that in situations where there are no individual genes with large fold-changes but many genes with low fold-change may work together to produce a significant effect. This is also useful in DEG analysis that outputs a small list of significant DE genes.</p>
+<p>We use the R package clusterProfiler again for GSEA analyses. Note that input is different now. We use the full list of genes tested ranked (sorted) by a value. We use log fold-change values for sorting the genes. Alternatively, unadjusted p-values can also be used.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(clusterProfiler)
+<span class="kw">library</span>(org.Hs.eg.db)
+
+bg &lt;-<span class="st"> </span>deg<span class="op">$</span>log2FoldChange
+<span class="kw">names</span>(bg) &lt;-<span class="st"> </span><span class="kw">as.character</span>(deg<span class="op">$</span>entrezgene)
+bg &lt;-<span class="st"> </span><span class="kw">sort</span>(bg,<span class="dt">decreasing=</span><span class="ot">TRUE</span>)
+
+<span class="kw">head</span>(bg)</code></pre></div>
+<pre><code>##     5673     9976   256309     5671    10044   344805 
+## 5.979488 5.974913 5.944264 5.768071 5.627404 5.594242</code></pre>
+</div>
+<div id="go-1" class="section level2">
+<h2><span class="header-section-number">3.1</span> GO</h2>
+<p>clusterProfiler can also be used for GSEA analyses using the function <code>gseGO()</code>.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ggo_cc &lt;-<span class="st"> </span><span class="kw">gseGO</span>(<span class="dt">geneList=</span>bg,<span class="dt">OrgDb=</span>org.Hs.eg.db,<span class="dt">ont=</span><span class="st">&quot;CC&quot;</span>,<span class="dt">nPerm=</span><span class="dv">1000</span>,<span class="dt">minGSSize=</span><span class="dv">100</span>,
+                <span class="dt">maxGSSize=</span><span class="dv">500</span>,<span class="dt">pvalueCutoff=</span><span class="fl">0.05</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
+ggo_bp &lt;-<span class="st"> </span><span class="kw">gseGO</span>(<span class="dt">geneList=</span>bg,<span class="dt">OrgDb=</span>org.Hs.eg.db,<span class="dt">ont=</span><span class="st">&quot;BP&quot;</span>,<span class="dt">nPerm=</span><span class="dv">1000</span>,<span class="dt">minGSSize=</span><span class="dv">100</span>,
+                <span class="dt">maxGSSize=</span><span class="dv">500</span>,<span class="dt">pvalueCutoff=</span><span class="fl">0.05</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
+ggo_mf &lt;-<span class="st"> </span><span class="kw">gseGO</span>(<span class="dt">geneList=</span>bg,<span class="dt">OrgDb=</span>org.Hs.eg.db,<span class="dt">ont=</span><span class="st">&quot;MF&quot;</span>,<span class="dt">nPerm=</span><span class="dv">1000</span>,<span class="dt">minGSSize=</span><span class="dv">100</span>,
+                <span class="dt">maxGSSize=</span><span class="dv">500</span>,<span class="dt">pvalueCutoff=</span><span class="fl">0.05</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
+<span class="kw">head</span>(ggo_cc)</code></pre></div>
+</div>
+<p>Let’s create a GSEA plot of the top gene set.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gseaplot</span>(ggo_cc,<span class="dt">geneSetID=</span><span class="dv">1</span>,<span class="dt">by=</span><span class="st">&quot;runningScore&quot;</span>,<span class="dt">title=</span>ggo_cc<span class="op">$</span>Description[<span class="dv">1</span>])</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-23-1.svg" width="768" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>This is a typical GSEA enrichment plot for the top term. X axis shows the ranked position of all genes (log fold-change). The vertical bars (rugs) shows position of ranked genes that match with the reference gene set. The y-axis shows the running enrichment score.</p>
+<p>As the algorithm passes through the list of ranked genes, it checks if that gene is present in the reference gene set. If present, the enrichment scores go up. So, the enrichment score keeps increases as more consecutive genes are part of the reference gene set. When a gene is not present, the enrichment score decreases. The red dotted line denotes the highest enrichment score. Therefore, genes from the beginning of the increase of the score up to the maximum enrichment score are called the ‘leading edge subset’. These are the interesting set of genes that are associated with this gene set.</p>
+<p>Perhaps, it may be useful to see the distribution of expression metric (log fold-change) across enriched genes within each term. This is displayed using a ridgeline plot.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ridgeplot</span>(ggo_cc)</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-24-1.svg" width="768" style="display: block; margin: auto auto auto 0;" />
+</div>
+</div>
+<div id="kegg-1" class="section level2">
+<h2><span class="header-section-number">3.2</span> KEGG</h2>
+<p>Next, we run GSEA using the same input on KEGG database.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gsk &lt;-<span class="st"> </span><span class="kw">gseKEGG</span>(<span class="dt">geneList=</span>bg,<span class="dt">organism=</span><span class="st">&#39;hsa&#39;</span>,<span class="dt">nPerm=</span><span class="dv">1000</span>,<span class="dt">minGSSize=</span><span class="dv">120</span>,
+               <span class="dt">pvalueCutoff=</span><span class="fl">0.05</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)</code></pre></div>
+</div>
+<p>We can use the GSEA plot to visualise the pattern of enrichment scores.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gseaplot</span>(gsk,<span class="dt">geneSetID=</span><span class="dv">1</span>,<span class="dt">by=</span><span class="st">&quot;runningScore&quot;</span>,<span class="dt">title=</span>gsk<span class="op">$</span>Description[<span class="dv">1</span>])</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-28-1.svg" width="768" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>We can take the KEGG pathway ID to be used to create a KEGG pathway diagram. We will use the top ID in our results: <strong>hsa05168</strong>. And we also provide our gene list. This function exports the figure to the current working directory.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pathview)
+<span class="kw">pathview</span>(<span class="dt">gene.data=</span>bg,<span class="dt">pathway.id=</span><span class="st">&quot;hsa05168&quot;</span>,<span class="dt">species=</span><span class="st">&quot;hsa&quot;</span>)</code></pre></div>
+</div>
+<pre><code>##############################################################################
+Pathview is an open source software package distributed under GNU General
+Public License version 3 (GPLv3). Details of GPLv3 is available at
+http://www.gnu.org/licenses/gpl-3.0.html. Particullary, users are required to
+formally cite the original Pathview paper (not just mention it) in publications
+or products. For details, do citation(&quot;pathview&quot;) within R.
+
+The pathview downloads and uses KEGG data. Non-academic uses may require a KEGG
+license agreement (details at http://www.kegg.jp/kegg/legal.html).
+##############################################################################</code></pre>
+<p>It creates two files per pathway. One shows a flow diagram of the genes involved in the pathway. Location of the genes and path is also shown where relevant.</p>
+<div class="figure">
+<img src="images/hsa05168.png" />
+
+</div>
+<p>The second figure is the same as the first, but this shows genes in our list superimposed as a heatmap. Red denotes over-expression and green denotes under-expression.</p>
+<div class="figure">
+<img src="images/hsa05168.pathview.png" />
+
+</div>
+</div>
+</div>
+<div id="protein-protein-interactions" class="section level1">
+<h1><span class="header-section-number">4</span> Protein-protein interactions</h1>
+<p>In the course we will not have much time to work on gene expression networks. However, there are some nice databases that allow you to easily visualize protein-protein interactions. Please paste the list of genes using the command above into those sites to have a visual insight on how the Up- or Down- regulated genes interact with each other.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Database</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>GeneMANIA</td>
+<td><a href="https://genemania.org" class="uri">https://genemania.org</a></td>
+</tr>
+<tr class="even">
+<td>STRING-DB</td>
+<td><a href="https://string-db.org" class="uri">https://string-db.org</a></td>
+</tr>
+<tr class="odd">
+<td>MIST</td>
+<td><a href="https://fgrtools.hms.harvard.edu/MIST/help.jsp" class="uri">https://fgrtools.hms.harvard.edu/MIST/help.jsp</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="acknowledgements" class="section level1">
+<h1><span class="header-section-number">5</span> Acknowledgements</h1>
+<ul>
+<li>ClusterProfiler <a href="https://yulab-smu.github.io/clusterProfiler-book/">handbook</a></li>
+<li>HBC <a href="https://hbctraining.github.io/Training-modules/DGE-functional-analysis/lessons/02_functional_analysis.html">training</a></li>
+</ul>
+<p><strong>End of document</strong></p>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
