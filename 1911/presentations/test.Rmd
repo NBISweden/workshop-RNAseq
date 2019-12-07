@@ -1,0 +1,79 @@
+---
+title: "Introduction to RNASeq"
+subtitle: "Workshop on RNA-Seq"
+author: "`r paste0('<b>Dag Ahrén</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
+institute: NBIS, SciLifeLab
+keywords: bioinformatics, course, scilifelab, nbis
+output:
+  xaringan::moon_reader:
+    encoding: 'UTF-8'
+    self_contained: false
+    chakra: 'assets/remark-latest.min.js'
+    css: 'assets/presentation.css'
+    lib_dir: libs
+    nature:
+      ratio: '4:3'
+      highlightLanguage: r
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      slideNumberFormat: "%current%/%total%"
+---
+exclude: true
+count: false
+
+```{r,echo=FALSE,child="assets/header-presentation.Rmd"}
+```
+
+<!-- ------------ Only edit title, subtitle & author above this ------------ -->
+
+```{r,include=FALSE}
+# load the packages you need
+library(dplyr)
+library(tidyr)
+#library(stringr)
+library(ggplot2)
+#library(plotly)
+library(pheatmap)
+library(DESeq2)
+library(edgeR)
+```
+
+---
+name: content
+class: spaced
+
+## Contents
+
+* [Preprocessing](#pp)
+* [Normalisation](#norm-1)
+* [Exploratory](#eda-cor)
+* [DGE](#dge)
+
+<!-- --------------------- Do not edit this and below --------------------- -->
+
+---
+
+# Acknowledgements
+
+* [Normalising RNA-seq data](https://www.ebi.ac.uk/sites/ebi.ac.uk/files/content.ebi.ac.uk/materials/2012/121029_HTS/ernest_turro_normalising_rna-seq_data.pdf) by Ernest Turro  
+* RNA-seq analysis [Bioconductor vignette](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html)
+* [DGE Workshop](https://github.com/hbctraining/DGE_workshop/tree/master/lessons) by HBC training
+
+---
+name: end_slide
+class: end-slide, middle
+count: false
+
+# Thank you. Questions?
+## Special thanks to Johan Reimegård for the slides
+
+```{r,echo=FALSE,child="assets/footer-presentation.Rmd"}
+```
+
+```{r,include=FALSE,eval=FALSE}
+# manually run this to render this document to HTML
+rmarkdown::render("test.Rmd")
+# manually run this to convert HTML to PDF
+#pagedown::chrome_print("test.html",output="test.pdf")
+```
