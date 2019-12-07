@@ -1,0 +1,63 @@
+---
+title: "GEO_query"
+subtitle: "RNA sequencing"
+author: "`r paste0('Paulo Czarnewski | <b>NBIS</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: paged
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+<!-- ------------ Only edit title, subtitle & author above this ------------ -->
+
+
+If you are running in problems to install some packages, please copy this into your Rscript, add of remove packages from the `pkgs` object and the run `inst_packages(pkgs)`. This wrapper function will install packages from
+
+```{r,eval=FALSE}
+#load the packages you need
+inst_packages <- function(pkgs){
+  pkg <- sub(".*[/]","",unique(pkgs) )
+  suppressMessages(source("http://bioconductor.org/biocLite.R",prompt.echo = F,echo=F))
+  new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  git.pkg <- pkgs[grep("[/]",pkgs)]
+  new.pkg <- new.pkg[!(new.pkg %in% sub(".*[/]","",git.pkg))]
+
+  if (length(git.pkg)) {
+    if (!require(devtools)) { install.packages("devtools") }
+    library(devtools)
+    for (i in git.pkg){
+      suppressWarnings(suppressMessages(install_github(i)))
+  } }
+
+  if (length(new.pkg)) {
+    suppressWarnings(suppressMessages(install.packages(new.pkg, repos='http://cran.us.r-project.org', dependencies = TRUE, quiet = T)))
+    if (!new.pkg %in% installed.packages()[, "Package"]) {
+      if (!require(BiocManager)) { install.packages("BiocManager") }
+      Bio.pkg <- new.pkg[!(new.pkg %in% installed.packages()[, "Package"])]
+      suppressWarnings(suppressMessages(BiocManager::install(Bio.pkg,suppressUpdates = T,suppressAutoUpdate = T)))
+  } }
+
+  data.frame("Pkg_Status"=suppressMessages(sapply(pkg, require, character.only = TRUE)),row.names = pkg)
+  }
+
+
+pkgs <- c("BiocManager","ggplot2","dplyr","scales","RColorBrewer","biomaRt","DESeq2","pvclust","rafalib","EDASeq","pheatmap")
+inst_packages(pkgs)
+```
+
+**End_of_document**

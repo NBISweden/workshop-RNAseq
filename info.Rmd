@@ -1,0 +1,58 @@
+---
+title: "<i class='fas fa-info' style='margin-left:4px;margin-right:4px;'></i> Info"
+output:
+  bookdown::html_document2:
+    toc: false
+    number_sections: false
+    theme: flatly
+    highlight: tango
+    df_print: default
+    code_folding: "none"
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+## Location
+
+```{r,eval=TRUE,include=FALSE}
+# setting
+# set location to to 'uppsala' or 'umea'
+loc <- "uppsala"
+```
+
+```{r,eval=TRUE,include=FALSE}
+if(loc=="uppsala") {
+  dfr <- data.frame(venue_lat=59.841949,venue_lon=17.637073,venue_address="<b>SciLifeLab</b>,Entrance C11,Biomedicinskt centrum,Uppsala University,Husargatan 3,75237 Uppsala,Sweden",description="Use the [UL website](www.ul.se) or the [UL app](https://www.ul.se/en/tickets/how-to-buy-a-ticket/the-UL-app/) for bus and train services around Uppsala. For buses from the Centralstation (Train/Bus), take Bus 4 (towards Gottsunda Centrum) or 8 (towards Sunnersta) and get off at the stop *Uppsala Science Park*. Bus tickets can be purchased in the app or directly from the driver using a credit card.",stringsAsFactors=F)
+}
+
+if(loc=="umea") {
+  dfr <- data.frame(venue_lat=63.820019,venue_lon=20.307814,venue_address="<b>Department of Science and Mathematics Education</b>,Naturvetarhuset A,Umeå University,Universums gränd,90736 Umeå,Sweden",description="[Umeå city buses](http://tabussen.nu/):<br>Pay your bus ticket on the bus (credit card only), or in advance in the ticket machines at Vasaplan or Umeå Airport, or at any Reseinfo centre. It is cheaper to buy the ticket in advance. You can also use the app [Ultra vill mer](https://www.tabussen.nu/ultra/biljetter/appen-ultra-vill-mer/). The bus stop in the city centre is *Vasaplan* and the stop near the course venue is *Universum*. Bus options are 2,5,8 or 9 and takes about 6-7 min.<br><br>[Airport bus](https://www.tabussen.nu/flygbussen/english/):<br>The airport bus (Bus 80) goes from the airport to *Vasaplan* (the city centre), and then passes NUS and Umeå Campus on the way back. The trip takes about 8 min from the airport to *Vasaplan*, and about 15 min the other way. It stops at *Universum* (Umeå Campus) approx. 5 min after leaving *Vasaplan*.",stringsAsFactors=F)
+}
+```
+
+```{r,eval=TRUE,echo=FALSE,block.title=NULL}
+library(leaflet)
+
+address <- paste(unlist(strsplit(dfr$venue_address,split=",")),collapse="<br>")
+leaflet(height=450,width=800) %>%
+  addTiles(urlTemplate='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png') %>%
+  addMarkers(lat=dfr$venue_lat,lng=dfr$venue_lon,popup=address) %>%
+  setView(lat=dfr$venue_lat,lng=dfr$venue_lon,zoom=15)
+```
+
+## Travel info
+
+```{r,eval=TRUE,echo=FALSE,results="asis",block.title=NULL}
+cat(dfr$description)
+```
+
+## Contact
+
+If you would like to get in touch with us regarding this course, it's contents, or if you have suggestions to improve it, please contact Johan Reimegård (`johan.reimegard@scilifelab.se`).  
+
+**End of document.**

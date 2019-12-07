@@ -1,0 +1,370 @@
+---
+title: "PCA and Clustering"
+subtitle: "Workshop on RNA-Seq"
+author: "`r paste0('Paulo Czarnewski • ',format(Sys.time(), '%d-%b-%Y'))`"
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: paged
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+Loading packages and data
+
+```{r}
+library(pheatmap)
+library(rafalib)
+library(DESeq2)
+library(pvclust)
+library(biomaRt)
+```
+
+Loading the sequencing data and the metadata data with sample information
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+#Load data and metadata
+data <- read.delim("data/count_raw.txt",header = T)
+metadata <- read.csv2("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T)
+
+#Convert ensembl IDs to gene names
+if( file.exists("data/human_biomaRt_annotation.csv") ){
+  annot <- read.csv2("data/human_biomaRt_annotation.csv", row.names = 1)
+} else {
+  human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+  annot <- getBM(c("ensembl_gene_id","external_gene_name"), mart=human)
+  write.csv2(annot,"data/human_biomaRt_annotation.csv",row.names = T)
+}
+gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
+gene_names[is.na(gene_names) ] <- ""
+
+#Remove missing or fuse duplicated annotations
+data <- rowsum(data, group = as.character(gene_names) ) #assign gene names and sum duplicates
+data <- data[ rownames(data) != "" , ] #remove blank annotation
+data <- data[ order(rownames(data)),]  #order genes alphabetically
+dim(data)
+
+#Remove genes with counts less than 
+sel <- apply(data, 1, function(x) {sum(x > 5) > 3} )
+data <- data[sel,]
+dim(data)
+
+#Transform data to log2CPM
+cpm <- t( round(t(data) / colSums(data) * 1e6))
+logcpm <- log2( cpm + 1)
+if(!file.exists("data/cpm.csv")) write.csv2(cpm , "data/cpm.csv",row.names = T)
+```
+
+***
+# PCA
+
+Performing PCA has many useful applications and interpretations, which much depends on the data used. In the case of life sciences, we want to segregate samples based on gene expression patterns in the data.
+
+## Z-score normalization
+
+Now that the data is prepared, we now proceed with PCA. Since each gene has a different expression level, it means that genes with higher expression values will naturally have higher variation that will be captured by PCA. This means that we need to somehow give each gene a similar weight when performing PCA (see below). The common practice is to center and scale each gene before performing PCA. This exact scaling is called **Z-score** normalization it is very useful for PCA, clustering and plotting heatmaps.
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+Znorm <- t( apply(logcpm , 1 , function(x) scale( x , center = T, scale = T)) )
+colnames(Znorm) <- colnames(logcpm)
+
+mypar(1,2,mar = c(5,3,2,1))
+boxplot( t(logcpm[1:30,])   , ylim=c(0,12), las=2 , col="grey" , main="logCPM raw_data" ,cex=.2)
+boxplot( t(Znorm[1:30,]) , ylim=c(-4,4), las=2 , col="grey" , main="Z-score data" ,cex=.2)
+abline(h=0, col="red" ,lty=2)
+```
+
+***
+## Gene selection
+
+As you can appreciate above, Z-score normalization have set each gene mean to 0 and changes the variances to a common scale. However, if we normalize all genes to the same scale, even genes that could be considered stable across samples (i.e. that do not vary across your samples) will be used for separation of samples. This might in turn add 'noise' to your data in form of 'variation across samples that are not meaningful'. Therefore, we can also sort the genes by variance and use the top genes to filter/prioritize the data. 
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+#Compute the mean, variance and cv for each gene and sort them in decreasing order
+gene_stats <- data.frame(row.names = rownames(data))
+means <- rowMeans(logcpm)
+vars <- apply(logcpm,1,var)
+
+#Plot the row means versus row means
+mypar(1,2,mar = c(5,3,2,1))
+plot(x=means, y=vars, cex=.1 )
+
+#Sort and select the top 500 highly variable genes from the data
+vars <- sort( vars , decreasing=T)
+top_var <- names( vars ) [1:500]
+boxplot( t(logcpm[ top_var[1:15],])   , ylim=c(0,12), las=2 , col="grey" , main="logCPM (top var genes)" ,cex=.2)
+```
+
+***
+## Computing PCA
+
+Next, we can compute PCA using the `prcomp()` function. As additional parameters, we can already center and scale each gene already inside the function. This the same exact **Z-score** scaling above, but already inside the function.
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+mypar(1,2,mar = c(3,3,2,1))
+PC <-  prcomp( t( Znorm[ top_var, ]) ) #Method1
+PC <-  prcomp( t( logcpm[ top_var, ]), center = TRUE, scale. = TRUE) #Method2
+
+mypar(1,2)
+plot(PC$x[,1] , PC$x[,2], cex=2, col=factor(metadata$Time), xlab="PC1", ylab="PC2", pch=16, main="PCA", las=1)
+text(PC$x[,1] , PC$x[,2], cex=.7, labels = paste0(metadata$Sample_Name), pos = 3)
+
+plot(PC$x[,3] , PC$x[,4], cex=2, col=factor(metadata$Time), xlab="PC3", ylab="PC4", pch=16, main="PCA", las=1)
+text(PC$x[,3] , PC$x[,4], cex=.7, labels = paste0(metadata$Sample_Name), pos = 3)
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* Which groups are clearly separated by PC1 and PC2?
+* Which groups are clearly separated by PC3 and PC4?
+* What happens if we include 2000 genes (rather than 500) in the PCA?
+* What happens if we include all genes in the PCA?
+* What happens if we use the raw CPM, rather than log2CPM for the PCA?
+* What happens if we don't scale or centralize the data?
+* How does PC3 and PC4 look? Go back to the code above and change which PCs to plot.
+* Do PC10 and PC11 still separate your samples as well as PC1 and PC2?
+
+***
+## Computing PC variance
+
+The usefulness of PCA is that the principal components do have a meaning: They store the amount of variance in decreasing order, so some PCs are more important than others. Inside the `PC$sdev` object, we can get the standard deviation stored in each PC.
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=5}
+PC_sd <- setNames(PC$sdev , paste0("PC",1:length(PC$sdev)))
+PC_var_expl <- ( PC_sd^2 ) / sum(PC_sd^2) * 100
+
+mypar(1,1)
+barplot(PC_var_expl, las=2, ylab="% variance explained")
+abline(h=2, lty=2)
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* Which PCs explain at least 2% of variance?
+* Instead of using our whole data set, could we use only the top PCs for downstream analysis ? Explain.
+
+***
+## Leading genes
+
+Now that you know that each PC stores a particular structure of the data, we could also explore with genes are more responsible for that separation (a.k.a. leading genes). For that, we can take a look inside the PC object.
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+leading_genes <- PC$rotation
+head(leading_genes)
+
+leading_PC1 <- sort(leading_genes[,1],decreasing = T)
+leading_PC2 <- sort(leading_genes[,2],decreasing = T)
+
+mypar(1,2,mar = c(10,4,2,2))
+barplot(leading_PC1[1:15], las=2)
+barplot(leading_PC2[1:15], las=2)
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* Which genes impact the most in PC1?
+* Which genes impact the most in PC2?
+
+***
+# Hierarchical clustering
+
+Hierarchical clustering is group of clustering methods used to group samples based on a hierarchy. The hierarchical clustering is done in two steps:
+
+* Step1: Define the distances between samples. The most common are Euclidean distance (a.k.a. straight line between two points) or correlation coefficients.
+* Step2: Define the dendrogram among all samples using **Bottom-up** or **Top-down** approach. **Bottom-up** is where samples start with their own cluster which end up merged pair-by-pair until only one cluster is left. **Top-down** is where samples start all in the same cluster that end up being split by 2 until each sample has its own cluster.
+
+***
+## Defining distance between samples
+
+The base R `stats` package already contains a function `dist()` that calculates distances between all pairs of samples. Since we want to compute distances between samples, rather than among genes, we need to transpose the data before applying it to the `dist()` function. This can be done by simply adding the transpose function `t()` to the data. When clustering on genes, it is wise to first define the gene selection to reduce the time to compute distances. A sensible choice is to do it on the differentially expressed genes only (including up to ~3000 genes).
+
+The distance methods available  in `dist()` are: *euclidean*, *maximum*, *manhattan*, *canberra*, *binary* or *minkowski*.
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+d <- dist( t(logcpm) , method="euclidean")
+d
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* When printing the distance object, why is only half of the matrix shown?
+
+***
+As you might have realized, correlation is not a method implemented in the `dist()` function. However, we can create our own distances and transform them to a distance object.
+
+We can first compute sample correlations using the `cor()` function. As you might already know, correlation range from -1 to 1, where 1 indicates that two samples are closest, -1 indicates that two samples are the furthest and 0 is somewhat in between. This, however, creates a problem in defining distances because a distance of 0 indicates that two samples are closest, 1 indicates that two samples are the furthest and distance of -1 is not meaningful. We thus need to transform the correlations to a positive scale (a.k.a. **adjacency**):
+
+\[adj = -\frac{cor - 1}{2}\]
+
+Once we transformed the correlations to a 0-1 scale, we can simply convert it to a distance object using `as.dist()` function. The transformation does not need to have a maximum of 1, but it is more intuitive to have it at 1, rather than at any other number.
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+#Compute sample correlations
+sample_cor <- cor( logcpm )
+round(sample_cor,4)
+
+#Transform the scale from correlations
+cor_distance <- -(sample_cor - 1)/2
+round(cor_distance,4)
+
+#Convert it to a distance object
+d2 <- as.dist(cor_distance)
+d2
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* What is the adjacency distance between two samples with correlation $r$ of 0.8 ?
+* What is the adjacency distance between two samples with correlation $r$ of -0.6 ?
+* What happens if instead of using the formula above, we used the absolute value of $r$ ( $|r|$ ) as adjacency (this way all values will be also between 0-1). Does this change affects the interpretation of adjacency distances ?
+* What happens if instead of using the formula above, we used $r^2$ as adjacency (this way all values will be also between 0-1). Does this change affects the interpretation of adjacency distances ?
+
+***
+## Clustering samples
+
+After having calculated the distances between samples calculated, we can now proceed with the hierarchical clustering per-se. We will use the function `hclust()` for this purpose, in which we can simply run it with the distance objects created above.
+
+The methods available are: *ward.D*, *ward.D2*, *single*, *complete*, *average*, *mcquitty*, *median* or *centroid*.
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+#Clustering using euclidean distance
+mypar(1,2,mar=c(6,4,2,1))
+h <- hclust(d, method="complete")
+plot( as.dendrogram(h) , las=1, main="d=euclidean\nh=complete")
+points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[h$order])
+
+h2 <- hclust(d2, method="complete")
+plot( as.dendrogram(h2) , las=1, main="d=correlation\nh=complete")
+points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[h2$order])
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* Does the ordering of the samples in dendrogram has a meaning ?
+* Why are the scales between those dendrograms so different ? Look at the distance matrices to get the intuition.
+* Do the two methods represent the same results ? Which one would you trust the most ?
+* Does the ordering of the dendrogram have a meaning ?
+* Change the clustering method to `ward.D2`. How does it affect your results ?
+* We used the whole dataset for clustering. Re-calculate the distances now using only the top 500 genes with highest CV. Does it change the results ?
+* Instead of clustering on the raw data, could we cluster on the top $N$ principal components? Justify.  
+
+***
+## Defining clusters
+
+Once your dendrogram is created, the next step is to define which samples belong to a particular cluster. However, the sample groups are already known in this example, so clustering them does not add much information for us. What we can do instead is subdivide the genes into clusters. As for the PCA (above), the ideal scenario is to use the Z-score normalized gene expression table, because in this way we make sure that we are grouping together expression trends (going up vs. down), rather than expression level (genes with more counts vs less counts). This way, we can simply repeat the steps above using the transpose of the Z-score matrix, compute the correlation distances and cluster using ward.D2 linkage method. Since it is time consuming to cluster on all genes, this step is usually done only on the differentially expressed gene list (say up to ~3000 genes). Here, we can for instance cluster on the genes with highest variance `top_var`.
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=5}
+gene_cor  <- cor( t( Znorm[ top_var, ] ) )
+gene_dist <- as.dist( -( gene_cor - 1 )/2 )
+gene_clus <- hclust(gene_dist, method = "complete")
+```
+
+After identifying the dendrogram for the genes (below), we can now literally cut the tree at a fixed threshold (with `cutree`) at different levels to define the clusters.
+
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+HEIGHT <- 0.6
+gene_clusters <- cutree(gene_clus, h = HEIGHT)
+gene_clusters
+
+mypar(1,1,mar=c(6,4,2,1))
+plot( as.dendrogram(gene_clus) , las=1, main="d=correlation\nh=complete" )
+
+rect.hclust(gene_clus, h = HEIGHT)
+abline(h = HEIGHT, col="red", lty=2)
+points(1:length(gene_clusters) ,rep(0,length(gene_clusters)), pch= 16, cex=2, col=factor(gene_clusters)[gene_clus$order] )
+legend( "topright", levels(factor(gene_clusters)) , pch = 16, col =  factor(levels(factor(gene_clusters))) )
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* Check the dendrogram above, what is a sensible height to cut the tree?
+* What is the maximum sensible amount of clusters I could have in my data?
+
+***
+## Clustering on Heatmap (optional)
+
+Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the `pheatmap` function, which by default will do the clustering of the rows and columns.
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=4}
+pheatmap( logcpm[top_var,] , scale = "row" , color = colorRampPalette(c("navy","white","firebrick"))(90), border_color = NA, cluster_cols = F)
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* Check the dendrograms on the side of the heatmap. Do they look familiar with the previous ones?
+* What does the 'scale' parameter mean? What happens with the clustering if we change it to 'none' or to 'columns'?
+* Can you change the clustering to 'ward.D2'? Explore the `pheatmap` function pressing tab.
+* Can you cut your gene tree into 4 clusters? Explore the `pheatmap` function pressing tab.
+
+
+***
+## Clustering bootstrapping (optional)
+
+Let's say that you have 12 samples, so that all samples have the exact same expression level (say 12000 genes). And to that you add 1 single gene which is more expressed in samples 6-12, than in 1-6. If you ran a bootstrapping in this **mock example**, you will see that the samples will seem to cluster very well enven though there is only 1 out 12000 genes that make that separation possible.
+
+One way to measure **clustering robustness / accuracy** is by selecting part of the data set (say 90% of the genes), performing the clustering and recording which samples fall together. Then, you repeat (iterate) with another selection of 90% of the genes up to 1000 times, recording the clustering results. In the end, you compare the results of all 1000 clusterings and check how often the same samples failed in the same group. This procedure is called **bootstrapping**, and it is measured as the "percentage of times an event can occur". For more details on this, please read the webpage for the `pvclust()` which is full of examples on this:
+
+* `pvclust` website: http://stat.sys.i.kyoto-u.ac.jp/prog/pvclust/ 
+* `pvclust` paper: https://academic.oup.com/bioinformatics/article/22/12/1540/207339
+
+<i class="fas fa-exclamation-circle"></i> Note that bootstrapping procedure is very time consuming and computationally intensive.
+
+```{r,eval=FALSE,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+mypar(1,2,mar=c(6,4,2,1))
+# Clustering on the MOCK dataset
+mock <- matrix(rep(logcpm[,1],12),byrow = F,ncol = 12)
+mock <- rbind( c(rep(2,6),rep(5,6)), mock)
+mock_pvc <- pvclust( data = mock , method.dist = "correlation", method.hclust = "complete",parallel = T,r=1)
+plot(mock_pvc,las=2,hang = -0.5)
+
+# Clustering on our dataset (this step is slow)
+pvc <- pvclust( data = logcpm , method.dist = "correlation", method.hclust = "complete",parallel = T)
+plot(pvc,las=2,hang = -0.5)
+pvrect(pvc, alpha = 0.9)
+points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[pvc$hclust$order])
+```
+
+```{r,eval=FALSE,include=FALSE}
+# slow, not displayed, not executed during runtime
+mock <- matrix(rep(logcpm[,1],12),byrow = F,ncol = 12)
+mock <- rbind( c(rep(2,6),rep(5,6)), mock)
+mock_pvc <- pvclust( data = mock , method.dist = "correlation", method.hclust = "complete",parallel = F,r=1)
+saveRDS(mock_pvc,"./data/mock_pvc.Rds")
+pvc <- pvclust( data = logcpm , method.dist = "correlation", method.hclust = "complete",parallel = F)
+saveRDS(pvc,"./data/pvc.Rds")
+```
+
+```{r,echo=FALSE,block.title=NULL,fig.height=5,fig.width=10}
+mock_pvc <- readRDS("./data/mock_pvc.Rds")
+pvc <- readRDS("./data/pvc.Rds")
+
+mypar(1,2,mar=c(6,4,2,1))
+plot(mock_pvc,las=2,hang = -0.5)
+plot(pvc,las=2,hang = -0.5)
+pvrect(pvc, alpha = 0.9)
+points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[pvc$hclust$order])
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* With what percentages the samples 10, 11 and 12 fall together in the same cluster?
+* With what percentages the samples other than 10, 11 and 12 fall together in the same cluster?
+* With what percentages the samples 8, 7 and 9 fall together in the same cluster?
+* With what percentages the samples 4 and 5 fall together in the same cluster?
+* The orange rectangles represent 2 clusters. What do you think is the criteria used to define this clusters ? PS: it is not the height as in the previous examples.
+
+__End of document__

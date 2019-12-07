@@ -1,0 +1,212 @@
+---
+title: "Quality control"
+subtitle: "Workshop on RNA-Seq"
+author: "`r paste0('<b>Johan Reimegård</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: default
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+In this tutorial we will go through some of the key steps in performing a quality control on your samples. We will start with the read based quality control, using FastQC, and continue with mapping based QC using RseqQC.  
+
+All the data you need for this lab is available in the folder:
+`/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/data/`.
+
+This folder contains:
+
+* Two FASTQ files, with mate pair libraries for sample 1 that is used in several of the other exercises, See section **Lab**.
+* BAM file and BAM-file index (`bam.bai`) for that sample mapped to the human genome using STAR.
+* count_table.txt - a table with number of reads per gene, using Ensembl annotations, created with HTseq-count.
+
+# Before mapping
+## FastQC on single file
+
+FastQC aims to provide a simple way to do some quality control checks on raw sequence data coming from high throughput sequencing pipelines. It provides a modular set of analyses which you can use to get a quick impression of whether your data has any problems of which you should be aware before doing any further analysis.
+
+The main functions of FastQC are:
+
+* Import of data from BAM, SAM or FASTQ files (any variant)
+* Providing a quick overview to tell you in which areas there may be problems
+* Summary graphs and tables to quickly assess your data
+* Export of results to an HTML-based permanent report
+* Offline operation to allow automated generation of reports without running the interactive application
+
+You can read more about the program and have a look at example reports at [the FastQC website](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/).
+
+<i class="fas fa-lightbulb"></i> This program can be used for any type of NGS data, not only RNA-seq.
+
+To run FastQC on UPPMAX you first need to load the module:
+
+```{sh,eval=FALSE,block.title=TRUE}
+module load bioinfo-tools
+module load FastQC/0.11.5
+
+# To see help information on the FastQC package:
+fastqc --help
+# Run for one FASTQ file:
+fastqc -o outdir fastqfile
+
+# Run on multiple FASTQ files:
+fastqc -o outdir fastqfile1 fastqfile2 etc.
+
+# You can use wildcards to run on all FASTQ files in a directory:
+fastqc -o outdir /proj/b2013006/INBOX/FASTQ/*fastq
+```
+
+In this case, only run FastQC on one file and take a look at the output. We have already prepared the outputs for all of the other samples. These can be copied from UPPMAX at:
+`/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/fastQC/`.
+
+<i class="fas fa-clipboard-list"></i> Take a look at some other file and see if it look similar in quality.
+
+## MultiQC on FastQC reports
+
+MultiQC is a program that creates summaries over all samples for several different types of QC-measures. You can read more about the program [here](http://multiqc.info/). It will automatically look for output files from the supported tools and make a summary of them. You can either go to the folder where you have the Fastqc output or run it with the path to the folder.  
+
+```{sh,eval=FALSE,block.title=TRUE}
+module load bioinfo-tools
+module load MultiQC/1.5
+multiqc /folder/with/FastQC_results/
+# in this case the folder is /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/fastQC/
+```
+
+This should create 1 folder named `multiqc_data` with some general stats, links to all files etc. And one file `multiqc_report.html`.
+
+<i class="fas fa-clipboard-list"></i> Have a look at the report you created. Alternatively, you can find the version we ran on UPPMAX at `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/fastQC/multiqc_report.html`.
+
+# After mapping
+
+These steps are to be carried out after the fastq files have been aligned to the reference.
+
+## Map logs
+
+The first step after you have finished your mapping is to get a general feel of how the mapping went. Most mapping programs produce some sort of summary output, either to a file or to standard out. For example, if using the mapper Bowtie you need to pipe that output to a file to see the summary statistics. In this case, the samples were mapped with STAR, that by default creates a file called **Log.final.out** in the mapping directory. Here is one example of **Log.final.out** content:
+
+```
+                           Started job on |       Oct 16 20:21:39
+                       Started mapping on |       Oct 16 20:27:04
+                              Finished on |       Oct 16 20:29:14
+ Mapping speed, Million of reads per hour |       366.35
+
+                    Number of input reads |       13229276
+                Average input read length |       202
+                              UNIQUE READS:
+             Uniquely mapped reads number |       11913568
+                  Uniquely mapped reads % |       90.05%
+                    Average mapped length |       198.41
+                 Number of splices: Total |       9523918
+      Number of splices: Annotated (sjdb) |       9443434
+                 Number of splices: GT/AG |       9432792
+                 Number of splices: GC/AG |       71488
+                 Number of splices: AT/AC |       10675
+         Number of splices: Non-canonical |       8963
+                Mismatch rate per base, % |       0.33%
+                   Deletion rate per base |       0.01%
+                  Deletion average length |       1.75
+                  Insertion rate per base |       0.01%
+                 Insertion average length |       1.39
+                       MULTI-MAPPING READS:
+  Number of reads mapped to multiple loci |       356839
+       % of reads mapped to multiple loci |       2.70%
+  Number of reads mapped to too many loci |       2102
+       % of reads mapped to too many loci |       0.02%
+                            UNMAPPED READS:
+ % of reads unmapped: too many mismatches |       0.00%
+           % of reads unmapped: too short |       7.21%
+               % of reads unmapped: other |       0.02%
+```
+
+The most important parts to look at are the proportion of uniquely mapping, multi-mapping and unmapped reads. We ideally want the uniquely mapping reads to be as high as possible. Multi-mapping or unmapped reads could indicate poor quality of the reads, adapter contamination or other reasons for low quality scores.
+
+Another key point is the mismatch and indel rates. If they are very high, this could indicate that there has been some problems during the sequencing or during the library preparation.
+
+## MultiQC summary of logs
+
+After mapping with star of all samples, we ran MultiQC to summarize all the logfiles. In this case we had a folder structure with **sample_name/Log.final.out**, so to make sure that MultiQC understands what is the sample name, we used the `-dd 2` command (e.g. it splits up the path and names the samples after the second last part).
+
+```{sh,eval=FALSE,block.title=TRUE}
+# OBS! do not run now, just for reference
+module load bioinfo-tools
+module load MultiQC/0.8
+multiqc -d -dd 2 .
+```
+
+You can find the output from that MultiQC report on UPPMAX   `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/output/multiqc_report_star.html`.
+
+## RSeQC
+
+The RSeQC package is one of many tools to get basic mapping statistics from your BAM files. This package provides a number of useful modules that can comprehensively evaluate high throughput sequence data, especially RNA-seq data. Some basic modules quickly inspect sequence quality, nucleotide composition bias, PCR bias and GC bias, while RNA-seq specific modules evaluate sequencing saturation, mapped reads distribution, coverage uniformity, strand specificity, etc. You can read more about the package at [the RSeQC website](http://rseqc.sourceforge.net/).
+
+The RSeQC package contains many steps that are equivalent to FastQC analysis, e.g. read quality, sequence composition (NVC), GC-bias etc, but the results may be different since many of the low quality reads may not map to the genome and therefore will not be included in the BAM file.
+
+Running all the QC steps takes a long time, so to save time, we only run the QC on a random selection of 10% of the reads. Random selection of reads can be performed with many different programs. Here we will use samtools:
+
+```{sh,eval=FALSE,block.title=TRUE}
+samtools view -b -s 0.1 Aligned.out.sorted.bam > Aligned.out.0.1.bam
+# then index the bamfile
+# (it is already sorted since you extracted reads from a sorted BAM file)
+samtools index Aligned.out.0.1.bam
+```
+
+The RSeQC package is already installed on UPPMAX. Load the package:
+
+```{sh,eval=FALSE,block.title=TRUE}
+module add bioinfo-tools
+module add rseqc/2.6.4
+```
+
+Some steps of the RSeQC package require a file with gene annotations in BED format. These can be downloaded from sources such as UCSC, RefSeq and Ensembl. In this case, the RSeQC team have already created annotation files in some common formats that can be downloaded from their website, but if you have data for a less studied organism you may need to create a BED-file on your own.
+
+Two annotation files have already been downloaded into `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/annotation` for you to use. These are: **hg19.HouseKeepingGenes.bed** and **hg19_RefSeq.bed**. The folder also contains a reduced annotation file **hg19_RefSeq_top1000.bed** to speed things up.
+
+In this tutorial, we will not run all the different parts of the RSeQC package, only the most relevant ones for this experiment. The different scripts in the RSeQC package are well described on [their website](http://rseqc.sourceforge.net/), so read the instructions there and specify the input/output files to fit your file names and folder structure.
+
+The steps that we are going to run are:
+
+1. geneBody_coverage.py
+2. inner_distance.py
+3. junction_saturation.py
+4. read_distribution.py
+
+<i class="fas fa-exclamation-circle"></i> The **geneBody_coverage.py** script takes a very long time to run, so we have created a subsection of annotations to run it on. Use the file ` hg19_RefSeq_top1000.bed`. This file was created with the command:
+
+```{sh,eval=FALSE,block.title=TRUE}
+head -n 1000 hg19_RefSeq.bed > hg19_RefSeq_top1000.bed
+```
+
+<i class="fas fa-lightbulb"></i> When running **read_distribution.py**, an outfile cannot be specified. Instead you need to pipe (`>`) the output to a file, or look at the output in the terminal.
+
+<i class="fas fa-clipboard-list"></i> Run RSeQC for one sample and have a look at your output.
+
+* Do most of your reads map to genes?
+* Do you have even coverage along the genes?
+* Do the reads cover most splice junctions?
+* Based on the inner distance plots, what do you think the average fragment size of the libraries was?
+
+## MultiQC summary of RSeQC output
+
+We have ran RSeQC and MultiQC on all the samples in the project. The summary report from MultiQC can be found on UPPMAX `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/output/multiqc_report_rseqc.html` .
+
+It was created using commands:
+
+```{sh,eval=FALSE,block.title=TRUE}
+multiqc -f -d -dd 3 .
+# since folder structure like: sample_name/qc/read_distribution.txt and so on for the other file types.
+```
+
+<i class="fas fa-clipboard-list"></i> Have a look at the reports. What is your conclusion, do your samples look good? Is there anything that looks strange in any sample, or do you feel comfortable using all the samples in your analysis?
+
+**End of document**

@@ -1,0 +1,215 @@
+---
+title: "Kallisto & Sleuth"
+subtitle: "Workshop on RNA-Seq"
+author: "`r paste0('<b>Johan Reimegård</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: default
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+This workflow runs transcript-level quantification using Kallisto followed by differential expression analysis using Sleuth.
+
+# Kallisto
+
+**Kallisto** is an "alignment-free" RNA-Seq quantification method that runs very fast with a small memory footprint, so that it can be run on most laptops. It is a command-line program that can be downloaded as binary executables for Linux or Mac, or in source code format. For a first insight into the program, read [here](https://liorpachter.wordpress.com/2015/05/10/near-optimal-rna-seq-quantification-with-kallisto/) and for the published article, see [here](http://www.nature.com/nbt/journal/vaop/ncurrent/full/nbt.3519.html). There is also a preprint [here](http://arxiv.org/abs/1505.02710).
+
+Kallisto is geared towards quantification on the transcript (isoform) level, rather than the gene-level (although the latter can also be done by post-processing Kallisto output.) However, read assignment to transcript isoforms cannot (in general) be done unambiguously, so there is an intrinsic "quantification noise" or variability in this process. Kallisto can thus be run either in a single step (which is very fast) or in "bootstrap" mode (which takes longer, but can be done on several processors in parallel) in order to get uncertainty estimates for the expression levels - a kind of error bars for the quantification process. Running with bootstraps is mandatory if you want to perform differential expression analysis of isoforms with Sleuth (see below).
+
+Kallisto is primarily meant for quantification of an existing set of FASTA sequences, that is, it does not perform transcript assembly and it cannot quantify the expression of novel transcripts that are not in the transcript index that you provide to it. With that said, you can of course use contigs from an assembly that you have produced in some other program in your Kallisto index. It would also be possible to use the software for eg: metagenomics or metatranscriptomics quantification.
+
+## Running Kallisto
+
+
+To load the Kallisto module on UPPMAX, execute
+
+```{sh,eval=FALSE,block.title=TRUE}
+module load bioinfo-tools
+module load kallisto/0.43.1
+```     
+
+
+
+Now we will download and merge human cDNA and ncDNA files from ENSEMBL in order to build a Kallisto transcript index. Note that we can concatenate the two gzipped files without unpacking them first. We use both the protein-coding transcripts and the non-coding ones to be able to capture more of the transcriptome.
+
+```{sh,eval=FALSE,block.title=FALSE}
+wget ftp://ftp.ensembl.org/pub/current_fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz
+wget ftp://ftp.ensembl.org/pub/current_fasta/homo_sapiens/ncrna/Homo_sapiens.GRCh38.ncrna.fa.gz
+cat Homo_sapiens.GRCh38.cdna.all.fa.gz Homo_sapiens.GRCh38.ncrna.fa.gz > Homo_sapiens.GRCh38.rna.fa.gz
+```
+
+Now we can build the transcriptome index.
+
+```{sh,eval=FALSE,block.title=FALSE}
+kallisto index -i hsGRCh38_kallisto Homo_sapiens.GRCh38.rna.fa.gz
+```
+
+It should take less than 10 minutes.
+
+Next, copy the FASTA files from this uppmax path: `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/diffExp/FASTQ/`. When that is done, it's time for quantifying the FASTQ files against our Kallisto index with bootstrapping (for later use in Sleuth). You could do that one by one, with a command like
+
+```{sh,eval=FALSE,block.title=FALSE}
+kallisto quant -i hsGRCh38_kallisto -t 4 -b 100 7_111116_AD0341ACXX_137_1_index1_1.fastq.gz 7_111116_AD0341ACXX_137_1_index1_2.fastq.gz -o sample1
+```
+
+**OR** in a bash loop:
+
+```{sh,eval=FALSE,block.title=FALSE}
+for i in {1..12};
+  do
+    kallisto quant -i hsGRCh38_kallisto -t 4 -b 100 7_111116_AD0341ACXX_137_${i}_index${i}_1.fastq.gz 7_111116_AD0341ACXX_137_${i}_index${i}_2.fastq.gz -o sample${i};
+  done
+```
+
+In this example, we put `-t 4` so we can use up to four processors in the bootstrapping. You may want to modify this value according to the machine you are working on. If you wanted to run Kallisto without bootstraps and just get expression values on a pair of FASTQ files, you would run something like
+
+```{sh,eval=FALSE,block.title=FALSE}
+kallisto quant -i hsGRCh38_kallisto sample1_reads1.fastq sample1_reads2.fastq -o sample1
+```
+
+Running Kallisto on all the 12 samples with 100 bootstraps may take an hour or so, depending on your machine and settings.
+
+# Sleuth
+
+**Sleuth** is a companion package for Kallisto which is used for differential expression analysis of transcript quantifications from Kallisto. While you could use other differential expression packages such as **Limma** or **DESeq2** to analyse your Kallisto output, Sleuth also takes into consideration the inherent variability in transcript quantification as explained above. Sleuth also allows the modeling of covariates such as batch, individual, tissue type etc. in the same way as **DESeq2/edgeR/Limma**, which is useful for experimental designs with multiple varying factors.
+
+Sleuth was designed to work on output from Kallisto (rather than count tables, like DESeq2, or BAM files, like CuffDiff2), so we need to run Kallisto first. (Note that the outputs from other RNA-seq quantifiers like [Salmon](https://github.com/COMBINE-lab/salmon) or [Sailfish](https://github.com/kingsfordgroup/sailfish) can also be used with Sleuth via the [wasabi](https://github.com/COMBINE-lab/wasabi) package.)
+
+Unlike Kallisto, Sleuth is an R package. At the end of a Sleuth analysis, it is possible to view a dynamical graphical presentation of the results where you can explore the differentially expressed transcripts in an intuitive way.
+
+It is still early days for Sleuth and it has not been extensively benchmarked against other packages yet. Let's try it on the same A431 data as in the DESeq2 lab!
+
+## Running Sleuth
+
+Here we give an example workflow for a DE analysis in Sleuth based on the A431 data that we are using for all the DE analysis labs. Start by copy the results from uppmax `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/diffExp/kallisto_results.tar.gz`. Download and extract the whole folder and make a note of where it is. We use the path `./data/kallisto_results/` relative to this document.
+
+The Sleuth analysis is done entirely in R, so start your R environment and begin by installing the dependencies. This only needs to be done the first time, of course.
+
+```{r,eval=FALSE,block.title=TRUE}
+source("http://bioconductor.org/biocLite.R")
+biocLite(rhdf5)
+install.packages("devtools")
+library(devtools)
+devtools::install_github("pachterlab/sleuth")
+```
+
+We start by specifying paths to the Kallisto directories. We have the directory structure like below:
+
+```
+kallisto_results\
+  +-- sample1\
+  |  +-- abundance.h5
+  |  +-- abundance.tsv
+  |  +-- run_info.json
+  +-- sample2\
+  +-- sample3\
+...
+```
+
+And we use the script below to generate the paths and labels.
+
+```{r,eval=FALSE,block.title=TRUE}
+base_dir <- "./data/kallisto_results"
+samples <- paste0("sample", 1:12)
+kal_dirs <- sapply(samples, function(id) file.path(base_dir, id))
+kal_dirs
+```
+
+```
+                           sample1                            sample2
+ "./data/kallisto_results/sample1"  "./data/kallisto_results/sample2"
+                           sample3                            sample4
+ "./data/kallisto_results/sample3"  "./data/kallisto_results/sample4"
+                           sample5                            sample6
+ "./data/kallisto_results/sample5"  "./data/kallisto_results/sample6"
+                           sample7                            sample8
+ "./data/kallisto_results/sample7"  "./data/kallisto_results/sample8"
+                           sample9                           sample10
+ "./data/kallisto_results/sample9" "./data/kallisto_results/sample10"
+                          sample11                           sample12
+"./data/kallisto_results/sample11" "./data/kallisto_results/sample12"
+```
+
+Now it's time to fill in metadata about the samples. We can use a similar assignment as in the DESeq2 exercise.
+
+```{r,eval=FALSE,block.title=TRUE}
+s2c <- data.frame(path=kal_dirs,sample=samples,timepoint=rep(c("ctrl","t2h","t6h","t24h"),each=3),stringsAsFactors=FALSE)
+```
+
+Again, if there were other experimental factors involved, these could have been modelled here as well.
+
+Now we read in the transcript-gene mappings file. This was [previously](lab_annotations.html) downloaded.
+
+```{r,eval=FALSE,block.title=TRUE}
+t2g <- read.delim("./data/human_transcripts.txt",header=TRUE,sep="\t",stringsAsFactors=F)
+t2g <- dplyr::rename(t2g,target_id=ensembl_transcript_id,
+                     ens_gene=ensembl_gene_id,ext_gene=external_gene_name)
+```
+
+The next command will read the Kallisto output files, connect them with metadata, and set up a linear model for analyzing the expression data.
+
+```{r,eval=FALSE,block.title=TRUE}
+library("sleuth")
+so <- sleuth_prep(s2c,~timepoint,target_mapping=t2g)
+```
+
+```
+It appears that you are running Sleuth from within Rstudio.
+Because of concerns with forking processes from a GUI, 'num_cores' is being set to 1.
+If you wish to take advantage of multiple cores, please consider running sleuth from the command line.reading in kallisto results
+dropping unused factor levels
+............
+normalizing est_counts
+47352 targets passed the filter
+normalizing tpm
+merging in metadata
+summarizing bootstraps
+............
+```
+
+Next, we fit the linear model and test for one of the model coefficients. In this case we test the 24h time point versus the control.
+
+```{r,eval=FALSE,block.title=TRUE}
+so <- sleuth_fit(so)
+so <- sleuth_wt(so,which_beta="timepointt24h")
+```
+
+```
+fitting measurement error models
+shrinkage estimation
+1 NA values were found during variance shrinkage estimation due to mean observation values outside of the range used for the LOESS fit.
+The LOESS fit will be repeated using exact computation of the fitted surface to extrapolate the missing values.
+These are the target ids with NA values: ENST00000465860
+computing variance of betas
+```
+
+Now we should be able to visualize the results:
+
+```{r,eval=FALSE,block.title=TRUE}
+sleuth_live(so)
+```
+
+There are lots of things to look at here - explore according to your interests! Some things you might try are e.g. the PCA and sample heatmap options in the map menu, the test table in the analyses menu (which contains a ranked list of the differentially expressed genes), or the gene view in the same menu.
+
+If you want to delve further into time series analysis with Sleuth (after all, we have just compared two time points here, whereas we have four in all), you might want to read this [excellent blog post](http://www.nxn.se/valent/timecourse-analysis-with-sleuth) by Valentine Svensson. Note that Sleuth is still under development, so some of the commands may be a bit different.
+
+# Session info
+
+```{r,echo=FALSE}
+sessionInfo()
+```
+
+**End of document.**

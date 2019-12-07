@@ -1,0 +1,37 @@
+name: Workshop on RNA-Seq
+favicon: assets/favicon.png
+output_dir: docs
+exclude: ["data","docs","README.md","schedule.csv","LICENSE"]
+navbar:
+  title: "<b>NBIS • Workshop on RNA-Seq</b>"
+  logo:
+    image: "assets/logo-white.svg"
+    href: https://nbisweden.github.io/course_rnaseq
+  right:
+    - text: Home
+      icon: fa-home
+      href: index.html
+    - text: Schedule
+      icon: fa-clipboard-list
+      href: schedule.html
+    - text: Lab
+      icon: fa-flask
+      href: lab.html
+    - text: Precourse
+      icon: fa-pencil-alt
+      href: precourse.html
+    - text: Info
+      icon: fa-info
+      href: info.html
+output:
+  bookdown::html_document2:
+    theme: flatly
+    highlight: tango
+    df_print: default
+    code_folding: none
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+    include:
+      after_body: assets/footer-lab.html

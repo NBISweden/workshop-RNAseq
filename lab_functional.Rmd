@@ -1,0 +1,254 @@
+---
+title: "Gene Function Annotation"
+subtitle: "Workshop on RNA-Seq"
+author: "`r paste0('<b>Paulo Czarnewski</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: paged
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+# Loading data
+
+<div class="instruction">
+<i class="fas fa-exclamation-circle"></i> The cpm data and metadata can be downloaded from [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). The files needed are **cpm.csv** and **metadata_raw.csv**. Place the files in a directory named `data` in your current working directory.
+</div>
+
+Loading packages and data.
+
+```{r}
+library(pheatmap)
+library(rafalib)
+library(DESeq2)
+library(pvclust)
+library(biomaRt)
+library(enrichR)
+library(fgsea)
+
+metadata <- read.csv2("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T)
+
+#Load data and metadata
+cpm <- read.csv2("data/cpm.csv",row.names = 1)
+```
+
+CPM counts are converted to log scale and row-wise variance is computed.
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+logcpm <- log2( cpm + 1)
+dim(logcpm)
+
+# Gene selection
+vars <- apply(logcpm,1,var)
+vars <- sort( vars , decreasing=T)
+top_var <- names( vars ) [1:500]
+```
+
+<div class="instruction">
+<i class="fas fa-exclamation-circle"></i> Here you would select genes based on p-values and logFC you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are selecting only the top 500 variable genes.
+</div>
+
+***
+## Clustering on Heatmap
+
+Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the `pheatmap()` function, which by default will do the clustering of the rows and columns.
+
+```{r,results='hide',block.title=TRUE,fig.height=7,fig.width=5}
+cl <- pheatmap( logcpm[top_var,] , scale = "row" , color = colorRampPalette(c("navy","white","firebrick"))(90), border_color = NA, cluster_cols = F,cutree_rows = 2)
+
+gene_clusters <- cutree(cl$tree_row,k = 2)
+```
+
+***
+# Functional Analysis
+
+R-packages | Comments
+--- | ---
+topGO | GO
+goana | GO
+GOseq | GO
+topKEGG | KEGG
+kegga | KEGG
+enrichR | GO, KEGG, many others
+piano | GO, KEGG, GSEA, many others, enrichment consensus
+ClusterProfiler | GO, KEGG, GSEA, many others, nice plots!
+Pathview | Nice visualization for KEGG pathways
+fgsea | GSEA
+
+## enrichR
+
+You can list all available databases by using the command `listEnrichrDbs()` function.
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+library(enrichR)
+
+genes_cluster1 <- names(gene_clusters)[gene_clusters == 1]
+genes_cluster2 <- names(gene_clusters)[gene_clusters == 2]
+
+head(logcpm[genes_cluster1,])
+head(logcpm[genes_cluster2,])
+```
+
+### GO enrichment (with enrichR)
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+go_cluster2 <- enrichr(genes = genes_cluster2,databases = "GO_Biological_Process_2018")
+go_cluster2 <- go_cluster2$GO_Biological_Process_2018
+go_cluster2 <- go_cluster2[order(go_cluster2$P.value),]
+go_cluster2[1:5,]
+
+mypar(1,1,mar=c(2,20,2,2))
+barplot( -log10(go_cluster2$P.value[15:1]), horiz = T, names.arg = go_cluster2$Term[15:1],las=1)
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* Which is the most enriched GO term for cluster1?
+* How many genes from your data set were detected in this most GO term?
+What is the percentage of genes out of the total list that defines the GO term?
+* Which genes from your data set belong to this most enriched GO term?
+* Some genes make part of several GO terms, can you list some?
+
+### KEGG enrichment (with enrichR)
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+kegg_cluster2 <- enrichr(genes = genes_cluster2,databases = "KEGG_2019_Human")
+kegg_cluster2 <- kegg_cluster2$KEGG_2019_Human
+kegg_cluster2 <- kegg_cluster2[order(kegg_cluster2$P.value),]
+kegg_cluster2[1:5,]
+
+mypar(1,1,mar=c(2,20,2,2))
+barplot( -log10(kegg_cluster2$P.value[15:1]), horiz = T, names.arg = kegg_cluster2$Term[15:1],las=1)
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* Which is the most enriched KEGG pathway for cluster1?
+* How many genes from your data set were detected in this most enriched KEGG pathway ?
+* What is the percentage of genes out of the total list that defines the KEGG pathway ?
+* Which genes from your data set belong to this most enriched KEGG pathway ?
+* Some genes make part of several KEGG pathways, can you list some?
+* Taking the results from GO term enrichment and the KEGG enrichment, what is a most likely function happening in your data set?
+
+***
+## GSEA
+
+MSigDB is one of the largest curated databases of signatures and pathways created by the BROAD INSTITUTE. The Molecular Signatures Database (MSigDB) is accessible [here](http://software.broadinstitute.org/gsea/msigdb/index.jsp).
+
+For this exercise, you can download a couple of data sets:
+
+Database | Link to Download
+--- | ---
+KEGG | [c2.cp.kegg.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/c2.cp.kegg.v6.2.symbols.gmt)
+GO_BP | [c5.bp.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/c5.bp.v6.2.symbols.gmt)
+HALLMARK | [h.all.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/h.all.v6.2.symbols.gmt)
+
+<div class="instruction">
+<i class="fas fa-exclamation-circle"></i> For this exercise, the database files are available at [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). You need the whole directory labelled **MSigDB_files**. Place this directory under a directory named `data` in your current working directory. Otherwise, set the path appropriately.
+</div>
+
+As you could already notice, the differences in gene expression between days t0 to t24 are very clear, but not the ones from t2. Here we will illustrate a gene set enrichment comparing t2 to t0 in order to explore which pathways are UP or DOWN regulated at the first 2 hours of the experiment.
+
+<div class="instruction">
+<i class="fas fa-exclamation-circle"></i> Here you would use the logFC values you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are using a simple difference in mean expression.
+</div>
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+# Create a gene rank based on the gene expression
+mean_t0 <- rowMeans( logcpm[,metadata$Time == "t0"] )
+mean_t2 <- rowMeans( logcpm[,metadata$Time == "t2"] )
+gene_rank <- mean_t0 - mean_t2
+
+# Load hallmark pathways
+hallmark_pathways <- gmtPathways("data/MSigDB_files/h.all.v6.2.symbols.gmt.txt")
+```
+
+Once our list of genes are sorted (from highest to lowest expression in t2), we can proceed with the enrichment itself. Here, we will be using the `fgsea()` function. This will result in a table containing information for several pathways. We can then sort and filter those pathways to visualize only the top ones. You can select/filter them by either `p-value` or normalized enrichemnet score (`NES`).
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+# Perform enrichemnt analysis
+fgseaRes <- fgsea( pathways=hallmark_pathways, stats=gene_rank, minSize=15, maxSize=500, nperm=10000)
+
+# Filter the results table to show only the top 10 UP and DOWN regulated processes (optional)
+topPathwaysUp <- fgseaRes[ES > 0][head(order(pval), n=10), pathway]
+topPathwaysDown <- fgseaRes[ES < 0][head(order(pval), n=10), pathway]
+topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
+
+# Nice summary table (shown as a plot)
+plotGseaTable(hallmark_pathways[topPathways], gene_rank, fgseaRes, gseaParam = 0.5)
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* Which is the most significantly up-regulated pathway at time t2?
+* What do the length of the black bars mean?
+* Is there any pathway that is significantly down-regulated at t2? Which columns tells you what is Up of downregulated?
+* Which is the most enriched pathway at time t6?
+* What happens if you do `t2-t0` instead of `t0-t2` ? What changes and why?
+
+Checking for individual enrichment:
+
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+topPathways
+
+# Nice plot to see enrichment of one specific pathway
+plotEnrichment(hallmark_pathways[["HALLMARK_MYC_TARGETS_V2"]],  gene_rank)
+```
+
+<i class="fas fa-comments"></i> **Exploratory Questions**
+
+* What do the black lines in the X-axis mean?
+* By looking at the green line distribution, and the comparison made (t0 - t2), at which time point is this pathways enriched.
+
+<i class="fas fa-comments"></i> **Exploratory Questions (optional)**
+
+* What if instead of the hallmark gene set, you use the GO? Try that.
+* How different are the results from EnrichR and GSEA using GO annotation? Remember to use the same comparison (i.e. t2 vs t0).
+
+***
+## Online enrichment tools:
+
+Below you can find a list with the most commonly used online enrichment tools. Each one differs a bit on what they can do. The packages are sorted in order, we would like you to work on the workshop.
+
+Package | link | Database | Comment
+--- | --- | --- | ---
+Enrichr | http://amp.pharm.mssm.edu/Enrichr/ | GO, KEGG, TF,  many others  | Extensive libraries
+GOrilla | http://cbl-gorilla.cs.technion.ac.il | GO | Support for REVIGO
+REVIGO | http://revigo.irb.hr | GO | Summarises redundancy
+DAVID | https://david.ncifcrf.gov | GO, KEGG, TF, many others | *Not updated
+KEGG | https://www.genome.jp/kegg/ | KEGG | Shows the pathways
+Reactome | https://www.reactome.org | KEGG-like | Shows the pathways/reactions
+Panther | http://www.pantherdb.org/about.jsp | GO | Evolutionary conserved GO annotation
+
+In case you want to test the online tools above, you can use the code below to copy the gene vector into memory, and then paste it to the webtools. Should work for both Mac and Windows users.
+
+```{r,eval=F,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+clip <- pipe("pbcopy", "w")
+write.table(genes_cluster1, file=clip, sep = '\t', row.names = FALSE)         
+close(clip)
+```
+
+***
+## Protein-protein interactions
+
+In the course we will not have much time to work on gene expression networks. However, there are some nice databases that allow you to easily visualize protein-protein interactions. Please paste the list of genes using the command above into those sites to have a visual insight on how the Up- or Down- regulated genes interact with each other.
+
+Database | Link
+--- | ---
+GeneMANIA | https://genemania.org
+STRING-DB | https://string-db.org
+MIST | https://fgrtools.hms.harvard.edu/MIST/help.jsp
+
+**End of document**
