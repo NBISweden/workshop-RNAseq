@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Johan Reimegård • 14-May-2019" />
+
+
+<title>Mapping</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Mapping</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+<h4 class="author"><b>Johan Reimegård</b> • 14-May-2019</h4>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<div id="star" class="section level1">
+<h1><span class="header-section-number">1</span> STAR</h1>
+<p>FastQ reads are mapped to a reference genome using splice-aware RNA-seq aligner STAR.</p>
+<div id="data" class="section level2">
+<h2><span class="header-section-number">1.1</span> Data</h2>
+<p>All FASTQ files that you will need for this exercise can be found in <code>/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/isoform/referenceBased/data</code> on UPPMAX.</p>
+<p>If you want to map more files for practice, you can continue with files for additional samples, found in <code>/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/isoform/RAB11FIP5_fastqFiles</code> on UPPMAX.</p>
+<p>A pre-built human genome index for STAR is found here <code>/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/reference/hg19_Gencode14.overhang75</code> on UPPMAX.</p>
+</div>
+<div id="mapping" class="section level2">
+<h2><span class="header-section-number">1.2</span> Mapping</h2>
+<p>Here we will map the reads to the hg19 reference genome using a popular RNA-seq aligner, <strong>STAR</strong>. There are many many features that can be tweaked using STAR. For more information concerning different features that can be used see the <a href="https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf">manual</a>.</p>
+<p>Read below for the flags we use for this exercise. Remember to change filenames accordingly so that you can run your program properly and know which files you have used.</p>
+<p>To load the STAR module on UPPMAX, execute</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">module</span> load bioinfo-tools
+<span class="ex">module</span> load module load star/2.5.3a</code></pre></div>
+</div>
+<p>Now you can map the reads from one of the samples (or several; it’s up to you which ones) using a command such as the one below.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">mkdir</span> outDir
+<span class="ex">STAR</span>  --runThreadN N --outSAMstrandField intronMotif --genomeDir /path/to/index \
+  --readFilesIn /path/to/reads/sample_1.fastq /path/to/reads/sample_2.fastq \
+  --outFileNamePrefix outDir/</code></pre></div>
+</div>
+<p>Flags used are</p>
+<ul>
+<li><code>--runThreadN N</code> specifies the number of threads that will be used by the program.</li>
+<li><code>--outSAMstrandField intronMotif</code> adds information (to the SAM output file) required for downstream analysis with Cufflinks</li>
+<li><code>--genomeDir /path/to/index</code> specifies the directory containing the pre-built genome index</li>
+<li><code>--readFilesIn /path/to/reads/sample_1.fastq /path/to/reads/sample_2.fastq</code> is where you should list the FASTQ files that you wish to map</li>
+<li><code>--outFileNamePrefix outDir</code> specifies the output directory</li>
+</ul>
+<p>This should run fairly quickly and put a file called <code>Aligned.out.sam</code> in the directory that you specified with <code>--outFileNamePrefix</code>.</p>
+<p><i class="fas fa-comments"></i> <strong>Try to answer the following:</strong></p>
+<ul>
+<li>How many RNA-seq read pairs were provided as input to STAR?</li>
+<li>How many of those read pairs were mapped by STAR?</li>
+<li>How many reads were uniquely mapped, i.e. mapped to one genomic location?</li>
+<li>In general, do the alignments seem to be good? I.e. do they cover the entire reads and contain few mismatches?</li>
+</ul>
+</div>
+</div>
+<div id="hisat2" class="section level1">
+<h1><span class="header-section-number">2</span> HISAT2</h1>
+<div id="data-1" class="section level2">
+<h2><span class="header-section-number">2.1</span> Data</h2>
+<p>All FASTQ files that you will need for this exercise can be found in <code>/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/isoform/referenceBased/data</code> on UPPMAX.</p>
+<p>A pre-built human genome index for HISAT2 is found here <code>/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/reference/hg19_hisat2</code> on UPPMAX.</p>
+</div>
+<div id="mapping-1" class="section level2">
+<h2><span class="header-section-number">2.2</span> Mapping</h2>
+<p>Here, you will map the reads to the hg19 reference genome using the RNA-seq aligner <strong>HISAT2</strong>. Note that if you are using your own non-human data, you need to use a reference genome for the corresponding species.</p>
+<p>There are many features that can be tweaked using HISAT2. For more information on all flags that can be used go <a href="https://ccb.jhu.edu/software/hisat2/manual.shtml">here</a>.</p>
+<p>Read below for the flags we use for this exercise. Remember to change filenames accordingly so that you can run your program properly and know which files you have used.</p>
+<p>To load the HISAT2 module on UPPMAX, execute:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash">     <span class="ex">module</span> load bioinfo-tools      # This is to get access to all bioinformatics tools available on UPPMAX
+     <span class="ex">module</span> load HISAT2/2.1.0       # The specific mapping program</code></pre></div>
+</div>
+Now you can map the reads from one of the samples (or several; it’s up to you which ones) using a command such as the one below.
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash">
+    <span class="fu">mkdir</span> outDir
+
+    <span class="ex">hisat2</span> -p N --dta-cufflinks -x path/to/index/fileName \
+      -1 path/to/reads/sample_1.fastq -2 path/to/reads/sample_2.fastq \
+      -S outDir/hisat2.sam --summary-file outDir/hisat2_summary.txt</code></pre></div>
+</div>
+<p>The flags used are:</p>
+<ul>
+<li><code>-p N</code> specifies the number of threads that will be used by the program</li>
+<li><code>--dta-cufflinks</code> will generate output that is optimal for downstream analysis with Cufflinks</li>
+<li><code>-x /path/to/index/fileName</code> specifies the path to the pre-built genome index. Note that the index consists of multiple files ending in <code>.ht2</code>, and only the shared part of the filename should be indicated (e.g. <code>genome</code> if the files are called <code>genome.1.ht2</code>, <code>genome.2.ht2</code>, etc).</li>
+<li><code>-1 /path/to/reads/sample_1.fastq</code> is where you should list the first-read FASTQ files that you wish to map</li>
+<li><code>-2 /path/to/reads/sample_2.fastq</code> is where you should list the second-read FASTQ files that you wish to map</li>
+<li><code>-S outDir/hisat2.sam</code> is the name of the result file that will be created</li>
+<li><code>--summary-file outDir/hisat2_summary.txt</code> is the name of a file for summary information about the alignments</li>
+</ul>
+<p>This should run fairly quickly and create the files you specified with <code>-S</code> and <code>--summary-file</code>.</p>
+<p>If everything worked, HISAT2 should report some statistics about how many reads were mapped, on your terminal and in the summary file.</p>
+<p><i class="fas fa-comments"></i> <strong>Try to answer the following:</strong></p>
+<ul>
+<li>How many RNA-seq read pairs were provided as input to HISAT2?</li>
+<li>How many of those read pairs were mapped by HISAT2?</li>
+<li>How many reads were uniquely mapped, i.e. mapped to one genomic location?</li>
+<li>In general, do the alignments seem to be good? I.e. do they cover the entire reads and contain few mismatches?</li>
+</ul>
+<p>To answer these questions, you should look at the input to and output from HISAT2. You may also need to consult the <a href="https://ccb.jhu.edu/software/hisat2/manual.shtml">HISAT2 manual</a>, <a href="https://en.wikipedia.org/wiki/FASTQ_format">information about the FASTQ format</a> and the <a href="https://github.com/samtools/hts-specs">SAM format specification</a>.</p>
+</div>
+</div>
+<div id="converting-sam-files-to-bam" class="section level1">
+<h1><span class="header-section-number">3</span> Converting SAM files to BAM</h1>
+<p>If you were able to run HISAT2 and STAR successfully, this should have produced files with mapped reads in SAM format. These files need to be converted to <em>sorted</em> and <em>indexed</em> BAM files for efficient downstream analysis.</p>
+<p>You should try to give the BAM files representable names, in order to make it easier to manage your files. A good naming scheme for BAM files is to use names that indicate what you mapped and how. As an example, if you mapped sample 12 using HISAT2 you could create a file named <code>sample12_RAB11FIP5.hg19.HISAT2.bam</code>.</p>
+<p>The most commonly used tool for converting from SAM to BAM is <a href="http://www.htslib.org/doc/samtools.html">Samtools</a> (follow the link for more information about Samtools).</p>
+<p>To load the Samtools module on UPPMAX, execute:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">module</span> load bioinfo-tools
+<span class="ex">module</span> load samtools/1.9</code></pre></div>
+</div>
+<p>The Samtools command to convert from SAM to a sorted BAM file is:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">samtools</span> sort -o output.bam input.sam</code></pre></div>
+</div>
+<p>Remember to use an appropriate filename instead of <code>output.bam</code>! Next, we need to index the BAM file.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">samtools</span> index properName.bam</code></pre></div>
+</div>
+<p>The indexing step should create an index file with the suffix <code>.bai</code>. This sorted, indexed BAM file can be viewed in the Integrative Genomics Viewer (IGV).</p>
+<p>You can also get a report on your mapped reads using the samtools command <em>flagstat</em>:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">samtools</span> flagstat properName.sorted.bam <span class="op">&gt;</span> properName.sorted.flagstat</code></pre></div>
+</div>
+<p><i class="fas fa-lightbulb"></i> Since the BAM file contains all the information from the original SAM file, remember to remove the SAM file once you are finished, in order to free up disk space.</p>
+<p><strong>End of document</strong></p>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

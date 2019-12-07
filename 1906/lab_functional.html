@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Paulo Czarnewski • 14-May-2019" />
+
+
+<title>Gene Function Annotation</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Gene Function Annotation</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+<h4 class="author"><b>Paulo Czarnewski</b> • 14-May-2019</h4>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<div id="loading-data" class="section level1">
+<h1><span class="header-section-number">1</span> Loading data</h1>
+<div class="instruction">
+<p><i class="fas fa-exclamation-circle"></i> The cpm data and metadata can be downloaded from <a href="https://github.com/NBISweden/course_rnaseq/tree/master/data">this location</a>. The files needed are <strong>cpm.csv</strong> and <strong>metadata_raw.csv</strong>. Place the files in a directory named <code>data</code> in your current working directory.</p>
+</div>
+<p>Loading packages and data.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pheatmap)
+<span class="kw">library</span>(rafalib)
+<span class="kw">library</span>(DESeq2)
+<span class="kw">library</span>(pvclust)
+<span class="kw">library</span>(biomaRt)
+<span class="kw">library</span>(enrichR)
+<span class="kw">library</span>(fgsea)
+
+metadata &lt;-<span class="st"> </span><span class="kw">read.csv2</span>(<span class="st">&quot;data/metadata_raw.csv&quot;</span>,<span class="dt">row.names =</span> <span class="dv">1</span>,<span class="dt">stringsAsFactors =</span> T)
+
+<span class="co">#Load data and metadata</span>
+cpm &lt;-<span class="st"> </span><span class="kw">read.csv2</span>(<span class="st">&quot;data/cpm.csv&quot;</span>,<span class="dt">row.names =</span> <span class="dv">1</span>)</code></pre></div>
+</div>
+<p>CPM counts are converted to log scale and row-wise variance is computed.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">logcpm &lt;-<span class="st"> </span><span class="kw">log2</span>( cpm <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)
+<span class="kw">dim</span>(logcpm)
+
+<span class="co"># Gene selection</span>
+vars &lt;-<span class="st"> </span><span class="kw">apply</span>(logcpm,<span class="dv">1</span>,var)
+vars &lt;-<span class="st"> </span><span class="kw">sort</span>( vars , <span class="dt">decreasing=</span>T)
+top_var &lt;-<span class="st"> </span><span class="kw">names</span>( vars ) [<span class="dv">1</span><span class="op">:</span><span class="dv">500</span>]</code></pre></div>
+</div>
+<div class="instruction">
+<p><i class="fas fa-exclamation-circle"></i> Here you would select genes based on p-values and logFC you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are selecting only the top 500 variable genes.</p>
+</div>
+<hr />
+<div id="clustering-on-heatmap" class="section level2">
+<h2><span class="header-section-number">1.1</span> Clustering on Heatmap</h2>
+<p>Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the <code>pheatmap()</code> function, which by default will do the clustering of the rows and columns.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cl &lt;-<span class="st"> </span><span class="kw">pheatmap</span>( logcpm[top_var,] , <span class="dt">scale =</span> <span class="st">&quot;row&quot;</span> , <span class="dt">color =</span> <span class="kw">colorRampPalette</span>(<span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>,<span class="st">&quot;white&quot;</span>,<span class="st">&quot;firebrick&quot;</span>))(<span class="dv">90</span>), <span class="dt">border_color =</span> <span class="ot">NA</span>, <span class="dt">cluster_cols =</span> F,<span class="dt">cutree_rows =</span> <span class="dv">2</span>)
+
+gene_clusters &lt;-<span class="st"> </span><span class="kw">cutree</span>(cl<span class="op">$</span>tree_row,<span class="dt">k =</span> <span class="dv">2</span>)</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-4-1.svg" width="480" style="display: block; margin: auto auto auto 0;" />
+</div>
+<hr />
+</div>
+</div>
+<div id="functional-analysis" class="section level1">
+<h1><span class="header-section-number">2</span> Functional Analysis</h1>
+<table>
+<thead>
+<tr class="header">
+<th>R-packages</th>
+<th>Comments</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>topGO</td>
+<td>GO</td>
+</tr>
+<tr class="even">
+<td>goana</td>
+<td>GO</td>
+</tr>
+<tr class="odd">
+<td>GOseq</td>
+<td>GO</td>
+</tr>
+<tr class="even">
+<td>topKEGG</td>
+<td>KEGG</td>
+</tr>
+<tr class="odd">
+<td>kegga</td>
+<td>KEGG</td>
+</tr>
+<tr class="even">
+<td>enrichR</td>
+<td>GO, KEGG, many others</td>
+</tr>
+<tr class="odd">
+<td>piano</td>
+<td>GO, KEGG, GSEA, many others, enrichment consensus</td>
+</tr>
+<tr class="even">
+<td>ClusterProfiler</td>
+<td>GO, KEGG, GSEA, many others, nice plots!</td>
+</tr>
+<tr class="odd">
+<td>Pathview</td>
+<td>Nice visualization for KEGG pathways</td>
+</tr>
+<tr class="even">
+<td>fgsea</td>
+<td>GSEA</td>
+</tr>
+</tbody>
+</table>
+<div id="enrichr" class="section level2">
+<h2><span class="header-section-number">2.1</span> enrichR</h2>
+<p>You can list all available databases by using the command <code>listEnrichrDbs()</code> function.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(enrichR)
+
+genes_cluster1 &lt;-<span class="st"> </span><span class="kw">names</span>(gene_clusters)[gene_clusters <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]
+genes_cluster2 &lt;-<span class="st"> </span><span class="kw">names</span>(gene_clusters)[gene_clusters <span class="op">==</span><span class="st"> </span><span class="dv">2</span>]
+
+<span class="kw">head</span>(logcpm[genes_cluster1,])
+<span class="kw">head</span>(logcpm[genes_cluster2,])</code></pre></div>
+</div>
+<div id="go-enrichment-with-enrichr" class="section level3">
+<h3><span class="header-section-number">2.1.1</span> GO enrichment (with enrichR)</h3>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">go_cluster2 &lt;-<span class="st"> </span><span class="kw">enrichr</span>(<span class="dt">genes =</span> genes_cluster2,<span class="dt">databases =</span> <span class="st">&quot;GO_Biological_Process_2018&quot;</span>)
+go_cluster2 &lt;-<span class="st"> </span>go_cluster2<span class="op">$</span>GO_Biological_Process_<span class="dv">2018</span>
+go_cluster2 &lt;-<span class="st"> </span>go_cluster2[<span class="kw">order</span>(go_cluster2<span class="op">$</span>P.value),]
+go_cluster2[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,]
+
+<span class="kw">mypar</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">20</span>,<span class="dv">2</span>,<span class="dv">2</span>))
+<span class="kw">barplot</span>( <span class="op">-</span><span class="kw">log10</span>(go_cluster2<span class="op">$</span>P.value[<span class="dv">15</span><span class="op">:</span><span class="dv">1</span>]), <span class="dt">horiz =</span> T, <span class="dt">names.arg =</span> go_cluster2<span class="op">$</span>Term[<span class="dv">15</span><span class="op">:</span><span class="dv">1</span>],<span class="dt">las=</span><span class="dv">1</span>)</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-6-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Which is the most enriched GO term for cluster1?</li>
+<li>How many genes from your data set were detected in this most GO term? What is the percentage of genes out of the total list that defines the GO term?</li>
+<li>Which genes from your data set belong to this most enriched GO term?</li>
+<li>Some genes make part of several GO terms, can you list some?</li>
+</ul>
+</div>
+<div id="kegg-enrichment-with-enrichr" class="section level3">
+<h3><span class="header-section-number">2.1.2</span> KEGG enrichment (with enrichR)</h3>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">kegg_cluster2 &lt;-<span class="st"> </span><span class="kw">enrichr</span>(<span class="dt">genes =</span> genes_cluster2,<span class="dt">databases =</span> <span class="st">&quot;KEGG_2019_Human&quot;</span>)
+kegg_cluster2 &lt;-<span class="st"> </span>kegg_cluster2<span class="op">$</span>KEGG_2019_Human
+kegg_cluster2 &lt;-<span class="st"> </span>kegg_cluster2[<span class="kw">order</span>(kegg_cluster2<span class="op">$</span>P.value),]
+kegg_cluster2[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>,]
+
+<span class="kw">mypar</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">20</span>,<span class="dv">2</span>,<span class="dv">2</span>))
+<span class="kw">barplot</span>( <span class="op">-</span><span class="kw">log10</span>(kegg_cluster2<span class="op">$</span>P.value[<span class="dv">15</span><span class="op">:</span><span class="dv">1</span>]), <span class="dt">horiz =</span> T, <span class="dt">names.arg =</span> kegg_cluster2<span class="op">$</span>Term[<span class="dv">15</span><span class="op">:</span><span class="dv">1</span>],<span class="dt">las=</span><span class="dv">1</span>)</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-7-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Which is the most enriched KEGG pathway for cluster1?</li>
+<li>How many genes from your data set were detected in this most enriched KEGG pathway ?</li>
+<li>What is the percentage of genes out of the total list that defines the KEGG pathway ?</li>
+<li>Which genes from your data set belong to this most enriched KEGG pathway ?</li>
+<li>Some genes make part of several KEGG pathways, can you list some?</li>
+<li>Taking the results from GO term enrichment and the KEGG enrichment, what is a most likely function happening in your data set?</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="gsea" class="section level2">
+<h2><span class="header-section-number">2.2</span> GSEA</h2>
+<p>MSigDB is one of the largest curated databases of signatures and pathways created by the BROAD INSTITUTE. The Molecular Signatures Database (MSigDB) is accessible <a href="http://software.broadinstitute.org/gsea/msigdb/index.jsp">here</a>.</p>
+<p>For this exercise, you can download a couple of data sets:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Database</th>
+<th>Link to Download</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>KEGG</td>
+<td><a href="http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/c2.cp.kegg.v6.2.symbols.gmt">c2.cp.kegg.v6.2.symbols.gmt</a></td>
+</tr>
+<tr class="even">
+<td>GO_BP</td>
+<td><a href="http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/c5.bp.v6.2.symbols.gmt">c5.bp.v6.2.symbols.gmt</a></td>
+</tr>
+<tr class="odd">
+<td>HALLMARK</td>
+<td><a href="http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/h.all.v6.2.symbols.gmt">h.all.v6.2.symbols.gmt</a></td>
+</tr>
+</tbody>
+</table>
+<div class="instruction">
+<p><i class="fas fa-exclamation-circle"></i> For this exercise, the database files are available at <a href="https://github.com/NBISweden/course_rnaseq/tree/master/data">this location</a>. You need the whole directory labelled <strong>MSigDB_files</strong>. Place this directory under a directory named <code>data</code> in your current working directory. Otherwise, set the path appropriately.</p>
+</div>
+<p>As you could already notice, the differences in gene expression between days t0 to t24 are very clear, but not the ones from t2. Here we will illustrate a gene set enrichment comparing t2 to t0 in order to explore which pathways are UP or DOWN regulated at the first 2 hours of the experiment.</p>
+<div class="instruction">
+<p><i class="fas fa-exclamation-circle"></i> Here you would use the logFC values you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are using a simple difference in mean expression.</p>
+</div>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create a gene rank based on the gene expression</span>
+mean_t0 &lt;-<span class="st"> </span><span class="kw">rowMeans</span>( logcpm[,metadata<span class="op">$</span>Time <span class="op">==</span><span class="st"> &quot;t0&quot;</span>] )
+mean_t2 &lt;-<span class="st"> </span><span class="kw">rowMeans</span>( logcpm[,metadata<span class="op">$</span>Time <span class="op">==</span><span class="st"> &quot;t2&quot;</span>] )
+gene_rank &lt;-<span class="st"> </span>mean_t0 <span class="op">-</span><span class="st"> </span>mean_t2
+
+<span class="co"># Load hallmark pathways</span>
+hallmark_pathways &lt;-<span class="st"> </span><span class="kw">gmtPathways</span>(<span class="st">&quot;data/MSigDB_files/h.all.v6.2.symbols.gmt.txt&quot;</span>)</code></pre></div>
+</div>
+<p>Once our list of genes are sorted (from highest to lowest expression in t2), we can proceed with the enrichment itself. Here, we will be using the <code>fgsea()</code> function. This will result in a table containing information for several pathways. We can then sort and filter those pathways to visualize only the top ones. You can select/filter them by either <code>p-value</code> or normalized enrichemnet score (<code>NES</code>).</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Perform enrichemnt analysis</span>
+fgseaRes &lt;-<span class="st"> </span><span class="kw">fgsea</span>( <span class="dt">pathways=</span>hallmark_pathways, <span class="dt">stats=</span>gene_rank, <span class="dt">minSize=</span><span class="dv">15</span>, <span class="dt">maxSize=</span><span class="dv">500</span>, <span class="dt">nperm=</span><span class="dv">10000</span>)
+
+<span class="co"># Filter the results table to show only the top 10 UP and DOWN regulated processes (optional)</span>
+topPathwaysUp &lt;-<span class="st"> </span>fgseaRes[ES <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>][<span class="kw">head</span>(<span class="kw">order</span>(pval), <span class="dt">n=</span><span class="dv">10</span>), pathway]
+topPathwaysDown &lt;-<span class="st"> </span>fgseaRes[ES <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span>][<span class="kw">head</span>(<span class="kw">order</span>(pval), <span class="dt">n=</span><span class="dv">10</span>), pathway]
+topPathways &lt;-<span class="st"> </span><span class="kw">c</span>(topPathwaysUp, <span class="kw">rev</span>(topPathwaysDown))
+
+<span class="co"># Nice summary table (shown as a plot)</span>
+<span class="kw">plotGseaTable</span>(hallmark_pathways[topPathways], gene_rank, fgseaRes, <span class="dt">gseaParam =</span> <span class="fl">0.5</span>)</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-9-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Which is the most significantly up-regulated pathway at time t2?</li>
+<li>What do the length of the black bars mean?</li>
+<li>Is there any pathway that is significantly down-regulated at t2? Which columns tells you what is Up of downregulated?</li>
+<li>Which is the most enriched pathway at time t6?</li>
+<li>What happens if you do <code>t2-t0</code> instead of <code>t0-t2</code> ? What changes and why?</li>
+</ul>
+<p>Checking for individual enrichment:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">topPathways
+
+<span class="co"># Nice plot to see enrichment of one specific pathway</span>
+<span class="kw">plotEnrichment</span>(hallmark_pathways[[<span class="st">&quot;HALLMARK_MYC_TARGETS_V2&quot;</span>]],  gene_rank)</code></pre></div>
+<img src="lab_functional_files/figure-html/unnamed-chunk-10-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>What do the black lines in the X-axis mean?</li>
+<li>By looking at the green line distribution, and the comparison made (t0 - t2), at which time point is this pathways enriched.</li>
+</ul>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions (optional)</strong></p>
+<ul>
+<li>What if instead of the hallmark gene set, you use the GO? Try that.</li>
+<li>How different are the results from EnrichR and GSEA using GO annotation? Remember to use the same comparison (i.e. t2 vs t0).</li>
+</ul>
+<hr />
+</div>
+<div id="online-enrichment-tools" class="section level2">
+<h2><span class="header-section-number">2.3</span> Online enrichment tools:</h2>
+<p>Below you can find a list with the most commonly used online enrichment tools. Each one differs a bit on what they can do. The packages are sorted in order, we would like you to work on the workshop.</p>
+<table style="width:22%;">
+<colgroup>
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>link</th>
+<th>Database</th>
+<th>Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Enrichr</td>
+<td><a href="http://amp.pharm.mssm.edu/Enrichr/" class="uri">http://amp.pharm.mssm.edu/Enrichr/</a></td>
+<td>GO, KEGG, TF, many others</td>
+<td>Extensive libraries</td>
+</tr>
+<tr class="even">
+<td>GOrilla</td>
+<td><a href="http://cbl-gorilla.cs.technion.ac.il" class="uri">http://cbl-gorilla.cs.technion.ac.il</a></td>
+<td>GO</td>
+<td>Support for REVIGO</td>
+</tr>
+<tr class="odd">
+<td>REVIGO</td>
+<td><a href="http://revigo.irb.hr" class="uri">http://revigo.irb.hr</a></td>
+<td>GO</td>
+<td>Summarises redundancy</td>
+</tr>
+<tr class="even">
+<td>DAVID</td>
+<td><a href="https://david.ncifcrf.gov" class="uri">https://david.ncifcrf.gov</a></td>
+<td>GO, KEGG, TF, many others</td>
+<td>*Not updated</td>
+</tr>
+<tr class="odd">
+<td>KEGG</td>
+<td><a href="https://www.genome.jp/kegg/" class="uri">https://www.genome.jp/kegg/</a></td>
+<td>KEGG</td>
+<td>Shows the pathways</td>
+</tr>
+<tr class="even">
+<td>Reactome</td>
+<td><a href="https://www.reactome.org" class="uri">https://www.reactome.org</a></td>
+<td>KEGG-like</td>
+<td>Shows the pathways/reactions</td>
+</tr>
+<tr class="odd">
+<td>Panther</td>
+<td><a href="http://www.pantherdb.org/about.jsp" class="uri">http://www.pantherdb.org/about.jsp</a></td>
+<td>GO</td>
+<td>Evolutionary conserved GO annotation</td>
+</tr>
+</tbody>
+</table>
+<p>In case you want to test the online tools above, you can use the code below to copy the gene vector into memory, and then paste it to the webtools. Should work for both Mac and Windows users.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">clip &lt;-<span class="st"> </span><span class="kw">pipe</span>(<span class="st">&quot;pbcopy&quot;</span>, <span class="st">&quot;w&quot;</span>)
+<span class="kw">write.table</span>(genes_cluster1, <span class="dt">file=</span>clip, <span class="dt">sep =</span> <span class="st">&#39;</span><span class="ch">\t</span><span class="st">&#39;</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)         
+<span class="kw">close</span>(clip)</code></pre></div>
+</div>
+<hr />
+</div>
+<div id="protein-protein-interactions" class="section level2">
+<h2><span class="header-section-number">2.4</span> Protein-protein interactions</h2>
+<p>In the course we will not have much time to work on gene expression networks. However, there are some nice databases that allow you to easily visualize protein-protein interactions. Please paste the list of genes using the command above into those sites to have a visual insight on how the Up- or Down- regulated genes interact with each other.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Database</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>GeneMANIA</td>
+<td><a href="https://genemania.org" class="uri">https://genemania.org</a></td>
+</tr>
+<tr class="even">
+<td>STRING-DB</td>
+<td><a href="https://string-db.org" class="uri">https://string-db.org</a></td>
+</tr>
+<tr class="odd">
+<td>MIST</td>
+<td><a href="https://fgrtools.hms.harvard.edu/MIST/help.jsp" class="uri">https://fgrtools.hms.harvard.edu/MIST/help.jsp</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>End of document</strong></p>
+</div>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

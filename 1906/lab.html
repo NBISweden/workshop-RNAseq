@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title> Lab</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore"><i class='fas fa-flask' style='margin-left:4px;margin-right:4px;'></i> Lab</h1>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<p>This page contains links to different tutorials that are used in this course. The tutorials are well documented and should be easy to follow.</p>
+<div class="instruction">
+<p>Input code blocks are displayed like shown below. The code language is displayed above the block. Shell scripts (<strong>SH</strong>) are to be executed in the linux terminal such as bash. <strong>R</strong> scripts are to be run in R either through the terminal, RGui or RStudio.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="bu">command</span></code></pre></div>
+</div>
+<p><i class="fas fa-exclamation-circle"></i> Note   <i class="fas fa-lightbulb"></i> Tip   <i class="fas fa-comments"></i> Discuss   <i class="fas fa-clipboard-list"></i> Task</p>
+</div>
+<p><br></p>
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>Most of the analyses is carried out in R and it will be useful to learn some basic R.</p>
+<p><a href="lab_r.html"><i class="fas fa-link"></i> <span class="large">Introduction to R</span></a></p>
+<p>This topic covers retrieving supporting data needed for RNA-seq analyses. These include gene annotation IDs such as mapping between Ensembl IDs and Gene IDs, GO terms and transcript IDs. We also cover retrieving genomic data from Ensembl.</p>
+<p><a href="lab_download.html"><i class="fas fa-link"></i> <span class="large">Downloading data</span></a></p>
+</div>
+<div id="main-lab" class="section level1">
+<h1><span class="header-section-number">2</span> Main lab</h1>
+<div id="data" class="section level2">
+<h2><span class="header-section-number">2.1</span> Data</h2>
+<p>In most of the exercises, we will use RNA-seq data (Illumina short reads) from the human A431 cell line. It is an epidermoid carcinoma cell line which is often used to study cancer and the cell cycle, and as a sort of positive control of epidermal growth factor receptor (EGFR) expression. A431 cells express very high levels of EGFR, in contrast to normal human fibroblasts.</p>
+<p>The A431 cells were treated with gefinitib, which is an EGFR inhibitor and is used (under the trade name Iressa) as a drug to treat cancers with mutated and overactive EGFR. In the experiment, RNA was extracted at four time points: before the gefinitib treatment (t=0), and two, six and twenty-four hours after treatment (t=2, t=6, t=24, respectively), and sequenced using an Illumina HiSeq instrument in triplicates (thus there are 3x4=12 samples).</p>
+<p>This data set or parts of it will be used in the labs on read mapping, transcript assembly, visualization, quality control and differential expression. There are many relevant questions that could be asked based on these measurements. In the QC exercise, we are going to examine if the RNA libraries that we work with are what we think they are or if there is any mislabelling. In the isoform exercise, we are going to look at some specific regions where the mass-spectrometry data indicated that novel exons or splice variants could be present at the protein level. We will use (part of) the RNA-seq data to examine if there is corresponding evidence on the mRNA level, and how different software tools could be used to detect novel gene variants.</p>
+</div>
+<div id="quality-control" class="section level2">
+<h2><span class="header-section-number">2.2</span> Quality control</h2>
+<p>Before doing any other analysis on mapped RNA-seq reads it is always important to do quality control of your mapped reads and that you do not have any obvious errors in your RNA-seq data.</p>
+<p><a href="lab_qc.html"><i class="fas fa-link"></i> <span class="large">Quality control</span></a></p>
+</div>
+<div id="mapping" class="section level2">
+<h2><span class="header-section-number">2.3</span> Mapping</h2>
+<p>This section contains information on how to map reads to a reference genome using splice-aware aligner STAR and HISAT2.</p>
+<p><a href="lab_mapping.html"><i class="fas fa-link"></i> <span class="large">Mapping reads using STAR</span></a></p>
+</div>
+<div id="igv" class="section level2">
+<h2><span class="header-section-number">2.4</span> IGV</h2>
+<p>Mapped reads in BAM files are visualised using integrated genome viewer.</p>
+<p><a href="lab_igv.html"><i class="fas fa-link"></i> <span class="large">Using IGV</span></a></p>
+</div>
+<div id="quantification" class="section level2">
+<h2><span class="header-section-number">2.5</span> Quantification</h2>
+<p>Gene counts are quantified from BAM files using featureCounts.</p>
+<p><a href="lab_quantification.html"><i class="fas fa-link"></i> <span class="large">Quantification</span></a></p>
+</div>
+<div id="differential-gene-expression" class="section level2">
+<h2><span class="header-section-number">2.6</span> Differential gene expression</h2>
+<p>We find genes that are differentially expressed between our time points.</p>
+<p><a href="lab_dge.html"><i class="fas fa-link"></i> <span class="large">DGE using DEseq2</span></a></p>
+</div>
+<div id="functional-analysis" class="section level2">
+<h2><span class="header-section-number">2.7</span> Functional analysis</h2>
+<p>We will perform functional analysis on the differentially expressed genes to place them into a function context and possibly explain the biological consequences of DE. Methods covered are GSA (Gene set analysis) and GSEA (Gene set enrichment analysis).</p>
+<p><a href="lab_functional.html"><i class="fas fa-link"></i> <span class="large">Functional analysis</span></a></p>
+</div>
+</div>
+<div id="bonus-labs" class="section level1">
+<h1><span class="header-section-number">3</span> Bonus labs</h1>
+<div id="exploratory-data-analyses" class="section level2">
+<h2><span class="header-section-number">3.1</span> Exploratory data analyses</h2>
+<p>This section dives deeper into exploratory analyses PCA and hierarchical clustering.</p>
+<p><a href="lab_eda.html"><i class="fas fa-link"></i> <span class="large">PCA &amp; Hierarchical clustering</span></a></p>
+</div>
+<div id="pseudoaligners" class="section level2">
+<h2><span class="header-section-number">3.2</span> Pseudoaligners</h2>
+<p>Kallisto uses FastQ reads and a reference transcriptome (cDNA+ncRNA) to quantify transcripts using rapid pseudo-alignment along with bootstrap replicates to assess quantification inaccuracy. Kallisto is significantly faster than STAR or HISAT2 and has a small memory footprint. Differential gene expression is carried out using Sleuth which utilises bootstrap replicates.</p>
+<p><a href="lab_kallisto.html"><i class="fas fa-link"></i> <span class="large">Mapping and quantification using Kallisto, DGE using Sleuth</span></a></p>
+</div>
+<div id="small-rna-analyses" class="section level2">
+<h2><span class="header-section-number">3.3</span> small RNA analyses</h2>
+<p>RNA-seq differential analyses workflow on microRNAs from Fruit fly.</p>
+<p><a href="lab_smallrna.html"><i class="fas fa-link"></i> <span class="large">Small RNA-seq analyses</span></a></p>
+</div>
+<div id="assembly-annotation" class="section level2">
+<h2><span class="header-section-number">3.4</span> Assembly &amp; annotation</h2>
+<p>Raw sequencing short reads are assembled into transcripts using two approaches. Genome-guided assembly using HiSat2 and StringTie. De-novo transcriptome assembly using Trinity. Assembled transcriptomes are functionally annotated to identify genes.</p>
+<p><a href="lab_assembly.html"><i class="fas fa-link"></i> <span class="large">Reference-guided assembly using StringTie</span></a><br />
+<a href="lab_assembly.html"><i class="fas fa-link"></i> <span class="large">De-novo assembly using Trinity</span></a><br />
+<a href="lab_annotation.html"><i class="fas fa-link"></i> <span class="large">Transcriptome annotation</span></a></p>
+<p><strong>End of document</strong></p>
+</div>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

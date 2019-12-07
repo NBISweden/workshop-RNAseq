@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Paulo Czarnewski • 14-May-2019" />
+
+
+<title>PCA and Clustering</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">PCA and Clustering</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+<h4 class="author">Paulo Czarnewski • 14-May-2019</h4>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<p>Loading packages and data</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pheatmap)
+<span class="kw">library</span>(rafalib)
+<span class="kw">library</span>(DESeq2)
+<span class="kw">library</span>(pvclust)
+<span class="kw">library</span>(biomaRt)</code></pre></div>
+</div>
+<p>Loading the sequencing data and the metadata data with sample information</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Load data and metadata</span>
+data &lt;-<span class="st"> </span><span class="kw">read.delim</span>(<span class="st">&quot;data/count_raw.txt&quot;</span>,<span class="dt">header =</span> T)
+metadata &lt;-<span class="st"> </span><span class="kw">read.csv2</span>(<span class="st">&quot;data/metadata_raw.csv&quot;</span>,<span class="dt">row.names =</span> <span class="dv">1</span>,<span class="dt">stringsAsFactors =</span> T)
+
+<span class="co">#Convert ensembl IDs to gene names</span>
+<span class="cf">if</span>( <span class="kw">file.exists</span>(<span class="st">&quot;data/human_biomaRt_annotation.csv&quot;</span>) ){
+  annot &lt;-<span class="st"> </span><span class="kw">read.csv2</span>(<span class="st">&quot;data/human_biomaRt_annotation.csv&quot;</span>, <span class="dt">row.names =</span> <span class="dv">1</span>)
+} <span class="cf">else</span> {
+  human &lt;-<span class="st"> </span><span class="kw">useMart</span>(<span class="st">&quot;ensembl&quot;</span>, <span class="dt">dataset =</span> <span class="st">&quot;hsapiens_gene_ensembl&quot;</span>)
+  annot &lt;-<span class="st"> </span><span class="kw">getBM</span>(<span class="kw">c</span>(<span class="st">&quot;ensembl_gene_id&quot;</span>,<span class="st">&quot;external_gene_name&quot;</span>), <span class="dt">mart=</span>human)
+  <span class="kw">write.csv2</span>(annot,<span class="st">&quot;data/human_biomaRt_annotation.csv&quot;</span>,<span class="dt">row.names =</span> T)
+}
+gene_names &lt;-<span class="st"> </span><span class="kw">as.character</span> ( annot[<span class="kw">match</span>(<span class="kw">rownames</span>(data),annot[,<span class="st">&quot;ensembl_gene_id&quot;</span>]),<span class="st">&quot;external_gene_name&quot;</span>] )
+gene_names[<span class="kw">is.na</span>(gene_names) ] &lt;-<span class="st"> &quot;&quot;</span>
+
+<span class="co">#Remove missing or fuse duplicated annotations</span>
+data &lt;-<span class="st"> </span><span class="kw">rowsum</span>(data, <span class="dt">group =</span> <span class="kw">as.character</span>(gene_names) ) <span class="co">#assign gene names and sum duplicates</span>
+data &lt;-<span class="st"> </span>data[ <span class="kw">rownames</span>(data) <span class="op">!=</span><span class="st"> &quot;&quot;</span> , ] <span class="co">#remove blank annotation</span>
+data &lt;-<span class="st"> </span>data[ <span class="kw">order</span>(<span class="kw">rownames</span>(data)),]  <span class="co">#order genes alphabetically</span>
+<span class="kw">dim</span>(data)
+
+<span class="co">#Remove genes with counts less than </span>
+sel &lt;-<span class="st"> </span><span class="kw">apply</span>(data, <span class="dv">1</span>, <span class="cf">function</span>(x) {<span class="kw">sum</span>(x <span class="op">&gt;</span><span class="st"> </span><span class="dv">5</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">3</span>} )
+data &lt;-<span class="st"> </span>data[sel,]
+<span class="kw">dim</span>(data)
+
+<span class="co">#Transform data to log2CPM</span>
+cpm &lt;-<span class="st"> </span><span class="kw">t</span>( <span class="kw">round</span>(<span class="kw">t</span>(data) <span class="op">/</span><span class="st"> </span><span class="kw">colSums</span>(data) <span class="op">*</span><span class="st"> </span><span class="fl">1e6</span>))
+logcpm &lt;-<span class="st"> </span><span class="kw">log2</span>( cpm <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)
+<span class="cf">if</span>(<span class="op">!</span><span class="kw">file.exists</span>(<span class="st">&quot;data/cpm.csv&quot;</span>)) <span class="kw">write.csv2</span>(cpm , <span class="st">&quot;data/cpm.csv&quot;</span>,<span class="dt">row.names =</span> T)</code></pre></div>
+</div>
+<hr />
+<div id="pca" class="section level1">
+<h1><span class="header-section-number">1</span> PCA</h1>
+<p>Performing PCA has many useful applications and interpretations, which much depends on the data used. In the case of life sciences, we want to segregate samples based on gene expression patterns in the data.</p>
+<div id="z-score-normalization" class="section level2">
+<h2><span class="header-section-number">1.1</span> Z-score normalization</h2>
+<p>Now that the data is prepared, we now proceed with PCA. Since each gene has a different expression level, it means that genes with higher expression values will naturally have higher variation that will be captured by PCA. This means that we need to somehow give each gene a similar weight when performing PCA (see below). The common practice is to center and scale each gene before performing PCA. This exact scaling is called <strong>Z-score</strong> normalization it is very useful for PCA, clustering and plotting heatmaps.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Znorm &lt;-<span class="st"> </span><span class="kw">t</span>( <span class="kw">apply</span>(logcpm , <span class="dv">1</span> , <span class="cf">function</span>(x) <span class="kw">scale</span>( x , <span class="dt">center =</span> T, <span class="dt">scale =</span> T)) )
+<span class="kw">colnames</span>(Znorm) &lt;-<span class="st"> </span><span class="kw">colnames</span>(logcpm)
+
+<span class="kw">mypar</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dt">mar =</span> <span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>))
+<span class="kw">boxplot</span>( <span class="kw">t</span>(logcpm[<span class="dv">1</span><span class="op">:</span><span class="dv">30</span>,])   , <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">12</span>), <span class="dt">las=</span><span class="dv">2</span> , <span class="dt">col=</span><span class="st">&quot;grey&quot;</span> , <span class="dt">main=</span><span class="st">&quot;logCPM raw_data&quot;</span> ,<span class="dt">cex=</span>.<span class="dv">2</span>)
+<span class="kw">boxplot</span>( <span class="kw">t</span>(Znorm[<span class="dv">1</span><span class="op">:</span><span class="dv">30</span>,]) , <span class="dt">ylim=</span><span class="kw">c</span>(<span class="op">-</span><span class="dv">4</span>,<span class="dv">4</span>), <span class="dt">las=</span><span class="dv">2</span> , <span class="dt">col=</span><span class="st">&quot;grey&quot;</span> , <span class="dt">main=</span><span class="st">&quot;Z-score data&quot;</span> ,<span class="dt">cex=</span>.<span class="dv">2</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="dv">0</span>, <span class="dt">col=</span><span class="st">&quot;red&quot;</span> ,<span class="dt">lty=</span><span class="dv">2</span>)</code></pre></div>
+<img src="lab_eda_files/figure-html/unnamed-chunk-4-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<hr />
+</div>
+<div id="gene-selection" class="section level2">
+<h2><span class="header-section-number">1.2</span> Gene selection</h2>
+<p>As you can appreciate above, Z-score normalization have set each gene mean to 0 and changes the variances to a common scale. However, if we normalize all genes to the same scale, even genes that could be considered stable across samples (i.e. that do not vary across your samples) will be used for separation of samples. This might in turn add ‘noise’ to your data in form of ‘variation across samples that are not meaningful’. Therefore, we can also sort the genes by variance and use the top genes to filter/prioritize the data.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Compute the mean, variance and cv for each gene and sort them in decreasing order</span>
+gene_stats &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">row.names =</span> <span class="kw">rownames</span>(data))
+means &lt;-<span class="st"> </span><span class="kw">rowMeans</span>(logcpm)
+vars &lt;-<span class="st"> </span><span class="kw">apply</span>(logcpm,<span class="dv">1</span>,var)
+
+<span class="co">#Plot the row means versus row means</span>
+<span class="kw">mypar</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dt">mar =</span> <span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>))
+<span class="kw">plot</span>(<span class="dt">x=</span>means, <span class="dt">y=</span>vars, <span class="dt">cex=</span>.<span class="dv">1</span> )
+
+<span class="co">#Sort and select the top 500 highly variable genes from the data</span>
+vars &lt;-<span class="st"> </span><span class="kw">sort</span>( vars , <span class="dt">decreasing=</span>T)
+top_var &lt;-<span class="st"> </span><span class="kw">names</span>( vars ) [<span class="dv">1</span><span class="op">:</span><span class="dv">500</span>]
+<span class="kw">boxplot</span>( <span class="kw">t</span>(logcpm[ top_var[<span class="dv">1</span><span class="op">:</span><span class="dv">15</span>],])   , <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">12</span>), <span class="dt">las=</span><span class="dv">2</span> , <span class="dt">col=</span><span class="st">&quot;grey&quot;</span> , <span class="dt">main=</span><span class="st">&quot;logCPM (top var genes)&quot;</span> ,<span class="dt">cex=</span>.<span class="dv">2</span>)</code></pre></div>
+<img src="lab_eda_files/figure-html/unnamed-chunk-5-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<hr />
+</div>
+<div id="computing-pca" class="section level2">
+<h2><span class="header-section-number">1.3</span> Computing PCA</h2>
+<p>Next, we can compute PCA using the <code>prcomp()</code> function. As additional parameters, we can already center and scale each gene already inside the function. This the same exact <strong>Z-score</strong> scaling above, but already inside the function.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mypar</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dt">mar =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>))
+PC &lt;-<span class="st">  </span><span class="kw">prcomp</span>( <span class="kw">t</span>( Znorm[ top_var, ]) ) <span class="co">#Method1</span>
+PC &lt;-<span class="st">  </span><span class="kw">prcomp</span>( <span class="kw">t</span>( logcpm[ top_var, ]), <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale. =</span> <span class="ot">TRUE</span>) <span class="co">#Method2</span>
+
+<span class="kw">mypar</span>(<span class="dv">1</span>,<span class="dv">2</span>)
+<span class="kw">plot</span>(PC<span class="op">$</span>x[,<span class="dv">1</span>] , PC<span class="op">$</span>x[,<span class="dv">2</span>], <span class="dt">cex=</span><span class="dv">2</span>, <span class="dt">col=</span><span class="kw">factor</span>(metadata<span class="op">$</span>Time), <span class="dt">xlab=</span><span class="st">&quot;PC1&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;PC2&quot;</span>, <span class="dt">pch=</span><span class="dv">16</span>, <span class="dt">main=</span><span class="st">&quot;PCA&quot;</span>, <span class="dt">las=</span><span class="dv">1</span>)
+<span class="kw">text</span>(PC<span class="op">$</span>x[,<span class="dv">1</span>] , PC<span class="op">$</span>x[,<span class="dv">2</span>], <span class="dt">cex=</span>.<span class="dv">7</span>, <span class="dt">labels =</span> <span class="kw">paste0</span>(metadata<span class="op">$</span>Sample_Name), <span class="dt">pos =</span> <span class="dv">3</span>)
+
+<span class="kw">plot</span>(PC<span class="op">$</span>x[,<span class="dv">3</span>] , PC<span class="op">$</span>x[,<span class="dv">4</span>], <span class="dt">cex=</span><span class="dv">2</span>, <span class="dt">col=</span><span class="kw">factor</span>(metadata<span class="op">$</span>Time), <span class="dt">xlab=</span><span class="st">&quot;PC3&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;PC4&quot;</span>, <span class="dt">pch=</span><span class="dv">16</span>, <span class="dt">main=</span><span class="st">&quot;PCA&quot;</span>, <span class="dt">las=</span><span class="dv">1</span>)
+<span class="kw">text</span>(PC<span class="op">$</span>x[,<span class="dv">3</span>] , PC<span class="op">$</span>x[,<span class="dv">4</span>], <span class="dt">cex=</span>.<span class="dv">7</span>, <span class="dt">labels =</span> <span class="kw">paste0</span>(metadata<span class="op">$</span>Sample_Name), <span class="dt">pos =</span> <span class="dv">3</span>)</code></pre></div>
+<img src="lab_eda_files/figure-html/unnamed-chunk-6-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Which groups are clearly separated by PC1 and PC2?</li>
+<li>Which groups are clearly separated by PC3 and PC4?</li>
+<li>What happens if we include 2000 genes (rather than 500) in the PCA?</li>
+<li>What happens if we include all genes in the PCA?</li>
+<li>What happens if we use the raw CPM, rather than log2CPM for the PCA?</li>
+<li>What happens if we don’t scale or centralize the data?</li>
+<li>How does PC3 and PC4 look? Go back to the code above and change which PCs to plot.</li>
+<li>Do PC10 and PC11 still separate your samples as well as PC1 and PC2?</li>
+</ul>
+<hr />
+</div>
+<div id="computing-pc-variance" class="section level2">
+<h2><span class="header-section-number">1.4</span> Computing PC variance</h2>
+<p>The usefulness of PCA is that the principal components do have a meaning: They store the amount of variance in decreasing order, so some PCs are more important than others. Inside the <code>PC$sdev</code> object, we can get the standard deviation stored in each PC.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PC_sd &lt;-<span class="st"> </span><span class="kw">setNames</span>(PC<span class="op">$</span>sdev , <span class="kw">paste0</span>(<span class="st">&quot;PC&quot;</span>,<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(PC<span class="op">$</span>sdev)))
+PC_var_expl &lt;-<span class="st"> </span>( PC_sd<span class="op">^</span><span class="dv">2</span> ) <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(PC_sd<span class="op">^</span><span class="dv">2</span>) <span class="op">*</span><span class="st"> </span><span class="dv">100</span>
+
+<span class="kw">mypar</span>(<span class="dv">1</span>,<span class="dv">1</span>)
+<span class="kw">barplot</span>(PC_var_expl, <span class="dt">las=</span><span class="dv">2</span>, <span class="dt">ylab=</span><span class="st">&quot;% variance explained&quot;</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="dv">2</span>, <span class="dt">lty=</span><span class="dv">2</span>)</code></pre></div>
+<img src="lab_eda_files/figure-html/unnamed-chunk-7-1.svg" width="480" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Which PCs explain at least 2% of variance?</li>
+<li>Instead of using our whole data set, could we use only the top PCs for downstream analysis ? Explain.</li>
+</ul>
+<hr />
+</div>
+<div id="leading-genes" class="section level2">
+<h2><span class="header-section-number">1.5</span> Leading genes</h2>
+<p>Now that you know that each PC stores a particular structure of the data, we could also explore with genes are more responsible for that separation (a.k.a. leading genes). For that, we can take a look inside the PC object.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">leading_genes &lt;-<span class="st"> </span>PC<span class="op">$</span>rotation
+<span class="kw">head</span>(leading_genes)
+
+leading_PC1 &lt;-<span class="st"> </span><span class="kw">sort</span>(leading_genes[,<span class="dv">1</span>],<span class="dt">decreasing =</span> T)
+leading_PC2 &lt;-<span class="st"> </span><span class="kw">sort</span>(leading_genes[,<span class="dv">2</span>],<span class="dt">decreasing =</span> T)
+
+<span class="kw">mypar</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dt">mar =</span> <span class="kw">c</span>(<span class="dv">10</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">2</span>))
+<span class="kw">barplot</span>(leading_PC1[<span class="dv">1</span><span class="op">:</span><span class="dv">15</span>], <span class="dt">las=</span><span class="dv">2</span>)
+<span class="kw">barplot</span>(leading_PC2[<span class="dv">1</span><span class="op">:</span><span class="dv">15</span>], <span class="dt">las=</span><span class="dv">2</span>)</code></pre></div>
+<img src="lab_eda_files/figure-html/unnamed-chunk-8-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Which genes impact the most in PC1?</li>
+<li>Which genes impact the most in PC2?</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="hierarchical-clustering" class="section level1">
+<h1><span class="header-section-number">2</span> Hierarchical clustering</h1>
+<p>Hierarchical clustering is group of clustering methods used to group samples based on a hierarchy. The hierarchical clustering is done in two steps:</p>
+<ul>
+<li>Step1: Define the distances between samples. The most common are Euclidean distance (a.k.a. straight line between two points) or correlation coefficients.</li>
+<li>Step2: Define the dendrogram among all samples using <strong>Bottom-up</strong> or <strong>Top-down</strong> approach. <strong>Bottom-up</strong> is where samples start with their own cluster which end up merged pair-by-pair until only one cluster is left. <strong>Top-down</strong> is where samples start all in the same cluster that end up being split by 2 until each sample has its own cluster.</li>
+</ul>
+<hr />
+<div id="defining-distance-between-samples" class="section level2">
+<h2><span class="header-section-number">2.1</span> Defining distance between samples</h2>
+<p>The base R <code>stats</code> package already contains a function <code>dist()</code> that calculates distances between all pairs of samples. Since we want to compute distances between samples, rather than among genes, we need to transpose the data before applying it to the <code>dist()</code> function. This can be done by simply adding the transpose function <code>t()</code> to the data. When clustering on genes, it is wise to first define the gene selection to reduce the time to compute distances. A sensible choice is to do it on the differentially expressed genes only (including up to ~3000 genes).</p>
+<p>The distance methods available in <code>dist()</code> are: <em>euclidean</em>, <em>maximum</em>, <em>manhattan</em>, <em>canberra</em>, <em>binary</em> or <em>minkowski</em>.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">d &lt;-<span class="st"> </span><span class="kw">dist</span>( <span class="kw">t</span>(logcpm) , <span class="dt">method=</span><span class="st">&quot;euclidean&quot;</span>)
+d</code></pre></div>
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>When printing the distance object, why is only half of the matrix shown?</li>
+</ul>
+<hr />
+<p>As you might have realized, correlation is not a method implemented in the <code>dist()</code> function. However, we can create our own distances and transform them to a distance object.</p>
+<p>We can first compute sample correlations using the <code>cor()</code> function. As you might already know, correlation range from -1 to 1, where 1 indicates that two samples are closest, -1 indicates that two samples are the furthest and 0 is somewhat in between. This, however, creates a problem in defining distances because a distance of 0 indicates that two samples are closest, 1 indicates that two samples are the furthest and distance of -1 is not meaningful. We thus need to transform the correlations to a positive scale (a.k.a. <strong>adjacency</strong>):</p>
+<p><span class="math display">\[adj = -\frac{cor - 1}{2}\]</span></p>
+<p>Once we transformed the correlations to a 0-1 scale, we can simply convert it to a distance object using <code>as.dist()</code> function. The transformation does not need to have a maximum of 1, but it is more intuitive to have it at 1, rather than at any other number.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Compute sample correlations</span>
+sample_cor &lt;-<span class="st"> </span><span class="kw">cor</span>( logcpm )
+<span class="kw">round</span>(sample_cor,<span class="dv">4</span>)
+
+<span class="co">#Transform the scale from correlations</span>
+cor_distance &lt;-<span class="st"> </span><span class="op">-</span>(sample_cor <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)<span class="op">/</span><span class="dv">2</span>
+<span class="kw">round</span>(cor_distance,<span class="dv">4</span>)
+
+<span class="co">#Convert it to a distance object</span>
+d2 &lt;-<span class="st"> </span><span class="kw">as.dist</span>(cor_distance)
+d2</code></pre></div>
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>What is the adjacency distance between two samples with correlation <span class="math inline">\(r\)</span> of 0.8 ?</li>
+<li>What is the adjacency distance between two samples with correlation <span class="math inline">\(r\)</span> of -0.6 ?</li>
+<li>What happens if instead of using the formula above, we used the absolute value of <span class="math inline">\(r\)</span> ( <span class="math inline">\(|r|\)</span> ) as adjacency (this way all values will be also between 0-1). Does this change affects the interpretation of adjacency distances ?</li>
+<li>What happens if instead of using the formula above, we used <span class="math inline">\(r^2\)</span> as adjacency (this way all values will be also between 0-1). Does this change affects the interpretation of adjacency distances ?</li>
+</ul>
+<hr />
+</div>
+<div id="clustering-samples" class="section level2">
+<h2><span class="header-section-number">2.2</span> Clustering samples</h2>
+<p>After having calculated the distances between samples calculated, we can now proceed with the hierarchical clustering per-se. We will use the function <code>hclust()</code> for this purpose, in which we can simply run it with the distance objects created above.</p>
+<p>The methods available are: <em>ward.D</em>, <em>ward.D2</em>, <em>single</em>, <em>complete</em>, <em>average</em>, <em>mcquitty</em>, <em>median</em> or <em>centroid</em>.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Clustering using euclidean distance</span>
+<span class="kw">mypar</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">6</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">1</span>))
+h &lt;-<span class="st"> </span><span class="kw">hclust</span>(d, <span class="dt">method=</span><span class="st">&quot;complete&quot;</span>)
+<span class="kw">plot</span>( <span class="kw">as.dendrogram</span>(h) , <span class="dt">las=</span><span class="dv">1</span>, <span class="dt">main=</span><span class="st">&quot;d=euclidean</span><span class="ch">\n</span><span class="st">h=complete&quot;</span>)
+<span class="kw">points</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(data) ,<span class="kw">rep</span>(<span class="dv">0</span>,<span class="kw">ncol</span>(data)), <span class="dt">pch=</span> <span class="dv">16</span>, <span class="dt">cex=</span><span class="dv">2</span>, <span class="dt">col=</span>metadata<span class="op">$</span>Time[h<span class="op">$</span>order])
+
+h2 &lt;-<span class="st"> </span><span class="kw">hclust</span>(d2, <span class="dt">method=</span><span class="st">&quot;complete&quot;</span>)
+<span class="kw">plot</span>( <span class="kw">as.dendrogram</span>(h2) , <span class="dt">las=</span><span class="dv">1</span>, <span class="dt">main=</span><span class="st">&quot;d=correlation</span><span class="ch">\n</span><span class="st">h=complete&quot;</span>)
+<span class="kw">points</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(data) ,<span class="kw">rep</span>(<span class="dv">0</span>,<span class="kw">ncol</span>(data)), <span class="dt">pch=</span> <span class="dv">16</span>, <span class="dt">cex=</span><span class="dv">2</span>, <span class="dt">col=</span>metadata<span class="op">$</span>Time[h2<span class="op">$</span>order])</code></pre></div>
+<img src="lab_eda_files/figure-html/unnamed-chunk-11-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Does the ordering of the samples in dendrogram has a meaning ?</li>
+<li>Why are the scales between those dendrograms so different ? Look at the distance matrices to get the intuition.</li>
+<li>Do the two methods represent the same results ? Which one would you trust the most ?</li>
+<li>Does the ordering of the dendrogram have a meaning ?</li>
+<li>Change the clustering method to <code>ward.D2</code>. How does it affect your results ?</li>
+<li>We used the whole dataset for clustering. Re-calculate the distances now using only the top 500 genes with highest CV. Does it change the results ?</li>
+<li>Instead of clustering on the raw data, could we cluster on the top <span class="math inline">\(N\)</span> principal components? Justify.</li>
+</ul>
+<hr />
+</div>
+<div id="defining-clusters" class="section level2">
+<h2><span class="header-section-number">2.3</span> Defining clusters</h2>
+<p>Once your dendrogram is created, the next step is to define which samples belong to a particular cluster. However, the sample groups are already known in this example, so clustering them does not add much information for us. What we can do instead is subdivide the genes into clusters. As for the PCA (above), the ideal scenario is to use the Z-score normalized gene expression table, because in this way we make sure that we are grouping together expression trends (going up vs. down), rather than expression level (genes with more counts vs less counts). This way, we can simply repeat the steps above using the transpose of the Z-score matrix, compute the correlation distances and cluster using ward.D2 linkage method. Since it is time consuming to cluster on all genes, this step is usually done only on the differentially expressed gene list (say up to ~3000 genes). Here, we can for instance cluster on the genes with highest variance <code>top_var</code>.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gene_cor  &lt;-<span class="st"> </span><span class="kw">cor</span>( <span class="kw">t</span>( Znorm[ top_var, ] ) )
+gene_dist &lt;-<span class="st"> </span><span class="kw">as.dist</span>( <span class="op">-</span>( gene_cor <span class="op">-</span><span class="st"> </span><span class="dv">1</span> )<span class="op">/</span><span class="dv">2</span> )
+gene_clus &lt;-<span class="st"> </span><span class="kw">hclust</span>(gene_dist, <span class="dt">method =</span> <span class="st">&quot;complete&quot;</span>)</code></pre></div>
+</div>
+<p>After identifying the dendrogram for the genes (below), we can now literally cut the tree at a fixed threshold (with <code>cutree</code>) at different levels to define the clusters.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">HEIGHT &lt;-<span class="st"> </span><span class="fl">0.6</span>
+gene_clusters &lt;-<span class="st"> </span><span class="kw">cutree</span>(gene_clus, <span class="dt">h =</span> HEIGHT)
+gene_clusters
+
+<span class="kw">mypar</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">6</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">1</span>))
+<span class="kw">plot</span>( <span class="kw">as.dendrogram</span>(gene_clus) , <span class="dt">las=</span><span class="dv">1</span>, <span class="dt">main=</span><span class="st">&quot;d=correlation</span><span class="ch">\n</span><span class="st">h=complete&quot;</span> )
+
+<span class="kw">rect.hclust</span>(gene_clus, <span class="dt">h =</span> HEIGHT)
+<span class="kw">abline</span>(<span class="dt">h =</span> HEIGHT, <span class="dt">col=</span><span class="st">&quot;red&quot;</span>, <span class="dt">lty=</span><span class="dv">2</span>)
+<span class="kw">points</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(gene_clusters) ,<span class="kw">rep</span>(<span class="dv">0</span>,<span class="kw">length</span>(gene_clusters)), <span class="dt">pch=</span> <span class="dv">16</span>, <span class="dt">cex=</span><span class="dv">2</span>, <span class="dt">col=</span><span class="kw">factor</span>(gene_clusters)[gene_clus<span class="op">$</span>order] )
+<span class="kw">legend</span>( <span class="st">&quot;topright&quot;</span>, <span class="kw">levels</span>(<span class="kw">factor</span>(gene_clusters)) , <span class="dt">pch =</span> <span class="dv">16</span>, <span class="dt">col =</span>  <span class="kw">factor</span>(<span class="kw">levels</span>(<span class="kw">factor</span>(gene_clusters))) )</code></pre></div>
+<img src="lab_eda_files/figure-html/unnamed-chunk-13-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Check the dendrogram above, what is a sensible height to cut the tree?</li>
+<li>What is the maximum sensible amount of clusters I could have in my data?</li>
+</ul>
+<hr />
+</div>
+<div id="clustering-on-heatmap-optional" class="section level2">
+<h2><span class="header-section-number">2.4</span> Clustering on Heatmap (optional)</h2>
+<p>Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the <code>pheatmap</code> function, which by default will do the clustering of the rows and columns.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pheatmap</span>( logcpm[top_var,] , <span class="dt">scale =</span> <span class="st">&quot;row&quot;</span> , <span class="dt">color =</span> <span class="kw">colorRampPalette</span>(<span class="kw">c</span>(<span class="st">&quot;navy&quot;</span>,<span class="st">&quot;white&quot;</span>,<span class="st">&quot;firebrick&quot;</span>))(<span class="dv">90</span>), <span class="dt">border_color =</span> <span class="ot">NA</span>, <span class="dt">cluster_cols =</span> F)</code></pre></div>
+<img src="lab_eda_files/figure-html/unnamed-chunk-14-1.svg" width="384" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Check the dendrograms on the side of the heatmap. Do they look familiar with the previous ones?</li>
+<li>What does the ‘scale’ parameter mean? What happens with the clustering if we change it to ‘none’ or to ‘columns’?</li>
+<li>Can you change the clustering to ‘ward.D2’? Explore the <code>pheatmap</code> function pressing tab.</li>
+<li>Can you cut your gene tree into 4 clusters? Explore the <code>pheatmap</code> function pressing tab.</li>
+</ul>
+<hr />
+</div>
+<div id="clustering-bootstrapping-optional" class="section level2">
+<h2><span class="header-section-number">2.5</span> Clustering bootstrapping (optional)</h2>
+<p>Let’s say that you have 12 samples, so that all samples have the exact same expression level (say 12000 genes). And to that you add 1 single gene which is more expressed in samples 6-12, than in 1-6. If you ran a bootstrapping in this <strong>mock example</strong>, you will see that the samples will seem to cluster very well enven though there is only 1 out 12000 genes that make that separation possible.</p>
+<p>One way to measure <strong>clustering robustness / accuracy</strong> is by selecting part of the data set (say 90% of the genes), performing the clustering and recording which samples fall together. Then, you repeat (iterate) with another selection of 90% of the genes up to 1000 times, recording the clustering results. In the end, you compare the results of all 1000 clusterings and check how often the same samples failed in the same group. This procedure is called <strong>bootstrapping</strong>, and it is measured as the “percentage of times an event can occur”. For more details on this, please read the webpage for the <code>pvclust()</code> which is full of examples on this:</p>
+<ul>
+<li><code>pvclust</code> website: <a href="http://stat.sys.i.kyoto-u.ac.jp/prog/pvclust/" class="uri">http://stat.sys.i.kyoto-u.ac.jp/prog/pvclust/</a></li>
+<li><code>pvclust</code> paper: <a href="https://academic.oup.com/bioinformatics/article/22/12/1540/207339" class="uri">https://academic.oup.com/bioinformatics/article/22/12/1540/207339</a></li>
+</ul>
+<p><i class="fas fa-exclamation-circle"></i> Note that bootstrapping procedure is very time consuming and computationally intensive.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mypar</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">6</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">1</span>))
+<span class="co"># Clustering on the MOCK dataset</span>
+mock &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rep</span>(logcpm[,<span class="dv">1</span>],<span class="dv">12</span>),<span class="dt">byrow =</span> F,<span class="dt">ncol =</span> <span class="dv">12</span>)
+mock &lt;-<span class="st"> </span><span class="kw">rbind</span>( <span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">2</span>,<span class="dv">6</span>),<span class="kw">rep</span>(<span class="dv">5</span>,<span class="dv">6</span>)), mock)
+mock_pvc &lt;-<span class="st"> </span><span class="kw">pvclust</span>( <span class="dt">data =</span> mock , <span class="dt">method.dist =</span> <span class="st">&quot;correlation&quot;</span>, <span class="dt">method.hclust =</span> <span class="st">&quot;complete&quot;</span>,<span class="dt">parallel =</span> T,<span class="dt">r=</span><span class="dv">1</span>)
+<span class="kw">plot</span>(mock_pvc,<span class="dt">las=</span><span class="dv">2</span>,<span class="dt">hang =</span> <span class="op">-</span><span class="fl">0.5</span>)
+
+<span class="co"># Clustering on our dataset (this step is slow)</span>
+pvc &lt;-<span class="st"> </span><span class="kw">pvclust</span>( <span class="dt">data =</span> logcpm , <span class="dt">method.dist =</span> <span class="st">&quot;correlation&quot;</span>, <span class="dt">method.hclust =</span> <span class="st">&quot;complete&quot;</span>,<span class="dt">parallel =</span> T)
+<span class="kw">plot</span>(pvc,<span class="dt">las=</span><span class="dv">2</span>,<span class="dt">hang =</span> <span class="op">-</span><span class="fl">0.5</span>)
+<span class="kw">pvrect</span>(pvc, <span class="dt">alpha =</span> <span class="fl">0.9</span>)
+<span class="kw">points</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(data) ,<span class="kw">rep</span>(<span class="dv">0</span>,<span class="kw">ncol</span>(data)), <span class="dt">pch=</span> <span class="dv">16</span>, <span class="dt">cex=</span><span class="dv">2</span>, <span class="dt">col=</span>metadata<span class="op">$</span>Time[pvc<span class="op">$</span>hclust<span class="op">$</span>order])</code></pre></div>
+</div>
+<p><img src="lab_eda_files/figure-html/unnamed-chunk-17-1.svg" width="960" style="display: block; margin: auto auto auto 0;" /></p>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>With what percentages the samples 10, 11 and 12 fall together in the same cluster?</li>
+<li>With what percentages the samples other than 10, 11 and 12 fall together in the same cluster?</li>
+<li>With what percentages the samples 8, 7 and 9 fall together in the same cluster?</li>
+<li>With what percentages the samples 4 and 5 fall together in the same cluster?</li>
+<li>The orange rectangles represent 2 clusters. What do you think is the criteria used to define this clusters ? PS: it is not the height as in the previous examples.</li>
+</ul>
+<p><strong>End of document</strong></p>
+</div>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

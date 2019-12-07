@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Johan Reimegård • 14-May-2019" />
+
+
+<title>Small RNA-Seq Analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Small RNA-Seq Analysis</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+<h4 class="author"><b>Johan Reimegård</b> • 14-May-2019</h4>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>In this exercise we will analyse a few small RNA libraries, from <em>Drosophila melanogaster</em> (fruit fly) embryos and two cell lines (KC167 cells derived from whole embryos, and ML-DmD32 cells derived from adult wing discs). This is a subset of a much larger data set used to study microRNAs and other small RNAs in Drosophila:</p>
+<ul>
+<li><strong>emb_0-1</strong>: Small RNA from 0-1 hour embryos. (SRA id: SRR069840)</li>
+<li><strong>emb_6-10</strong>: Small RNA from 6-10 hour embryos. (SRA id:SRR069839)</li>
+<li><strong>kc167</strong>: Small RNA from KC167 cells. (SRA id:SRR028728)</li>
+<li><strong>ml-DmD32_r1</strong>: Small RNA from ML-DmD32 cells replicate1. (SRA id: SRR069508)</li>
+<li><strong>ml-DmD32_r2</strong>: Small RNA from ML-DmD32 cells replicate2. (SRA id: SRR488696)</li>
+</ul>
+<p>These data sets are described more in <a href="http://genome.cshlp.org/content/24/7/1236.full">this paper</a>.</p>
+<p>The aim of the exercise is to show a simple way to process small RNA data and to quantify the expression of microRNAs, and to make some plots of global expression patterns in R. First, you will preprocess the small RNA reads, map them to the genome, and browse the results. Then you will quantify the expression of the microRNAs, and make some plots of microRNA expression profiles.</p>
+</div>
+<div id="preparation" class="section level1">
+<h1><span class="header-section-number">2</span> Preparation</h1>
+<p>Running this on UPPMAX, start by loading the modules you will need:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">module</span> load bioinfo-tools
+<span class="ex">module</span> load samtools
+<span class="ex">module</span> load cutadapt
+<span class="ex">module</span> load bowtie
+<span class="ex">module</span> load subread/1.5.2</code></pre></div>
+</div>
+<p>And we create a directory under bonus to work in.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">mkdir</span> bonus/smallrna</code></pre></div>
+</div>
+<p>All data and scripts required for this exercise can be found in <code>/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/smallRNA</code> on UPPMAX.</p>
+<p>This includes:</p>
+<ul>
+<li>5 fastq files with the raw reads from the small RNA sequencing (in the sub directory fastq).</li>
+<li>Precomputed BAM files with the sequencing data mapped to the entire Drosophila genome, which can be used for browsing in IGV (in the sub directory mapped_to_genome).</li>
+<li>A gff file with the coordinates of all mircoRNAs on the Drosophila genome. (Use the file dme_mirbase_FORMAT2016.gff3 in the sub directory mirbase).</li>
+</ul>
+<p>Copy these files in the directory you will use for this exercise. On UPPMAX you can use the following command:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="bu">cd</span> /bonus/smallrna
+<span class="fu">cp</span> -r /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/smallRNA/* .</code></pre></div>
+</div>
+<p>This might take a while since the fastq files are quite large.</p>
+</div>
+<div id="adaptor-trimming" class="section level1">
+<h1><span class="header-section-number">3</span> Adaptor trimming</h1>
+<p>When sequencing small RNAs we are working with very short RNA fragments, typically shorter than the reads. This means that most reads will contain parts of adaptor sequences that were inserted during library preparation. These are found at the (3’) end of the reads. Before we can do anything else with the data we have to remove these sequences.</p>
+<p>Look at any fastq file, e.g. using less:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">less</span> file.fastq</code></pre></div>
+</div>
+<p>Just by looking the nucleotide sequence, can you guess what the adapter is? (This is actually a useful exercise. Many data sets are poorly annotated, and no information is given about the adapter sequence. When analyzing such data the only option is to infer the adapter from the sequence data.)</p>
+<p>There are many programs available for trimming adapters. We will use a program called <a href="https://cutadapt.readthedocs.org/en/stable/">cutadapt</a>. You can run it with the following command:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">cutadapt</span> -a [adaptor] --trimmed-only [in.fastq] --minimum-length=17 <span class="op">&gt;</span> [trimmed.fastq]</code></pre></div>
+</div>
+<p>This trims the sequence given in adapter from the reads in in.fastq and prints the results to a new file trimmed.fastq. It also applies the following filters: only reads where the adapter was trimmed are printed to the output, and only reads that are at least 17 nucleotides after trimming are printed. For the data in this exercise, use the adapter sequence <code>CTGTAGGCACCATC</code>.</p>
+<p>Run this program on each of the 6 fastq files. This takes a few minutes per file. Make sure you give the resulting files good names (e.g. kc167_TRIM.fastq) so you can keep track of all files.</p>
+<p><i class="fas fa-comments"></i> How many reads were removed because they didn’t have the adapter sequence or because they were to short?</p>
+</div>
+<div id="mapping" class="section level1">
+<h1><span class="header-section-number">4</span> Mapping</h1>
+<p>The next step is to align (map) the reads to the genome sequence around the microRNA loci. We will use the program <a href="http://bowtie-bio.sourceforge.net/index.shtml">bowtie</a> to do this. We will map the reads against the entire <em>Drosophila melanogaster</em> genome. To be able to map millions of reads very fast, bowtie uses an index of the sequence we map against. You find an index of the <em>Drosophila</em> genome at <code>/sw/data/uppnex/igenomes/Drosophila_melanogaster/UCSC/dm3/Sequence/BowtieIndex/genome</code>. To map all reads we use the following command: ::</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">bowtie</span> -q -v 0 -k 10 -S -t [index.name] [small_rna.fastq] [out.sam]</code></pre></div>
+</div>
+<p>Here, <em>index.name</em> is the bowtie index above, <em>small_rna.fastq</em> is the file with the small RNA data (after trimming!) and <em>out.sam</em> is the resulting file. This maps the reads with the following settings: input is a fastq file (-q), no mismatches are allowed (-v 0), max 10 hits are reported for each read (-k 10), output is a SAM file (-S) and the time the mapping took is printed to the screen (-t). Run this command once for every file with trimmed reads. It takes around one minute for each data set.</p>
+<div class="optional">
+<p><strong>Optional</strong><br />
+<i class="fas fa-clipboard-list"></i> You can try mapping one of the fastq files where the adaptor was not trimmed, and see what happens.</p>
+</div>
+</div>
+<div id="igv" class="section level1">
+<h1><span class="header-section-number">5</span> IGV</h1>
+<p>It is often informative to just browse the reads once they have been mapped to genome. For this we will use pre-computed BAM files, which can be viewed with IGV or some other genome browser. These are basically the same as the SAM files created by bowtie, but converted to a compressed binary format and sorted. Start IGV and load the files <strong>emb_0_1.sorted.bam</strong> and <strong>ml-DmD32_r2.sorted.bam</strong>. Also load the file with all microRNA annotations <strong>dme_mirbase.gff3</strong>.</p>
+<p><i class="fas fa-lightbulb"></i> IGV can be started on UPPMAX using <code>module load IGV; igv.sh&amp;</code>.</p>
+<p>To load a file you first select the correct genome (<strong>D. melanogaster r5.22</strong>) in the top left menu. Then go to the <em>File &gt; Menu</em>, and select <em>Load from file</em>, and select the files described above.</p>
+<p>Type the name of a microRNA, e.g <strong>mir-124</strong>, to go to that locus. You can see that the read mapping patterns are very distinct: (Almost) only the processed microRNAs end in the sequencing libraries, and you can see reads from both arms of the hairpin structure. While many microRNAs occur alone in the genome, other are arranged in clusters. Type <strong>let-7</strong> to browse such a cluster.</p>
+<p><i class="fas fa-comments"></i> How many microRNAs do you see in this region?</p>
+<div class="optional">
+<p><strong>Optional</strong><br />
+To see something weird, go to <strong>3R:18,118,436-18,118,767</strong>. <i class="fas fa-comments"></i>Do you have any idea what this could be?</p>
+</div>
+</div>
+<div id="quantification" class="section level1">
+<h1><span class="header-section-number">6</span> Quantification</h1>
+<p>We can now summarize the mapped reads to see which microRNAs are expressed in the different samples, and to do some global comparisons. For this, we use the SAM files created by bowtie. If you have not seen a SAM file before, have a look at one of the files, for example by running:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">less</span> [out.sam]</code></pre></div>
+</div>
+<p>Press <kbd>SPACE</kbd> to scroll down into the file and <kbd>Q</kbd> to exit the viewer.</p>
+<p>We are only interested in the reads mapping to known microRNA loci in <a href="http://www.mirbase.org">miRBase</a>, which is the “official” data base of microRNAs in many different species. The file <code>/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/smallRNA/mirbase/dme_mirbase_FORMAT2016.gff3</code> contains the locations of all microRNAs on the fly genome. Use <code>less</code> to have a look at this file. <a href="http://bioinf.wehi.edu.au/featureCounts/">featureCounts</a> is a useful program for counting reads mapping to different genomic regions. Run it like this, for all SAM files at once:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">featureCounts</span> -t miRNA -g Name -O -s 1 -M -a [mirbasefile] -o [outfile] [samfiles ...] </code></pre></div>
+</div>
+<p>Here we only look at loci that are miRNA, and we use the <strong>Name</strong> attribute to name the loci. The <code>-O</code> flag tells the program that reads that map to several overlapping microRNAs should be assigned to all of them. The <code>-s 1</code> flag tells the program to only count reads that map to the same strand as the microRNA, and the <code>-M</code> flag makes sure we count multi mapping reads. The output will be a list with the number of reads mapping to each microRNA. <code>featureCounts</code> takes around a few minutes to run. When the program has finished, look at the results with <code>less</code>.</p>
+</div>
+<div id="dge" class="section level1">
+<h1><span class="header-section-number">7</span> DGE</h1>
+<p>Once the reads mapping to each microRNA have been counted, we can analyze the microRNA expression levels using R.</p>
+<p>You can run R on UPPMAX by running</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">module</span> load R/3.5.2
+<span class="ex">module</span> load R_packages/3.5.2
+<span class="ex">R</span></code></pre></div>
+</div>
+<p>You will see a different prompt, since you are now typing commands to R. You can always exit R with <code>quit()</code>.</p>
+<p>Alternatively, you can run RStudio locally on your system. In this case, you need to download the count tables.</p>
+<p>To combine the files you just created into an expression table, use the following commands:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">count.file &lt;-<span class="st"> &quot;&lt;path to the output of featureCounts&gt;&quot;</span>
+count.data &lt;-<span class="st"> </span><span class="kw">read.table</span>(count.file, <span class="dt">sep=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>, <span class="dt">header=</span><span class="ot">TRUE</span>)
+exp.data &lt;-<span class="st"> </span>count.data[,<span class="op">-</span><span class="dv">1</span><span class="op">*</span><span class="dv">1</span><span class="op">:</span><span class="dv">6</span>]      ## remove first 6 columns
+<span class="kw">rownames</span>(exp.data) &lt;-<span class="st"> </span>count.data[,<span class="dv">1</span>] ## use names of microRNAs as rownames in the table
+<span class="kw">colnames</span>(exp.data) &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;.sam&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="kw">colnames</span>(exp.data)) ## make column names of table nicer
+<span class="kw">colnames</span>(exp.data) &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;fastq.&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="kw">colnames</span>(exp.data))</code></pre></div>
+</div>
+<p>You can look at the first 20 rows of the table by typing:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">exp.data[<span class="dv">1</span><span class="op">:</span><span class="dv">20</span>,]</code></pre></div>
+</div>
+<p>Since the log transformation we will do later cannot handle cases with zero reads, we add a dummy value of 1 read to each microRNA:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">exp.data &lt;-<span class="st"> </span>exp.data <span class="op">+</span><span class="st"> </span><span class="dv">1</span></code></pre></div>
+</div>
+<p>To compare expression levels from different libraries, the read counts have to be normalized to compensate for different sequencing depths etc. For this we will use the TMM normalization. This normalization method uses a trimmed mean of M- values (TMM) between each pair of samples to find a set of scaling factors for the library sizes that minimize the log-fold changes between the samples for most genes (if you are interested in the details, see <a href="https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-3-r25">this paper</a>). To use this method we need to load the edgeR module. edgeR is an R module with many useful functions for normalizing RNA-seq data and finding differentially expressed genes. Here we will only use one of the normalization functions.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(edgeR)</code></pre></div>
+</div>
+<p>If you get an error message that the edgeR module is not installed on the computer you are using, you can download and install it with:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;http://bioconductor.org/biocLite.R&quot;</span>)
+<span class="kw">biocLite</span>(<span class="st">&quot;edgeR&quot;</span>)</code></pre></div>
+</div>
+<p>In the normalization, we start by computing the factors by which the read counts from each library are rescaled:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lib.size &lt;-<span class="st"> </span><span class="kw">apply</span>(exp.data,<span class="dv">2</span>,sum)
+scale.factors &lt;-<span class="st"> </span><span class="kw">calcNormFactors</span>(exp.data, <span class="dt">method=</span><span class="st">&quot;TMM&quot;</span>)</code></pre></div>
+</div>
+<p>Next, we apply the rescaling to the read counts for each library:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">norm.data &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">t</span>(exp.data)<span class="op">/</span>(scale.factors<span class="op">*</span>lib.size))</code></pre></div>
+</div>
+<p>Finally, we log transform all values. This makes the analysis less sensitive to microRNAs with a huge number of reads:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">norm.data &lt;-<span class="st"> </span><span class="kw">log</span>(norm.data)</code></pre></div>
+</div>
+<p>We can use principal component analysis (PCA) to get a global look of how similar the microRNA expression profiles are in the different libraries:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mir.pca &lt;-<span class="st"> </span><span class="kw">prcomp</span>(<span class="kw">t</span>(norm.data))     ## compute principal components
+<span class="kw">plot</span>(mir.pca<span class="op">$</span>x[,<span class="dv">1</span>], mir.pca<span class="op">$</span>x[,<span class="dv">2</span>])  ## plot  PC1 and PC2
+<span class="kw">text</span>(mir.pca<span class="op">$</span>x[,<span class="dv">1</span>], mir.pca<span class="op">$</span>x[,<span class="dv">2</span>], <span class="kw">rownames</span>(mir.pca<span class="op">$</span>x), <span class="dt">cex=</span><span class="fl">0.7</span>, <span class="dt">pos=</span><span class="dv">4</span>, <span class="dt">col=</span><span class="st">&quot;red&quot;</span>)</code></pre></div>
+</div>
+<p>You should now see a plot on the screen. <strong>What can we learn from looking at this PCA plot?</strong></p>
+<p>We can also look at the loadings, i.e. how much each microRNA contributes to each principal component. To see which microRNAs are highly expressed in samples with high PC1, type:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">sort</span>(mir.pca<span class="op">$</span>rotation[,<span class="dv">1</span>], <span class="dt">decreasing=</span><span class="ot">TRUE</span>))</code></pre></div>
+</div>
+<p>To see which microRNAs are highly expressed in samples with low PC1, type:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">sort</span>(mir.pca<span class="op">$</span>rotation[,<span class="dv">1</span>], <span class="dt">decreasing=</span><span class="ot">FALSE</span>))</code></pre></div>
+</div>
+<p>(Some background about some specific microRNAs: bantam is known to prevent apoptosis by repressing pro-apoptosis genes, so it makes sense that it is highly expressed in cell lines. mir-124 is a nervous system specific microRNA. It is not surprising that it is higher expressed in embryos than in (non-neural) cell lines. Also, mir-4 mir-5 and mir-286 come from the same transcriptional cluster, and have been associated with degradation of maternal mRNA in embryos.)</p>
+</div>
+<div id="exploratory" class="section level1">
+<h1><span class="header-section-number">8</span> Exploratory</h1>
+<p>Another way to get a global overview of the data is to use clustering and plot heatmaps. You can do this with the following command:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">heatmap</span>(norm.data, <span class="dt">scale=</span><span class="st">&quot;none&quot;</span>, <span class="dt">cexRow=</span><span class="fl">0.2</span>, <span class="dt">cexCol=</span><span class="fl">0.6</span>)</code></pre></div>
+</div>
+<p>In the resulting plot each library is a column and each microRNA is a row. The color indicates the expression levels, with red being no reads and more yellow indicating higher expression. The dendrogram at the top shows how the libraries cluster together.</p>
+<p><i class="fas fa-comments"></i> What can you learn from looking at this plot?</p>
+<p>Another function to create heatmaps R is <code>pheatmap()</code> from the <strong>pheatmap</strong> R package. To use it, do</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pheatmap)
+<span class="kw">pheatmap</span>(norm.data, <span class="dt">scale=</span><span class="st">&quot;none&quot;</span>, <span class="dt">fontsize_row=</span><span class="dv">3</span>)</code></pre></div>
+</div>
+<p>If the library <strong>pheatmap</strong> isn’t installed, you can download and install it with</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;pheatmap&quot;</span>)</code></pre></div>
+</div>
+<div class="instruction">
+<p>There may be some problems displaying plots etc. on UPPMAX when running in interactive mode. If you have trouble viewing the PCA plots and heatmaps, try:</p>
+<ul>
+<li>Log out of UPPMAX</li>
+<li>Log into UPPMAX again</li>
+<li>Do not go into interactive mode, just start R</li>
+<li>Type in all R commands again.</li>
+</ul>
+</div>
+<p><strong>End of document</strong></p>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title> Schedule</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore"><i class='fas fa-clipboard-list' style='margin-left:4px;margin-right:4px;'></i> Schedule</h1>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<div class="table-schedule">
+<table class="table table-hover table-responsive" style="width: auto !important; ">
+<thead>
+<tr>
+<th style="text-align:left;">
+Time
+</th>
+<th style="text-align:left;">
+Topic
+</th>
+<th style="text-align:left;">
+Person
+</th>
+</tr>
+</thead>
+<tbody>
+<tr grouplength="12">
+<td colspan="3" style="background:white;">
+<strong>
+<p style="font-size:110%;padding-top:10px;padding-bottom:5px;margin-top:10px;">
+<span style="font-weight:bold;"><span style="color:#0093BD;"><i class="fas fa-calendar" style="margin-left:5px;margin-right:5px;"></i></span>13-May-2019</span><span style="color:white;border-radius:4px;padding-right:4px;padding-left:4px;background:#0093BD;margin-left:9px;margin-right:7px;">Mon</span><span style="color:#0093BD;"><i class="fas fa-map-marker-alt" style="margin-left:5px;margin-right:5px;"></i></span><a href="http://bit.ly/2UKjEoQ">E10:1309</a>
+</p>
+</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+09:00 - 09:40<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">Welcome</span>
+</td>
+<td style="text-align:left;">
+Johan Reimegård
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+09:40 - 10:20<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span style="margin-right:5px;">RNA Introduction</span><a href="presentations/RNA_introduction.pdf"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Johan Reimegård
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10:20 - 10:40<span style="color:lightgrey;margin-left:4px;">(20 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="color:white;font-weight:bold;border-radius:4px;padding:4px;background:#BDBDBD;">Coffee Break</span>
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10:40 - 11:20<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span style="margin-right:5px;">RNA-Seq Introduction</span><a href="presentations/RNAseq_Introduction.pdf"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Johan Reimegård
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11:20 - 12:00<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span style="margin-right:5px;">Unix &amp; Uppmax</span><a href="presentations/Uppmax.pdf"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Johan Reimegård
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12:00 - 13:00<span style="color:lightgrey;margin-left:4px;">(60 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="color:white;font-weight:bold;border-radius:4px;padding:4px;background:#BDBDBD;">Lunch</span>
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13:00 - 13:40<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span><span style="margin-right:5px;">Pre-alignment QC</span><a href="presentations/After_sequencing_QC.pdf"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span><a href="lab_qc.html"><i class="fas fa-file-alt" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Johan Reimegård
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13:40 - 14:20<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span><span style="margin-right:5px;">Mapping</span><a href="presentations/RNAseq_aligners.pdf"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span><a href="lab_mapping.html"><i class="fas fa-file-alt" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Johan Reimegård
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14:20 - 15:00<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span><span style="margin-right:5px;">Post-alignment QC</span><a href="presentations/After_mapping_QC.pdf"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span><a href="lab_qc.html"><i class="fas fa-file-alt" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Johan Reimegård
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+15:00 - 15:20<span style="color:lightgrey;margin-left:4px;">(20 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="color:white;font-weight:bold;border-radius:4px;padding:4px;background:#BDBDBD;">Coffee Break</span>
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+15:20 - 16:00<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span><span style="margin-right:5px;">Pseudoaligners</span><a href="presentations/Pseudoaligners.pdf"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span><a href="lab_kallisto.html"><i class="fas fa-file-alt" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Johan Reimegård
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16:00 - 16:40<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span><span style="margin-right:5px;">Quantification</span><a href="presentations/Quantification.pdf"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span><a href="lab_quantification.html"><i class="fas fa-file-alt" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Johan Reimegård
+</td>
+</tr>
+<tr grouplength="12">
+<td colspan="3" style="background:white;">
+<strong>
+<p style="font-size:110%;padding-top:10px;padding-bottom:5px;margin-top:10px;">
+<span style="font-weight:bold;"><span style="color:#0093BD;"><i class="fas fa-calendar" style="margin-left:5px;margin-right:5px;"></i></span>14-May-2019</span><span style="color:white;border-radius:4px;padding-right:4px;padding-left:4px;background:#0093BD;margin-left:9px;margin-right:7px;">Tue</span><span style="color:#0093BD;"><i class="fas fa-map-marker-alt" style="margin-left:5px;margin-right:5px;"></i></span><a href="http://bit.ly/2UKjEoQ">E10:1309</a>
+</p>
+</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+09:00 - 09:40<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span style="margin-right:5px;">Intro to R</span><a href="lab_r.html"><i class="fas fa-file-alt" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Roy Francis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+09:40 - 10:20<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span style="margin-right:5px;">Retrieving Data</span><a href="lab_download.html"><i class="fas fa-file-alt" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Roy Francis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10:20 - 10:40<span style="color:lightgrey;margin-left:4px;">(20 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="color:white;font-weight:bold;border-radius:4px;padding:4px;background:#BDBDBD;">Coffee Break</span>
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10:40 - 11:20<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span><span style="margin-right:5px;">Data Preprocessing</span><a href="presentations/presentation_dge.html"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span><a href="lab_dge.html"><i class="fas fa-file-alt" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Roy Francis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11:20 - 12:00<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">Normalisation</span>
+</td>
+<td style="text-align:left;">
+Roy Francis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12:00 - 13:00<span style="color:lightgrey;margin-left:4px;">(60 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="color:white;font-weight:bold;border-radius:4px;padding:4px;background:#BDBDBD;">Lunch</span>
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13:00 - 13:40<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">Exploratory Analyses</span>
+</td>
+<td style="text-align:left;">
+Roy Francis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13:40 - 14:20<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">DGE</span>
+</td>
+<td style="text-align:left;">
+Roy Francis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14:20 - 15:00<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">DGE</span>
+</td>
+<td style="text-align:left;">
+Roy Francis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+15:00 - 15:20<span style="color:lightgrey;margin-left:4px;">(20 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="color:white;font-weight:bold;border-radius:4px;padding:4px;background:#BDBDBD;">Coffee Break</span>
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+15:20 - 16:00<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">DGE Visualisation</span>
+</td>
+<td style="text-align:left;">
+Roy Francis
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16:00 - 16:40<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">DGE Visualisation</span>
+</td>
+<td style="text-align:left;">
+Roy Francis
+</td>
+</tr>
+<tr groupLength="11">
+<td colspan="3" style="background:white;">
+<strong>
+<p style="font-size:110%;padding-top:10px;padding-bottom:5px;margin-top:10px;">
+<span style="font-weight:bold;"><span style="color:#0093BD;"><i class="fas fa-calendar" style="margin-left:5px;margin-right:5px;"></i></span>15-May-2019</span><span style="color:white;border-radius:4px;padding-right:4px;padding-left:4px;background:#0093BD;margin-left:9px;margin-right:7px;">Wed</span><span style="color:#0093BD;"><i class="fas fa-map-marker-alt" style="margin-left:5px;margin-right:5px;"></i></span><a href="http://bit.ly/2UKjEoQ">E10:1309</a>
+</p>
+</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+09:00 - 09:40<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span><span style="margin-right:5px;">PCA</span><a href="presentations/presentation_pca.pdf"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span><a href="lab_eda.html"><i class="fas fa-file-alt" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Paulo Czarnewski
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+09:40 - 10:20<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span><span style="margin-right:5px;">Hierarchical Clustering</span><a href="presentations/presentation_clustering.pdf"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span><a href="lab_eda.html"><i class="fas fa-file-alt" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Paulo Czarnewski
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10:20 - 10:40<span style="color:lightgrey;margin-left:4px;">(20 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="color:white;font-weight:bold;border-radius:4px;padding:4px;background:#BDBDBD;">Coffee Break</span>
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10:40 - 11:20<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">Hierarchical Clustering</span>
+</td>
+<td style="text-align:left;">
+Paulo Czarnewski
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11:20 - 12:00<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span><span><span style="margin-right:5px;">GSA &amp; GSEA</span><a href="presentations/presentation_functional.pdf"><i class="fas fa-file-powerpoint" style="margin-left:4px;margin-right:4px;"></i></a></span><a href="lab_functional.html"><i class="fas fa-file-alt" style="margin-left:4px;margin-right:4px;"></i></a></span>
+</td>
+<td style="text-align:left;">
+Paulo Czarnewski
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12:00 - 13:00<span style="color:lightgrey;margin-left:4px;">(60 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="color:white;font-weight:bold;border-radius:4px;padding:4px;background:#BDBDBD;">Lunch</span>
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13:00 - 13:40<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">GSA &amp; GSEA</span>
+</td>
+<td style="text-align:left;">
+Paulo Czarnewski
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13:40 - 14:20<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">GEO</span>
+</td>
+<td style="text-align:left;">
+Paulo Czarnewski
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14:20 - 15:00<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">Free Exercises</span>
+</td>
+<td style="text-align:left;">
+Paulo Czarnewski
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+15:00 - 15:20<span style="color:lightgrey;margin-left:4px;">(20 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="color:white;font-weight:bold;border-radius:4px;padding:4px;background:#BDBDBD;">Coffee Break</span>
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+15:20 - 16:00<span style="color:lightgrey;margin-left:4px;">(40 min)</span>
+</td>
+<td style="text-align:left;">
+<span style="margin-right:5px;">Conclusion</span>
+</td>
+<td style="text-align:left;">
+Johan Reimegård
+</td>
+</tr>
+</tbody>
+</table>
+<!-- marker legend -->
+<p class="small" style="margin-top:20px;">
+<span> <span style="margin-left:6px;margin-right:6px;&gt;
+&lt;i class=" fas="" fa-calendar'="" style="margin-left:4px;margin-right:4px;"> <i class='fas fa-calendar' style='margin-left:4px;margin-right:4px;'></i> Date </span> <span style="margin-left:6px;margin-right:6px;&gt;
+&lt;i class=" fas="" fa-map-marker-alt'="" style="margin-left:4px;margin-right:4px;"> <i class='fas fa-map-marker-alt' style='margin-left:4px;margin-right:4px;'></i> Room number </span> <span style="margin-left:6px;margin-right:6px;&gt;
+&lt;i class=" fas="" fa-file-powerpoint'="" style="margin-left:4px;margin-right:4px;"> <i class='fas fa-file-powerpoint' style='margin-left:4px;margin-right:4px;'></i> Presentation </span> <span style="margin-left:6px;margin-right:6px;&gt;
+&lt;i class=" fas="" fa-file-alt'="" style="margin-left:4px;margin-right:4px;"> <i class='fas fa-file-alt' style='margin-left:4px;margin-right:4px;'></i> Lab exercises </span> </span>
+</p>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Roy Francis • 14-May-2019" />
+
+
+<title>Downloads</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Downloads</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+<h4 class="author"><b>Roy Francis</b> • 14-May-2019</h4>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<div id="genomic-data" class="section level1">
+<h1><span class="header-section-number">1</span> Genomic data</h1>
+<p>Reference genomic data for your projects are available from Ensembl. This is usually the latest build of the genome, transcriptome etc as well as the annotations in GTF or GFF format. Most common organisms are available from <a href="https://www.ensembl.org/index.html">ensembl.org</a>. You can select the organism and then click on <strong>Download FASTA</strong>/<strong>Download GTF/GFF</strong> which takes you to the FTP site.</p>
+<p>You can also go directly to their FTP site <a href="ftp://ftp.ensembl.org/pub/release-96" class="uri">ftp://ftp.ensembl.org/pub/release-96</a> where you can select the type of data you need, and then select the organism. For eg; <strong>homo_sapiens</strong>, under which you find <strong>cdna</strong>, <strong>cds</strong>, <strong>dna</strong>, <strong>dna_index</strong>, <strong>ncrna</strong> and <strong>pep</strong>. Under <strong>dna</strong>, the FASTA files are available as full genome or as separate chromosomes. Each of them are again available as regular (repeat content as normal bases), soft-masked (sm, repeat content in lowercase) or repeat-masked (rm, repeat content as Ns). Full genomes are also available as <strong>primary assembly</strong> or <strong>top-level</strong>. <strong>Primary assembly</strong> is what most people would need. The <strong>top-level</strong> is much larger in size and contains non-chromosomal contigs, patches, haplotypes etc. This is significantly larger in size compared to the primary assembly.</p>
+<p><i class="fas fa-exclamation-circle"></i> Clades such as metazoa, protists, bacteria, fungi and plants are available through separate ensembl websites. These are listed on <a href="http://ensemblgenomes.org/" class="uri">http://ensemblgenomes.org/</a>.</p>
+</div>
+<div id="biomart" class="section level1">
+<h1><span class="header-section-number">2</span> Biomart</h1>
+<div id="genes" class="section level2">
+<h2><span class="header-section-number">2.1</span> Genes</h2>
+<p>In this section, we will download annotation data using R package <strong>biomaRt</strong>. Annotations refer to known features (verified experimentally or predicted) in the genome. Usually, our features of interest in RNA-Seq are genes, their IDs, position in the genome, gene biotype (protein coding, non-coding etc) etc. We will also use the <strong>dplyr</strong> package to pipe data through functions.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(biomaRt)
+<span class="kw">library</span>(dplyr)
+
+<span class="kw">listMarts</span>()</code></pre></div>
+<pre><code>##                biomart               version
+## 1 ENSEMBL_MART_ENSEMBL      Ensembl Genes 96
+## 2   ENSEMBL_MART_MOUSE      Mouse strains 96
+## 3     ENSEMBL_MART_SNP  Ensembl Variation 96
+## 4 ENSEMBL_MART_FUNCGEN Ensembl Regulation 96</code></pre>
+</div>
+<p>We will use the code below to find the name of the Human ensembl genes dataset under ensembl mart.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mart &lt;-<span class="st"> </span><span class="kw">useMart</span>(<span class="st">&quot;ENSEMBL_MART_ENSEMBL&quot;</span>)
+ds &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">listDatasets</span>(<span class="dt">mart=</span>mart))
+
+<span class="co"># find all rows in dataset &#39;ds&#39; where column &#39;description&#39; contains the string &#39;human&#39;</span>
+ds[<span class="kw">grepl</span>(<span class="st">&quot;human&quot;</span>,<span class="kw">tolower</span>(ds<span class="op">$</span>description)),]</code></pre></div>
+<pre><code>##                  dataset              description    version
+## 73 hsapiens_gene_ensembl Human genes (GRCh38.p12) GRCh38.p12</code></pre>
+</div>
+<p>Now that we know the name of the dataset, we can list all the columns (filters) in this dataset.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mart &lt;-<span class="st"> </span><span class="kw">useMart</span>(<span class="st">&quot;ENSEMBL_MART_ENSEMBL&quot;</span>)
+mart &lt;-<span class="st"> </span><span class="kw">useDataset</span>(<span class="dt">mart=</span>mart,<span class="dt">dataset=</span><span class="st">&quot;hsapiens_gene_ensembl&quot;</span>)
+la &lt;-<span class="st"> </span><span class="kw">listAttributes</span>(<span class="dt">mart=</span>mart)
+<span class="kw">head</span>(la)</code></pre></div>
+<pre><code>##                            name                  description         page
+## 1               ensembl_gene_id               Gene stable ID feature_page
+## 2       ensembl_gene_id_version       Gene stable ID version feature_page
+## 3         ensembl_transcript_id         Transcript stable ID feature_page
+## 4 ensembl_transcript_id_version Transcript stable ID version feature_page
+## 5            ensembl_peptide_id            Protein stable ID feature_page
+## 6    ensembl_peptide_id_version    Protein stable ID version feature_page</code></pre>
+</div>
+<p>One can also search for attributes of interest.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">searchAttributes</span>(<span class="dt">mart=</span>mart,<span class="dt">pattern=</span><span class="st">&quot;entrez&quot;</span>)</code></pre></div>
+<pre><code>##                     name                   description         page
+## 55 entrezgene_trans_name EntrezGene transcript name ID feature_page
+## 74            entrezgene                  NCBI gene ID feature_page</code></pre>
+</div>
+<p>We create a vector of our columns of interest.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myattributes &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;ensembl_gene_id&quot;</span>,
+                  <span class="st">&quot;entrezgene&quot;</span>,
+                  <span class="st">&quot;external_gene_name&quot;</span>,
+                  <span class="st">&quot;chromosome_name&quot;</span>,
+                  <span class="st">&quot;start_position&quot;</span>,
+                  <span class="st">&quot;end_position&quot;</span>,
+                  <span class="st">&quot;strand&quot;</span>,
+                  <span class="st">&quot;gene_biotype&quot;</span>,
+                  <span class="st">&quot;description&quot;</span>)</code></pre></div>
+</div>
+<p>We then use this to download our data. Note that this can be a slow step.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mart &lt;-<span class="st"> </span><span class="kw">useMart</span>(<span class="st">&quot;ENSEMBL_MART_ENSEMBL&quot;</span>)
+mart &lt;-<span class="st"> </span><span class="kw">useDataset</span>(<span class="dt">mart=</span>mart,<span class="dt">dataset=</span><span class="st">&quot;hsapiens_gene_ensembl&quot;</span>)
+bdata &lt;-<span class="st"> </span><span class="kw">getBM</span>(<span class="dt">mart=</span>mart,<span class="dt">attributes=</span>myattributes,<span class="dt">uniqueRows=</span>T)
+<span class="kw">head</span>(bdata)</code></pre></div>
+</div>
+<pre><code>  ensembl_gene_id entrezgene external_gene_name chromosome_name start_position
+1 ENSG00000210049         NA              MT-TF              MT            577
+2 ENSG00000211459         NA            MT-RNR1              MT            648
+3 ENSG00000210077         NA              MT-TV              MT           1602
+4 ENSG00000210082         NA            MT-RNR2              MT           1671
+5 ENSG00000209082         NA             MT-TL1              MT           3230
+6 ENSG00000198888       4535             MT-ND1              MT           3307
+  end_position strand   gene_biotype
+1          647      1        Mt_tRNA
+2         1601      1        Mt_rRNA
+3         1670      1        Mt_tRNA
+4         3229      1        Mt_rRNA
+5         3304      1        Mt_tRNA
+6         4262      1 protein_coding
+                                                                                               description
+1                              mitochondrially encoded tRNA-Phe (UUU/C) [Source:HGNC Symbol;Acc:HGNC:7481]
+2                                       mitochondrially encoded 12S RNA [Source:HGNC Symbol;Acc:HGNC:7470]
+3                                mitochondrially encoded tRNA-Val (GUN) [Source:HGNC Symbol;Acc:HGNC:7500]
+4                                       mitochondrially encoded 16S RNA [Source:HGNC Symbol;Acc:HGNC:7471]
+5                            mitochondrially encoded tRNA-Leu (UUA/G) 1 [Source:HGNC Symbol;Acc:HGNC:7490]
+6 mitochondrially encoded NADH:ubiquinone oxidoreductase core subunit 1 [Source:HGNC Symbol;Acc:HGNC:7455]</code></pre>
+<p>We find that there are several duplicates for all the IDs. This needs to be fixed when this information is to be used downstream.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(<span class="kw">duplicated</span>(bdata<span class="op">$</span>ensembl_gene_id))
+<span class="kw">sum</span>(<span class="kw">duplicated</span>(bdata<span class="op">$</span>entrezgene))
+<span class="kw">sum</span>(<span class="kw">duplicated</span>(bdata<span class="op">$</span>external_gene_name))</code></pre></div>
+</div>
+<pre><code>252
+45751
+6417</code></pre>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># arrange table by chr name and start position</span>
+bdata &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">arrange</span>(bdata,chromosome_name,start_position)
+<span class="kw">write.table</span>(bdata,<span class="st">&quot;./data/human_genes.txt&quot;</span>,<span class="dt">row.names=</span>F,<span class="dt">quote=</span>F,<span class="dt">col.names=</span>T,<span class="dt">sep=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)</code></pre></div>
+</div>
+</div>
+<div id="transcript" class="section level2">
+<h2><span class="header-section-number">2.2</span> Transcript</h2>
+<p>Here we download transcript to gene mappings. Notice that we can specify the <code>mart</code> and <code>dataset</code> in the <code>useMart()</code> function.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mart &lt;-<span class="st"> </span><span class="kw">useMart</span>(<span class="dt">biomart=</span><span class="st">&quot;ensembl&quot;</span>,<span class="dt">dataset=</span><span class="st">&quot;hsapiens_gene_ensembl&quot;</span>)
+t2g &lt;-<span class="st"> </span><span class="kw">getBM</span>(<span class="dt">attributes=</span><span class="kw">c</span>(<span class="st">&quot;ensembl_transcript_id&quot;</span>,<span class="st">&quot;ensembl_gene_id&quot;</span>,<span class="st">&quot;external_gene_name&quot;</span>),<span class="dt">mart=</span>mart)
+<span class="kw">write.table</span>(t2g,<span class="st">&quot;./data/human_transcripts.txt&quot;</span>,<span class="dt">row.names=</span>F,<span class="dt">quote=</span>F,<span class="dt">col.names=</span>T,<span class="dt">sep=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)</code></pre></div>
+</div>
+<p>The transcipt information file is saved to a file and will be used in the lab on <a href="lab_kallisto.html">Kallisto</a>.</p>
+</div>
+<div id="gene-ontology" class="section level2">
+<h2><span class="header-section-number">2.3</span> Gene ontology</h2>
+<p>Similarly, we can get entrez gene ID to GO ID relationships. List all the GO related filters:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mart &lt;-<span class="st"> </span>biomaRt<span class="op">::</span><span class="kw">useMart</span>(<span class="dt">biomart=</span><span class="st">&quot;ensembl&quot;</span>,<span class="dt">dataset=</span><span class="st">&quot;hsapiens_gene_ensembl&quot;</span>)
+lf &lt;-<span class="st"> </span><span class="kw">listFilters</span>(<span class="dt">mart=</span>mart)
+
+<span class="co"># find all rows in dataset &#39;lf&#39; where column &#39;name&#39; contains the string &#39;go&#39;</span>
+lf[<span class="kw">grepl</span>(<span class="st">&quot;go&quot;</span>,<span class="kw">tolower</span>(lf<span class="op">$</span>name)),]</code></pre></div>
+</div>
+<pre><code>                   name                        description
+1               with_go                      With GO ID(s)
+2       with_goslim_goa              With GOSlim GOA ID(s)
+3                    go         GO ID(s) [e.g. GO:0000002]
+4            goslim_goa GOSlim GOA ID(s) [e.g. GO:0000003]
+5        go_parent_term              Parent term accession
+6        go_parent_name                   Parent term name
+7      go_evidence_code                   GO Evidence code
+8   with_cdingo_homolog            Orthologous Dingo Genes
+9 with_ggorilla_homolog          Orthologous Gorilla Genes</code></pre>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mart &lt;-<span class="st"> </span>biomaRt<span class="op">::</span><span class="kw">useMart</span>(<span class="dt">biomart=</span><span class="st">&quot;ensembl&quot;</span>,<span class="dt">dataset=</span><span class="st">&quot;hsapiens_gene_ensembl&quot;</span>)
+bdata &lt;-<span class="st"> </span><span class="kw">getBM</span>(<span class="dt">mart=</span>mart,<span class="dt">attributes=</span><span class="kw">c</span>(<span class="st">&quot;entrezgene&quot;</span>,<span class="st">&quot;go&quot;</span>,<span class="st">&quot;go_evidence_code&quot;</span>),<span class="dt">uniqueRows=</span>T)
+<span class="kw">write.table</span>(bdata,<span class="st">&quot;./data/go.txt&quot;</span>,<span class="dt">row.names=</span>F,<span class="dt">quote=</span>F,<span class="dt">col.names=</span>T,<span class="dt">sep=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)</code></pre></div>
+</div>
+</div>
+<div id="id-conversion" class="section level2">
+<h2><span class="header-section-number">2.4</span> ID conversion</h2>
+<p>We can also take a quick look at converting IDs. It is often desirable to convert a certain gene identifier to another (ensembl gene ID, entrez gene ID, gene ID). Sometimes, it may be necessary to convert gene IDs of one organism to another. biomaRt has a convenient function for this called <code>getLDS()</code>.</p>
+<p>Here is an example where we convert a few mouse ensembl IDs to Human Hugo gene IDs.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mouse_genes &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;ENSMUSG00000035847&quot;</span>,<span class="st">&quot;ENSMUSG00000000214&quot;</span>)
+mouse &lt;-<span class="st"> </span><span class="kw">useMart</span>(<span class="st">&quot;ensembl&quot;</span>,<span class="dt">dataset=</span><span class="st">&quot;mmusculus_gene_ensembl&quot;</span>)
+human &lt;-<span class="st"> </span><span class="kw">useMart</span>(<span class="st">&quot;ensembl&quot;</span>,<span class="dt">dataset=</span><span class="st">&quot;hsapiens_gene_ensembl&quot;</span>)
+human_genes &lt;-<span class="st"> </span><span class="kw">getLDS</span>(<span class="dt">attributes=</span><span class="kw">c</span>(<span class="st">&quot;ensembl_gene_id&quot;</span>),<span class="dt">filters=</span><span class="st">&quot;ensembl_gene_id&quot;</span>,<span class="dt">values=</span>mouse_genes,<span class="dt">mart=</span>mouse, <span class="dt">attributesL=</span><span class="kw">c</span>(<span class="st">&quot;hgnc_symbol&quot;</span>),<span class="dt">martL=</span>human,<span class="dt">valuesL=</span><span class="st">&quot;hgnc_symbol&quot;</span>,<span class="dt">uniqueRows=</span>F)[,<span class="dv">1</span>]</code></pre></div>
+</div>
+<pre><code>      Gene.stable.ID HGNC.symbol
+1 ENSMUSG00000000214          TH
+2 ENSMUSG00000035847         IDS</code></pre>
+</div>
+</div>
+<div id="session-info" class="section level1">
+<h1><span class="header-section-number">3</span> Session info</h1>
+<div class="block-title-parent">
+<div class="block-title small">
+Output
+</div>
+<pre><code>## R version 3.5.2 (2018-12-20)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 18.04.2 LTS
+## 
+## Matrix products: default
+## BLAS: /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.7.1
+## LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.7.1
+## 
+## locale:
+##  [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+##  [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
+##  [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] parallel  stats4    stats     datasets  grDevices utils     graphics 
+## [8] methods   base     
+## 
+## other attached packages:
+##  [1] pheatmap_1.0.12             edgeR_3.24.3               
+##  [3] limma_3.38.3                biomaRt_2.39.3             
+##  [5] ggplot2_3.1.1               dplyr_0.8.0.1              
+##  [7] leaflet_2.0.2               captioner_2.2.3            
+##  [9] bookdown_0.9                knitr_1.22                 
+## [11] DESeq2_1.22.2               SummarizedExperiment_1.12.0
+## [13] DelayedArray_0.8.0          BiocParallel_1.16.6        
+## [15] matrixStats_0.54.0          Biobase_2.42.0             
+## [17] GenomicRanges_1.34.0        GenomeInfoDb_1.18.2        
+## [19] IRanges_2.16.0              S4Vectors_0.20.1           
+## [21] BiocGenerics_0.28.0        
+## 
+## loaded via a namespace (and not attached):
+##  [1] nlme_3.1-137           bitops_1.0-6           bit64_0.9-7           
+##  [4] RColorBrewer_1.1-2     progress_1.2.0         httr_1.4.0            
+##  [7] tools_3.5.2            backports_1.1.4        R6_2.4.0              
+## [10] rpart_4.1-13           mgcv_1.8-26            Hmisc_4.2-0           
+## [13] DBI_1.0.0              lazyeval_0.2.2         colorspace_1.4-1      
+## [16] nnet_7.3-12            withr_2.1.2            tidyselect_0.2.5      
+## [19] gridExtra_2.3          prettyunits_1.0.2      curl_3.3              
+## [22] bit_1.1-14             compiler_3.5.2         htmlTable_1.13.1      
+## [25] labeling_0.3           scales_1.0.0           checkmate_1.9.1       
+## [28] genefilter_1.64.0      stringr_1.4.0          digest_0.6.18         
+## [31] foreign_0.8-71         rmarkdown_1.12         XVector_0.22.0        
+## [34] base64enc_0.1-3        pkgconfig_2.0.2        htmltools_0.3.6       
+## [37] htmlwidgets_1.3        rlang_0.3.4            rstudioapi_0.10       
+## [40] RSQLite_2.1.1          shiny_1.3.2            jsonlite_1.6          
+## [43] crosstalk_1.0.0        acepack_1.4.1          RCurl_1.95-4.12       
+## [46] magrittr_1.5           GenomeInfoDbData_1.2.0 Formula_1.2-3         
+## [49] Matrix_1.2-15          Rcpp_1.0.1             munsell_0.5.0         
+## [52] stringi_1.4.3          yaml_2.2.0             zlibbioc_1.28.0       
+## [55] plyr_1.8.4             grid_3.5.2             blob_1.1.1            
+## [58] promises_1.0.1         crayon_1.3.4           lattice_0.20-38       
+## [61] cowplot_0.9.4          splines_3.5.2          annotate_1.60.1       
+## [64] hms_0.4.2              locfit_1.5-9.1         pillar_1.3.1          
+## [67] ggpubr_0.2             geneplotter_1.60.0     XML_3.98-1.19         
+## [70] glue_1.3.1             evaluate_0.13          latticeExtra_0.6-28   
+## [73] data.table_1.12.2      httpuv_1.5.1           tidyr_0.8.3           
+## [76] gtable_0.3.0           purrr_0.3.2            assertthat_0.2.1      
+## [79] xfun_0.6               mime_0.6               xtable_1.8-3          
+## [82] later_0.8.0            survival_2.43-3        tibble_2.1.1          
+## [85] AnnotationDbi_1.44.0   memoise_1.1.0          cluster_2.0.7-1</code></pre>
+</div>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

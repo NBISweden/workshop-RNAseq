@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Johan Reimegård • 14-May-2019" />
+
+
+<title>Kallisto &amp; Sleuth</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Kallisto &amp; Sleuth</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+<h4 class="author"><b>Johan Reimegård</b> • 14-May-2019</h4>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<p>This workflow runs transcript-level quantification using Kallisto followed by differential expression analysis using Sleuth.</p>
+<div id="kallisto" class="section level1">
+<h1><span class="header-section-number">1</span> Kallisto</h1>
+<p><strong>Kallisto</strong> is an “alignment-free” RNA-Seq quantification method that runs very fast with a small memory footprint, so that it can be run on most laptops. It is a command-line program that can be downloaded as binary executables for Linux or Mac, or in source code format. For a first insight into the program, read <a href="https://liorpachter.wordpress.com/2015/05/10/near-optimal-rna-seq-quantification-with-kallisto/">here</a> and for the published article, see <a href="http://www.nature.com/nbt/journal/vaop/ncurrent/full/nbt.3519.html">here</a>. There is also a preprint <a href="http://arxiv.org/abs/1505.02710">here</a>.</p>
+<p>Kallisto is geared towards quantification on the transcript (isoform) level, rather than the gene-level (although the latter can also be done by post-processing Kallisto output.) However, read assignment to transcript isoforms cannot (in general) be done unambiguously, so there is an intrinsic “quantification noise” or variability in this process. Kallisto can thus be run either in a single step (which is very fast) or in “bootstrap” mode (which takes longer, but can be done on several processors in parallel) in order to get uncertainty estimates for the expression levels - a kind of error bars for the quantification process. Running with bootstraps is mandatory if you want to perform differential expression analysis of isoforms with Sleuth (see below).</p>
+<p>Kallisto is primarily meant for quantification of an existing set of FASTA sequences, that is, it does not perform transcript assembly and it cannot quantify the expression of novel transcripts that are not in the transcript index that you provide to it. With that said, you can of course use contigs from an assembly that you have produced in some other program in your Kallisto index. It would also be possible to use the software for eg: metagenomics or metatranscriptomics quantification.</p>
+<div id="running-kallisto" class="section level2">
+<h2><span class="header-section-number">1.1</span> Running Kallisto</h2>
+<p>To load the Kallisto module on UPPMAX, execute</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">module</span> load bioinfo-tools
+<span class="ex">module</span> load kallisto/0.43.1</code></pre></div>
+</div>
+<p>Now we will download and merge human cDNA and ncDNA files from ENSEMBL in order to build a Kallisto transcript index. Note that we can concatenate the two gzipped files without unpacking them first. We use both the protein-coding transcripts and the non-coding ones to be able to capture more of the transcriptome.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">wget</span> ftp://ftp.ensembl.org/pub/current_fasta/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz
+<span class="fu">wget</span> ftp://ftp.ensembl.org/pub/current_fasta/homo_sapiens/ncrna/Homo_sapiens.GRCh38.ncrna.fa.gz
+<span class="fu">cat</span> Homo_sapiens.GRCh38.cdna.all.fa.gz Homo_sapiens.GRCh38.ncrna.fa.gz <span class="op">&gt;</span> Homo_sapiens.GRCh38.rna.fa.gz</code></pre></div>
+</div>
+<p>Now we can build the transcriptome index.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">kallisto</span> index -i hsGRCh38_kallisto Homo_sapiens.GRCh38.rna.fa.gz</code></pre></div>
+</div>
+<p>It should take less than 10 minutes.</p>
+<p>Next, copy the FASTA files from this uppmax path: <code>/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/diffExp/FASTQ/</code>. When that is done, it’s time for quantifying the FASTQ files against our Kallisto index with bootstrapping (for later use in Sleuth). You could do that one by one, with a command like</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">kallisto</span> quant -i hsGRCh38_kallisto -t 4 -b 100 7_111116_AD0341ACXX_137_1_index1_1.fastq.gz 7_111116_AD0341ACXX_137_1_index1_2.fastq.gz -o sample1</code></pre></div>
+</div>
+<p><strong>OR</strong> in a bash loop:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="kw">for</span> <span class="ex">i</span> in <span class="dt">{1..12}</span><span class="kw">;</span>
+  <span class="kw">do</span>
+    <span class="ex">kallisto</span> quant -i hsGRCh38_kallisto -t 4 -b 100 7_111116_AD0341ACXX_137_<span class="va">${i}</span>_index<span class="va">${i}</span>_1.fastq.gz 7_111116_AD0341ACXX_137_<span class="va">${i}</span>_index<span class="va">${i}</span>_2.fastq.gz -o sample<span class="va">${i}</span><span class="kw">;</span>
+  <span class="kw">done</span></code></pre></div>
+</div>
+<p>In this example, we put <code>-t 4</code> so we can use up to four processors in the bootstrapping. You may want to modify this value according to the machine you are working on. If you wanted to run Kallisto without bootstraps and just get expression values on a pair of FASTQ files, you would run something like</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">kallisto</span> quant -i hsGRCh38_kallisto sample1_reads1.fastq sample1_reads2.fastq -o sample1</code></pre></div>
+</div>
+<p>Running Kallisto on all the 12 samples with 100 bootstraps may take an hour or so, depending on your machine and settings.</p>
+</div>
+</div>
+<div id="sleuth" class="section level1">
+<h1><span class="header-section-number">2</span> Sleuth</h1>
+<p><strong>Sleuth</strong> is a companion package for Kallisto which is used for differential expression analysis of transcript quantifications from Kallisto. While you could use other differential expression packages such as <strong>Limma</strong> or <strong>DESeq2</strong> to analyse your Kallisto output, Sleuth also takes into consideration the inherent variability in transcript quantification as explained above. Sleuth also allows the modeling of covariates such as batch, individual, tissue type etc. in the same way as <strong>DESeq2/edgeR/Limma</strong>, which is useful for experimental designs with multiple varying factors.</p>
+<p>Sleuth was designed to work on output from Kallisto (rather than count tables, like DESeq2, or BAM files, like CuffDiff2), so we need to run Kallisto first. (Note that the outputs from other RNA-seq quantifiers like <a href="https://github.com/COMBINE-lab/salmon">Salmon</a> or <a href="https://github.com/kingsfordgroup/sailfish">Sailfish</a> can also be used with Sleuth via the <a href="https://github.com/COMBINE-lab/wasabi">wasabi</a> package.)</p>
+<p>Unlike Kallisto, Sleuth is an R package. At the end of a Sleuth analysis, it is possible to view a dynamical graphical presentation of the results where you can explore the differentially expressed transcripts in an intuitive way.</p>
+<p>It is still early days for Sleuth and it has not been extensively benchmarked against other packages yet. Let’s try it on the same A431 data as in the DESeq2 lab!</p>
+<div id="running-sleuth" class="section level2">
+<h2><span class="header-section-number">2.1</span> Running Sleuth</h2>
+<p>Here we give an example workflow for a DE analysis in Sleuth based on the A431 data that we are using for all the DE analysis labs. Start by copy the results from uppmax <code>/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/diffExp/kallisto_results.tar.gz</code>. Download and extract the whole folder and make a note of where it is. We use the path <code>./data/kallisto_results/</code> relative to this document.</p>
+<p>The Sleuth analysis is done entirely in R, so start your R environment and begin by installing the dependencies. This only needs to be done the first time, of course.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">source</span>(<span class="st">&quot;http://bioconductor.org/biocLite.R&quot;</span>)
+<span class="kw">biocLite</span>(rhdf5)
+<span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)
+<span class="kw">library</span>(devtools)
+devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;pachterlab/sleuth&quot;</span>)</code></pre></div>
+</div>
+<p>We start by specifying paths to the Kallisto directories. We have the directory structure like below:</p>
+<pre><code>kallisto_results\
+  +-- sample1\
+  |  +-- abundance.h5
+  |  +-- abundance.tsv
+  |  +-- run_info.json
+  +-- sample2\
+  +-- sample3\
+...</code></pre>
+<p>And we use the script below to generate the paths and labels.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">base_dir &lt;-<span class="st"> &quot;./data/kallisto_results&quot;</span>
+samples &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;sample&quot;</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">12</span>)
+kal_dirs &lt;-<span class="st"> </span><span class="kw">sapply</span>(samples, <span class="cf">function</span>(id) <span class="kw">file.path</span>(base_dir, id))
+kal_dirs</code></pre></div>
+</div>
+<pre><code>                           sample1                            sample2
+ &quot;./data/kallisto_results/sample1&quot;  &quot;./data/kallisto_results/sample2&quot;
+                           sample3                            sample4
+ &quot;./data/kallisto_results/sample3&quot;  &quot;./data/kallisto_results/sample4&quot;
+                           sample5                            sample6
+ &quot;./data/kallisto_results/sample5&quot;  &quot;./data/kallisto_results/sample6&quot;
+                           sample7                            sample8
+ &quot;./data/kallisto_results/sample7&quot;  &quot;./data/kallisto_results/sample8&quot;
+                           sample9                           sample10
+ &quot;./data/kallisto_results/sample9&quot; &quot;./data/kallisto_results/sample10&quot;
+                          sample11                           sample12
+&quot;./data/kallisto_results/sample11&quot; &quot;./data/kallisto_results/sample12&quot;</code></pre>
+<p>Now it’s time to fill in metadata about the samples. We can use a similar assignment as in the DESeq2 exercise.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s2c &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">path=</span>kal_dirs,<span class="dt">sample=</span>samples,<span class="dt">timepoint=</span><span class="kw">rep</span>(<span class="kw">c</span>(<span class="st">&quot;ctrl&quot;</span>,<span class="st">&quot;t2h&quot;</span>,<span class="st">&quot;t6h&quot;</span>,<span class="st">&quot;t24h&quot;</span>),<span class="dt">each=</span><span class="dv">3</span>),<span class="dt">stringsAsFactors=</span><span class="ot">FALSE</span>)</code></pre></div>
+</div>
+<p>Again, if there were other experimental factors involved, these could have been modelled here as well.</p>
+<p>Now we read in the transcript-gene mappings file. This was <a href="lab_annotations.html">previously</a> downloaded.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">t2g &lt;-<span class="st"> </span><span class="kw">read.delim</span>(<span class="st">&quot;./data/human_transcripts.txt&quot;</span>,<span class="dt">header=</span><span class="ot">TRUE</span>,<span class="dt">sep=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>,<span class="dt">stringsAsFactors=</span>F)
+t2g &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">rename</span>(t2g,<span class="dt">target_id=</span>ensembl_transcript_id,
+                     <span class="dt">ens_gene=</span>ensembl_gene_id,<span class="dt">ext_gene=</span>external_gene_name)</code></pre></div>
+</div>
+<p>The next command will read the Kallisto output files, connect them with metadata, and set up a linear model for analyzing the expression data.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">&quot;sleuth&quot;</span>)
+so &lt;-<span class="st"> </span><span class="kw">sleuth_prep</span>(s2c,<span class="op">~</span>timepoint,<span class="dt">target_mapping=</span>t2g)</code></pre></div>
+</div>
+<pre><code>It appears that you are running Sleuth from within Rstudio.
+Because of concerns with forking processes from a GUI, &#39;num_cores&#39; is being set to 1.
+If you wish to take advantage of multiple cores, please consider running sleuth from the command line.reading in kallisto results
+dropping unused factor levels
+............
+normalizing est_counts
+47352 targets passed the filter
+normalizing tpm
+merging in metadata
+summarizing bootstraps
+............</code></pre>
+<p>Next, we fit the linear model and test for one of the model coefficients. In this case we test the 24h time point versus the control.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">so &lt;-<span class="st"> </span><span class="kw">sleuth_fit</span>(so)
+so &lt;-<span class="st"> </span><span class="kw">sleuth_wt</span>(so,<span class="dt">which_beta=</span><span class="st">&quot;timepointt24h&quot;</span>)</code></pre></div>
+</div>
+<pre><code>fitting measurement error models
+shrinkage estimation
+1 NA values were found during variance shrinkage estimation due to mean observation values outside of the range used for the LOESS fit.
+The LOESS fit will be repeated using exact computation of the fitted surface to extrapolate the missing values.
+These are the target ids with NA values: ENST00000465860
+computing variance of betas</code></pre>
+<p>Now we should be able to visualize the results:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sleuth_live</span>(so)</code></pre></div>
+</div>
+<p>There are lots of things to look at here - explore according to your interests! Some things you might try are e.g. the PCA and sample heatmap options in the map menu, the test table in the analyses menu (which contains a ranked list of the differentially expressed genes), or the gene view in the same menu.</p>
+<p>If you want to delve further into time series analysis with Sleuth (after all, we have just compared two time points here, whereas we have four in all), you might want to read this <a href="http://www.nxn.se/valent/timecourse-analysis-with-sleuth">excellent blog post</a> by Valentine Svensson. Note that Sleuth is still under development, so some of the commands may be a bit different.</p>
+</div>
+</div>
+<div id="session-info" class="section level1">
+<h1><span class="header-section-number">3</span> Session info</h1>
+<div class="block-title-parent">
+<div class="block-title small">
+Output
+</div>
+<pre><code>## R version 3.5.2 (2018-12-20)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 18.04.2 LTS
+## 
+## Matrix products: default
+## BLAS: /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.7.1
+## LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.7.1
+## 
+## locale:
+##  [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+##  [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
+##  [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] parallel  stats4    stats     datasets  grDevices utils     graphics 
+## [8] methods   base     
+## 
+## other attached packages:
+##  [1] fgsea_1.8.0                 Rcpp_1.0.1                 
+##  [3] enrichR_1.0                 pvclust_2.0-0              
+##  [5] rafalib_1.0.0               pheatmap_1.0.12            
+##  [7] edgeR_3.24.3                limma_3.38.3               
+##  [9] biomaRt_2.39.3              ggplot2_3.1.1              
+## [11] dplyr_0.8.0.1               leaflet_2.0.2              
+## [13] captioner_2.2.3             bookdown_0.9               
+## [15] knitr_1.22                  DESeq2_1.22.2              
+## [17] SummarizedExperiment_1.12.0 DelayedArray_0.8.0         
+## [19] BiocParallel_1.16.6         matrixStats_0.54.0         
+## [21] Biobase_2.42.0              GenomicRanges_1.34.0       
+## [23] GenomeInfoDb_1.18.2         IRanges_2.16.0             
+## [25] S4Vectors_0.20.1            BiocGenerics_0.28.0        
+## 
+## loaded via a namespace (and not attached):
+##  [1] colorspace_1.4-1       rjson_0.2.20           htmlTable_1.13.1      
+##  [4] XVector_0.22.0         base64enc_0.1-3        rstudioapi_0.10       
+##  [7] ggpubr_0.2             bit64_0.9-7            AnnotationDbi_1.44.0  
+## [10] splines_3.5.2          geneplotter_1.60.0     Formula_1.2-3         
+## [13] jsonlite_1.6           annotate_1.60.1        cluster_2.0.7-1       
+## [16] shiny_1.3.2            compiler_3.5.2         httr_1.4.0            
+## [19] backports_1.1.4        assertthat_0.2.1       Matrix_1.2-15         
+## [22] lazyeval_0.2.2         later_0.8.0            acepack_1.4.1         
+## [25] htmltools_0.3.6        prettyunits_1.0.2      tools_3.5.2           
+## [28] gtable_0.3.0           glue_1.3.1             GenomeInfoDbData_1.2.0
+## [31] fastmatch_1.1-0        nlme_3.1-137           crosstalk_1.0.0       
+## [34] xfun_0.6               stringr_1.4.0          mime_0.6              
+## [37] XML_3.98-1.19          zlibbioc_1.28.0        scales_1.0.0          
+## [40] hms_0.4.2              promises_1.0.1         RColorBrewer_1.1-2    
+## [43] yaml_2.2.0             curl_3.3               memoise_1.1.0         
+## [46] gridExtra_2.3          rpart_4.1-13           latticeExtra_0.6-28   
+## [49] stringi_1.4.3          RSQLite_2.1.1          genefilter_1.64.0     
+## [52] checkmate_1.9.1        rlang_0.3.4            pkgconfig_2.0.2       
+## [55] bitops_1.0-6           evaluate_0.13          lattice_0.20-38       
+## [58] purrr_0.3.2            htmlwidgets_1.3        labeling_0.3          
+## [61] cowplot_0.9.4          bit_1.1-14             tidyselect_0.2.5      
+## [64] plyr_1.8.4             magrittr_1.5           R6_2.4.0              
+## [67] Hmisc_4.2-0            DBI_1.0.0              pillar_1.3.1          
+## [70] foreign_0.8-71         withr_2.1.2            mgcv_1.8-26           
+## [73] survival_2.43-3        RCurl_1.95-4.12        nnet_7.3-12           
+## [76] tibble_2.1.1           crayon_1.3.4           rmarkdown_1.12        
+## [79] progress_1.2.0         locfit_1.5-9.1         grid_3.5.2            
+## [82] data.table_1.12.2      blob_1.1.1             digest_0.6.18         
+## [85] xtable_1.8-3           tidyr_0.8.3            httpuv_1.5.1          
+## [88] munsell_0.5.0</code></pre>
+</div>
+<p><strong>End of document.</strong></p>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

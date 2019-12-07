@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Lucile Soler • 14-May-2019" />
+
+
+<title>Transcriptome assembly</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Transcriptome assembly</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+<h4 class="author"><b>Lucile Soler</b> • 14-May-2019</h4>
+
+</div>
+
+
+<!-- rmd lab header -->
+<!-- custom fonts -->
+<p><link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;subset=latin-ext" rel="stylesheet"></p>
+<p><br></p>
+<div id="preparation" class="section level1">
+<h1><span class="header-section-number">1</span> Preparation</h1>
+<p>This exercise is meant to get you acquainted with the type of data you would normally encounter in an assembly/annotation project. We will for all exercises use data for the fruit fly (<em>Drosophila melanogaster</em>), as that is one of the currently best annotated organisms and there is plenty of high quality data available.</p>
+<p>You can create the folders where you want but I would suggest a folder organisation, if you do not follow this organisation remember to put the correct path to your data.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">mkdir</span> bonus/assembly
+<span class="bu">cd</span> bonus/assembly</code></pre></div>
+</div>
+<p>Let’s link the raw fastq files.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">mkdir</span> raw
+<span class="bu">cd</span> raw
+<span class="fu">ln</span> -s /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/assembly_annotation/raw_computes/* .</code></pre></div>
+</div>
+<p>We will clone this Github repo from NBIS annotation team which will be used during this practical.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">git</span> clone https://github.com/NBISweden/GAAS.git</code></pre></div>
+</div>
+<div id="assembling-transcripts-based-on-rna-seq-data" class="section level2">
+<h2><span class="header-section-number">1.1</span> Assembling transcripts based on RNA-seq data</h2>
+<p>RNA-Seq data is in general very useful in annotation projects as the data usually comes from the actual organism you are studying and thus avoids the danger of introducing errors caused by differences in gene structure between your study organism and other species.</p>
+<p>Important points to remember before starting working with RNA-Seq:</p>
+<ul>
+<li><p>Check if sequence data is paired-end or single-end. Last generation of sequenced short reads (since 2013) are almost all paired. Anyway, it is important to check that information, which will be useful for the tools used in the next steps.</p></li>
+<li><p>Check if the sequence data are stranded. This information will be useful for the tools used in the next steps. (It is recommended to use stranded data to avoid transcript fusion during the transcript assembly process. That gives more reliable results.)</p></li>
+<li><p>Left / L / forward / 1 have identical meaning. It is the same for Right / R /Reverse / 2</p></li>
+</ul>
+<div id="qc" class="section level3">
+<h3><span class="header-section-number">1.1.1</span> QC</h3>
+<p>We run a quick QC to check encoding version and fastq quality score format. We have to use FastQC tool.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">module</span> load bioinfo-tools
+<span class="ex">module</span> load FastQC/0.11.5
+
+<span class="fu">mkdir</span> fastqc
+<span class="ex">fastqc</span> ./raw/ERR305399_1.fastq.gz -o fastqc/</code></pre></div>
+</div>
+<p>Copy the FastQC report HTML file to your system and inspect the results. You can use <code>SCP</code> to copy the file. Run the command below from a <strong>LOCAL</strong> terminal.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">scp</span> user@rackham.uppmax.uu.se:[path-to-report.html] .</code></pre></div>
+</div>
+<p>Next, we check the fastq quality score format. For this, we will be using the scripts libraries available in the git gaas you need first to export the libraries and run the script <code>fastq_guessMyFormat.pl</code>.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="bu">export</span> <span class="va">PERL5LIB=$PERL5LIB</span>:./GAAS/annotation/
+<span class="ex">./GAAS/annotation/Tools/bin/fastq_guessMyFormat.pl</span> -i ./raw/ERR305399_1.fastq.gz</code></pre></div>
+</div>
+<p>In the normal mode, it differentiates between Sanger/Illumina1.8+ and Solexa/Illumina1.3+/Illumina1.5+. In the advanced mode, it will try to pinpoint exactly which scoring system is used.</p>
+<p>More test can be made and should be made on RNA-seq data before doing the assembly, we have not time to do all of them during this course. have a look <a href="https://en.wikipedia.org/wiki/List_of_RNA-Seq_bioinformatics_tools">here</a></p>
+</div>
+</div>
+</div>
+<div id="guided-assembly" class="section level1">
+<h1><span class="header-section-number">2</span> Guided assembly</h1>
+<p>In this section, we run a genome-guided transcriptome assembly. We use Trimmomatic to trim the reads, HISAT2 to map reads to reference genome and StringTie to assemble reads into transcripts.</p>
+<div id="trimmomatic" class="section level2">
+<h2><span class="header-section-number">2.1</span> Trimmomatic</h2>
+<p><a href="http://www.usadellab.org/cms/?page=trimmomatic">Trimmomatic</a> performs a variety of useful trimming tasks for illumina paired-end and single ended data.The selection of trimming steps and their associated parameters are supplied on the command line.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">mkdir</span> trimmomatic
+<span class="ex">module</span> load bioinfo-tools
+<span class="ex">module</span> load trimmomatic/0.36</code></pre></div>
+</div>
+<p>The following command line will perform the following: * Remove adapters (ILLUMINACLIP:TruSeq3-PE.fa:2:30:10) * Remove leading low quality or N bases (below quality 3) (LEADING:3) * Remove trailing low quality or N bases (below quality 3) (TRAILING:3) * Scan the read with a 4-base wide sliding window, cutting when the average quality per base drops below 15 (SLIDINGWINDOW:4:15) * Drop reads below the 36 bases long (MINLEN:36)</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">java</span> -jar /sw/apps/bioinfo/trimmomatic/0.36/milou/trimmomatic-0.36.jar PE -threads 5 -phred33 ./raw/ERR305399_1.fastq.gz ./raw/ERR305399_2.fastq.gz trimmomatic/ERR305399.left_paired.fastq.gz trimmomatic/ERR305399.left_unpaired.fastq.gz trimmomatic/ERR305399.right_paired.fastq.gz trimmomatic/ERR305399.right_unpaired.fastq.gz ILLUMINACLIP:/sw/apps/bioinfo/trimmomatic/0.36/milou/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36</code></pre></div>
+</div>
+</div>
+<div id="hisat2" class="section level2">
+<h2><span class="header-section-number">2.2</span> HISAT2</h2>
+<p>Once the reads have been trimmed, we use <a href="https://ccb.jhu.edu/software/hisat2/index.shtml">HISAT2</a> to align the RNA-seq reads to a genome in order to identify exon-exon splice junctions. HISAT2 is a fast and sensitive alignment program for mapping next-generation sequencing reads (whole-genome, transcriptome, and exome sequencing data) against a reference genome.</p>
+<p>First you need to build an index of your chromosome 4</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">mkdir</span> index
+
+<span class="ex">module</span> load HISAT2
+<span class="ex">module</span> load samtools/1.8
+<span class="ex">hisat2-build</span> /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/assembly_annotation/chromosome/chr4.fa ./index/chr4_index</code></pre></div>
+</div>
+<p>Then you can run HISAT2 : * <code>--phred33</code> Input qualities are ASCII chars equal to the Phred quality plus 33. This is also called the “Phred+33” encoding, which is used by the very latest Illumina pipelines (you checked it with the script <em>fastq_guessMyFormat.pl</em>)<br />
+* <code>--rna-strandness &lt;string&gt;</code> For single-end reads, use <strong>F</strong> or <strong>R</strong>. <strong>F</strong> means a read corresponds to a transcript. <strong>R</strong> means a read corresponds to the reverse complemented counterpart of a transcript. For paired-end reads, use either <strong>FR</strong> or <strong>RF</strong>. (<strong>RF</strong> means fr-firststrand see <a href="https://github.com/NBISweden/GAAS/blob/master/annotation/CheatSheet/rnaseq_library_types.md">here</a> for more explanation).<br />
+* <code>--novel-splicesite-outfile &lt;path&gt;</code> In this mode, HISAT2 reports a list of splice sites in the file : chromosome name <tab> genomic position of the flanking base on the left side of an intron <tab> genomic position of the flanking base on the right <tab> strand (+, -, and .) ‘.’ indicates an unknown strand for non-canonical splice sites.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">hisat2</span> --phred33 --rna-strandness RF --novel-splicesite-outfile hisat2/splicesite.txt -S hisat2/accepted_hits.sam -p 5 -x index/chr4_index -1 trimmomatic/ERR305399.left_paired.fastq.gz -2 trimmomatic/ERR305399.right_paired.fastq.gz</code></pre></div>
+</div>
+<p>Finally you need to change the SAM into BAM file and to sort it in order for StringTie to use the bam file to assemble the read into transcripts.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">samtools</span> view -bS -o hisat2/accepted_hits.bam hisat2/accepted_hits.sam
+<span class="ex">samtools</span> sort -o hisat2/accepted_hits.sorted.bam hisat2/accepted_hits.bam</code></pre></div>
+</div>
+</div>
+<div id="stringtie" class="section level2">
+<h2><span class="header-section-number">2.3</span> StringTie</h2>
+<p><a href="https://ccb.jhu.edu/software/stringtie/">StringTie</a> is a fast and highly efficient assembler of RNA-Seq alignments into potential transcripts. It uses a novel network flow algorithm as well as an optional de novo assembly step to assemble and quantitate full-length transcripts representing multiple splice variants for each gene locus. You can add as input an annotation from GTF/GFF3 file to calculate TPM and FPKM values.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">module</span> load bioinfo-tools
+<span class="ex">module</span> load StringTie
+
+<span class="ex">stringtie</span> hisat2/accepted_hits.sorted.bam -o stringtie/transcripts.gtf</code></pre></div>
+</div>
+<p>When done you can find your results in the directory <strong>outdir</strong>. The file <code>transcripts.gtf</code> includes your assembled transcripts.</p>
+<p>You could now also visualise all this information using a genome browser, such as IGV. IGV requires a genome fasta file and any number of annotation files in GTF or GFF3 format (note that GFF3 formatted file tend to look a bit weird in IGV sometimes).</p>
+<p>Transfer the GTF files to your computer using SCP:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">scp</span> user@rackham.uppmax.uu.se:[path-to-transcripts.gtf] .</code></pre></div>
+</div>
+<p><i class="fas fa-comments"></i> Looking at your results, are you happy with the default values of StringTie (which we used in this exercise) or is there something you would like to change?</p>
+</div>
+</div>
+<div id="de-novo-assembly" class="section level1">
+<h1><span class="header-section-number">3</span> De-novo assembly</h1>
+<p><a href="https://github.com/trinityrnaseq/trinityrnaseq/wiki">Trinity</a> assemblies can be used as complementary evidence, particularly when trying to polish a gene build with Pasa. Before you start, check how big the raw read data is that you wish to assemble to avoid unreasonably long run times.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">module</span> load bioinfo-tools
+<span class="ex">module</span> load trinity/2.4.0
+<span class="ex">module</span> load samtools
+
+<span class="ex">Trinity</span> --seqType fq --max_memory 32G --left ./raw/ERR305399_1.fastq.gz --right ./raw/ERR305399_2.fastq.gz --CPU 5 --output trinity --SS_lib_type RF</code></pre></div>
+</div>
+<p>Trinity takes a long time to run (like hours), you can stop the program when you start it and have a look at the results, look in <code>/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/assembly_annotation/RNAseq/trinity</code> and the output is <code>Trinity.fasta</code>.</p>
+<p>In order to compare the output of StringTie and the output of Trinity we need to map the Trinity transcript to the chr4 of Drosophila.</p>
+<p>We’ll use the GMAP software to align the Trinity transcripts to our reference genome. Trinity contains a utility that facilitates running GMAP, which first builds an index for the target genome followed by running the gmap aligner:</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">module</span> load gmap-gsnap
+
+<span class="fu">mkdir</span> gmap
+
+<span class="ex">/sw/apps/bioinfo/trinity/2.4.0/rackham/util/misc/process_GMAP_alignments_gff3_chimeras_ok.pl</span> --genome /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/assembly_annotation/chromosome/chr4.fa --transcripts /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/assembly_annotation/RNAseq/trinity/Trinity.fasta <span class="op">&gt;</span> gmap/transcript_trinity.gff</code></pre></div>
+</div>
+<div id="assembly-quality" class="section level2">
+<h2><span class="header-section-number">3.1</span> Assembly quality</h2>
+<p>There are different ways of assessing the quality of your assembly, you will find some of them <a href="https://github.com/trinityrnaseq/trinityrnaseq/wiki/Transcriptome-Assembly-Quality-Assessment">here</a>.</p>
+<p>We will run BUSCO to check the the quality of the assembly. <a href="https://busco.ezlab.org/">BUSCO</a> provides measures for quantitative assessment of genome assembly, gene set, and transcriptome completeness (what we are going to do here). Genes that make up the BUSCO sets for each major lineage are selected from orthologous groups with genes present as single-copy orthologs in at least 90% of the species in the chosen branch of tree of life.</p>
+<p>For the Trinity results :</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">module</span> load BUSCO/3.0.2b
+
+<span class="ex">/sw/apps/bioinfo/BUSCO/3.0.2b/rackham/bin/run_BUSCO.py</span> -i /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/assembly_annotation/RNAseq/trinity/Trinity.fasta -o busco_trinity -l <span class="va">$BUSCO_LINEAGE_SETS</span>/arthropoda_odb9 -m tran -c 5</code></pre></div>
+</div>
+<p>Busco will take 30 to run so you can check the results in <code>/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/assembly_annotation/RNAseq/busco_trinity</code></p>
+<p>For the guided assembly results, you need first to extract the transcript sequences from the gtf transcript file :</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">module</span> load BioPerl
+
+<span class="bu">export</span> <span class="va">PERL5LIB=$PERL5LIB</span>:./GAAS/annotation/
+<span class="ex">./GAAS/annotation/Tools/bin/gff3_sp_extract_sequences.pl</span> --cdna -g transcripts.gtf -f /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/assembly_annotation/chromosome/chr4.fa -o transcripts_stringtie.fa</code></pre></div>
+</div>
+<p>Then you can run BUSCO again :</p>
+<div class="block-title-parent">
+<div class="block-title small">
+sh
+</div>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">/sw/apps/bioinfo/BUSCO/3.0.2b/rackham/bin/run_BUSCO.py</span> -i stringtie/transcripts_stringtie.fa -o busco_stringtie -l <span class="va">$BUSCO_LINEAGE_SETS</span>/arthropoda_odb9 -m tran -c 5</code></pre></div>
+</div>
+<p><i class="fas fa-clipboard-list"></i> Compare the two BUSCO results, what do you think happened for StringTie?</p>
+</div>
+<div id="whats-next" class="section level2">
+<h2><span class="header-section-number">3.2</span> What’s next?</h2>
+<p>Now you are ready either to annotate your RNA-Seq or you can use then to do the genome annotation.</p>
+<p>For the de-novo assembly you can use the <code>Trinity.fasta</code> file obtained. For the genome-guided assembly you can either use the StringTie results <code>transcripts.gtf</code>, but you will often need to reformat it into a gff file.</p>
+<p><strong>End of document</strong></p>
+</div>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

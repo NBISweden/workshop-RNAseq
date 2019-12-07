@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title></title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><b>NBIS • Workshop on RNA-Seq</b></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li>
+  <a href="schedule.html">
+    <span class="fa fa-clipboard-list"></span>
+     
+    Schedule
+  </a>
+</li>
+<li>
+  <a href="lab.html">
+    <span class="fa fa-flask"></span>
+     
+    Lab
+  </a>
+</li>
+<li>
+  <a href="precourse.html">
+    <span class="fa fa-pencil-alt"></span>
+     
+    Precourse
+  </a>
+</li>
+<li>
+  <a href="info.html">
+    <span class="fa fa-info"></span>
+     
+    Info
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<div id="course_rnaseq" class="section level1">
+<h1><span class="header-section-number">1</span> course_rnaseq</h1>
+<p>This repo contains the course material for NBIS course <strong>Workshop on RNA-Seq</strong>. The rendered view of this repo is available <a href="https://nbisweden.github.io/course_rnaseq/">here</a>.</p>
+<div id="contributing" class="section level2">
+<h2><span class="header-section-number">1.1</span> Contributing</h2>
+<p>To add or update contents of this repo (for collaborators), first clone the repo.</p>
+<pre><code>git clone https://github.com/nbisweden/course_rnaseq.git</code></pre>
+<p>Make changes/updates as needed. Add the changed files. Commit it. Then push the repo back.</p>
+<pre><code>git add *
+git commit -m &quot;I did this and that&quot;
+git status
+git push origin</code></pre>
+<p>If you are not added as a collaborator, first fork this repo to your account, then clone it locally, make changes, commit, push to your repo, then submit a pull request to this repo.</p>
+</div>
+<div id="descriptions" class="section level2">
+<h2><span class="header-section-number">1.2</span> Descriptions</h2>
+<p>These are descriptions of the files and a guide to updating this repo for course maintainers.</p>
+<p>**_site.yml**<br />
+All website configuration options are here. Nothing to be changed here.</p>
+<p><strong>README.md</strong><br />
+You are reading this file now. Nothing to do here.</p>
+<p><strong>index.Rmd</strong><br />
+This file generates the home page. <strong>Make sure that the date and location is correct</strong>. Verify links.</p>
+<p><strong>schedule.Rmd</strong><br />
+This file generates the schedule page. <strong>The start time of the course is set to <code>09:00:00</code>. Change if needed</strong>. It is assumed that the course starts at the same time everyday.</p>
+<p><strong>schedule.csv</strong><br />
+This table holds the schedule information. Open/edit in a spreadsheet or text editor. Columns are delimited by <code>;</code>. Do not change the number of columns, position of columns or column names.</p>
+<p><strong><em>date</em></strong>: Full date for each day in format dd/mm/yyyy. Missing/empty cells are filled down automatically.<br />
+<strong><em>room</em></strong>: Room number for the course. Missing/empty cells are filled down automatically.<br />
+<strong><em>dur</em></strong>: Duration for the topic in minutes.<br />
+<strong><em>topic</em></strong>: Topic name (Keep it short).<br />
+<strong><em>person</em></strong>: Name of the person covering the topic.<br />
+<strong><em>link_presentation</em></strong>: (Optional) Link to the presentation. Local links can be just <code>presentation_topic.html</code>. Use this labelling convention.<br />
+<strong><em>link_lab</em></strong>: (Optional) Link to the lab material. Local links can be just <code>lab_topic.html</code>. This is the labelling convention used.<br />
+<strong><em>link_room</em></strong>: (Optional) Link to the room location. Can be a google map link, mazemap link etc.</p>
+<p><strong>lab.Rmd</strong><br />
+This page brings together all the exercises. Verify links.</p>
+<p><strong>precourse.Rmd</strong><br />
+This page holds the steps needed to be completed before the course. <strong>Change project ID for each course</strong>.</p>
+<p><strong>info.Rmd</strong><br />
+This page contains practical information related to the course. <strong>Set location and update info if needed</strong>.</p>
+<p>[<strong>presentation_topic.Rmd</strong>]<br />
+RMarkdown presentation files for various topics. Replace ‘topic’ with a short name of the topic.</p>
+<p>[<strong>lab_topic.Rmd</strong>]<br />
+RMarkdown lab files for various topics. Replace ‘topic’ with a short name of the topic.</p>
+</div>
+<div id="dependencies" class="section level2">
+<h2><span class="header-section-number">1.3</span> Dependencies</h2>
+<p>The <code>assets</code> directory contains css styles, headers, footers, logos etc. If you are using images in your .Rmd file, place them in the directory <code>images</code> and refer to them using relative path like <code>![](./images/image.jpg)</code>. Images generated in R during rendering of the .Rmd file is automatically handled. If you have data (tsv, csv, txt text files, .Rds files), place them inside the directory <code>data</code> and read them using relative path <code>x &lt;- read.delim(&quot;./data/table.txt&quot;)</code>. Do not use paths that link outside of the project environment.</p>
+</div>
+<div id="rendering" class="section level2">
+<h2><span class="header-section-number">1.4</span> Rendering</h2>
+<p>The website is rendered by running <code>rmarkdown::render_site()</code> in the project directory. This generates the HTML files and all other necessary files (including the assets, images and data directories) and moves them into a directory named <strong>docs</strong>. Open <strong>docs/index.html</strong> to start. The output directory is set to <strong>docs</strong> because this GitHub repo uses the <strong>docs</strong> directory as the Github pages (rendered content) source.</p>
+<p>For testing purposes, you can run <code>rmarkdown::render(&quot;bla.Rmd&quot;)</code> on individual Rmd files. This is a time-saver as the whole website need not be rendered just to preview this one file.</p>
+<hr />
+<p><strong>2019</strong> NBIS | SciLifeLab</p>
+</div>
+</div>
+
+
+<div class="footer">
+<div class="container" style="padding-top:5px;padding-bottom:5px;">
+<p>
+<span style="float:left; vertical-align:middle">
+<b>2019 </b><a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</span>
+<span style="float:right; vertical-align:middle">
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+</span>
+<span class="footericon" style="padding-right:4px; padding-left:4px">
+<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+</span>
+<span class="footericon" style="padding-left:4px">
+<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+</span>
+</span>
+</p>
+</div>
+</div>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
