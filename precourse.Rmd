@@ -1,0 +1,52 @@
+---
+title: "<i class='fas fa-pencil-alt' style='margin-left:4px;margin-right:4px;'></i> Precourse"
+output:
+  bookdown::html_document2:
+    toc: false
+    number_sections: false
+    theme: flatly
+    highlight: tango
+    df_print: default
+    code_folding: "none"
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+These are steps to be completed before the course.
+
+* A remote computing cluster (UPPMAX) will be use for handling raw sequence data. A SUPR/SNIC account is needed to use UPPMAX resources. If you do not already have one, [create an account](https://supr.snic.se/). Log in to [SUPR/SNIC](https://supr.snic.se/) and request membership to the project **g2019XXX**.
+
+* Make sure you can connect to the Uppmax cluster Rackham through a terminal. If you are on a PC, we recommend [MobaXterm](http://mobaxterm.mobatek.net). For MobaXterm users, it is recommended that you install the program and not use the portable version. Type `ssh -Y user@rackham.uppmax.uu.se` and then enter your password. The password will not be visible as you type.
+
+* If you do not feel comfortable working in a terminal, please take the time to do the first three parts in the *[Unix tutorial for beginners](http://www.ee.surrey.ac.uk/Teaching/Unix/)* before the workshop. Otherwise, it may be difficult for you to follow the exercises during the course.
+
+* Make sure that you can read and write in the workshop folder. Go to `/proj/g2019008/nobackup/` and create a directory with your username. You will work inside this directory for the course. If you cannot write to the folder, the most likely reason is that you have not requested access to the workshop project via SUPR.  
+
+<div class="instruction">
+<i class="fas fa-exclamation-circle"></i> Note that it may take an hour or so from request approval, before you can actually write to the folder.  
+<i class="fas fa-exclamation-circle"></i> We will check before the workshop that all students have logged in and done this, so do not forget!  
+</div>
+
+* Download IGV on your own computer and make sure that you have hg19 genome available. The data we will work with is from human and we will visualise the results in the IGV genome browser. IGV can be downloaded from the [Broad Institute](https://www.broadinstitute.org/igv/).
+
+* Download and install the latest version of R from [r-project.org](https://cloud.r-project.org/). Install Rtools from [https://cran.r-project.org/bin/](https://cran.r-project.org/bin/). Rtools may be needed for installing new packages from source. 
+
+* Install [RStudio](https://www.rstudio.com/products/rstudio/download/). RStudio provides you with tools like code editor with highlighting, project management, version control, package building, debugger, profiler and more.
+
+* The following R packages will be used in the course exercises. It might save you some time if you have these installed in advance.
+
+```{r,eval=FALSE,block.title=TRUE}
+# set repositories to CRAN and Bioconductor
+setRepositories(graphics=F,ind=c(1,2,3,4,5))
+# install R packages from CRAN and Bioconductor
+install.packages(c("DESeq2","edgeR","tidyverse","biomaRt","pheatmap","pvclust","rafalib","enrichR","fgsea","devtools"),dep=TRUE)
+# install from github (optional)
+# devtools::install_github("pachterlab/sleuth")
+```
+
+**End of document.**

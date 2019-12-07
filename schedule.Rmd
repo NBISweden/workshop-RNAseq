@@ -1,0 +1,100 @@
+---
+title: "<i class='fas fa-clipboard-list' style='margin-left:4px;margin-right:4px;'></i> Schedule"
+output:
+  bookdown::html_document2:
+    toc: false
+    number_sections: false
+    theme: flatly
+    highlight: tango
+    df_print: default
+    code_folding: "none"
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+```{r,eval=TRUE,include=FALSE}
+library(lubridate)
+library(dplyr)
+library(kableExtra)
+library(formattable)
+
+# setting
+# set start time for the course (assumes same start time everyday)
+time_begin <- as.POSIXct("09:00:00",format="%T")
+```
+
+```{r,eval=TRUE,include=FALSE}
+s <- read.delim("schedule.csv",sep=";",stringsAsFactors=F,header=T,na.strings="",colClasses="character")
+
+s <- s %>%
+  # missing values in date and room are filled
+  tidyr::fill(date,room,link_room,.direction="down") %>%
+  # convert date characters to date objects
+  mutate(date=format(as_datetime(date,format="%d/%m/%Y"),"%d-%b-%Y")) %>%
+  mutate(day=format(as_datetime(date,format="%d-%b-%Y"),"%a")) %>%
+  group_by(date) %>%
+  mutate(end=time_begin+minutes(cumsum(dur)),start=c(time_begin,end[-n()])) %>%
+  mutate(start=format(start,"%H:%M"),end=format(end,"%H:%M")) %>%
+  as.data.frame() %>%
+  mutate(room=ifelse(is.na(link_room),room,paste0("<a href='",link_room,"'>",room,"</a>"))) %>%
+  # create day label (with date, day, room)
+  mutate(date=paste0("<p style='font-size:110%;padding-top:10px;padding-bottom:5px;margin-top:10px;'><span style='font-weight:bold;'><span style='color:#0093BD;'><i class='fas fa-calendar' style='margin-left:5px;margin-right:5px;'></i></span>",date,"</span>",
+                     "<span style='color:white;border-radius:4px;padding-right:4px;padding-left:4px;background:#0093BD;margin-left:9px;margin-right:7px;'>",day,"</span>",
+                     "<span style='color:#0093BD;'><i class='fas fa-map-marker-alt' style='margin-left:5px;margin-right:5px;'></i></span>",room,"</p>")) %>%
+  # style topic
+  mutate(topic=ifelse(tolower(topic)=="coffee break" | tolower(topic)=="lunch",paste0("<span style='color:white;font-weight:bold;border-radius:4px;padding:4px;background:#BDBDBD;'>",topic,"</span>"),paste0("<span style='margin-right:5px;'>",topic,"</span>"))) %>%
+  # add links to topic
+  mutate(topic=ifelse(is.na(link_presentation),topic,paste0("<span>",topic,"<a href='",link_presentation,"'><i class='fas fa-file-powerpoint' style='margin-left:4px;margin-right:4px;'></i></a></span>"))) %>%
+  mutate(topic=ifelse(is.na(link_lab),topic,paste0("<span>",topic,"<a href='",link_lab,"'><i class='fas fa-file-alt' style='margin-left:4px;margin-right:4px;'></i></a></span>"))) %>%
+  mutate(time=paste0(start," - ",end,"<span style='color:lightgrey;margin-left:4px;'>(",dur," min)","</span>")) %>%
+  mutate(person=ifelse(is.na(person),"",person)) %>%
+  dplyr::select(date,room,time,topic,person)
+```
+
+<div class="table-schedule">
+
+```{r,eval=TRUE,echo=FALSE,block.title=NULL}
+# grouping vector
+r <- rle(s$date)$length
+names(r) <- rle(s$date)$values
+
+cols <- c("#8DD3C7","#FFFFB3","#BEBADA","#FB8072","#80B1D3","#FDB462",
+               "#B3DE69","#FCCDE5","#D9D9D9","#BC80BD","#CCEBC5","#FFED6F")
+cols_room <- cols[factor(s$room)]
+
+s %>%
+  dplyr::select(-date,-room) %>%
+  setNames(c("Time","Topic","Person")) %>%
+  #mutate(room=paste0("<span style='color:white;font.weight:bold;border-radius:4px;padding-left:3px;padding-right:3px,background:",cols_room,";>",room,"</span>")) %>%
+  kable(format="html",escape=FALSE) %>%
+  kable_styling(bootstrap_options=c("hover","responsive"),
+                                    position="left",full_width=FALSE) %>%
+  pack_rows(index=r,label_row_css="background:white;",escape=F,indent=FALSE)
+```
+
+<!-- marker legend -->
+<p class="small" style="margin-top:20px;">
+<span>
+<span style='margin-left:6px;margin-right:6px;>
+<i class='fas fa-calendar' style='margin-left:4px;margin-right:4px;'></i> Date
+</span>
+<span style='margin-left:6px;margin-right:6px;>
+<i class='fas fa-map-marker-alt' style='margin-left:4px;margin-right:4px;'></i> Room number
+</span>
+<span style='margin-left:6px;margin-right:6px;>
+<i class='fas fa-file-powerpoint' style='margin-left:4px;margin-right:4px;'></i> Presentation
+</span>
+<span style='margin-left:6px;margin-right:6px;>
+<i class='fas fa-file-alt' style='margin-left:4px;margin-right:4px;'></i> Lab exercises
+</span>
+</span>
+</p>
+
+</div>
+
+

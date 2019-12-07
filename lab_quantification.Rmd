@@ -1,0 +1,52 @@
+---
+title: "Quantification"
+subtitle: "Workshop on RNA-Seq"
+author: "`r paste0('<b>Johan Reimegård</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: default
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+Once all the read samples have been mapped to the reference we want to quantify how many of the reads that are mapping to different parts of the genome. In most cases this regions are the genes but you can ask to get counts for other parts of the genome as long as you can provide a annotation file with that information. In most cases the format GTF or GFF3 are the most common formats for genome annotation and the ones that most programs use.
+
+In our case we are going to use a program called __featureCounts__ that is fast and reliable.
+
+First load  the modules.
+
+```{sh,eval=FALSE,block.title=TRUE}
+module load bioinfo-tools
+module load subread/1.5.2
+```
+
+Then by providing the mapped read files and the annotation you can quantify how many reads that mapped to your reference. There are many settings that you can use to decide how you want to do the counting. In our case we will count the reads that are in the annotated exons (`-t exon`) and sum them up per gene (`-g gene`) . In __featureCounts__, this is done by the following command.
+
+```{sh,eval=FALSE,block.title=TRUE}
+# With only one bam file
+featureCounts -T {threads} -p -t exon -g gene_id -a {input.gtf} -o {output.countTable} bamFiles/file1.bam > results/Counts.featureCount.log
+
+# Or multiple bamfiles.
+featureCounts -T {threads} -p -t exon -g gene_id -a {input.gtf} -o {output.countTable} bamFiles/*.bam > results/Counts.featureCount.log
+```
+
+This will create a file that contains a matrix were the rows represents the genes and the columns represent the samples. Feature count will also include some information per gene to see were it is annotated in the reference. The file is easy to open in R for further analysis.
+
+```{r,block.title=TRUE}
+counts <- read.delim("./data/count_raw.txt",header=TRUE)
+head(counts)
+```
+
+**End of document**

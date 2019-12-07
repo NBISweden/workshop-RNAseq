@@ -1,0 +1,215 @@
+---
+title: "Downloads"
+subtitle: "Workshop on RNA-Seq"
+author: "`r paste0('<b>Roy Francis</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: default
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+```{r,include=FALSE}
+# data handling
+library(dplyr)
+#library(tidyr)
+#library(stringr)
+
+# plotting
+library(ggplot2)
+
+library(biomaRt) # annotation
+library(DESeq2) # rna-seq
+library(edgeR) # rna-seq
+```
+
+# Genomic data
+
+Reference genomic data for your projects are available from Ensembl. This is usually the latest build of the genome, transcriptome etc as well as the annotations in GTF or GFF format. Most common organisms are available from [ensembl.org](https://www.ensembl.org/index.html). You can select the organism and then click on **Download FASTA**/**Download GTF/GFF** which takes you to the FTP site.
+
+You can also go directly to their FTP site [ftp://ftp.ensembl.org/pub/release-96](ftp://ftp.ensembl.org/pub/release-96) where you can select the type of data you need, and then select the organism. For eg; **homo_sapiens**, under which you find **cdna**, **cds**, **dna**, **dna_index**, **ncrna** and **pep**. Under **dna**, the FASTA files are available as full genome or as separate chromosomes. Each of them are again available as regular (repeat content as normal bases), soft-masked (sm, repeat content in lowercase) or repeat-masked (rm, repeat content as Ns). Full genomes are also available as **primary assembly** or **top-level**. **Primary assembly** is what most people would need. The **top-level** is much larger in size and contains non-chromosomal contigs, patches, haplotypes etc. This is significantly larger in size compared to the primary assembly.
+
+<i class="fas fa-exclamation-circle"></i> Clades such as metazoa, protists, bacteria, fungi and plants are available through separate ensembl websites. These are listed on [http://ensemblgenomes.org/](http://ensemblgenomes.org/).
+
+# Biomart
+## Genes
+In this section, we will download annotation data using R package **biomaRt**. Annotations refer to known features (verified experimentally or predicted) in the genome. Usually, our features of interest in RNA-Seq are genes, their IDs, position in the genome, gene biotype (protein coding, non-coding etc) etc. We will also use the **dplyr** package to pipe data through functions.
+
+```{r}
+library(biomaRt)
+library(dplyr)
+
+listMarts()
+```
+
+We will use the code below to find the name of the Human ensembl genes dataset under ensembl mart.
+
+```{r}
+mart <- useMart("ENSEMBL_MART_ENSEMBL")
+ds <- as.data.frame(listDatasets(mart=mart))
+
+# find all rows in dataset 'ds' where column 'description' contains the string 'human'
+ds[grepl("human",tolower(ds$description)),]
+```
+
+Now that we know the name of the dataset, we can list all the columns (filters) in this dataset.
+
+```{r}
+mart <- useMart("ENSEMBL_MART_ENSEMBL")
+mart <- useDataset(mart=mart,dataset="hsapiens_gene_ensembl")
+la <- listAttributes(mart=mart)
+head(la)
+```
+
+One can also search for attributes of interest.
+
+```{r}
+searchAttributes(mart=mart,pattern="entrez")
+```
+
+We create a vector of our columns of interest.
+
+```{r,eval=FALSE}
+myattributes <- c("ensembl_gene_id",
+                  "entrezgene",
+                  "external_gene_name",
+                  "chromosome_name",
+                  "start_position",
+                  "end_position",
+                  "strand",
+                  "gene_biotype",
+                  "description")
+```
+
+We then use this to download our data. Note that this can be a slow step.
+
+```{r,eval=FALSE}
+mart <- useMart("ENSEMBL_MART_ENSEMBL")
+mart <- useDataset(mart=mart,dataset="hsapiens_gene_ensembl")
+bdata <- getBM(mart=mart,attributes=myattributes,uniqueRows=T)
+head(bdata)
+```
+
+```
+  ensembl_gene_id entrezgene external_gene_name chromosome_name start_position
+1 ENSG00000210049         NA              MT-TF              MT            577
+2 ENSG00000211459         NA            MT-RNR1              MT            648
+3 ENSG00000210077         NA              MT-TV              MT           1602
+4 ENSG00000210082         NA            MT-RNR2              MT           1671
+5 ENSG00000209082         NA             MT-TL1              MT           3230
+6 ENSG00000198888       4535             MT-ND1              MT           3307
+  end_position strand   gene_biotype
+1          647      1        Mt_tRNA
+2         1601      1        Mt_rRNA
+3         1670      1        Mt_tRNA
+4         3229      1        Mt_rRNA
+5         3304      1        Mt_tRNA
+6         4262      1 protein_coding
+                                                                                               description
+1                              mitochondrially encoded tRNA-Phe (UUU/C) [Source:HGNC Symbol;Acc:HGNC:7481]
+2                                       mitochondrially encoded 12S RNA [Source:HGNC Symbol;Acc:HGNC:7470]
+3                                mitochondrially encoded tRNA-Val (GUN) [Source:HGNC Symbol;Acc:HGNC:7500]
+4                                       mitochondrially encoded 16S RNA [Source:HGNC Symbol;Acc:HGNC:7471]
+5                            mitochondrially encoded tRNA-Leu (UUA/G) 1 [Source:HGNC Symbol;Acc:HGNC:7490]
+6 mitochondrially encoded NADH:ubiquinone oxidoreductase core subunit 1 [Source:HGNC Symbol;Acc:HGNC:7455]
+```
+
+We find that there are several duplicates for all the IDs. This needs to be fixed when this information is to be used downstream.
+
+```{r,eval=FALSE}
+sum(duplicated(bdata$ensembl_gene_id))
+sum(duplicated(bdata$entrezgene))
+sum(duplicated(bdata$external_gene_name))
+```
+
+```
+252
+45751
+6417
+```
+
+```{r,eval=FALSE}
+# arrange table by chr name and start position
+bdata <- dplyr::arrange(bdata,chromosome_name,start_position)
+write.table(bdata,"./data/human_genes.txt",row.names=F,quote=F,col.names=T,sep="\t")
+```
+
+## Transcript
+
+Here we download transcript to gene mappings. Notice that we can specify the `mart` and `dataset` in the `useMart()` function.
+
+```{r,eval=FALSE}
+mart <- useMart(biomart="ensembl",dataset="hsapiens_gene_ensembl")
+t2g <- getBM(attributes=c("ensembl_transcript_id","ensembl_gene_id","external_gene_name"),mart=mart)
+write.table(t2g,"./data/human_transcripts.txt",row.names=F,quote=F,col.names=T,sep="\t")
+```
+
+The transcipt information file is saved to a file and will be used in the lab on [Kallisto](lab_kallisto.html).
+
+## Gene ontology
+
+Similarly, we can get entrez gene ID to GO ID relationships. List all the GO related filters:
+
+```{r,eval=FALSE}
+mart <- biomaRt::useMart(biomart="ensembl",dataset="hsapiens_gene_ensembl")
+lf <- listFilters(mart=mart)
+
+# find all rows in dataset 'lf' where column 'name' contains the string 'go'
+lf[grepl("go",tolower(lf$name)),]
+```
+
+```
+                   name                        description
+1               with_go                      With GO ID(s)
+2       with_goslim_goa              With GOSlim GOA ID(s)
+3                    go         GO ID(s) [e.g. GO:0000002]
+4            goslim_goa GOSlim GOA ID(s) [e.g. GO:0000003]
+5        go_parent_term              Parent term accession
+6        go_parent_name                   Parent term name
+7      go_evidence_code                   GO Evidence code
+8   with_cdingo_homolog            Orthologous Dingo Genes
+9 with_ggorilla_homolog          Orthologous Gorilla Genes
+```
+
+```{r,eval=FALSE}
+mart <- biomaRt::useMart(biomart="ensembl",dataset="hsapiens_gene_ensembl")
+bdata <- getBM(mart=mart,attributes=c("entrezgene","go","go_evidence_code"),uniqueRows=T)
+write.table(bdata,"./data/go.txt",row.names=F,quote=F,col.names=T,sep="\t")
+```
+
+## ID conversion
+
+We can also take a quick look at converting IDs. It is often desirable to convert a certain gene identifier to another (ensembl gene ID, entrez gene ID, gene ID). Sometimes, it may be necessary to convert gene IDs of one organism to another. biomaRt has a convenient function for this called `getLDS()`.
+
+Here is an example where we convert a few mouse ensembl IDs to Human Hugo gene IDs.
+
+```{r,eval=FALSE}
+mouse_genes <- c("ENSMUSG00000035847","ENSMUSG00000000214")
+mouse <- useMart("ensembl",dataset="mmusculus_gene_ensembl")
+human <- useMart("ensembl",dataset="hsapiens_gene_ensembl")
+human_genes <- getLDS(attributes=c("ensembl_gene_id"),filters="ensembl_gene_id",values=mouse_genes,mart=mouse, attributesL=c("hgnc_symbol"),martL=human,valuesL="hgnc_symbol",uniqueRows=F)[,1]
+```
+
+```
+      Gene.stable.ID HGNC.symbol
+1 ENSMUSG00000000214          TH
+2 ENSMUSG00000035847         IDS
+```
+
+# Session info
+
+```{r,echo=FALSE}
+sessionInfo()
+```

@@ -1,0 +1,36 @@
+date;room;dur;topic;person;link_presentation;link_lab;link_room
+26/11/2019;"Retina; D227";40;Welcome;Dag Ahrén;;;https://tinyurl.com/yyaf3zbb
+;;40;RNA Introduction;Dag Ahrén;;;
+;;20;Coffee Break;;;;
+;;40;RNA-Seq Introduction;Dag Ahrén;RNAseq_Introduction.pdf;;
+;;40;Unix & Uppmax;Dag Ahrén;;;
+;;60;Lunch;;;;
+;;40;Pre-alignment QC;Lokesh Manoharan;;;
+;;40;Mapping;Lokesh Manoharan;;
+;;40;Post-alignment QC;Lokesh Manoharan;;;
+;;20;Coffee Break;;;;
+;;40;Pseudoaligners;Markus Ringnér;;;
+;;40;Quantification;Markus Ringnér;;;
+27/11/2019;"Retina; D227";40;Intro to R;Lokesh Manoharan;;;
+;;40;Retrieving Data;Lokesh Manoharan;;;
+;;20;Coffee Break;;;;
+;;40;Data Preprocessing;Lokesh Manoharan;;;
+;;40;Normalisation;Lokesh Manoharan;;;
+;;60;Lunch;;;;
+;;40;Exploratory Analyses;Ashfaq Ali;;;
+;;40;DGE;Ashfaq Ali;;;
+;;40;DGE;Ashfaq Ali;;;
+;;20;Coffee Break;;;;
+;;40;DGE Visualisation;Markus Ringnér;;;
+;;40;DGE Visualisation;Markus Ringnér;;;
+28/11/2019;"Retina; D227";40;PCA;Markus Ringnér;;;
+;;40;Hierarchical Clustering;Markus Ringnér;;;
+;;20;Coffee Break;;;;
+;;40;Hierarchical Clustering;Markus Ringnér;;;
+;;40;GSA & GSEA;Lokesh Manoharan;;;
+;;60;Lunch;;;;
+;;40;GSA & GSEA;Lokesh Manoharan;;;
+;;40;GEO;Lokesh Manoharan;;;
+;;40;Free Exercises;-;;;
+;;20;Coffee Break;;;;
+;;40;Conclusion;TBA;;;

@@ -1,0 +1,707 @@
+---
+title: "DGE Workflow"
+subtitle: "Workshop on RNA-Seq"
+author: "`r paste0('<b>Roy Francis</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: default
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+```{r,include=FALSE}
+# data handling
+library(dplyr)
+#library(tidyr)
+#library(stringr)
+
+# plotting
+library(ggplot2)
+
+library(biomaRt) # annotation
+library(DESeq2) # rna-seq
+library(edgeR) # rna-seq
+```
+
+<div class="instruction">
+<i class="fas fa-exclamation-circle"></i> The raw data and metadata can be downloaded from [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). The files needed are **counts_raw.txt** and **metadata_raw.csv**. Other files are created as intermediates during this workflow. They may be useful if you cannot get a step to work. Place the files in a directory named `data` in your current working directory.
+</div>
+
+# Data preprocessing
+
+Data preprocessing is done in R. First, we read in the count table.
+
+```{r}
+cr <- read.table("./data/count_raw.txt",header=TRUE)
+head(cr)
+str(cr)
+```
+
+The count data shows read counts across samples and genes. The columns denote samples and rows denote genes.
+
+Read in the metadata. Each row corresponds to a sample. The sample names can be added as row names.
+
+```{r}
+mr <- read.csv2("./data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
+rownames(mr) <- mr$Sample_ID
+head(mr)
+str(mr)
+```
+
+The metadata columns are sample name and time points. It is a good idea to check that the number of columns of data match the number of rows of metadata. The column names of data must also match the row names of metadata.
+
+```{r}
+all.equal(colnames(cr),rownames(mr))
+```
+
+Let's create a boxplot to visualise the distribution of counts.
+
+```{r}
+boxplot(log10(as.matrix(cr)+1),ylab=expression('Log'[10]~'Read counts'),las=2,
+        main="Raw data")
+```
+
+The median values are zero across all samples. This is a sign that the data set would benefit from a low count filtering.
+
+We can check if any samples need to be discarded based on the number of genes detected. We create a barplot of genes detected across samples.
+
+```{r}
+{barplot(colSums(cr>5),ylab="Number of detected genes",las=2)
+abline(h=median(colSums(cr>5)))}
+```
+
+None of the samples look bad enough to be removed.
+
+<i class="fas fa-comments"></i> What does `cr>5` do? Why did we use 5? Is it better than using `cr>0`?
+
+And we can create a similar plot for detection rate across genes.
+
+```{r}
+{barplot(rowSums(cr>5),xlab="Genes",ylab="Number of samples",las=2,names.arg="")
+abline(h=median(rowSums(cr>5)))}
+```
+
+Some of the genes are not detected across most samples. These genes can be discarded. Below, rather than using zero are minimum value for detection, we used minimum of 1 count-per-million (CPM). This ignores noisy background counts. And we want to keep genes that have minimum 1 CPM across 2 samples (since each of test groups consist of 3 samples).
+
+```{r}
+# remove genes with low counts
+keepgenes <- rowSums(edgeR::cpm(cr)>1) >= 2
+cf <- cr[keepgenes,]
+```
+
+<i class="fas fa-comments"></i> How would the results change if we used total number of samples (ie; 12 for this dataset) in the code above?
+
+```{r}
+boxplot(log10(as.matrix(cf)+1),ylab=expression('Log'[10]~'Read counts'),las=2,
+        main="Filtered data")
+```
+
+The missingness in the data set is reduced. The filtering process has removed `r nrow(cr)-nrow(cf)` genes with low counts.
+
+Since no samples were discarded, the metadata file will remain the same. And we can check that the labels are the same order in counts and metadata.
+
+```{r}
+all.equal(colnames(cf),rownames(mr))
+```
+
+At this point, we can save the filtered data.
+
+```{r}
+write.table(cf,"./data/counts_filtered.txt",col.names=T,quote=F,sep="\t",dec=".")
+```
+
+# Normalisation
+
+The raw count data needs to be corrected for various biases before statistical inference. If the data set is to be used in an R package for differential gene expression such as **DESeq2**, **edgeR** or **Limma**, the raw data must be used directly. This is because, these packages handle the correction and transformation internally.
+
+## CPM/TPM
+
+For analysis other than DGE, the data set must be corrected before use. The most basic correction required is sequencing depth. This is achieved using rescaling the counts to counts per million.
+
+We read in out filtered count data and metadata. We can use the function `cpm()` from R package **edgeR** for this.
+
+```{r}
+cf <- read.table("./data/counts_filtered.txt",header=TRUE)
+mr <- read.csv2("./data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
+rownames(mr) <- mr$Sample_ID
+```
+
+```{r}
+cc <- edgeR::cpm(cf)
+boxplot(log10(as.matrix(cc)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="CPM")
+```
+
+But, CPM data has some drawbacks. It is not suitable for within-sample comparisons. The total number of reads per sample varies from sample to sample. This also makes it harder to compare one experiment to another. In addition, gene length is not controlled for in this correction. RPKM/FPKM normalisations correct for gene length, but they are not recommended because they are not comparable between samples.
+
+A better correction method that resolves these issues is TPM (transcripts-per-million). The code for computing TPM is simple.
+
+```{r}
+#' @title Compute TPM from a read count matrix
+#' @param counts A numeric data.frame of read counts with samples (columns) and genes (rows).
+#' @param len A vector of gene cds length equal to number of rows of dfr.
+#'
+#' https://support.bioconductor.org/p/91218/
+#'
+tpm <- function(counts,len) {
+  x <- counts/len
+  return(t(t(x)*1e6/colSums(x)))
+}
+```
+
+We read in the annotation data, remove duplicated ensembl IDs and compute gene lengths.
+
+```{r}
+g <- read.delim("./data/human_genes.txt",header=T,stringsAsFactors=F)
+g <- g[!duplicated(g$ensembl_gene_id),]
+g$len <- g$end_position-g$start_position
+rownames(g) <- g$ensembl_gene_id
+```
+
+Next, we find shared genes between count data and annotation data and match their order.
+
+```{r}
+igenes <- intersect(rownames(cf),g$ensembl_gene_id)
+g1 <- g[igenes,]
+cf1 <- cf[igenes,]
+all.equal(rownames(cf1),g1$ensembl_gene_id)
+```
+
+```{r}
+ct <- tpm(cf1,g1$len)
+boxplot(log10(as.matrix(ct)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="TPM")
+```
+
+## DESeq2
+
+DESeq2 internally corrects counts for sequencing depth and RNA compositional bias using **Median of ratios** method. The details of this method are described further below under DGE size factors. To run this method, we create a DESeq2 object using the count data and metadata.
+
+```{r}
+library(DESeq2)
+mr$Time <- factor(mr$Time)
+d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Time)
+d <- DESeq2::estimateSizeFactors(d,type="ratio")
+cd <- counts(d,normalized=TRUE)
+boxplot(log10(as.matrix(cd)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="DESeq2")
+```
+
+## VST
+
+For the purpose of exploratory analysis such as MDS, PCA, clustering etc, VST (variance-stabilizing-transformation) is recommended. VST is also run using DESeq2. As in the previous step, a DESeq2 object is created.
+
+```{r}
+library(DESeq2)
+mr$Time <- factor(mr$Time)
+d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Time)
+d <- DESeq2::estimateSizeFactors(d,type="ratio")
+d <- DESeq2::estimateDispersions(d)
+cv <- as.data.frame(assay(varianceStabilizingTransformation(d,blind=T)),check.names=F)
+if(!file.exists("./data/counts_vst.txt")) write.table(cv,"./data/counts_vst.txt",sep="\t",dec=".",quote=FALSE)
+boxplot(log10(as.matrix(cv)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="VST")
+```
+
+The effect of VST transformation can be clearly seen in a mean vs variance plot.
+
+```{r,fig.height=7,fig.width=7}
+rowVar <- function(x) apply(x,1,var)
+par(mfrow=c(2,2))
+plot(log10(rowMeans(cf)+1),log10(rowVar(cf)+1),xlab=expression('Log'[10]~'Mean count'),ylab=expression('Log'[10]~'Variance'),main="Filtered")
+plot(log10(rowMeans(ct)+1),log10(rowVar(ct)+1),xlab=expression('Log'[10]~'Mean count'),ylab=expression('Log'[10]~'Variance'),main="TPM")
+plot(log10(rowMeans(cd)+1),log10(rowVar(cd)+1),xlab=expression('Log'[10]~'Mean count'),ylab=expression('Log'[10]~'Variance'),main="DESeq2")
+plot(rowMeans(cv),rowVar(cv),xlab='Mean count',ylab='Variance',main="VST")
+par(mfrow=c(1,1))
+```
+
+For RNA-seq data, as the mean count value increases, the variance increases. There is a strong almost linear relationship as seen in the figures. The statistical methods such as PCA expects similar variance across the range of mean values. If not, the higher variance genes will contribute more than the lower variance genes. Such data is said to be heteroscedastic and needs to be corrected. Correction using log transformation (with pseudocount) now gives inflates the contribution of the low variance genes. To obtain similar variance across the whole range of mean values, DESeq2 offers two methods VST (variance stabilising transformation) and RLOG (regularised log transformation).
+
+As the name suggests, VST transformation stabilizes variance across the whole range of count values. VST is recommended for clustering or visualisation. It is not intended for differential gene expression. If the size factors vary dramatically between samples, then RLOG transformation is recommended.
+
+Finally, we can compare all of the various transformations in a single plot.
+
+```{r,fig.height=3.5,fig.width=9}
+par(mfrow=c(1,4))
+boxplot(log10(as.matrix(cf)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="Filtered")
+boxplot(log10(as.matrix(ct)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="TPM")
+boxplot(log10(as.matrix(cd)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="DESeq2")
+boxplot(as.matrix(cv),ylab='Read counts',las=2,main="VST")
+par(mfrow=c(1,1))
+```
+
+<i class="fas fa-comments"></i> Would it be possible to have one perfect normalisation method for all types of analyses? Is there any drawback to using gene length corrected counts in differential gene expression analyses?
+
+# Exploratory
+
+In this section, we are strictly not running any quantitative analyses or statistical test. This is a QC of the counts. We are running correlation to check similarity of gene counts between samples. We are running distance based clustering and PCA to estimate similarity between samples. This should give us an idea of the variation within your sample groups and detect possible outliers or mis-labelled samples.
+
+We will use the variance stabilized counts (VST) from the previous step for all exploratory analyses. Otherwise, the files below can also be copied from the data location mentioned at the beginning of this document.
+
+```{r}
+cv <- read.table("./data/counts_vst.txt",header=TRUE)
+mr <- read.csv2("./data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
+rownames(mr) <- mr$Sample_ID
+```
+
+## Correlation
+
+It is a good idea to start by checking correlation between samples. RNA-Seq samples generally have very high correlation (R^2 > 0.9). R^2 values below 0.8 may be an indication of an outlier sample. Depending on other QC metric, these low correlation samples may be discarded from analyses.
+
+We use the function `cor()` for computing sample-to-sample Spearman correlation. Note that the input matrix has genes as rows and samples as columns. This generates a sample-to-sample pairwise correlation matrix. This matrix can be plotted as a heatmap using the `pheatmap()` function from the **pheatmap** R package.
+
+```{r,fig.height=5,fig.width=6}
+dmat <- as.matrix(cor(cv,method="spearman"))
+
+library(pheatmap)
+pheatmap(dmat,border_color=NA,annotation_col=mr[,"Time",drop=F],
+         annotation_row=mr[,"Time",drop=F],annotation_legend=T)
+```
+
+In the matrix, red colour denotes higher correlation (higher similarity) and blue denotes lower correlation (lower similarity). `pheatmap()` also hierarchically clusters rows and columns based on correlation values. The dendrograms show how samples cluster. Annotation colours denote **Time** groups. Notice that samples group by **Time**.
+
+## PCA
+
+To run PCA, we use the R function `prcomp()`. It takes in a matrix where samples are rows and variables are columns. Therefore, we transpose our count matrix using the function `t()`. If we do not transpose, then PCA is run on the genes rather than the samples. The next line of code plots the variance explained by the top PCs.
+
+```{r,fig.height=5,fig.width=5}
+pcaobj <- prcomp(x=t(cv))
+{barplot(round(pcaobj$sdev^2/sum(pcaobj$sdev^2)*100,2),las=2,
+        names.arg=colnames(pcaobj$x),ylab="% Variance explained",
+        xlab="PCA principal components")
+abline(h=2, lty=2)}
+```
+
+The first two principal components in total explain 85% (75%+10%) of the variance in the data set. This means a scatterplot of PC1 vs PC2 can help to visualise the most important trend in the data. Then we merge the rotated data with the metadata and plot a scatterplot coloured by our variable of interest (Time).
+
+```{r,fig.height=4,fig.width=4.5}
+pcamat1 <- as.data.frame(pcaobj$x)
+pcamat2 <- merge(pcamat1,mr,by=0)
+
+ggplot(pcamat2,aes(PC1,PC2,colour=Time))+
+  geom_point()+
+  theme_bw()
+```
+
+Samples cluster by the **Time** variable as expected.
+
+Sometimes the first two PCs may not be the ones that will best separate the sample groups, so it is a good idea to look at more PCs.
+
+```{r,fig.height=3.5,fig.width=8}
+p1 <- ggplot(pcamat2,aes(PC1,PC3,colour=Time))+
+  geom_point()+
+  theme_bw()
+p2 <- ggplot(pcamat2,aes(PC2,PC3,colour=Time))+
+  geom_point()+
+  theme_bw()
+ggpubr::ggarrange(p1,p2,nrow=1,ncol=2)
+```
+
+An alternative way to create a PCA plot is directly from the DESeq2 object using the DESeq2 function `plotPCA()`.
+
+```{r}
+plotPCA(varianceStabilizingTransformation(d),intgroup="Time")
+```
+
+## Clustering
+
+For clustering, we create a sample-to-sample pairwise distance matrix (here we use euclidean distance). The rows and columns of this matrix is then hierarchically clustered. We use the function `dist()` to compute the distance. Note that for a sample-to-sample matrix, the rows need to be samples and columns should be genes. Therefore, we use the function `t()` to transpose our VST normalised count matrix.
+
+```{r,fig.height=5,fig.width=6}
+dmat <- as.matrix(dist(t(cv)))
+
+library(pheatmap)
+pheatmap(dmat,border_color=NA,annotation_col=mr[,"Time",drop=F],
+         annotation_row=mr[,"Time",drop=F],annotation_legend=T)
+```
+
+Hierarchically clustered sample-to-sample euclidean distance matrix. Larger distances mean lower similarity and vice-versa. In the matrix, red colour denotes larger distance (lower similarity) and blue denotes small distance (higher similarity). Annotation colours denote **Time** groups. The dendrogram helps to visualise sample clustering. Notice that samples group by **Time**.
+
+<i class="fas fa-clipboard-list"></i> Try to run the PCA using one of the other normalisation methods, say logCPM and/or DESeq2 normalised counts.   
+<i class="fas fa-comments"></i> How different are the results? How do samples group? Can these differences be explained?  
+
+# DGE
+
+For differential gene expression, we use the **DESeq2** package. We use the raw filtered counts and metadata.
+
+```{r}
+cf <- read.table("./data/counts_filtered.txt",header=TRUE)
+mr <- read.csv2("./data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
+rownames(mr) <- mr$Sample_ID
+```
+
+The data is converted to a DESeq2 object. The GLM model we use is simple since we only have one variable of interest `~Time`.
+
+If we had other covariates to control for, we would add them to the model like so `~var+Time`. The variable of interest appears in the end. This model means find differentially expressed genes between groups under 'time' variable while controlling for the effect of 'var'. Similarily, batch effects can be controlled by specifying them in the model `~batch+Time`.
+
+```{r}
+library(DESeq2)
+mr$Time <- factor(mr$Time)
+d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Time)
+```
+
+## Size factors
+
+The first step is estimating size factors. The data is normalised for sequencing depth and compositional bias as done for the VST step. DESeq2 uses a method called *median-of-ratios* for this step.
+
+```{r,block.title=TRUE}
+d <- DESeq2::estimateSizeFactors(d,type="ratio")
+```
+
+<div class="optional">
+<b>Optional</b>
+
+For those interested in the details of the *median-of-ratios* method, click below.
+
+<p>
+<button class="btn btn-sm btn-primary btn-collapse btn-collapse-optional collapsed type="button" data-toggle="collapse" data-target="#dge-size-factor" aria-expanded="false" aria-controls="dge-size-factor">
+</button>
+</p>
+<div class="collapse" id="dge-size-factor">
+<div class="card card-body">
+
+This is a step-by-step guide to computing normalisation factors (size factors) using the *median-of-ratios* method.
+
+1. The geometric mean is computed across all samples for each gene.
+
+```{r,block.title=TRUE}
+gm_mean = function(x, na.rm=TRUE){
+  exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
+}
+
+gmean <- apply(cf,1,gm_mean)
+head(gmean)
+```
+
+2. Read counts for each gene is divided by the geometric mean of that gene to create a ratio.
+
+```{r,block.title=TRUE}
+ratio <- cf/gmean
+head(ratio)[,1:5]
+```
+
+3. The median ratio for each sample (across all genes) is taken as the size factor for that sample.
+
+```{r,block.title=TRUE}
+sf <- apply(ratio,2,median)
+sf
+```
+
+We can verify that these values are correct by comparing with size factors generated by DESeq2.
+
+```{r,block.title=TRUE}
+# deseq2 size factors
+sizeFactors(d)
+```
+
+If we plot the size factors for each sample against the total counts for each sample, we get the plot below. We can see that they correlate very well. Size factors are mostly correcting for total counts, ie; sequencing depth.
+
+```{r,fig.height=4.5,fig.width=4.5}
+plot(sizeFactors(d),colSums(cf),xlab="Size factors",ylab="Total counts")
+```
+
+The raw counts can then be divided by the size factor to yield normalised read counts.
+
+```{r,block.title=TRUE}
+# custom
+head(t(t(cf)/sf))[,1:5]
+# deseq2
+head(counts(d,normalized=TRUE))[,1:5]
+```
+
+</div>
+</div>
+</div>
+
+<i class="fas fa-comments"></i> The function `estimateSizeFactors()` has options to set a custom `locfunc` other than the median. Why is this useful? What happens if you change it to "shorth". Check out the help page for `estimateSizeFactors()`.
+
+## Gene dispersion
+
+When it comes to comparing values between groups, some measure of variation is needed to estimate the variability in gene counts within groups. Dispersion is a measure of variation in a data set. Variance and standard deviation are not a good measure to estimate variability because it correlates with the mean.
+
+<div class="optional">
+<b>Optional</b>
+
+For some more discussion on dispersion, click below.
+
+<p>
+<button class="btn btn-sm btn-primary btn-collapse btn-collapse-optional collapsed type="button" data-toggle="collapse" data-target="#dge-dispersion" aria-expanded="false" aria-controls="dge-dispersion">
+</button>
+</p>
+<div class="collapse" id="dge-dispersion">
+<div class="card card-body">
+
+We can create a mean counts vs variance plot for all genes in our data set.
+
+```{r,fig.height=4.5,fig.width=4.5,block.title=TRUE}
+dm <- apply(cd,1,mean)
+dv <- apply(cd,1,var)
+
+ggplot(data.frame(mean=log10(dm+1),var=log10(dv+1)),
+       aes(mean,var))+
+  geom_point(alpha=0.2)+
+  geom_smooth(method="lm")+
+  labs(x=expression('Log'[10]~'Mean counts'),y=expression('Log'[10]~'Variance'))+
+  theme_bw()
+```
+
+We see a mostly linear relationship on the log scale. The blue line denotes a linear fit. Genes that have larger read counts show higher variance. It's hard to say which genes are more variable based on this alone. Therefore, variance is not a good measure to identify variation in read counts. A measure that controls for this mean-variance relationship is what we need.
+
+One option is the coefficient of variation (CV).
+
+```{r,fig.height=4.5,fig.width=4.5,block.title=TRUE}
+cva <- function(x) sd(x)/mean(x)
+dc <- apply(cd,1,cva)
+
+ggplot(data.frame(mean=log10(dm+1),var=dc),
+       aes(mean,var))+
+  geom_point(alpha=0.2)+
+  geom_smooth()+
+  labs(x=expression('Log'[10]~'Mean counts'),y="Coefficient of variation")+
+  theme_bw()
+```
+
+Now, we see that genes with lower counts have higher variability and genes with larger counts have lower variability. A measure like CV is taking the ratio of 'variation' to mean. `cv=sd(x)/mean(x)`.
+
+This becomes even more apparent if we compute the CV and mean over replicates within sample groups (Time).
+
+```{r,fig.height=5,fig.width=5,block.title=TRUE}
+dx1 <- data.frame(t0=apply(cd[,1:3],1,cva),t2=apply(cd[,4:6],1,cva),
+            t6=apply(cd[,7:9],1,cva),t24=apply(cd[,10:12],1,cva))
+dx1$gene <- rownames(dx1)
+dx1 <- tidyr::gather(dx1,key=sample,value=cv,-gene)
+rownames(dx1) <- paste0(dx1$gene,"-",dx1$sample)
+
+dx2 <- data.frame(t0=apply(cd[,1:3],1,mean),t2=apply(cd[,4:6],1,mean),
+            t6=apply(cd[,7:9],1,mean),t24=apply(cd[,10:12],1,mean))
+dx2$gene <- rownames(dx2)
+dx2 <- tidyr::gather(dx2,key=sample,value=mean,-gene)
+rownames(dx2) <- paste0(dx2$gene,"-",dx2$sample)
+
+dx3 <- merge(dx1,dx2,by=0)
+
+ggplot(dx3,aes(x=log10(mean+1),y=cv))+
+  geom_point(alpha=0.2)+
+  geom_smooth()+
+  facet_wrap(~sample.x)+
+  labs(x=expression('Log'[10]~'Mean counts'),y="Coefficient of variation")+
+  theme_bw()
+```
+
+We find that CV strongly declines with increasing counts. Genes with low counts show higher dispersion. For the sake of completeness, we can also plot the relationship between CV and variance for the same sample groups.
+
+```{r,fig.height=5,fig.width=5,block.title=TRUE}
+dx1 <- data.frame(t0=apply(cd[,1:3],1,cva),t2=apply(cd[,4:6],1,cva),
+            t6=apply(cd[,7:9],1,cva),t24=apply(cd[,10:12],1,cva))
+dx1$gene <- rownames(dx1)
+dx1 <- tidyr::gather(dx1,key=sample,value=cv,-gene)
+rownames(dx1) <- paste0(dx1$gene,"-",dx1$sample)
+
+dx2 <- data.frame(t0=apply(cd[,1:3],1,var),t2=apply(cd[,4:6],1,var),
+            t6=apply(cd[,7:9],1,var),t24=apply(cd[,10:12],1,var))
+dx2$gene <- rownames(dx2)
+dx2 <- tidyr::gather(dx2,key=sample,value=var,-gene)
+rownames(dx2) <- paste0(dx2$gene,"-",dx2$sample)
+
+dx3 <- merge(dx1,dx2,by=0)
+
+ggplot(dx3,aes(x=log10(var+1),y=cv))+
+  geom_point(alpha=0.2)+
+  geom_smooth()+
+  facet_wrap(~sample.x)+
+  labs(x=expression('Log'[10]~'Variance'),y="Coefficient of variation")+
+  theme_bw()
+```
+
+</div>
+</div>
+</div>
+
+DESeq2 computes it's own version of dispersion in a more robust manner taking into account low count values. The DESeq2 dispersion estimates are inversely related to the mean and directly related to variance. The dispersion estimate is a good measure of the variation in gene expression for a certain mean value.
+
+Now, the variance or dispersion estimate for genes with low counts is unreliable when there are too few replicates. To overcome this, DESeq2 borrows information from other genes. DESeq2 assumes that genes with similar expression levels have similar dispersion values. Dispersion estimates are computed for each gene separately using maximum likelihood estimate. A curve is fitted to these gene-wise dispersion estimates. The gene-wise estimates are then 'shrunk' to the fitted curve.
+
+Gene-wide dispersions, fitted curve and shrinkage can be visualised using the `plotDispEsts()` function.
+
+```{r,fig.height=5.5,fig.width=5,block.title=TRUE}
+d <- DESeq2::estimateDispersions(d)
+plotDispEsts(d)
+```
+
+The black points denote the maximum likelihood dispersion estimate for each gene. The red curve denote the fitted curve. The blue points denote the new gene dispersion estimates after shrunk towards the curve. The circled blue points denote estimates that are not shrunk as they are too far away from the curve. Thus, shrinkage method is important to reduce false positives in DGE analysis involving too few replicates.
+
+<i class='fas fa-lightbulb'></i> It is a good idea to visually check the dispersion shrinkage plot to verify that the modelling works for your data set.
+
+## Testing
+
+Overdispersion is the reason why RNA-Seq data is better modelled as negative-binomial distribution rather than poisson distribution. Poisson distribution has a mean = variance relationship, while negative-binomial distribution has a variance > mean relationship. The last step in the DESeq2 workflow is fitting the Negative Binomial model for each gene and performing differential expression testing. This is based on the log fold change values computed on the corrected count estimates between groups.
+
+`logFC = log2 (corrected counts group A / corrected counts group B)`
+
+The most commonly used testing for comparing two groups in DESeq2 is the Walds's test. The null hypothesis is that the groups are not different and `logFC=0`. The list of contrasts can be seen using `resultsNames()`. Then we can pick our comparisons of interest.
+
+```{r,block.title=TRUE}
+dg <- nbinomWaldTest(d)
+resultsNames(dg)
+```
+
+And we can get the result tables for the three different comparisons. The summary of the result object shows the number of genes that are differentially expressed with positive or negative fold-change and outliers.
+
+```{r,block.title=TRUE}
+res1 <- results(dg,name="Time_t2_vs_t0",alpha=0.05)
+summary(res1)
+res2 <- results(dg,name="Time_t24_vs_t0",alpha=0.05)
+summary(res2)
+res3 <- results(dg,name="Time_t6_vs_t0",alpha=0.05)
+summary(res3)
+```
+
+You can also build up the comparison using **contrasts**. Contrats need the condition, level to compare and the reference level (base level). For example, `results(dg,contrast=c("Time","t2","t0"),alpha=0.05)`.
+
+Note that in both cases above, `t0` is the reference level and other levels are compared to this. Therefore, a fold-change of 2 would mean that, a gene is 2 fold higher expressed in the test level compared to `t0`.
+
+The `results()` function has many useful arguments. One can set a threshold on the logFC values using `lfcThreshold`. By default, no filtering is performed based on logFC values. Outliers are detected and p-values are set to NA automatically using `cooksCutoff`. `independentFiltering` remove genes with low counts.
+
+```{r,block.title=TRUE}
+head(res1)
+```
+
+The results table contains mean expression value (baseMean), log2 fold change (log2FoldChange), log2 fold change standard error (lfcSE), wald test statistic (stat), wald test p-value (pvalue) and BH adjusted p-value (padj) for each gene.
+
+It is a good idea to look at the distribution on unadjusted p-values.
+
+```{r,fig.height=5,fig.width=5}
+hist(res1$pvalue[res1$baseMean>1],main="res1 Pval distribution",xlab="P-values")
+```
+
+This is the kind of distribution to be expected when the p-values are "well-behaved". For more explanation on p-value distributions, see [here](http://varianceexplained.org/statistics/interpreting-pvalue-histogram/). If this distribution is very different or strange, then it might indicate an underlying problem.
+
+<i class='fas fa-lightbulb'></i>  Note that the results object is a `DESeqResults` class object and not a data.frame. It can be converted to a data.frame using `as.data.frame()` for exporting to a file.
+
+We can filter the results table as needed.
+
+```{r,block.title=TRUE}
+# all genes
+nrow(as.data.frame(res1))
+# only genes with padj <0.05
+nrow(filter(as.data.frame(res1),padj<0.05))
+# only genes with padj <0.05 and an absolute fold change >2
+nrow(filter(as.data.frame(res1),padj<0.05,abs(log2FoldChange)>2))
+```
+
+Note that manually filtering by **log2FoldChange** on the results table is not the same as setting the `lfcThreshold` argument in the `results()` function.
+
+Finally, we can add additional information to our results to make the interpretation and downstream analyses easier. We read in the gene info downloaded through biomaRt.
+
+```{r}
+# convert res to data.frame
+df_res <- as.data.frame(res1)
+# add row names as a new column
+df_res$ensembl_gene_id <- rownames(df_res)
+
+# read genes info
+hg <- read.delim("./data/human_genes.txt",header=T,sep="\t",stringsAsFactors=F)
+hg <- hg[!duplicated(hg$ensembl_gene_id),]
+
+# merge dataframes
+df_res1 <- merge(df_res,hg,by="ensembl_gene_id")
+head(df_res1)
+```
+
+Now we have annotated our DEG list with information such as gene names, genomic coordinates, biotype etc.
+
+### lfcShrink
+
+This is an extra step to generate more accurate log2 fold changes. This step corrects the log2 fold changes for genes with high dispersion.
+
+```{r,block.title=TRUE}
+lres1 <- lfcShrink(dg,coef="Time_t2_vs_t0",res=res1)
+summary(lres1)
+```
+
+```{r,block.title=TRUE}
+head(lres1)
+```
+
+We see that the number of genes up and down has not changed. But, we can see that the logFC distribution has changed in the density plot below.
+
+```{r,fig.height=4,fig.width=8}
+par(mfrow=c(1,2))
+plot(density(na.omit(lres1$log2FoldChange)),main="log2FoldChange")
+plot(density(na.omit(lres1$padj)),main="BH adj pval")
+par(mfrow=c(1,1))
+```
+
+```{r,eval=FALSE,include=FALSE}
+# check rownames are same
+all.equal(rownames(res1),rownames(lres1))
+dfr <- data.frame(gene=rownames(res1),lfc=res1$log2FoldChange,slfc=lres1$log2FoldChange,diff=abs(res1$log2FoldChange-lres1$log2FoldChange))
+
+ggplot(dfr,aes(lfc,slfc,color=diff))+
+  geom_point()
+```
+
+```{r}
+plotCounts(d,gene="ENSG00000095370",intgroup="Time",normalized=T)
+```
+
+This step does not change the total number of DE genes. This may be useful in downstream steps where genes need to be filtered down based on fold change or if fold change values are used in functional analyses such as GSEA.
+
+<i class="fas fa-comments"></i> How many DE genes do you get?
+
+# Visualisation
+
+In this section, we can explore some useful visualisation of the differential gene expression output.
+
+## MA plot
+
+The MA plot shows mean expression vs log fold change for all genes. The `plotMA()` function from DESeq2 takes a results object as input. Differentially expressed genes are marked in red.
+
+```{r,fig.height=5.5,fig.width=5,block.title=TRUE}
+DESeq2::plotMA(res1)
+```
+
+<i class="fas fa-comments"></i> How does this plot change if you set log fold change filtering to minimum value of 1. How does the plot change when you use `lfcShrink()`?
+
+## Volcano plot
+
+A volcano plot is similar to the MA plot. It plots log fold change vs adjusted p-values.
+
+```{r,fig.height=5,fig.width=5,block.title=TRUE}
+ggplot()+
+  geom_point(data=as.data.frame(res1),aes(x=log2FoldChange,y=-log10(padj)),col="grey80",alpha=0.5)+
+  geom_point(data=filter(as.data.frame(res1),padj<0.05),aes(x=log2FoldChange,y=-log10(padj)),col="red",alpha=0.7)+
+  geom_hline(aes(yintercept=-log10(0.05)),alpha=0.5)+
+  theme_bw()
+```
+
+X axis denotes log fold change and the y axis denotes -log10 adjusted p-value. The adjusted p-value is transformed so that the smallest p-values appears at the top. The horizontal grey line denotes the significance threshold line. All genes above this line (coloured red as well) are considered significant.
+
+<i class="fas fa-comments"></i> Why is the y-axis (p-value) on a -log scale?
+
+## Counts plot
+
+It can be a good idea to manually verify some of these genes by plotting out it's actual read count values. We can use the function `plotCounts()` to visualise the data points for a gene of interest. Below, we see the counts before and after normalisation.
+
+```{r,fig.height=5,fig.width=5,block.title=TRUE}
+plotCounts(d,gene=rownames(res1)[1],intgroup="Time",normalized=F)
+plotCounts(d,gene=rownames(res1)[1],intgroup="Time",normalized=T)
+```
+
+<i class="fas fa-comments"></i> By looking at the count plots, do you agree that the top DE genes differ  significantly between the groups compared?
+
+# Session info
+
+```{r,echo=FALSE}
+sessionInfo()
+```
+
+__End of document__
