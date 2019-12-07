@@ -1,0 +1,67 @@
+---
+title: "Using IGV"
+subtitle: "Workshop on RNA-Seq"
+author: "`r paste0('<b>NBIS</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: default
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+# Introduction
+
+Integrated Genomics Viewer (IGV) is a visualization tool for interactive exploration of large, integrated genomic data sets. It supports a wide variety of data types, including array-based and next-generation sequence data, and genomic annotations. Our purpose of IGV is to visualise reads mapped to reference in BAM files. IGV is also useful in curating/verifying results from analyses pipelines.  
+
+<div class="instruction">
+
+IGV is installed on uppmax, but since you would then access it over a network connection, the graphics might be sluggish. We recommend that you download and run IGV locally and download the files that you will look at locally. Alternatively, you can put the files in the webexport folder on uppmax and view them from there. More information about that further down.
+
+If you still want to try to run IGV on uppmax, please refer to the uppmax [instructions](https://www.uppmax.uu.se/support/user-guides/integrative-genomics-viewer--igv--guide/) for IGV.
+
+</div>
+
+# BAM, BED, GTF
+
+To visualise a BED, BAM or GTF file from your local computer, select **File > Load from File …** and navigate to the file of interest. From the file extension, IGV will automatically treat the information in the file accordingly.
+
+To visualise a BED, BAM or GTF file from a URL, select **File > Load from URL …**. A window will pop up and ask you to give the correct URL for the file you want to view. Paste in the URL, and the file will be downloaded. From the file extension, IGV will automatically treat the information in the file accordingly.
+
+# SAM file
+
+If the file you would like to view is in SAM format (file ends with **.sam**), which is a uncompressed text format, you need to convert it to BAM format (file ends with **.bam**). A BAM file contains the same information as the SAM file but now it is in a binary compressed format unreadable for a human.
+
+To convert a SAM file to BAM format type:
+
+```{sh,block.title=TRUE,eval=FALSE}
+samtools view -bS fileName.sam > fileName.bam
+```
+
+Before the visualization, you need to sort it and then build a BAM file index (**.bai**).
+
+```{sh,block.title=TRUE,eval=FALSE}
+samtools sort fileName.bam fileName.sorted
+samtools index fileName.sorted.bam
+```
+
+This is explained in some more detail in the read mapping tutorial.
+
+Then, in IGV, just follow the instruction above for choose **File > Load from File …** and select the BAM file. If you are running IGV locally and did the mapping on uppmax, you will have to download the BAM file and the corresponding index file (**.bai**) from your work folder to your own computer first.
+
+# Going to a locus
+
+In IGV, click the text box which has the word **Go** on its right hand side. This text box will typically contain genomic coordinates for the locus you are presently looking at, but it can also be used to find gene locations. Type a gene name in it and press <kbd>Enter</kbd>.
+
+**End of document.**

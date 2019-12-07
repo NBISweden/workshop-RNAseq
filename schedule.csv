@@ -1,0 +1,29 @@
+date;room;dur;topic;person;link_presentation;link_lab;link_room
+29/05/2019;Prima;15;Welcome;Lea Wittorf;;;info.html
+;;165;Intro to Linux;Martin Dahlö;presentations/linux-tutorial.pdf;linux-intro.html;
+;;60;Lunch;;;;
+;;240;Intro to UPPMAX;Martin Dahlö;presentations/UPPMAX-tutorial.pdf;uppmax-intro.html;
+03/06/2019;Prima;40;Welcome;Johan Reimegård;;;info.html
+;;40;RNA Introduction;Johan Reimegård;presentations/RNA_introduction.pdf;;
+;;20;Coffee Break;;;;
+;;40;RNA-Seq Introduction;Johan Reimegård;presentations/RNAseq_Introduction.pdf;;
+;;40;Pre-alignment QC;Johan Reimegård;presentations/After_sequencing_QC.pdf;lab_qc.html;
+;;60;Lunch;;;;
+;;40;Mapping;Johan Reimegård;presentations/RNAseq_aligners.pdf;lab_mapping.html;
+;;40;Post-alignment QC;Johan Reimegård;presentations/After_mapping_QC.pdf;lab_qc.html;
+;;40;Quantification;Johan Reimegård;presentations/Quantification.pdf;lab_quantification.html;
+;;20;Coffee Break;;;;
+;;40;Free Exercises;;;;
+;;40;Free Exercises;;;;
+04/06/2019;Prima;40;Intro to R;Roy Francis;;lab_r.html;info.html
+;;40;Retrieving Data;Roy Francis;;lab_download.html;
+;;20;Coffee Break;;;;
+;;40;Data Preprocessing;Roy Francis;presentations/presentation_dge.html;lab_dge.html;
+;;40;Normalisation;Roy Francis;;;
+;;60;Lunch;;;;
+;;40;Exploratory Analyses;Roy Francis;;;
+;;40;DGE;Roy Francis;;;
+;;40;DGE Visualisation;Roy Francis;;;
+;;20;Coffee Break;;;;
+;;40;GSA & GSEA;Roy Francis;presentations/presentation_functional.html;lab_functional.html;
+;;40;Free Exercises;Johan Reimegård;;;

@@ -1,0 +1,208 @@
+---
+title: "Transcriptome annotation"
+subtitle: "Workshop on RNA-Seq"
+author: "`r paste0('<b>Lucile Soler</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: default
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+# Functional annotation
+
+Functional annotation is the process during which we try to put names to faces - what do the transcript that we have assemble do? Basically all existing approaches accomplish this by means of similarity. If a translation product has strong similarity to a protein that has previously been assigned a function, the function in this newly annotated transcript is probably the same. Of course, this thinking is a bit problematic (where do other functional annotations come from...?) and the method will break down the more distant a newly annotated genome is to existing reference data. A complementary strategy is to scan for more limited similarity - specifically to look for the motifs of functionally characterized protein domains. It doesn't directly tell you what the protein is doing exactly, but it can provide some first indication.
+
+In this exercise we will use an approach that combines the search for full-sequence similarity by means of 'Blast' against large public databases with more targeted characterization of functional elements through the trinotate pipeline[trinotate](https://github.com/Trinotate/Trinotate.github.io/wiki). Trinotate is a suite of tools designed for automatic functional annotation of transcriptomes, particularly de novo assembled transcriptomes, from model or non-model organisms. It uses homology search to known sequence data (BLAST+/SwissProt), protein domain identification (HMMER/PFAM), protein signal peptide and transmembrane domain prediction (signalP/tmHMM).
+
+## Prepare the input data
+
+For this exercise we will use the Trinity_200.fasta output that is in the folder /assembly_annotation/raw_computes/. It is the first 200 sequences of the Trinity.fasta file that you created (we create this file so the running time will fit this practical).
+
+Create a new folder for this exercise:
+
+```{sh,eval=FALSE,block.title=TRUE}
+cd ~/RNAseq_assembly_annotation/
+mkdir RNAseq_annotation
+cd RNAseq_annotation
+```
+
+```{sh,eval=FALSE,block.title=TRUE}
+mkdir Trinotate
+ln -s ~/RNAseq_assembly_annotation/assembly_annotation/raw_computes/Trinity_200.fa
+```
+
+One of the first thing to do when one want to annotate a transcriptome with trinotate is is to prepare the database. I prepared it for you as it is taking 50 minutes to run. You will find it there : ~/RNAseq_assembly_annotation/RNAseq_assembly_annotation/assembly_annotation/database/trinotate_database
+
+If you want to know how to prepare the database, you can look at the following lines (again you do not need to run it) :
+
+```{sh,eval=FALSE,block.title=TRUE}
+module load bioinfo-tools
+module load trinotate
+
+/sw/apps/bioinfo/trinotate/3.1.1/rackham/admin/Build_Trinotate_Boilerplate_SQLite_db.pl Trinotate
+```
+
+Then there is few step to prepare the protein database for blast searches by:
+
+```{sh,eval=FALSE,block.title=TRUE}
+makeblastdb -in uniprot_sprot.pep -dbtype prot
+```
+
+And uncompress and prepare the Pfam database for use with 'hmmscan':
+
+```{sh,eval=FALSE,block.title=TRUE}
+gunzip Pfam-A.hmm.gz
+hmmpress Pfam-A.hmm
+```
+
+##	Determining longest Open Reading Frames (ORF)
+
+The second step of the annotation of transcript is to determine open reading frame, they will be then annotated.
+In order to perform this work we use [TransDecoder](https://github.com/TransDecoder/TransDecoder/wiki)
+This tool has proved to be worth particularly within the Trinotate pipeline.
+
+TransDecoder identifies likely coding sequences based on the following steps:
+
+1) All open reading frames (ORFs) above a minimum length (default: 100 amino acids) are identified across all transcripts. Incomplete ORFs are accepted (no start or/and no stop)
+
+2) The top 500 longest ORFs are selected and a reading frame-specific
+5th-order Markov model is trained based on these coding sequences.
+
+3) All previously identified ORFs are scored as a sum of the log odds ratio across the length of the putative coding sequence. This log-likelihood score is similar to what is computed by the GeneID software.
+
+4) In addition to reporting ORFs meeting the score requirements, any ORF found to exceed a minimum length of 300 amino acids is reported.
+
+Running TransDecoder is a two-step process. First run the TransDecoder step that identifies all long ORFs and then the step that predicts which ORFs are likely to be coding.
+
+```{sh,eval=FALSE,block.title=TRUE}
+module load bioinfo-tools
+
+module load trinotate
+TransDecoder.LongOrfs -t Trinity_200.fa
+TransDecoder.Predict -t Trinity_200.fa
+```
+
+Once you have the sequences you can start looking for sequence or domain homologies.
+
+## BLAST approach
+
+Blast searches provide an indication about potential homology to known proteins.
+A 'full' Blast analysis can run for several days and consume several GB of Ram. Consequently, for a huge amount of data it is recommended to parallelize this step doing analysis of chunks of tens or hundreds proteins. This approach can be used to give a name to the genes and a function to the transcripts. We will first run a blastx on our transcripts and then a blastp on the proteins we obtained from the transdecoder tool.
+
+
+### Perform Blast searches from the command line on Uppmax:
+
+To run Blast on your data, use the Ncbi Blast+ package against a Drosophila-specific database (included in the folder we have provided for you, under `~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa`. Of course, any other NCBI database would also work:
+
+```{sh,eval=FALSE,block.title=TRUE}
+blastx -db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -query Trinity_200.fa -max_target_seqs 1 -outfmt 6 -evalue 1e-5 > swissprot.blastx.outfmt6
+
+blastp -db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -query Trinity_200.fa.transdecoder.pep -max_target_seqs 1 -outfmt 6 -evalue 1e-5 > swissprot.blastp.outfmt6
+```
+
+## Domain/profiles homology searches
+
+### Pfam database
+Using your predicted protein sequences, we can run a [HMMER](http://hmmer.org/) search against the [Pfam database](http://pfam.xfam.org/), and identify conserved domains that might be indicative or suggestive of function:
+
+```{sh,eval=FALSE,block.title=TRUE}
+hmmscan --cpu 5 --domtblout TrinotatePFAM.out ~/RNAseq_assembly_annotation/assembly_annotation/database/trinotate_database/Pfam-A.hmm Trinity_200.fa.transdecoder.pep
+```
+
+### Signal peptide
+The [signalP tool](http://www.cbs.dtu.dk/services/SignalP/) is very useful for predicting signal peptides (secretion signals).
+
+To predict signal peptides, run signalP:
+
+```{sh,eval=FALSE,block.title=TRUE}
+export SNIC_TMP=$SNIC_TMP:~/RNAseq_assembly_annotation/RNAseq_annotation/trinotate
+signalp -f short -n signalp.out Trinity_200.fa.transdecoder.pep
+```
+
+### Transmembrane region
+
+[Tmhmm](http://www.cbs.dtu.dk/~krogh/TMHMM/) software tools is very useful for predicting transmembrane domains.
+Run TMHMM to predict transmembrane regions:
+
+```{sh,eval=FALSE,block.title=TRUE}
+tmhmm --short < Trinity_200.fa.transdecoder.pep > tmhmm.out
+```
+
+## Load results into the database
+
+To load results of your previous analyses you need to copy the database in your folder (otherwise you will not be able to modify it):
+
+```{sh,eval=FALSE,block.title=TRUE}
+cp ~/RNAseq_assembly_annotation/assembly_annotation/database/trinotate_database/Trinotate.sqlite .
+```
+
+You also need the transcript sequences (Trinity_200.fa), the protein sequences (Trinity_200.fa.transdecoder.pep) and a file showing gene/Transcript relationships (tab delimited format: "gene_id(tab)transcript_id"). You are using Trinity assemblies, you can generate this file like this:
+
+```{sh,eval=FALSE,block.title=TRUE}
+/sw/apps/bioinfo/trinity/2.8.2/rackham/util/support_scripts/get_Trinity_gene_to_trans_map.pl Trinity_200.fa > Trinity_200.fa.gene_trans_map
+```
+
+Then you can load those three files into the databases:
+
+```{sh,eval=FALSE,block.title=TRUE}
+Trinotate Trinotate.sqlite init --gene_trans_map Trinity_200.fa.gene_trans_map --transcript_fasta Trinity_200.fa --transdecoder_pep Trinity_200.fa.transdecoder.pep
+```
+
+Load the blast results :
+
+```{sh,eval=FALSE,block.title=TRUE}
+Trinotate Trinotate.sqlite LOAD_swissprot_blastp swissprot.blastp.outfmt6
+Trinotate Trinotate.sqlite LOAD_swissprot_blastx swissprot.blastx.outfmt6
+```
+
+Load the other domains results :
+
+```{sh,eval=FALSE,block.title=TRUE}
+Trinotate Trinotate.sqlite LOAD_pfam TrinotatePFAM.out
+Trinotate Trinotate.sqlite LOAD_tmhmm tmhmm.out
+Trinotate Trinotate.sqlite LOAD_signalp signalp.out
+```
+
+## Output and Annotation Report
+
+From the database you can create a report to visualize the results :
+
+```{sh,eval=FALSE,block.title=TRUE}
+Trinotate Trinotate.sqlite report > trinotate_annotation_report.xls
+```
+
+You can have a look at the parameters if you want to select by evalue or Pfam cutoff.
+
+The output is a 14 columns tabulated file, you can read more about it [here](https://github.com/Trinotate/Trinotate.github.io/wiki/Loading-generated-results-into-a-Trinotate-SQLite-Database-and-Looking-the-Output-Annotation-Report).
+
+Have a look at the results, you can retrieve them on your computer to have a better view at it.
+what do you see? How many transcripts are annotated? What kind of information do you get?
+
+## What's next?
+
+You have executed part of the trinotate pipeline step by step but it is now possible to run it as a real pipeline with all the step automated [see](https://github.com/Trinotate/Trinotate.github.io/wiki/Automated-Execution-of-Trinotate:-Running-computes-and-loading-results).
+
+You can run other analyses with the pipeline such as [RNAMMER](https://wiki.gacrc.uga.edu/wiki/RNAmmer) to look for RNA (there was none in this sequence).
+
+You can also load expression data, expression clusters and some other annotated text into the database created [see](https://github.com/Trinotate/Trinotate.github.io/wiki/TrinotateWeb).
+
+Finally, you can visualize all those data using the TrinotateWeb tool to visualize the annotation results and differential expression data [same link as before](https://github.com/Trinotate/Trinotate.github.io/wiki/TrinotateWeb).
+
+One alternative to annotate transcripts or protein is Interproscan. [InterproScan](https://github.com/ebi-pf-team/interproscan/wiki) combines a number of searches for conserved motifs and curated data sets of protein clusters etc. This step may take fairly long time. It is recommended to parallelize it for huge amount of data by doing analysis of chunks of tens or hundreds proteins.
+
+The annotated transcripts can be used in different way in annotation. It can be used to help in the first annotation round to map annotated transcripts to the genome and then help for the genes annotation. It can also be used after the annotation to complement and improve this one if RNAseq data were not available when the genome annotation was done.
+
+**End of document**

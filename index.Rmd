@@ -1,0 +1,51 @@
+---
+#title: "Workshop on RNA-Seq"
+#subtitle: "29 May & 3-4 June 2019 at SLU, Uppsala"
+output:
+  bookdown::html_document2:
+    toc: false
+    number_sections: false
+    theme: flatly
+    highlight: tango
+    df_print: default
+    code_folding: "none"
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+<div class="container" style="width:auto;padding-right:0px;">
+<div class="row">
+<div class="col-sm-6" style="margin-left:-15px;">
+<h1>Workshop on RNA-Seq</h1>
+</div>
+<div class="col-sm-6" style="text-align:right;margin-top:16px;padding-right:0px;">
+<img src="assets/logo.svg" alt="NBIS | ScilifeLab" class="img-fluid" style="height:45px;">
+</div>
+</div>
+</div>
+
+<div class="large"> **29 May & 3-4 June 2019 at SLU, Uppsala** </div>
+
+<p class="large" style="line-height:150%;margin-bottom:30px;">
+Welcome to this workshop on RNA-Seq. This course aims to cover the most important aspects of RNA-Seq analysis using next generation sequencing data. We cover quality control, mapping, quantification and differential gene expression.
+</p>
+
+<div class="medium" style="line-height:150%;">
+* Before the course, please ensure that you have completed the **[Precourse](precourse.html)** steps.
+* For practical information regarding the course venue and travel information, see **[Info](info.html)**.
+* See **[Schedule](schedule.html)** for the current course plan in chronological order.
+* All lab materials have been collected in a single location, organised into **main** workflow and **bonus** sections, see **[Lab](lab.html)**.
+</div>
+
+<!-- <p class="large danger""> <i class="fas fa-exclamation-circle"></i> The contents of this website are subject to change until the course.</p> -->
+
+---
+
+<div class="small">
+`r paste0("Last updated on  <i class='fa fa-calendar' aria-hidden='true'></i> ",format(Sys.time(),format='%d-%b-%Y')," at  <i class='fa fa-clock-o' aria-hidden='true'></i> ",format(Sys.time(),format='%X'),".")`
+</div>

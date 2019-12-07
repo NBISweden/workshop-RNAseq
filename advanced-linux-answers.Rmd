@@ -1,0 +1,89 @@
+---
+title: "Advanced Linux Answers"
+subtitle: "Workshop on RNA-Seq"
+author: "Martin Dahlö"
+output:
+  bookdown::html_document2:
+          toc: true
+          toc_float: true
+          toc_depth: 4
+          number_sections: true
+          theme: flatly
+          highlight: tango
+          df_print: default
+          code_folding: "none"
+          self_contained: false
+          keep_md: false
+          encoding: 'UTF-8'
+          css: "assets/lab.css"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+# Ownership and permissions
+
+Q:  Change permission from `----------` to `-rw-rw—wx`.
+
+One answer:
+
+```
+chmod ug+rw filename  
+chmod o+wx filename  
+```
+
+# Symbolic links - files
+
+Q Did editing the information in the link change the information in the original?  
+A: Yes.
+
+Q: What happens to a symbolic link when we move whatever its pointing to?  
+A: it breaks.
+
+Q: Is the link re-activated?  
+A: yes.
+
+# Grep
+
+Command to grep all lines with chr1 and send to other file.
+
+ex:
+
+```
+grep "chr1" sample_1.sam > chr1.txt
+```
+
+# WC
+
+```
+grep "chr1" sample_1.sam | wc -l
+samtools view outbam.bam | grep "CATCATCAT" | wc -l
+```
+
+# Extra material 1
+
+Task 1:
+
+```
+grep "^@" sample_1.sam > at.txt
+```
+
+Task 2:
+
+```
+grep "[0-9]\{3\}$" sample_1.sam
+```
+
+# Extra material 2
+
+```
+sed 's/chr1/chr2/' sample_1.sam > sample_2.sam
+```
+
+# Extra material 3
+
+```
+for f in *.sam; do mv $f ${f/.sam}.bam; done
+```
+
+__End of document__
