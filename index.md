@@ -1,5 +1,3 @@
-# Workshop material
-
 All current and previous workshop materials are listed below. Numbers denote year and month.
 
 <a href='https://NBISweden.github.io/workshop-RNAseq/2005/'>2005</a>
