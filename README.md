@@ -1,4 +1,4 @@
-# workshop-RNAseq [![travis-build](https://travis-ci.org/NBISweden/workshop-RNAseq.svg?branch=master)](https://travis-ci.org/NBISweden/workshop-RNAseq)
+# workshop-RNAseq [![travis-build](https://travis-ci.com/NBISweden/workshop-RNAseq.svg?branch=master)](https://travis-ci.com/NBISweden/workshop-RNAseq)
 
 This repo contains the course material for NBIS **Workshop on RNA-Seq**. The rendered view of this repo is available [here](https://nbisweden.github.io/workshop-RNAseq/).
 

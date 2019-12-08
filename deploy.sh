@@ -49,8 +49,7 @@ str_user_repo=$(echo $url_git | sed 's/https:\/\/github.com\///' | sed 's/.git//
 str_user=$(echo "$str_user_repo" | sed 's/\/.*//')
 str_repo=$(echo "$str_user_repo" | sed 's/.*\///')
 
-printf "# Workshop material\n\n" > index.md
-printf "All current and previous workshop materials are listed below. Numbers denote year and month.\n\n" >> index.md
+printf "All current and previous workshop materials are listed below. Numbers denote year and month.\n\n" > index.md
 
 dirs=$(ls -d */ | sed 's/\///' | tac)
 
