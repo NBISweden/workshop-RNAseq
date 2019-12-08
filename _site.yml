@@ -1,0 +1,80 @@
+﻿name: Workshop on RNA-Seq
+favicon: assets/favicon.png
+output_dir: 2005
+uppmax_project: XXXXXXXX
+# location options are lund, umea or uppsala
+location: uppsala 
+exclude: ["data","docs","README.md","schedule.csv","LICENSE","LICENSE.md","scripts"]
+navbar:
+  title: "<b>NBIS • Workshop on RNA-Seq</b>"
+  logo:
+    image: "assets/logo-white.svg"
+    href: https://NBISweden.github.io/workshop-RNAseq
+  right:
+    - text: Home
+      icon: fa-home
+      href: index.html
+    - text: Schedule
+      icon: fa-clipboard-list
+      href: home_schedule.html
+    - text: Lab
+      icon: fa-flask
+      href: home_lab.html
+    - text: Precourse
+      icon: fa-pencil-alt
+      href: home_precourse.html
+    - text: Info
+      icon: fa-info
+      href: home_info.html
+output:
+  bookdown::html_document2:
+    highlight: textmate
+    toc: true
+    toc_float: true
+    toc_depth: 4
+    number_sections: true
+    df_print: default
+    code_folding: none
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+    include:
+      after_body: assets/footer-lab.html
+# r packages needed for the workshop
+# used in home_precourse.Rmd
+# split into cran and bioc packages
+# if a package is needed by students and repo, add to _student
+# if a package is only needed for repo, add to _repo
+# if unsure, add to _student
+packages:
+ packages_cran_student:
+  - devtools
+  - dplyr
+  - enrichR
+  - ggplot2
+  - ggpubr
+  - knitr
+  - markdown
+  - pheatmap
+  - pvclust
+  - rafalib
+  - rmarkdown
+  - stringr
+  - tidyr
+ packages_bioc_student:
+  - biomaRt
+  - DESeq2
+  - edgeR
+  - fgsea
+ packages_cran_repo:
+  - bookdown
+  - captioner
+  - formattable
+  - kableExtra
+  - leaflet
+  - lubridate
+  - xaringan
+  - yaml
+ packages_bioc_repo:
+

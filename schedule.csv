@@ -1,0 +1,36 @@
+date;room;dur;topic;teacher;assistant;link_slide;link_lab;link_room
+04/05/2020;E10:1309;40;Welcome;Johan Reimegård;;;;http://bit.ly/2UKjEoQ
+;;40;RNA Introduction;Johan Reimegård;;slide_rna_intro.pdf;;
+;;20;Coffee Break;;;;;
+;;40;RNA-Seq Introduction;Johan Reimegård;;slide_rnaseq_intro.pdf;;
+;;40;Unix & Uppmax;Johan Reimegård;;slide_uppmax.pdf;;
+;;60;Lunch;;;;;
+;;40;Pre-alignment QC;Johan Reimegård;;slide_after_sequencing_qc.pdf;lab_qc.html;
+;;40;Mapping;Johan Reimegård;;alide_rnaseq_aligners.pdf;lab_mapping.html;
+;;40;Post-alignment QC;Johan Reimegård;;slide_after_mapping_qc.pdf;lab_qc.html;
+;;20;Coffee Break;;;;;
+;;40;Pseudoaligners;Johan Reimegård;;slide_pseudoaligners.pdf;lab_kallisto.html;
+;;40;Quantification;Johan Reimegård;;slide_quantification.pdf;lab_quantification.html;
+05/05/2020;E10:1309;40;Intro to R;Roy Francis;;;lab_r.html;http://bit.ly/2UKjEoQ
+;;40;Retrieving Data;Roy Francis;;;lab_download.html;
+;;20;Coffee Break;;;;;
+;;40;Data Preprocessing;Roy Francis;;slide_dge.html;lab_dge.html;
+;;40;Normalisation;Roy Francis;;;;
+;;60;Lunch;;;;;
+;;40;Exploratory Analyses;Roy Francis;;;;
+;;40;DGE;Roy Francis;;;;
+;;40;DGE;Roy Francis;;;;
+;;20;Coffee Break;;;;;
+;;40;DGE Visualisation;Roy Francis;;;;
+;;40;DGE Visualisation;Roy Francis;;;;
+06/05/2020;E10:1309;40;PCA;Paulo Czarnewski;;slide_pca.pdf;lab_eda.html;http://bit.ly/2UKjEoQ
+;;40;Hierarchical Clustering;Paulo Czarnewski;;slide_clustering.pdf;lab_eda.html;
+;;20;Coffee Break;;;;;
+;;40;Hierarchical Clustering;Paulo Czarnewski;;;;
+;;40;GSA & GSEA;Paulo Czarnewski;;slide_functional.pdf;lab_functional.html;
+;;60;Lunch;;;;;
+;;40;GSA & GSEA;Paulo Czarnewski;;;;
+;;40;GEO;Paulo Czarnewski;;;;
+;;40;Free Exercises;Paulo Czarnewski;;;;
+;;20;Coffee Break;;;;;
+;;40;Conclusion;Johan Reimegård;;;;
