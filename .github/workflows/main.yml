@@ -1,0 +1,92 @@
+name: web-build
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+jobs:
+  rmd-render-job:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: r-lib/actions/setup-r@master
+        with:
+          r-version: '3.6.1'
+      - uses: r-lib/actions/setup-pandoc@master
+      - name: Install linux dependencies
+        run: |
+          sudo apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev libudunits2-dev libopenblas-base
+      - name: Define variables
+        run: |
+          echo "::set-env name=path_repo::$(pwd)"
+          echo "::set-env name=path_export::$(grep -E '^output_dir' _site.yml | sed 's/^output_dir://' | xargs)"
+          echo "::set-env name=repo::$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')"
+      - name: Check R installation and variables
+        run: |
+          Rscript -e "print('R installation works!')"
+          echo "Github actor: ${GITHUB_ACTOR}"
+          echo "Github repository: ${GITHUB_REPOSITORY}"
+          echo "Github repo: ${repo}"
+          echo "Path repo: ${path_repo}"
+          echo "Path export: ${path_export}"
+          echo "Folder contents at $(pwd):"
+          ls -lh
+      - name: Cache R packages
+        id: cache-rp
+        uses: actions/cache@v1
+        with:
+          path: "/home/runner/work/_temp/Library"
+          key: ${{ runner.os }}-cache-rp-$(ls /home/runner/work/_temp/Library/ | sha256sum)
+      - name: Install R dependencies
+        if: steps.cache-rp.outputs.cache-hit != 'true'
+        run: |
+          Rscript -e "install.packages('yaml')"
+          Rscript -e 'install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)'
+          Rscript -e 'install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_student)'
+          Rscript -e 'devtools::install_github("rstudio/fontawesome")'
+          echo "R directory size:"
+          du -sh /home/runner/work/_temp/Library
+      - name: Render site, pull repo, copy folder, create index, push repo
+        run: |
+          # Add git info
+          git config --global user.email "do_not_email@example.com"
+          git config --global user.name "gh_action"
+
+          # Render website
+          Rscript -e "rmarkdown::render_site()"
+          echo "Folder contents at $(pwd):"
+          ls -lh
+          echo "Folder contents at ${path_repo}/${path_export}:"
+          ls -lh ${path_repo}/${path_export}
+
+          # Clone gh-pages branch
+          git clone --single-branch --branch gh-pages "https://${{ secrets.TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" tmprepo
+          cd tmprepo
+          if [ -d $path_export ]; then
+            echo "Directory ${path_export} already exists. Removing the directory."
+            git rm -r $path_export
+            git commit -m "Old directory ${path_export} deleted."
+          fi
+          cd ${path_repo}
+          cp -r $path_export tmprepo/
+          cd tmprepo
+          echo "Folder contents at $(pwd):"
+          ls -lh
+
+          # Create index file
+          printf "All current and previous workshop materials are listed below.\n\n" > index.md
+          printf "<div style='display:block;'><p>\n" >> index.md
+          months=(Zero Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
+          dirs=$(ls -d */ | sed 's/\///' | tac)
+          for i in $dirs
+          do
+           printf "<span style='display:block;'><a href='https://nbisweden.github.io/${repo}/${i}/'>20${i:0:2} ${months[${i:(-3)}]}</a></span>" >> index.md
+          done
+          printf "</p></div>" >> index.md
+
+          echo "Folder contents at $(pwd):"
+          ls -lh
+
+          # Push changes back
+          git add .
+          git commit -m "Updated contents at $(date +%Y%m%d-%H%M%S)"
+          git push origin

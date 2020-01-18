@@ -12,7 +12,7 @@ author: "`r paste0('<b>Johan Reimegård</b> • ',format(Sys.time(), '%d-%b-%Y')
 In this exercise we will analyse a few small RNA libraries, from *Drosophila melanogaster* (fruit fly) embryos and two cell lines (KC167 cells derived from whole embryos, and ML-DmD32 cells derived from adult wing discs). This is a subset of a much larger data set used to study microRNAs and other small RNAs in Drosophila:
 
 * **emb_0-1**: Small RNA from 0-1 hour embryos. (SRA id: SRR069840)
-* **emb_6-10**: Small RNA from 6-10 hour embryos. (SRA id:SRR069839) 
+* **emb_6-10**: Small RNA from 6-10 hour embryos. (SRA id:SRR069839)
 * **kc167**: Small RNA from KC167 cells. (SRA id:SRR028728)
 * **ml-DmD32_r1**: Small RNA from ML-DmD32 cells replicate1. (SRA id: SRR069508)
 * **ml-DmD32_r2**: Small RNA from ML-DmD32 cells replicate2. (SRA id: SRR488696)
@@ -39,7 +39,7 @@ And we create a directory under bonus to work in.
 mkdir bonus/smallrna
 ```
 
-All data and scripts required for this exercise can be found in 
+All data and scripts required for this exercise can be found in
 `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/smallRNA` on UPPMAX.
 
 This includes:
@@ -59,7 +59,7 @@ This might take a while since the fastq files are quite large.
 
 # Adaptor trimming
 
-When sequencing small RNAs we are working with very short RNA fragments, typically shorter than the reads. This means that most reads will contain parts of adaptor sequences that were inserted during library preparation. These are found at the (3') end of the reads. Before we can do anything else with the data we have to remove these sequences. 
+When sequencing small RNAs we are working with very short RNA fragments, typically shorter than the reads. This means that most reads will contain parts of adaptor sequences that were inserted during library preparation. These are found at the (3') end of the reads. Before we can do anything else with the data we have to remove these sequences.
 
 Look at any fastq file, e.g. using less:
 
@@ -104,7 +104,7 @@ It is often informative to just browse the reads once they have been mapped to g
 
 To load a file you first select the correct genome (**D. melanogaster r5.22**) in the top left menu. Then go to the *File > Menu*, and select *Load from file*, and select the files described above.
 
-Type the name of a microRNA, e.g **mir-124**, to go to that locus. You can see that the read mapping patterns are very distinct: (Almost) only the processed microRNAs end in the sequencing libraries, and you can see reads from both arms of the hairpin structure. While many microRNAs occur alone in the genome, other are arranged in clusters. Type **let-7** to browse such a cluster. 
+Type the name of a microRNA, e.g **mir-124**, to go to that locus. You can see that the read mapping patterns are very distinct: (Almost) only the processed microRNAs end in the sequencing libraries, and you can see reads from both arms of the hairpin structure. While many microRNAs occur alone in the genome, other are arranged in clusters. Type **let-7** to browse such a cluster.
 
 <i class="fas fa-comments"></i> How many microRNAs do you see in this region?
 
@@ -121,15 +121,15 @@ We can now summarize the mapped reads to see which microRNAs are expressed in th
 less [out.sam]
 ```
 
-Press <kbd>SPACE</kbd> to scroll down into the file and <kbd>Q</kbd> to exit the viewer. 
+Press <kbd>SPACE</kbd> to scroll down into the file and <kbd>Q</kbd> to exit the viewer.
 
 We are only interested in the reads mapping to known microRNA loci in [miRBase](http://www.mirbase.org), which is the "official" data base of microRNAs in many different species. The file `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/smallRNA/mirbase/dme_mirbase_FORMAT2016.gff3` contains the locations of all microRNAs on the fly genome. Use `less` to have a look at this file. [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) is a useful program for counting reads mapping to different genomic regions. Run it like this, for all SAM files at once:
 
 ```{sh,block.title=TRUE,eval=FALSE}
-featureCounts -t miRNA -g Name -O -s 1 -M -a [mirbasefile] -o [outfile] [samfiles ...] 
+featureCounts -t miRNA -g Name -O -s 1 -M -a [mirbasefile] -o [outfile] [samfiles ...]
 ```
 
-Here we only look at loci that are miRNA, and we use the **Name** attribute to name the loci. The `-O` flag tells the program that reads that map to several overlapping microRNAs should be assigned to all of them. The `-s 1` flag tells the program to only count reads that map to the same strand as the microRNA, and the `-M` flag makes sure we count multi mapping reads. The output will be a list with the number of reads mapping to each microRNA. `featureCounts` takes around a few minutes to run. When the program has finished, look at the results with `less`. 
+Here we only look at loci that are miRNA, and we use the **Name** attribute to name the loci. The `-O` flag tells the program that reads that map to several overlapping microRNAs should be assigned to all of them. The `-s 1` flag tells the program to only count reads that map to the same strand as the microRNA, and the `-M` flag makes sure we count multi mapping reads. The output will be a list with the number of reads mapping to each microRNA. `featureCounts` takes around a few minutes to run. When the program has finished, look at the results with `less`.
 
 # DGE
 
@@ -143,7 +143,7 @@ module load R_packages/3.5.2
 R
 ```
 
-You will see a different prompt, since you are now typing commands to R. You can always exit R with `quit()`. 
+You will see a different prompt, since you are now typing commands to R. You can always exit R with `quit()`.
 
 Alternatively, you can run RStudio locally on your system. In this case, you need to download the count tables.
 
@@ -164,7 +164,7 @@ You can look at the first 20 rows of the table by typing:
 exp.data[1:20,]
 ```
 
-Since the log transformation we will do later cannot handle cases with zero reads, we add a dummy value of 1 read to each microRNA: 
+Since the log transformation we will do later cannot handle cases with zero reads, we add a dummy value of 1 read to each microRNA:
 
 ```{r,block.title=TRUE,eval=FALSE}
 exp.data <- exp.data + 1
@@ -234,7 +234,7 @@ Another way to get a global overview of the data is to use clustering and plot h
 heatmap(norm.data, scale="none", cexRow=0.2, cexCol=0.6)
 ```
 
-In the resulting plot each library is a column and each microRNA is a row. The color indicates the expression levels, with red being no reads and more yellow indicating higher expression. The dendrogram at the top shows how the libraries cluster together. 
+In the resulting plot each library is a column and each microRNA is a row. The color indicates the expression levels, with red being no reads and more yellow indicating higher expression. The dendrogram at the top shows how the libraries cluster together.
 
 <i class="fas fa-comments"></i> What can you learn from looking at this plot?
 
@@ -251,7 +251,7 @@ If the library **pheatmap** isn't installed, you can download and install it wit
 install.packages("pheatmap")
 ```
 
-<div class="instruction">
+<div class="boxy boxy-exclamation">
 There may be some problems displaying plots etc. on UPPMAX when running in interactive mode. If you have trouble viewing the PCA plots and heatmaps, try:
 
 - Log out of UPPMAX

@@ -1,0 +1,127 @@
+---
+title: "Content"
+output:
+  bookdown::html_document2:
+    toc: true
+    number_sections: true
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+This page contains links to different lectures (slides) and practical exercises (labs) that are part of this workshop. The links below are similar to that under [Schedule](home_schedule.html) but organised here by topic.
+
+<div class="boxy boxy-tip">
+Input code blocks are displayed like shown below. The code language is displayed above the block. Shell scripts (**SH**) are to be executed in the linux terminal. **R** scripts are to be run in R either through the terminal, RGui or RStudio.
+
+```{sh,eval=FALSE,block.title=TRUE}
+command
+```
+
+<i class="fas fa-exclamation-circle"></i> Note &nbsp; <i class="fas fa-lightbulb"></i> Tip &nbsp; <i class="fas fa-comments"></i> Discuss &nbsp; <i class="fas fa-clipboard-list"></i> Task
+</div>
+
+<br>
+
+# Introduction
+
+A brief introduction to the world of RNA and RNA-Seq technology.
+
+* [Introduction to RNA (Slide)](slide_rna_intro.pdf)  
+* [Introduction to RNA-Seq (Slide)](slide_rnaseq_intro.pdf)
+
+A primer to working on the unix/linux command line and working on a remote computing cluster Uppmax.
+
+* [Introduction to Linux & Uppmax (Slide)](slide_uppmax_intro.pdf)
+
+RNA-Seq analyses is usually carried out in R programming language and it will be useful to learn some basic R.
+
+* [Introduction to R (Lab)](lab_r.html)  
+
+This topic covers retrieving supporting data needed for RNA-seq analyses. These include gene annotation IDs such as mapping between Ensembl IDs and Gene IDs, GO terms and transcript IDs. We also cover retrieving genomic data from Ensembl.
+
+* [Downloading data (Lab)](lab_download.html)
+
+# Main lab
+## Data
+
+In most of the exercises, we will use RNA-seq data (Illumina short reads) from the human A431 cell line. It is an epidermoid carcinoma cell line which is often used to study cancer and the cell cycle, and as a sort of positive control of epidermal growth factor receptor (EGFR) expression. A431 cells express very high levels of EGFR, in contrast to normal human fibroblasts.
+
+The A431 cells were treated with gefinitib, which is an EGFR inhibitor and is used (under the trade name Iressa) as a drug to treat cancers with mutated and overactive EGFR. In the experiment, RNA was extracted at four time points: before the gefinitib treatment (t=0), and two, six and twenty-four hours after treatment (t=2, t=6, t=24, respectively), and sequenced using an Illumina HiSeq instrument in triplicates (thus there are 3x4=12 samples).
+
+This data set or parts of it will be used in the labs on read mapping, transcript assembly, visualization, quality control and differential expression. There are many relevant questions that could be asked based on these measurements. In the QC exercise, we are going to examine if the RNA libraries that we work with are what we think they are or if there is any mislabelling. In the isoform exercise, we are going to look at some specific regions where the mass-spectrometry data indicated that novel exons or splice variants could be present at the protein level. We will use (part of) the RNA-seq data to examine if there is corresponding evidence on the mRNA level, and how different software tools could be used to detect novel gene variants.
+
+## Quality control
+
+Before doing any other analysis on mapped RNA-seq reads it is always important to do quality control of your mapped reads and that you do not have any obvious errors in your RNA-seq data.
+
+* [QC of raw reads (Slide)](slide_after_sequencing_qc.pdf)
+* [Quality control (Lab)](lab_qc.html)
+
+## Mapping
+
+This section contains information on how to map reads to a reference genome using splice-aware aligner STAR and HISAT2.
+
+* [RNA-Seq aligners (Slide)](slide_rnaseq_aligners.pdf)
+* [Mapping reads using STAR (Lab)](lab_mapping.html)
+
+## Post-alignment QC
+
+* [QC of alignments (Slide)](slide_after_mapping_qc.pdf)
+* [Quality control (Lab)](lab_qc.html) (Same document as before)
+
+BAM files are visualised using integrated genome viewer.
+
+* [Using IGV (Lab)](lab_igv.html)
+
+## Quantification
+
+Gene counts are quantified from BAM files using featureCounts.
+
+* [Quantification (Slide)](slide_quantification.pdf)
+* [Quantification (Lab)](lab_quantification.html)
+
+## Mapping and quantification using Pseudoaligners
+
+Kallisto uses FastQ reads and a reference transcriptome (cDNA+ncRNA) to quantify transcripts using rapid pseudo-alignment along with bootstrap replicates to assess quantification inaccuracy. Kallisto is significantly faster than STAR or HISAT2 and has a small memory footprint. Differential gene expression is carried out using Sleuth which utilises bootstrap replicates.
+
+* [Pseudoaligners (Slide)](slide_pseudoaligners.pdf)
+* [Mapping and quantification using Kallisto (Lab)](lab_kallisto.html)
+
+## Exploratory data analyses
+
+Before commencing any quantitative analyses, it is important to run some exploratory analyses to access similarity between samples. This is a vital step to identify mislabelled samples, poor-quality samples and/or replicates that differ considerably. This section dives deeper into exploratory analyses PCA and hierarchical clustering.
+
+* [Principal component analysis (Slide)](slide_pca.pdf)
+* [Cluster analysis (Slide)](slide_clustering.pdf)
+* [Exploratory data analyses (Lab)](lab_eda.html)
+
+## Differential gene expression
+
+We find genes that are differentially expressed between our time points.
+
+* [Differential gene expression (Slide)](slide_dge.html)  
+* [DGE workflow using DESeq2 (Lab)](lab_dge.html)  
+
+## Functional analysis
+
+We will perform functional analysis on the differentially expressed genes to place them into a function context and possibly explain the biological consequences of DE. Methods covered are GSA (Gene set analysis) and GSEA (Gene set enrichment analysis).
+
+* [Functional analyses (Slide)](slide_functional.pdf)  
+* [Functional analysis (Lab)](lab_functional.html)
+
+# Bonus labs
+## small RNA analyses
+
+RNA-seq differential analyses workflow on microRNAs from Fruit fly.
+
+* [Small RNA-seq analyses (Lab)](lab_smallrna.html)
+
+## Assembly & annotation
+
+Raw sequencing short reads are assembled into transcripts using two approaches. Genome-guided assembly using HiSat2 and StringTie. De-novo transcriptome assembly using Trinity. Assembled transcriptomes are functionally annotated to identify genes.
+
+* [Reference-guided assembly using StringTie and De-novo assembly using Trinity (Lab)](lab_assembly.html)  
+* [Transcriptome annotation (Lab)](lab_annotation.html)
+
+***

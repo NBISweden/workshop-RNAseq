@@ -3,34 +3,33 @@ favicon: assets/favicon.png
 output_dir: 2005
 uppmax_project: XXXXXXXX
 # location options are lund, umea or uppsala
-location: uppsala 
-exclude: ["data","docs","README.md","schedule.csv","LICENSE","LICENSE.md","scripts"]
+location: uppsala
+exclude: ["docs","README.md","schedule.csv","LICENSE","LICENSE.md","scripts","tmprepo"]
 navbar:
-  title: "<b>NBIS • Workshop on RNA-Seq</b>"
+  title: '<img src="assets/logo.svg" id="logo" style="height:30px;margin:0;"/>'
+  type: default
   logo:
-    image: "assets/logo-white.svg"
+    image: "assets/logo.svg"
     href: https://NBISweden.github.io/workshop-RNAseq
   right:
     - text: Home
-      icon: fa-home
       href: index.html
     - text: Schedule
-      icon: fa-clipboard-list
       href: home_schedule.html
-    - text: Lab
-      icon: fa-flask
-      href: home_lab.html
+    - text: Content
+      href: home_content.html
     - text: Precourse
-      icon: fa-pencil-alt
       href: home_precourse.html
     - text: Info
-      icon: fa-info
       href: home_info.html
 output:
   bookdown::html_document2:
     highlight: textmate
     toc: true
-    toc_float: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
     toc_depth: 4
     number_sections: true
     df_print: default
@@ -45,21 +44,16 @@ output:
 # used in home_precourse.Rmd
 # split into cran and bioc packages
 # if a package is needed by students and repo, add to _student
-# if a package is only needed for repo, add to _repo
-# if unsure, add to _student
+# if a package is only needed for repo (build, rendering etc), add to _repo
 packages:
  packages_cran_student:
-  - devtools
   - dplyr
   - enrichR
   - ggplot2
   - ggpubr
-  - knitr
-  - markdown
   - pheatmap
   - pvclust
   - rafalib
-  - rmarkdown
   - stringr
   - tidyr
  packages_bioc_student:
@@ -70,11 +64,14 @@ packages:
  packages_cran_repo:
   - bookdown
   - captioner
+  - devtools
   - formattable
   - kableExtra
+  - knitr
   - leaflet
   - lubridate
+  - markdown
+  - rmarkdown
   - xaringan
   - yaml
  packages_bioc_repo:
-

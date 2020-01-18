@@ -1,5 +1,5 @@
 ---
-title: "<i class='fas fa-pencil-alt' style='margin-left:4px;margin-right:4px;'></i> Precourse"
+title: "&nbsp;"
 output:
   bookdown::html_document2:
     toc: false
@@ -14,32 +14,79 @@ library(yaml)
 upid <- yaml::read_yaml("_site.yml")$uppmax_project
 ```
 
+# Precourse {.tabset .tabset-fade}
+
+This workshop is aimed towards biologists, researchers, computer scientists or data analysts planning to run, analyse and interpret an RNA-Seq experiment. Basic knowledge of working on the Unix/Linux command line is expected.
+
+## Preparation
+
 These are steps to be completed before the workshop.
 
-* A remote computing cluster (UPPMAX) will be use for handling raw sequence data. A SUPR/SNIC account is needed to use UPPMAX resources. If you do not already have one, [create an account](https://supr.snic.se/). Log in to [SUPR/SNIC](https://supr.snic.se/) and request membership to the project ID **`r paste0(upid)`**. 
+### Uppmax ID
 
-* Make sure you can connect to the Uppmax cluster Rackham through a terminal. Type `ssh -Y user@rackham.uppmax.uu.se` and then enter your password. The password will not be visible as you type. 
+A remote computing cluster (UPPMAX) will be use for data analyses. A SUPR/SNIC account is needed to use UPPMAX resources.
 
-<div class="instruction">
-<i class="fas fa-lightbulb"></i> If you are on a Windows system, we recommend [MobaXterm](http://mobaxterm.mobatek.net). For MobaXterm users, it is recommended that you install the program and not use the portable version. MobaXterm also has an integrated SFTP file browser.  
-<i class="fas fa-lightbulb"></i> For all users, if you prefer a GUI to upload and download files from UPPMAX, we recommend installing [FileZilla](https://filezilla-project.org/).
+If you do not already have one, create an account at [https://supr.snic.se/](https://supr.snic.se/).
+
+<img src="data/common/supr-login.png" class="fancyimage">
+
+Log in to [SUPR/SNIC](https://supr.snic.se/) and request membership to the project ID **`r paste0(upid)`**.
+
+<img src="data/common/supr-request.png" class="fancyimage">
+
+Once you are accepted to the project, you should see that project listed under your active projects.
+
+<img src="data/common/supr-projects.png" class="fancyimage">
+
+### SSH & SFTP access
+
+<div class="boxy boxy-lightbulb">
+You need a program to connect to a remote cluster (UPPMAX). Linux and Mac users already have terminal on their systems.
+
+[![](data/common/mobaxterm.png)](http://mobaxterm.mobatek.net)
+
+If you are on a Windows system, we recommend [MobaXterm](http://mobaxterm.mobatek.net). It is recommended that you INSTALL the program and not use the portable version. MobaXterm also has an integrated SFTP file browser.  
+
+[![](data/common/xquartz.png)](https://www.xquartz.org/)
+
+Mac users will need to download and install [XQuartz](https://www.xquartz.org/) for X11 forwarding. *ie*; to forward remotely opened windows to local machine.
 </div>
 
-* If you do not feel comfortable working in a terminal, please take the time to do the first three parts in the *[Unix tutorial for beginners](http://www.ee.surrey.ac.uk/Teaching/Unix/)* before the workshop. Otherwise, it may be difficult for you to follow the exercises during the workshop. 
+Type `ssh -Y user@rackham.uppmax.uu.se` in the terminal and then enter your password. The password will not be visible as you type.
 
-* Make sure that you can read and write in the workshop folder. Go to ``r paste0("/proj/",upid,"/nobackup/")`` and create a directory with your username. For example `mkdir jody`. You will work inside this directory for the workshop. For example ``r paste0("/proj/",upid,"/nobackup/jody")``. If you cannot write to the folder, the most likely reason is that you have not requested access to the workshop project via SUPR.  
+<div class="boxy boxy-lightbulb">
+If you need to transfer data between UPPMAX and your computer, you can use tools SCP or SFTP through the terminal. Windows users can use the SFTP browser available with MobaXterm.
 
-<div class="instruction">
-<i class="fas fa-exclamation-circle"></i> Note that it may take an hour or so from request approval, before you can actually write to the folder. We will check before the workshop that all students have logged in and done this, so do not forget!  
+[![](data/common/filezilla.png)](https://filezilla-project.org/)
+
+For all users, if you prefer a GUI to upload and download files from UPPMAX, we recommend installing [FileZilla](https://filezilla-project.org/).
 </div>
 
-* Download IGV on your own computer and make sure that you have hg19 genome available. The data we will work with is from human and we will visualise the results in the IGV genome browser. IGV can be downloaded from the [Broad Institute](https://www.broadinstitute.org/igv/).
+### Course directory access
 
-* Download and install the latest version of R from [r-project.org](https://cloud.r-project.org/). If you have an old version of R and you do not use it, uninstall it and then install a newer version. Make sure you have one of the recent versions of R. For Windows users, it is recommended that you DO NOT install to `C:\Program Files\R\`. Instead, install to `C:\R\`. 
+<div class="boxy boxy-lightbulb">
+For this step, you will have to use the terminal a bit. You can get started by following **Tutorial One** at this link *[Unix tutorial for beginners](http://www.ee.surrey.ac.uk/Teaching/Unix/)*. You must use [https://scilifelab.github.io/courses/ngsintro/common/emu/](https://scilifelab.github.io/courses/ngsintro/common/emu/) [(or this mirror)](https://bellard.org/jslinux/vm.html?url=https://bellard.org/jslinux/buildroot-x86.cfg) to try the commands in the tutorial, so that you don't mess up any real world system. If you any questions regarding this tutorial contact: *martin.dahlo@scilifelab.uu.se*.
+</div>
 
-* Install [RStudio](https://www.rstudio.com/products/rstudio/download/). RStudio provides you with tools like code editor with highlighting, project management, version control, package building, debugger, profiler and more.
+Make sure that you can read and write in the workshop folder. Go to ``r paste0("/proj/",upid,"/nobackup/")`` and create a directory with your username. For example `mkdir jody`. You will work inside this directory for the workshop. For example ``r paste0("/proj/",upid,"/nobackup/jody")``. If you cannot write to the folder, the most likely reason is that you have not requested access to the workshop project via SUPR. This is described in step 1.  
 
-* Extra R packages used in the workshop exercises (if any) are listed below. It is recommended that you install this in advance. Simply copy and paste the code into R.
+<div class="boxy boxy-exclamation">
+Note that it may take an hour or so from request approval, before you can actually write to the folder. We will check before the workshop that all students have logged in and done this, so do not forget!
+</div>
+
+### Tools
+
+<i class="fas fa-chevron-circle-right"></i> **Download IGV** (Integrated Genome Browser) from the [Broad Institute](https://www.broadinstitute.org/igv/) on your own computer and make sure that you have human genome available. The will work with human data and visualise the results in the IGV genome browser.
+
+[![](data/common/r.png)](https://cloud.r-project.org/)
+
+<i class="fas fa-chevron-circle-right"></i> **Install R statistical software** from [r-project.org](https://cloud.r-project.org/). If you have an old version of R and you do not use it, uninstall it and then install a newer version. Make sure you have one of the recent versions of R. For Windows users, it is recommended that you DO NOT install to `C:\Program Files\R\`. Instead, install to `C:\R\`.
+
+[![](data/common/rstudio.png)](https://www.rstudio.com/products/rstudio/download/)
+
+<i class="fas fa-chevron-circle-right"></i> **Install [RStudio](https://www.rstudio.com/products/rstudio/download/)**. RStudio provides you with tools like code editor with highlighting, project management, version control, package building, debugger, profiler and more.
+
+<i class="fas fa-chevron-circle-right"></i> **Extra R packages** used in the workshop exercises (if any) are listed below. It is recommended that you install this in advance. Simply copy and paste the code into R.
 
 ```{r,eval=TRUE,block.title=NULL,echo=FALSE,comment="",class.output="r"}
 # this code block reads package names from '_site.yml' and prints them as installation instruction.
@@ -58,4 +105,24 @@ if(!is.null(pkg$packages$packages_bioc_student)) {
 }
 ```
 
-**End of document.**
+***
+
+## Syllabus
+
+The syllabus for this workshop are as follows.
+
+* Introduction to RNA-Seq technology and workflow
+* Assessing quality of raw Illumina short reads using FastQC
+* Mapping short reads to reference genome using STAR sligner
+* Post alignment QC
+* Quantification of mapped reads using featureCounts
+* Exploratory data analysing using PCA and cluster analysis
+* Differential gene expression using DESeq2
+
+***
+
+## Learning outcomes
+
+***
+
+#

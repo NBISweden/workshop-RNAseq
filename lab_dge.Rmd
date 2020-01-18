@@ -21,8 +21,8 @@ library(DESeq2) # rna-seq
 library(edgeR) # rna-seq
 ```
 
-<div class="instruction">
-<i class="fas fa-exclamation-circle"></i> The raw data and metadata can be downloaded from [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). The files needed are **counts_raw.txt** and **metadata_raw.csv**. Other files are created as intermediates during this workflow. They may be useful if you cannot get a step to work. Place the files in a directory named `data` in your current working directory.
+<div class="boxy boxy-exclamation">
+The raw data and metadata can be downloaded from [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). The files needed are **counts_raw.txt** and **metadata_raw.csv**. Other files are created as intermediates during this workflow. They may be useful if you cannot get a step to work. Place the files in a directory named `data` in your current working directory.
 </div>
 
 # Data preprocessing

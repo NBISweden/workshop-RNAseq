@@ -1,5 +1,5 @@
 ---
-title: "<i class='fas fa-clipboard-list' style='margin-left:4px;margin-right:4px;'></i> Schedule"
+title: "Schedule"
 output:
   bookdown::html_document2:
     toc: false
@@ -63,7 +63,7 @@ s %>%
   dplyr::select(-date,-room) %>%
   setNames(cnames[1:ncol(.)]) %>%
   kable(format="html",escape=FALSE) %>%
-  kable_styling(bootstrap_options=c("hover","responsive"),position="left",full_width=FALSE) %>%
+  kable_styling(bootstrap_options=c("hover","responsive","condensed"),position="left",full_width=FALSE) %>%
   pack_rows(index=r,label_row_css="background:white;",escape=F,indent=FALSE)
 ```
 

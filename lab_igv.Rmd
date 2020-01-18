@@ -11,11 +11,11 @@ author: "`r paste0('<b>NBIS</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
 
 Integrated Genomics Viewer (IGV) is a visualization tool for interactive exploration of large, integrated genomic data sets. It supports a wide variety of data types, including array-based and next-generation sequence data, and genomic annotations. Our purpose of IGV is to visualise reads mapped to reference in BAM files. IGV is also useful in curating/verifying results from analyses pipelines.  
 
-<div class="instruction">
+<div class="boxy boxy-lightbulb">
 
-IGV is installed on uppmax, but since you would then access it over a network connection, the graphics might be sluggish. We recommend that you download and run IGV locally and download the files that you will look at locally. Alternatively, you can put the files in the webexport folder on uppmax and view them from there. More information about that further down.
+IGV is installed on Uppmax, but since you would then access it over a network connection, the graphics might be sluggish. We recommend that you download and run IGV locally and download the files that you will look at locally. Alternatively, you can put the files in the webexport folder on Uppmax and view them from there. More information about that further down.
 
-If you still want to try to run IGV on uppmax, please refer to the uppmax [instructions](https://www.uppmax.uu.se/support/user-guides/integrative-genomics-viewer--igv--guide/) for IGV.
+If you still want to try to run IGV on Uppmax, please refer to the Uppmax [instructions](https://www.uppmax.uu.se/support/user-guides/integrative-genomics-viewer--igv--guide/) for IGV.
 
 </div>
 
@@ -44,7 +44,7 @@ samtools index fileName.sorted.bam
 
 This is explained in some more detail in the read mapping tutorial.
 
-Then, in IGV, just follow the instruction above for choose **File > Load from File …** and select the BAM file. If you are running IGV locally and did the mapping on uppmax, you will have to download the BAM file and the corresponding index file (**.bai**) from your work folder to your own computer first.
+Then, in IGV, just follow the instruction above for choose **File > Load from File …** and select the BAM file. If you are running IGV locally and did the mapping on Uppmax, you will have to download the BAM file and the corresponding index file (**.bai**) from your work folder to your own computer first.
 
 # Going to a locus
 

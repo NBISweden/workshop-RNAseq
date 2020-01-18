@@ -9,8 +9,8 @@ author: "`r paste0('<b>Paulo Czarnewski</b> • ',format(Sys.time(), '%d-%b-%Y')
 
 # Loading data
 
-<div class="instruction">
-<i class="fas fa-exclamation-circle"></i> The cpm data and metadata can be downloaded from [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). The files needed are **cpm.csv** and **metadata_raw.csv**. Place the files in a directory named `data` in your current working directory.
+<div class="boxy boxy-exclamation">
+The cpm data and metadata can be downloaded from [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). The files needed are **cpm.csv** and **metadata_raw.csv**. Place the files in a directory named `data` in your current working directory.
 </div>
 
 Loading packages and data.
@@ -42,8 +42,8 @@ vars <- sort( vars , decreasing=T)
 top_var <- names( vars ) [1:500]
 ```
 
-<div class="instruction">
-<i class="fas fa-exclamation-circle"></i> Here you would select genes based on p-values and logFC you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are selecting only the top 500 variable genes.
+<div class="boxy boxy-exclamation">
+Here you would select genes based on p-values and logFC you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are selecting only the top 500 variable genes.
 </div>
 
 ***
@@ -141,14 +141,14 @@ KEGG | [c2.cp.kegg.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msi
 GO_BP | [c5.bp.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/c5.bp.v6.2.symbols.gmt)
 HALLMARK | [h.all.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/h.all.v6.2.symbols.gmt)
 
-<div class="instruction">
-<i class="fas fa-exclamation-circle"></i> For this exercise, the database files are available at [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). You need the whole directory labelled **MSigDB_files**. Place this directory under a directory named `data` in your current working directory. Otherwise, set the path appropriately.
+<div class="boxy boxy-exclamation">
+For this exercise, the database files are available at [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). You need the whole directory labelled **MSigDB_files**. Place this directory under a directory named `data` in your current working directory. Otherwise, set the path appropriately.
 </div>
 
 As you could already notice, the differences in gene expression between days t0 to t24 are very clear, but not the ones from t2. Here we will illustrate a gene set enrichment comparing t2 to t0 in order to explore which pathways are UP or DOWN regulated at the first 2 hours of the experiment.
 
-<div class="instruction">
-<i class="fas fa-exclamation-circle"></i> Here you would use the logFC values you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are using a simple difference in mean expression.
+<div class="boxy boxy-exclamation">
+Here you would use the logFC values you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are using a simple difference in mean expression.
 </div>
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}

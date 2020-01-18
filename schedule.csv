@@ -6,7 +6,7 @@ date;room;dur;topic;teacher;assistant;link_slide;link_lab;link_room
 ;;40;Unix & Uppmax;Johan Reimegård;;slide_uppmax.pdf;;
 ;;60;Lunch;;;;;
 ;;40;Pre-alignment QC;Johan Reimegård;;slide_after_sequencing_qc.pdf;lab_qc.html;
-;;40;Mapping;Johan Reimegård;;alide_rnaseq_aligners.pdf;lab_mapping.html;
+;;40;Mapping;Johan Reimegård;;slide_rnaseq_aligners.pdf;lab_mapping.html;
 ;;40;Post-alignment QC;Johan Reimegård;;slide_after_mapping_qc.pdf;lab_qc.html;
 ;;20;Coffee Break;;;;;
 ;;40;Pseudoaligners;Johan Reimegård;;slide_pseudoaligners.pdf;lab_kallisto.html;

@@ -1,19 +1,33 @@
+---
+title: "&nbsp;"
+---
 
-<hr/>
+<footer class="footer">
+<div class="container container-footer">
+<div class="row">
 
-<div>
-<span style="float:left; vertical-align:middle">
-<b>2019</b> [NBIS](https://nbis.se/) • [SciLifeLab](https://www.scilifelab.se/)
-</span>
-<span style="float:right; vertical-align:middle">
+<div class="col-sm-8" style="text-align:left;vertical-align:middle;">
+<p style="color:#bdbdbd;">
+<b>2020</b> • NBIS • SciLifeLab
+</p>
+</div>
+
+<div class="col-sm-4" style="text-align:right;vertical-align:middle;">
+<p style="color:#bdbdbd;">
+<span>
 <span class="footericon" style="padding-right:4px; padding-left:4px">
-<a href="https://nbis.se/"><i class="fas fa-globe-americas"></i></a>
+<a href="https://nbis.se/">`r fontawesome::fa("globe-americas",fill="#bdbdbd")`</a>
 </span>
 <span class="footericon" style="padding-right:4px; padding-left:4px">
-<a href="https://twitter.com/NBISwe"><i class="fab fa-twitter"></i></a>
+<a href="https://twitter.com/NBISwe">`r fontawesome::fa("twitter",fill="#bdbdbd")`</a>
 </span>
 <span class="footericon" style="padding-left:4px">
-<a href="https://www.linkedin.com/company/nbisweden/"><i class="fab fa-linkedin"></i></a>
+<a href="https://www.linkedin.com/company/nbisweden/">`r fontawesome::fa("linkedin",fill="#bdbdbd")`</a>
 </span>
 </span>
+</p>
 </div>
+
+</div>
+</div>
+</footer>

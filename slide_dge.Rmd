@@ -151,7 +151,7 @@ name: norm-1
 - Make counts comparable across samples
 - Control for sequencing depth
 
-![](images/normalization_methods_depth.png)
+![](data/normalization_methods_depth.png)
 
 ```{r,echo=FALSE}
 dfr <- data.frame(s1=c(20,25,15),s2=c(6,6,4))
@@ -166,7 +166,7 @@ dfr
 
 .pull-right-50[
 - Control for sequencing bias
-![](images/normalization_methods_composition.png)
+![](data/normalization_methods_composition.png)
 
 ```{r,echo=FALSE}
 dfr <- data.frame(s1=c(20,25,15,100),s2=c(20,25,4,2))
@@ -187,7 +187,7 @@ name: norm-2
 ## Normalisation
 
 - Make counts comparable across features (genes)
-.size-60[![](images/normalization_methods_length.png)]
+.size-60[![](data/normalization_methods_length.png)]
 
 ```{r,echo=FALSE}
 dfr <- data.frame(counts=c(50,25),gene_length=c(10,5))
