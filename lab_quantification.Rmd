@@ -1,7 +1,10 @@
 ---
 title: "Quantification"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Johan Reimegård</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
+output:
+  bookdown::html_document2:
+    toc: false
+    number_sections: false
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -30,9 +33,4 @@ featureCounts -T {threads} -p -t exon -g gene_id -a {input.gtf} -o {output.count
 
 This will create a file that contains a matrix were the rows represents the genes and the columns represent the samples. Feature count will also include some information per gene to see were it is annotated in the reference. The file is easy to open in R for further analysis.
 
-```{r,block.title=TRUE}
-counts <- read.delim("./data/count_raw.txt",header=TRUE)
-head(counts)
-```
-
-**End of document**
+***

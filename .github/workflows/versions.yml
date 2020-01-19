@@ -1,0 +1,50 @@
+name: version-test
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+jobs:
+  rmd-render-job:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        r-version: [3.6.0, 3.6.1, 3.6.2]
+    steps:
+      - uses: actions/checkout@v1
+      - uses: r-lib/actions/setup-r@master
+        with:
+          r-version: ${{ matrix.r-version }}
+      - uses: r-lib/actions/setup-pandoc@master
+      - name: Install linux dependencies
+        run: |
+          sudo apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev
+      - name: Check R installation
+        run: |
+          Rscript -e "print('R installation works!')"
+          echo "Folder contents at $(pwd):"
+          ls -lh
+      - name: Cache R packages
+        id: cache-rp
+        uses: actions/cache@v1
+        with:
+          path: "/home/runner/work/_temp/Library"
+          key: ${{ runner.os }}-cache-rp-$(ls /home/runner/work/_temp/Library/ | sha256sum)
+      - name: Install R dependencies
+        if: steps.cache-rp.outputs.cache-hit != 'true'
+        run: |
+          Rscript -e "install.packages('yaml')"
+          Rscript -e 'tryCatch({install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)},error=function(e){message("No packages to install.")})'
+          Rscript -e 'tryCatch({install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_student)},error=function(e){message("No packages to install.")})'
+          Rscript -e 'tryCatch({BiocManager::install(yaml::read_yaml("_site.yml")$packages$packages_bioc_repo)},error=function(e){message("No packages to install.")})'
+          Rscript -e 'tryCatch({BiocManager::install(yaml::read_yaml("_site.yml")$packages$packages_bioc_student)},error=function(e){message("No packages to install.")})'
+          Rscript -e 'devtools::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_repo)'
+          Rscript -e 'devtools::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_student)'
+          du -sh /home/runner/work/_temp/Library
+      - name: Render site
+        run: |
+          # Render website
+          Rscript -e "rmarkdown::render_site()"
+          echo "Folder contents at $(pwd):"
+          ls -lh
+          echo "Folder contents at ${path_repo}/${path_export}:"
+          ls -lh ${path_repo}/${path_export}

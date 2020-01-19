@@ -1,7 +1,6 @@
 ---
 title: "Intro to R"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Roy Francis</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -466,4 +465,4 @@ ggsave(filename="plot-ggplot-2.png",plot=p)
 sessionInfo()
 ```
 
-__End of document__
+***

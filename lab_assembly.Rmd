@@ -1,7 +1,6 @@
 ---
 title: "Transcriptome assembly"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Lucile Soler</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -222,4 +221,4 @@ Now you are ready either to annotate your RNA-Seq or you can use then to do the 
 For the de-novo assembly you can use the `Trinity.fasta` file obtained.
 For the genome-guided assembly you can either use the StringTie results `transcripts.gtf`, but you will often need to reformat it into a gff file.
 
-**End of document**
+***

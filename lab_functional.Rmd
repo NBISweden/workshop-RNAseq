@@ -1,7 +1,6 @@
 ---
 title: "Gene Function Annotation"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Paulo Czarnewski</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -24,10 +23,23 @@ library(biomaRt)
 library(enrichR)
 library(fgsea)
 
-metadata <- read.csv2("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T)
+# read data
 
-#Load data and metadata
+# if file doesn't exist, download it
+if(!file.exists("data/cpm.csv")) {
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/cpm.csv","./data/cpm.csv")
+}
+
 cpm <- read.csv2("data/cpm.csv",row.names = 1)
+
+# read metadata
+
+# if file doesn't exist, download it
+if(!file.exists("data/metadata_raw.csv")) {
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.csv")
+}
+
+metadata <- read.csv2("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T)
 ```
 
 CPM counts are converted to log scale and row-wise variance is computed.
@@ -237,4 +249,4 @@ GeneMANIA | https://genemania.org
 STRING-DB | https://string-db.org
 MIST | https://fgrtools.hms.harvard.edu/MIST/help.jsp
 
-**End of document**
+***

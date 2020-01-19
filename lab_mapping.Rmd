@@ -1,7 +1,6 @@
 ---
 title: "Mapping"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Johan Reimegård</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -36,7 +35,10 @@ Now you can map the reads from one of the samples (or several; it's up to you wh
 
 ```{sh,eval=FALSE,block.title=TRUE}
 mkdir outDir
-STAR  --runThreadN N --outSAMstrandField intronMotif --genomeDir /path/to/index \
+
+STAR  --runThreadN N \
+  --outSAMstrandField intronMotif \
+  --genomeDir /path/to/index \
   --readFilesIn /path/to/reads/sample_1.fastq /path/to/reads/sample_2.fastq \
   --outFileNamePrefix outDir/
 ```
@@ -59,7 +61,7 @@ This should run fairly quickly and put a file called `Aligned.out.sam` in the di
 * In general, do the alignments seem to be good? I.e. do they cover the entire reads and contain few mismatches?
 
 
-#HISAT2
+# HISAT2
 
 ## Data
 
@@ -78,17 +80,20 @@ Read below for the flags we use for this exercise. Remember to change filenames 
 To load the HISAT2 module on UPPMAX, execute:
 
 ```{sh,eval=FALSE,block.title=TRUE}
-     module load bioinfo-tools      # This is to get access to all bioinformatics tools available on UPPMAX
-     module load HISAT2/2.1.0       # The specific mapping program
+# This is to get access to all bioinformatics tools available on UPPMAX
+ module load bioinfo-tools
+# The specific mapping program
+ module load HISAT2/2.1.0
 ```
 Now you can map the reads from one of the samples (or several; it's up to you which ones) using a command such as the one below.
 ```{sh,eval=FALSE,block.title=TRUE}
+mkdir outDir
 
-	mkdir outDir
-
-    hisat2 -p N --dta-cufflinks -x path/to/index/fileName \
-	  -1 path/to/reads/sample_1.fastq -2 path/to/reads/sample_2.fastq \
-	  -S outDir/hisat2.sam --summary-file outDir/hisat2_summary.txt
+hisat2 -p N --dta-cufflinks -x path/to/index/fileName \
+  -1 path/to/reads/sample_1.fastq \
+  -2 path/to/reads/sample_2.fastq \
+  -S outDir/hisat2.sam \
+  --summary-file outDir/hisat2_summary.txt
 ```    
 The flags used are:
 
@@ -114,8 +119,7 @@ If everything worked, HISAT2 should report some statistics about how many reads 
 To answer these questions, you should look at the input to and output from HISAT2. You may also need to consult the [HISAT2 manual](https://ccb.jhu.edu/software/hisat2/manual.shtml), [information about the FASTQ format](https://en.wikipedia.org/wiki/FASTQ_format) and the [SAM format specification](https://github.com/samtools/hts-specs).
 
 
-
-# Converting SAM files to BAM
+# Convert SAM to BAM
 
 If you were able to run HISAT2 and STAR successfully, this should have produced files with mapped reads in SAM format. These files need to be converted to *sorted* and *indexed* BAM files for efficient downstream analysis.
 
@@ -152,4 +156,4 @@ samtools flagstat properName.sorted.bam > properName.sorted.flagstat
 
 <i class="fas fa-lightbulb"></i> Since the BAM file contains all the information from the original SAM file, remember to remove the SAM file once you are finished, in order to free up disk space.
 
-**End of document**
+***

@@ -1,7 +1,6 @@
 ---
 title: "Kallisto & Sleuth"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Johan Reimegård</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -19,15 +18,12 @@ Kallisto is primarily meant for quantification of an existing set of FASTA seque
 
 ## Running Kallisto
 
-
 To load the Kallisto module on UPPMAX, execute
 
 ```{sh,eval=FALSE,block.title=TRUE}
 module load bioinfo-tools
 module load kallisto/0.43.1
 ```     
-
-
 
 Now we will download and merge human cDNA and ncDNA files from ENSEMBL in order to build a Kallisto transcript index. Note that we can concatenate the two gzipped files without unpacking them first. We use both the protein-coding transcripts and the non-coding ones to be able to capture more of the transcriptome.
 
@@ -48,7 +44,11 @@ It should take less than 10 minutes.
 Next, copy the FASTA files from this uppmax path: `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/diffExp/FASTQ/`. When that is done, it's time for quantifying the FASTQ files against our Kallisto index with bootstrapping (for later use in Sleuth). You could do that one by one, with a command like
 
 ```{sh,eval=FALSE,block.title=FALSE}
-kallisto quant -i hsGRCh38_kallisto -t 4 -b 100 7_111116_AD0341ACXX_137_1_index1_1.fastq.gz 7_111116_AD0341ACXX_137_1_index1_2.fastq.gz -o sample1
+kallisto quant -i hsGRCh38_kallisto \
+  -t 4 \
+  -b 100 \
+  7_111116_AD0341ACXX_137_1_index1_1.fastq.gz 7_111116_AD0341ACXX_137_1_index1_2.fastq.gz \
+  -o sample1
 ```
 
 **OR** in a bash loop:
@@ -140,7 +140,12 @@ Again, if there were other experimental factors involved, these could have been 
 Now we read in the transcript-gene mappings file. This was [previously](lab_annotations.html) downloaded.
 
 ```{r,eval=FALSE,block.title=TRUE}
-t2g <- read.delim("./data/human_transcripts.txt",header=TRUE,sep="\t",stringsAsFactors=F)
+# if file doesn't exist, download it
+if(!file.exists("data/human_transcripts.txt")) {
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/human_transcripts.txt","./data/human_transcripts.txt")
+}
+
+t2g <- read.delim("data/human_transcripts.txt", header=TRUE,sep="\t", stringsAsFactors=F)
 t2g <- dplyr::rename(t2g,target_id=ensembl_transcript_id,
                      ens_gene=ensembl_gene_id,ext_gene=external_gene_name)
 ```
@@ -198,4 +203,4 @@ If you want to delve further into time series analysis with Sleuth (after all, w
 sessionInfo()
 ```
 
-**End of document.**
+***

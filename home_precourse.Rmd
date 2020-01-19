@@ -80,13 +80,30 @@ Note that it may take an hour or so from request approval, before you can actual
 
 [![](data/common/r.png)](https://cloud.r-project.org/)
 
-<i class="fas fa-chevron-circle-right"></i> **Install R statistical software** from [r-project.org](https://cloud.r-project.org/). If you have an old version of R and you do not use it, uninstall it and then install a newer version. Make sure you have one of the recent versions of R. For Windows users, it is recommended that you DO NOT install to `C:\Program Files\R\`. Instead, install to `C:\R\`.
+<i class="fas fa-chevron-circle-right"></i> **Install R statistical software** from [r-project.org](https://cloud.r-project.org/). If you have an old version of R and you do not use it, uninstall it and then install a newer version. Make sure you have one of the recent versions of R. One version older than the latest version is recommended. This is because all packages may not be updated for the very latest version of R. For Windows users, it is recommended that you DO NOT install to `C:\Program Files\R\`. Instead, install to `C:\R\`.
 
 [![](data/common/rstudio.png)](https://www.rstudio.com/products/rstudio/download/)
 
 <i class="fas fa-chevron-circle-right"></i> **Install [RStudio](https://www.rstudio.com/products/rstudio/download/)**. RStudio provides you with tools like code editor with highlighting, project management, version control, package building, debugger, profiler and more.
 
-<i class="fas fa-chevron-circle-right"></i> **Extra R packages** used in the workshop exercises (if any) are listed below. It is recommended that you install this in advance. Simply copy and paste the code into R.
+<i class="fas fa-chevron-circle-right"></i> **Extra R packages** used in the workshop exercises (if any) are listed below. It is recommended that you install this in advance.
+
+For Linux and Mac users, you may have to install some extra OS specific softwares before installing the R packages. Pick the packages as needed based on your system below.
+
+> * deb: libcurl4-openssl-dev (Debian, Ubuntu, etc)
+> * rpm: libcurl-devel (Fedora, CentOS, RHEL)
+> * csw: libcurl_dev (Solaris)
+>
+> * deb: libssl-dev (Debian, Ubuntu, etc)
+> * rpm: openssl-devel (Fedora, CentOS, RHEL)
+> * csw: libssl_dev (Solaris)
+> * brew: openssl@1.1 (Mac OSX)
+>
+> * deb: libxml2-dev (Debian, Ubuntu, etc)
+> * rpm: libxml2-devel (Fedora, CentOS, RHEL)
+> * csw: libxml2_dev (Solaris)
+
+Install the R packages. Simply copy and paste the code into R.
 
 ```{r,eval=TRUE,block.title=NULL,echo=FALSE,comment="",class.output="r"}
 # this code block reads package names from '_site.yml' and prints them as installation instruction.
@@ -113,10 +130,10 @@ The syllabus for this workshop are as follows.
 
 * Introduction to RNA-Seq technology and workflow
 * Assessing quality of raw Illumina short reads using FastQC
-* Mapping short reads to reference genome using STAR sligner
+* Mapping short reads to reference genome using STAR aligner
 * Post alignment QC
 * Quantification of mapped reads using featureCounts
-* Exploratory data analysing using PCA and cluster analysis
+* Exploratory data analyses using PCA and cluster analysis
 * Differential gene expression using DESeq2
 
 ***

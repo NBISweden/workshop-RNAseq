@@ -1,7 +1,6 @@
 ---
 title: "Downloads"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Roy Francis</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -199,3 +198,4 @@ human_genes <- getLDS(attributes=c("ensembl_gene_id"),filters="ensembl_gene_id",
 ```{r,echo=FALSE}
 sessionInfo()
 ```
+***

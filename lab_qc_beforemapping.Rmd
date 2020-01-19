@@ -1,0 +1,75 @@
+---
+title: "Quality control"
+subtitle: "Workshop on RNA-Seq"
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+In this tutorial we will go through some of the key steps in performing a quality control on your samples. We will start with the read based quality control, using FastQC, and continue with mapping based QC using RseqQC.  
+
+All the data you need for this lab is available in the folder:
+`/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/data/`.
+
+This folder contains:
+
+* Two FASTQ files, with mate pair libraries for sample 1 that is used in several of the other exercises, See section **Lab**.
+* BAM file and BAM-file index (`bam.bai`) for that sample mapped to the human genome using STAR.
+* count_table.txt - a table with number of reads per gene, using Ensembl annotations, created with HTseq-count.
+
+# FastQC on single file
+
+FastQC aims to provide a simple way to do some quality control checks on raw sequence data coming from high throughput sequencing pipelines. It provides a modular set of analyses which you can use to get a quick impression of whether your data has any problems of which you should be aware before doing any further analysis.
+
+The main functions of FastQC are:
+
+* Import of data from BAM, SAM or FASTQ files (any variant)
+* Providing a quick overview to tell you in which areas there may be problems
+* Summary graphs and tables to quickly assess your data
+* Export of results to an HTML-based permanent report
+* Offline operation to allow automated generation of reports without running the interactive application
+
+You can read more about the program and have a look at example reports at [the FastQC website](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/).
+
+<i class="fas fa-lightbulb"></i> This program can be used for any type of NGS data, not only RNA-seq.
+
+To run FastQC on UPPMAX you first need to load the module:
+
+```{sh,eval=FALSE,block.title=TRUE}
+module load bioinfo-tools
+module load FastQC/0.11.5
+
+# To see help information on the FastQC package:
+fastqc --help
+# Run for one FASTQ file:
+fastqc -o outdir fastqfile
+
+# Run on multiple FASTQ files:
+fastqc -o outdir fastqfile1 fastqfile2 etc.
+
+# You can use wildcards to run on all FASTQ files in a directory:
+fastqc -o outdir /proj/b2013006/INBOX/FASTQ/*fastq
+```
+
+In this case, only run FastQC on one file and take a look at the output. We have already prepared the outputs for all of the other samples. These can be copied from UPPMAX at:
+`/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/fastQC/`.
+
+<i class="fas fa-clipboard-list"></i> Take a look at some other file and see if it looks similar in quality.
+
+# MultiQC on FastQC reports
+
+MultiQC is a program that creates summaries over all samples for several different types of QC-measures. You can read more about the program [here](http://multiqc.info/). It will automatically look for output files from the supported tools and make a summary of them. You can either go to the folder where you have the Fastqc output or run it with the path to the folder.  
+
+```{sh,eval=FALSE,block.title=TRUE}
+module load bioinfo-tools
+module load MultiQC/1.5
+
+multiqc /folder/with/FastQC_results/
+# in this case the folder is /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/fastQC/
+```
+
+This should create a folder named `multiqc_data` with some general stats, links to all files etc. And one file named `multiqc_report.html`.
+
+<i class="fas fa-clipboard-list"></i> Have a look at the report you created. Alternatively, you can find the version we ran on UPPMAX at `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/fastQC/multiqc_report.html`.
+
+***

@@ -1,7 +1,7 @@
 ---
 title: "Differential Gene Expression Workflow"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Roy Francis</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
+author: "`r paste0('<b>NBIS</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
 institute: NBIS, SciLifeLab
 keywords: bioinformatics, course, scilifelab, nbis
 output:
@@ -89,8 +89,8 @@ cf3 <- cr[rowSums(edgeR::cpm(cr)>1) >= 2, ]
 - Inspect distribution
 
 ```{r,fig.height=2.7,fig.width=9,echo=FALSE}
-h0 <- cr %>% 
-  mutate(gene=rownames(.)) %>% 
+h0 <- cr %>%
+  mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
   ggplot(aes(x=log10(value+1),group=sample))+
   geom_density()+
@@ -99,8 +99,8 @@ h0 <- cr %>%
   theme(panel.border=element_blank(),
         axis.ticks=element_blank())
 
-h1 <- cf1 %>% 
-  mutate(gene=rownames(.)) %>% 
+h1 <- cf1 %>%
+  mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
   ggplot(aes(x=log10(value+1),group=sample))+
   geom_density()+
@@ -109,8 +109,8 @@ h1 <- cf1 %>%
   theme(panel.border=element_blank(),
         axis.ticks=element_blank())
 
-h2 <- cf2 %>% 
-  mutate(gene=rownames(.)) %>% 
+h2 <- cf2 %>%
+  mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
   ggplot(aes(x=log10(value+1),group=sample))+
   geom_density()+
@@ -119,8 +119,8 @@ h2 <- cf2 %>%
   theme(panel.border=element_blank(),
         axis.ticks=element_blank())
 
-h3 <- cf3 %>% 
-  mutate(gene=rownames(.)) %>% 
+h3 <- cf3 %>%
+  mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
   ggplot(aes(x=log10(value+1),group=sample))+
   geom_density()+
@@ -280,8 +280,8 @@ cv <- as.data.frame(assay(varianceStabilizingTransformation(d,blind=T)),check.na
 ```
 
 ```{r,fig.height=1.8,fig.width=8,echo=FALSE}
-h0 <- cf %>% 
-  mutate(gene=rownames(.)) %>% 
+h0 <- cf %>%
+  mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
   ggplot(aes(x=log10(value+1),group=sample))+
   geom_density()+
@@ -290,8 +290,8 @@ h0 <- cf %>%
   theme(panel.border=element_blank(),
         axis.ticks=element_blank())
 
-h1 <- as.data.frame(edgeR::cpm(cf)) %>% 
-  mutate(gene=rownames(.)) %>% 
+h1 <- as.data.frame(edgeR::cpm(cf)) %>%
+  mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
   ggplot(aes(x=log10(value+1),group=sample))+
   geom_density()+
@@ -300,8 +300,8 @@ h1 <- as.data.frame(edgeR::cpm(cf)) %>%
   theme(panel.border=element_blank(),
         axis.ticks=element_blank())
 
-h2 <- as.data.frame(ct) %>% 
-  mutate(gene=rownames(.)) %>% 
+h2 <- as.data.frame(ct) %>%
+  mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
   ggplot(aes(x=log10(value+1),group=sample))+
   geom_density()+
@@ -310,8 +310,8 @@ h2 <- as.data.frame(ct) %>%
   theme(panel.border=element_blank(),
         axis.ticks=element_blank())
 
-h3 <- as.data.frame(cd) %>% 
-  mutate(gene=rownames(.)) %>% 
+h3 <- as.data.frame(cd) %>%
+  mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
   ggplot(aes(x=log10(value+1),group=sample))+
   geom_density()+
@@ -320,8 +320,8 @@ h3 <- as.data.frame(cd) %>%
   theme(panel.border=element_blank(),
         axis.ticks=element_blank())
 
-h4 <- cv %>% 
-  mutate(gene=rownames(.)) %>% 
+h4 <- cv %>%
+  mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
   ggplot(aes(x=value,group=sample))+
   geom_density()+
@@ -334,8 +334,8 @@ ggpubr::ggarrange(h0,h1,h2,h3,h4,nrow=1,ncol=5)
 ```
 
 ```{r,fig.height=1.8,fig.width=8,echo=FALSE}
-h0 <- cf %>% 
-    mutate(gene=rownames(.)) %>% 
+h0 <- cf %>%
+    mutate(gene=rownames(.)) %>%
     gather(key="sample",value="value",-gene) %>%
     group_by(gene) %>% summarise(mean=mean(value),var=var(value)) %>%
     ggplot(aes(x=log10(mean+1),y=log10(var+1)))+
@@ -345,8 +345,8 @@ h0 <- cf %>%
     theme(panel.border=element_blank(),
           axis.ticks=element_blank())
 
-h1 <- as.data.frame(edgeR::cpm(cf)) %>% 
-    mutate(gene=rownames(.)) %>% 
+h1 <- as.data.frame(edgeR::cpm(cf)) %>%
+    mutate(gene=rownames(.)) %>%
     gather(key="sample",value="value",-gene) %>%
     group_by(gene) %>% summarise(mean=mean(value),var=var(value)) %>%
     ggplot(aes(x=log10(mean+1),y=log10(var+1)))+
@@ -356,8 +356,8 @@ h1 <- as.data.frame(edgeR::cpm(cf)) %>%
     theme(panel.border=element_blank(),
           axis.ticks=element_blank())
 
-h2 <- as.data.frame(ct) %>% 
-    mutate(gene=rownames(.)) %>% 
+h2 <- as.data.frame(ct) %>%
+    mutate(gene=rownames(.)) %>%
     gather(key="sample",value="value",-gene) %>%
     group_by(gene) %>% summarise(mean=mean(value),var=var(value)) %>%
     ggplot(aes(x=log10(mean+1),y=log10(var+1)))+
@@ -367,8 +367,8 @@ h2 <- as.data.frame(ct) %>%
     theme(panel.border=element_blank(),
           axis.ticks=element_blank())
 
-h3 <- as.data.frame(cd) %>% 
-    mutate(gene=rownames(.)) %>% 
+h3 <- as.data.frame(cd) %>%
+    mutate(gene=rownames(.)) %>%
     gather(key="sample",value="value",-gene)%>%
     group_by(gene) %>% summarise(mean=mean(value),var=var(value)) %>%
     ggplot(aes(x=log10(mean+1),y=log10(var+1)))+
@@ -378,8 +378,8 @@ h3 <- as.data.frame(cd) %>%
     theme(panel.border=element_blank(),
           axis.ticks=element_blank())
 
-h4 <- cv %>% 
-    mutate(gene=rownames(.)) %>% 
+h4 <- cv %>%
+    mutate(gene=rownames(.)) %>%
     gather(key="sample",value="value",-gene) %>%
     group_by(gene) %>% summarise(mean=mean(value),var=var(value)) %>%
     ggplot(aes(x=mean,y=var))+

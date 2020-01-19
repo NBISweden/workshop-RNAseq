@@ -56,7 +56,7 @@ This data set or parts of it will be used in the labs on read mapping, transcrip
 Before doing any other analysis on mapped RNA-seq reads it is always important to do quality control of your mapped reads and that you do not have any obvious errors in your RNA-seq data.
 
 * [QC of raw reads (Slide)](slide_after_sequencing_qc.pdf)
-* [Quality control (Lab)](lab_qc.html)
+* [Short read quality control (Lab)](lab_qc_beforemapping.html)
 
 ## Mapping
 
@@ -67,10 +67,12 @@ This section contains information on how to map reads to a reference genome usin
 
 ## Post-alignment QC
 
-* [QC of alignments (Slide)](slide_after_mapping_qc.pdf)
-* [Quality control (Lab)](lab_qc.html) (Same document as before)
+After alignment, the BAM files are inspected for various alignment metrics. Some of these include the number of reads mapped, number of unmapped reads, regions in the reference that reads map to, gene body coverage, signs of DNA contamination etc.
 
-BAM files are visualised using integrated genome viewer.
+* [QC of alignments (Slide)](slide_after_mapping_qc.pdf)
+* [Post-alignment quality control (Lab)](lab_qc_aftermapping.html)
+
+BAM files are optionally visualised using integrated genome viewer.
 
 * [Using IGV (Lab)](lab_igv.html)
 
@@ -80,13 +82,6 @@ Gene counts are quantified from BAM files using featureCounts.
 
 * [Quantification (Slide)](slide_quantification.pdf)
 * [Quantification (Lab)](lab_quantification.html)
-
-## Mapping and quantification using Pseudoaligners
-
-Kallisto uses FastQ reads and a reference transcriptome (cDNA+ncRNA) to quantify transcripts using rapid pseudo-alignment along with bootstrap replicates to assess quantification inaccuracy. Kallisto is significantly faster than STAR or HISAT2 and has a small memory footprint. Differential gene expression is carried out using Sleuth which utilises bootstrap replicates.
-
-* [Pseudoaligners (Slide)](slide_pseudoaligners.pdf)
-* [Mapping and quantification using Kallisto (Lab)](lab_kallisto.html)
 
 ## Exploratory data analyses
 
@@ -111,6 +106,14 @@ We will perform functional analysis on the differentially expressed genes to pla
 * [Functional analysis (Lab)](lab_functional.html)
 
 # Bonus labs
+
+## Pseudoaligners
+
+This is an alternative step INSTEAD of mapping, PA-QC and quantification. Kallisto uses FastQ reads and a reference transcriptome (cDNA+ncRNA) to quantify transcripts using rapid pseudo-alignment along with bootstrap replicates to assess quantification inaccuracy. Kallisto is significantly faster than STAR or HISAT2 and has a small memory footprint. Kallisto generates transcript counts. Differential transcript expression is carried out using Sleuth which utilises bootstrap replicates.
+
+* [Pseudoaligners (Slide)](slide_pseudoaligners.pdf)
+* [Mapping and quantification using Kallisto (Lab)](lab_kallisto.html)
+
 ## small RNA analyses
 
 RNA-seq differential analyses workflow on microRNAs from Fruit fly.
@@ -121,7 +124,7 @@ RNA-seq differential analyses workflow on microRNAs from Fruit fly.
 
 Raw sequencing short reads are assembled into transcripts using two approaches. Genome-guided assembly using HiSat2 and StringTie. De-novo transcriptome assembly using Trinity. Assembled transcriptomes are functionally annotated to identify genes.
 
-* [Reference-guided assembly using StringTie and De-novo assembly using Trinity (Lab)](lab_assembly.html)  
+* [Transcriptome assembly (Lab)](lab_assembly.html)  
 * [Transcriptome annotation (Lab)](lab_annotation.html)
 
 ***

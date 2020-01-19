@@ -1,7 +1,6 @@
 ---
 title: "PCA and Clustering"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('Paulo Czarnewski • ',format(Sys.time(), '%d-%b-%Y'))`"
 editor_options:
   chunk_output_type: console
 ---
@@ -9,7 +8,11 @@ editor_options:
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-Loading packages and data
+<div class="boxy boxy-exclamation">
+Create a directory named `data` in your current working directory for input and output files.
+</div>
+
+Load R packages.
 
 ```{r}
 library(pheatmap)
@@ -19,21 +22,39 @@ library(pvclust)
 library(biomaRt)
 ```
 
-Loading the sequencing data and the metadata data with sample information
+Load the sequencing data and the metadata data with sample information.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 #Load data and metadata
+
+# if file doesn't exist, download it
+if(!file.exists("data/count_raw.txt")) {
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/count_raw.txt","./data/count_raw.txt")
+}
+
 data <- read.delim("data/count_raw.txt",header = T)
+
+# if file doesn't exist, download it
+if(!file.exists("data/metadata_raw.csv")) {
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.csv")
+}
+
 metadata <- read.csv2("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T)
 
 #Convert ensembl IDs to gene names
-if( file.exists("data/human_biomaRt_annotation.csv") ){
-  annot <- read.csv2("data/human_biomaRt_annotation.csv", row.names = 1)
-} else {
-  human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
-  annot <- getBM(c("ensembl_gene_id","external_gene_name"), mart=human)
-  write.csv2(annot,"data/human_biomaRt_annotation.csv",row.names = T)
+
+# optionally, get annotation from biomart
+#human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+#annot <- getBM(c("ensembl_gene_id","external_gene_name"), mart=human)
+#write.csv2(annot,"data/human_biomaRt_annotation.csv",row.names = T)
+
+# if file doesn't exist, download it
+if(!file.exists("data/human_biomaRt_annotation.csv")) {
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/human_biomaRt_annotation.csv","./data/human_biomaRt_annotation.csv")
 }
+
+annot <- read.csv2("data/human_biomaRt_annotation.csv", row.names = 1)
+
 gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
 gene_names[is.na(gene_names) ] <- ""
 
@@ -43,7 +64,7 @@ data <- data[ rownames(data) != "" , ] #remove blank annotation
 data <- data[ order(rownames(data)),]  #order genes alphabetically
 dim(data)
 
-#Remove genes with counts less than 
+#Remove genes with counts less than
 sel <- apply(data, 1, function(x) {sum(x > 5) > 3} )
 data <- data[sel,]
 dim(data)
@@ -76,7 +97,7 @@ abline(h=0, col="red" ,lty=2)
 ***
 ## Gene selection
 
-As you can appreciate above, Z-score normalization have set each gene mean to 0 and changes the variances to a common scale. However, if we normalize all genes to the same scale, even genes that could be considered stable across samples (i.e. that do not vary across your samples) will be used for separation of samples. This might in turn add 'noise' to your data in form of 'variation across samples that are not meaningful'. Therefore, we can also sort the genes by variance and use the top genes to filter/prioritize the data. 
+As you can appreciate above, Z-score normalization have set each gene mean to 0 and changes the variances to a common scale. However, if we normalize all genes to the same scale, even genes that could be considered stable across samples (i.e. that do not vary across your samples) will be used for separation of samples. This might in turn add 'noise' to your data in form of 'variation across samples that are not meaningful'. Therefore, we can also sort the genes by variance and use the top genes to filter/prioritize the data.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 #Compute the mean, variance and cv for each gene and sort them in decreasing order
@@ -304,7 +325,7 @@ Let's say that you have 12 samples, so that all samples have the exact same expr
 
 One way to measure **clustering robustness / accuracy** is by selecting part of the data set (say 90% of the genes), performing the clustering and recording which samples fall together. Then, you repeat (iterate) with another selection of 90% of the genes up to 1000 times, recording the clustering results. In the end, you compare the results of all 1000 clusterings and check how often the same samples failed in the same group. This procedure is called **bootstrapping**, and it is measured as the "percentage of times an event can occur". For more details on this, please read the webpage for the `pvclust()` which is full of examples on this:
 
-* `pvclust` website: http://stat.sys.i.kyoto-u.ac.jp/prog/pvclust/ 
+* `pvclust` website: http://stat.sys.i.kyoto-u.ac.jp/prog/pvclust/
 * `pvclust` paper: https://academic.oup.com/bioinformatics/article/22/12/1540/207339
 
 <i class="fas fa-exclamation-circle"></i> Note that bootstrapping procedure is very time consuming and computationally intensive.
@@ -335,8 +356,19 @@ saveRDS(pvc,"./data/pvc.Rds")
 ```
 
 ```{r,echo=FALSE,block.title=NULL,fig.height=5,fig.width=10}
-mock_pvc <- readRDS("./data/mock_pvc.Rds")
-pvc <- readRDS("./data/pvc.Rds")
+# if file doesn't exist, download it
+if(!file.exists("data/mock_pvc.Rds")) {
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/mock_pvc.Rds","./data/mock_pvc.Rds")
+}
+
+mock_pvc <- readRDS("data/pvc.Rds")
+
+# if file doesn't exist, download it
+if(!file.exists("data/mock_pvc.Rds")) {
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/pvc.Rds","./data/pvc.Rds")
+}
+
+pvc <- readRDS("data/pvc.Rds")
 
 mypar(1,2,mar=c(6,4,2,1))
 plot(mock_pvc,las=2,hang = -0.5)
@@ -353,4 +385,4 @@ points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[pvc$hc
 * With what percentages the samples 4 and 5 fall together in the same cluster?
 * The orange rectangles represent 2 clusters. What do you think is the criteria used to define this clusters ? PS: it is not the height as in the previous examples.
 
-__End of document__
+***

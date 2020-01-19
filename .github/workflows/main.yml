@@ -1,4 +1,4 @@
-name: web-build
+name: render
 on:
   push:
     branches-ignore:
@@ -14,7 +14,7 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@master
       - name: Install linux dependencies
         run: |
-          sudo apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev libudunits2-dev libopenblas-base
+          sudo apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev
       - name: Define variables
         run: |
           echo "::set-env name=path_repo::$(pwd)"
@@ -40,9 +40,12 @@ jobs:
         if: steps.cache-rp.outputs.cache-hit != 'true'
         run: |
           Rscript -e "install.packages('yaml')"
-          Rscript -e 'install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)'
-          Rscript -e 'install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_student)'
-          Rscript -e 'devtools::install_github("rstudio/fontawesome")'
+          Rscript -e 'tryCatch({install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)},error=function(e){message("No packages to install.")})'
+          Rscript -e 'tryCatch({install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_student)},error=function(e){message("No packages to install.")})'
+          Rscript -e 'tryCatch({BiocManager::install(yaml::read_yaml("_site.yml")$packages$packages_bioc_repo)},error=function(e){message("No packages to install.")})'
+          Rscript -e 'tryCatch({BiocManager::install(yaml::read_yaml("_site.yml")$packages$packages_bioc_student)},error=function(e){message("No packages to install.")})'
+          Rscript -e 'devtools::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_repo)'
+          Rscript -e 'devtools::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_student)'
           echo "R directory size:"
           du -sh /home/runner/work/_temp/Library
       - name: Render site, pull repo, copy folder, create index, push repo

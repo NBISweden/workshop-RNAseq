@@ -1,13 +1,18 @@
 ---
 title: "DGE Workflow"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Roy Francis</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-```{r,include=FALSE}
+<div class="boxy boxy-exclamation">
+Create a directory named `data` in your current working directory for input and output files.
+</div>
+
+Load R packages.
+
+```{r}
 # data handling
 library(dplyr)
 #library(tidyr)
@@ -21,15 +26,16 @@ library(DESeq2) # rna-seq
 library(edgeR) # rna-seq
 ```
 
-<div class="boxy boxy-exclamation">
-The raw data and metadata can be downloaded from [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). The files needed are **counts_raw.txt** and **metadata_raw.csv**. Other files are created as intermediates during this workflow. They may be useful if you cannot get a step to work. Place the files in a directory named `data` in your current working directory.
-</div>
-
 # Data preprocessing
 
 Data preprocessing is done in R. First, we read in the count table.
 
 ```{r}
+# if file doesn't exist, download it
+if(!file.exists("data/count_raw.txt")) {
+  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/count_raw.txt","./data/count_raw.txt")
+}
+
 cr <- read.table("./data/count_raw.txt",header=TRUE)
 head(cr)
 str(cr)
@@ -40,7 +46,12 @@ The count data shows read counts across samples and genes. The columns denote sa
 Read in the metadata. Each row corresponds to a sample. The sample names can be added as row names.
 
 ```{r}
-mr <- read.csv2("./data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
+# if file doesn't exist, download it
+if(!file.exists("data/metadata_raw.txt")) {
+  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.txt")
+}
+
+mr <- read.csv2("./data/metadata_raw.txt",header=TRUE,stringsAsFactors=F)
 rownames(mr) <- mr$Sample_ID
 head(mr)
 str(mr)
@@ -119,8 +130,19 @@ For analysis other than DGE, the data set must be corrected before use. The most
 We read in out filtered count data and metadata. We can use the function `cpm()` from R package **edgeR** for this.
 
 ```{r}
-cf <- read.table("./data/counts_filtered.txt",header=TRUE)
-mr <- read.csv2("./data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
+# if file doesn't exist, download it
+if(!file.exists("data/counts_filtered.txt")) {
+  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/counts_filtered.txt","./data/counts_filtered.txt")
+}
+
+cf <- read.table("data/counts_filtered.txt",header=TRUE)
+
+# if file doesn't exist, download it
+if(!file.exists("data/metadata_raw.csv")) {
+  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.csv")
+}
+
+mr <- read.csv2("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
 rownames(mr) <- mr$Sample_ID
 ```
 
@@ -149,7 +171,12 @@ tpm <- function(counts,len) {
 We read in the annotation data, remove duplicated ensembl IDs and compute gene lengths.
 
 ```{r}
-g <- read.delim("./data/human_genes.txt",header=T,stringsAsFactors=F)
+# if file doesn't exist, download it
+if(!file.exists("data/human_genes.txt")) {
+  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/human_genes.txt","./data/human_genes.txt")
+}
+
+g <- read.delim("data/human_genes.txt",header=T,stringsAsFactors=F)
 g <- g[!duplicated(g$ensembl_gene_id),]
 g$len <- g$end_position-g$start_position
 rownames(g) <- g$ensembl_gene_id
@@ -193,7 +220,11 @@ d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Time)
 d <- DESeq2::estimateSizeFactors(d,type="ratio")
 d <- DESeq2::estimateDispersions(d)
 cv <- as.data.frame(assay(varianceStabilizingTransformation(d,blind=T)),check.names=F)
-if(!file.exists("./data/counts_vst.txt")) write.table(cv,"./data/counts_vst.txt",sep="\t",dec=".",quote=FALSE)
+
+if(!file.exists("./data/counts_vst.txt")) {
+  write.table(cv,"./data/counts_vst.txt",sep="\t",dec=".",quote=FALSE)
+}
+
 boxplot(log10(as.matrix(cv)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="VST")
 ```
 
@@ -233,8 +264,19 @@ In this section, we are strictly not running any quantitative analyses or statis
 We will use the variance stabilized counts (VST) from the previous step for all exploratory analyses. Otherwise, the files below can also be copied from the data location mentioned at the beginning of this document.
 
 ```{r}
-cv <- read.table("./data/counts_vst.txt",header=TRUE)
-mr <- read.csv2("./data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
+# if file doesn't exist, download it
+if(!file.exists("data/counts_vst.txt")) {
+  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/counts_vst.txt","./data/counts_vst.txt")
+}
+
+cv <- read.table("data/counts_vst.txt",header=TRUE)
+
+# if file doesn't exist, download it
+if(!file.exists("data/metadata_raw.csv")) {
+  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.csv")
+}
+
+mr <- read.csv2("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
 rownames(mr) <- mr$Sample_ID
 ```
 
@@ -319,8 +361,19 @@ Hierarchically clustered sample-to-sample euclidean distance matrix. Larger dist
 For differential gene expression, we use the **DESeq2** package. We use the raw filtered counts and metadata.
 
 ```{r}
-cf <- read.table("./data/counts_filtered.txt",header=TRUE)
-mr <- read.csv2("./data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
+# if file doesn't exist, download it
+if(!file.exists("data/counts_filtered.txt")) {
+  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/counts_filtered.txt","./data/counts_filtered.txt")
+}
+
+cf <- read.table("data/counts_filtered.txt",header=TRUE)
+
+# if file doesn't exist, download it
+if(!file.exists("data/metadata_raw.csv")) {
+  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.csv")
+}
+
+mr <- read.csv2("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
 rownames(mr) <- mr$Sample_ID
 ```
 
@@ -342,8 +395,8 @@ The first step is estimating size factors. The data is normalised for sequencing
 d <- DESeq2::estimateSizeFactors(d,type="ratio")
 ```
 
-<div class="optional">
-<b>Optional</b>
+<div class="boxy boxy-optional">
+**Optional**
 
 For those interested in the details of the *median-of-ratios* method, click below.
 
@@ -413,8 +466,8 @@ head(counts(d,normalized=TRUE))[,1:5]
 
 When it comes to comparing values between groups, some measure of variation is needed to estimate the variability in gene counts within groups. Dispersion is a measure of variation in a data set. Variance and standard deviation are not a good measure to estimate variability because it correlates with the mean.
 
-<div class="optional">
-<b>Optional</b>
+<div class="boxy boxy-optional">
+**Optional**
 
 For some more discussion on dispersion, click below.
 
@@ -594,7 +647,13 @@ df_res <- as.data.frame(res1)
 df_res$ensembl_gene_id <- rownames(df_res)
 
 # read genes info
-hg <- read.delim("./data/human_genes.txt",header=T,sep="\t",stringsAsFactors=F)
+
+# if file doesn't exist, download it
+if(!file.exists("data/human_genes.txt")) {
+  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/human_genes.txt","./data/human_genes.txt")
+}
+
+hg <- read.delim("data/human_genes.txt",header=T,sep="\t",stringsAsFactors=F)
 hg <- hg[!duplicated(hg$ensembl_gene_id),]
 
 # merge dataframes
@@ -690,4 +749,4 @@ plotCounts(d,gene=rownames(res1)[1],intgroup="Time",normalized=T)
 sessionInfo()
 ```
 
-__End of document__
+***

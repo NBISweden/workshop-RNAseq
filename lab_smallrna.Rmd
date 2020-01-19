@@ -1,11 +1,14 @@
 ---
 title: "Small RNA-Seq Analysis"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Johan Reimegård</b> • ',format(Sys.time(), '%d-%b-%Y'))`"
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
 ```
+
+<div class="boxy boxy-exclamation">
+This lab is to be run on Uppmax <i class="fas fa-cloud"></i>.
+</div>
 
 # Introduction
 
@@ -260,4 +263,4 @@ There may be some problems displaying plots etc. on UPPMAX when running in inter
 - Type in all R commands again.
 </div>
 
-**End of document**
+***

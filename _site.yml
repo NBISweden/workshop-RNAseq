@@ -1,7 +1,7 @@
-﻿name: Workshop on RNA-Seq
+﻿name: Analysis of RNA-Seq data
 favicon: assets/favicon.png
 output_dir: 2005
-uppmax_project: XXXXXXXX
+uppmax_project: g2020006
 # location options are lund, umea or uppsala
 location: uppsala
 exclude: ["docs","README.md","schedule.csv","LICENSE","LICENSE.md","scripts","tmprepo"]
@@ -47,6 +47,7 @@ output:
 # if a package is only needed for repo (build, rendering etc), add to _repo
 packages:
  packages_cran_student:
+  - BiocManager
   - dplyr
   - enrichR
   - ggplot2
@@ -75,3 +76,6 @@ packages:
   - xaringan
   - yaml
  packages_bioc_repo:
+ packages_github_student:
+ packages_github_repo:
+  - rstudio/fontawesome
