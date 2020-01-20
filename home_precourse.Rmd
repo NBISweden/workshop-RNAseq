@@ -88,17 +88,20 @@ Note that it may take an hour or so from request approval, before you can actual
 
 <i class="fas fa-chevron-circle-right"></i> **Extra R packages** used in the workshop exercises (if any) are listed below. It is recommended that you install this in advance.
 
-For Linux and Mac users, you may have to install some extra OS specific softwares before installing the R packages. Pick the packages as needed based on your system below.
+For Linux and Mac users, you may have to install some extra OS specific libraries before installing the R packages. Pick the packages as needed based on your system below.
 
+> libcurl
 > * deb: libcurl4-openssl-dev (Debian, Ubuntu, etc)
 > * rpm: libcurl-devel (Fedora, CentOS, RHEL)
 > * csw: libcurl_dev (Solaris)
 >
+> libssl
 > * deb: libssl-dev (Debian, Ubuntu, etc)
 > * rpm: openssl-devel (Fedora, CentOS, RHEL)
 > * csw: libssl_dev (Solaris)
 > * brew: openssl@1.1 (Mac OSX)
 >
+> libxml2
 > * deb: libxml2-dev (Debian, Ubuntu, etc)
 > * rpm: libxml2-devel (Fedora, CentOS, RHEL)
 > * csw: libxml2_dev (Solaris)
@@ -120,6 +123,11 @@ if(!is.null(pkg$packages$packages_bioc_student)) {
  cat("# install from bioconductor\n")
  cat(paste0("BiocManager::install(c('",paste(pkg$packages$packages_bioc_student,sep="",collapse="','"),"'))"))
 }
+
+if(!is.null(pkg$packages$packages_github_student)) {
+ cat("# install from github\n")
+ cat(paste0("devtools::install_github(c('",paste(pkg$packages$packages_github_student,sep="",collapse="','"),"'))"))
+}
 ```
 
 ***
@@ -139,6 +147,8 @@ The syllabus for this workshop are as follows.
 ***
 
 ## Learning outcomes
+
+[To be added]
 
 ***
 

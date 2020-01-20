@@ -9,7 +9,7 @@ subtitle: "Workshop on RNA-Seq"
 # Loading data
 
 <div class="boxy boxy-exclamation">
-The cpm data and metadata can be downloaded from [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). The files needed are **cpm.csv** and **metadata_raw.csv**. Place the files in a directory named `data` in your current working directory.
+Create a directory named `data` in your current working directory.
 </div>
 
 Loading packages and data.
@@ -58,7 +58,6 @@ top_var <- names( vars ) [1:500]
 Here you would select genes based on p-values and logFC you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are selecting only the top 500 variable genes.
 </div>
 
-***
 ## Clustering on Heatmap
 
 Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the `pheatmap()` function, which by default will do the clustering of the rows and columns.
@@ -69,7 +68,6 @@ cl <- pheatmap( logcpm[top_var,] , scale = "row" , color = colorRampPalette(c("n
 gene_clusters <- cutree(cl$tree_row,k = 2)
 ```
 
-***
 # Functional Analysis
 
 R-packages | Comments
@@ -140,7 +138,6 @@ barplot( -log10(kegg_cluster2$P.value[15:1]), horiz = T, names.arg = kegg_cluste
 * Some genes make part of several KEGG pathways, can you list some?
 * Taking the results from GO term enrichment and the KEGG enrichment, what is a most likely function happening in your data set?
 
-***
 ## GSEA
 
 MSigDB is one of the largest curated databases of signatures and pathways created by the BROAD INSTITUTE. The Molecular Signatures Database (MSigDB) is accessible [here](http://software.broadinstitute.org/gsea/msigdb/index.jsp).
@@ -153,15 +150,23 @@ KEGG | [c2.cp.kegg.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msi
 GO_BP | [c5.bp.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/c5.bp.v6.2.symbols.gmt)
 HALLMARK | [h.all.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/h.all.v6.2.symbols.gmt)
 
-<div class="boxy boxy-exclamation">
-For this exercise, the database files are available at [this location](https://github.com/NBISweden/course_rnaseq/tree/master/data). You need the whole directory labelled **MSigDB_files**. Place this directory under a directory named `data` in your current working directory. Otherwise, set the path appropriately.
-</div>
-
 As you could already notice, the differences in gene expression between days t0 to t24 are very clear, but not the ones from t2. Here we will illustrate a gene set enrichment comparing t2 to t0 in order to explore which pathways are UP or DOWN regulated at the first 2 hours of the experiment.
 
 <div class="boxy boxy-exclamation">
 Here you would use the logFC values you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are using a simple difference in mean expression.
 </div>
+
+```{r}
+# if folder and files doesn't exist, download it
+if(!dir.exists("data/MSigDB_files/")) {
+  dir.create("data/MSigDB_files")
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/MSigDB_files/c2.cp.kegg.v6.2.symbols.gmt.txt","./data/MSigDB_files/c2.cp.kegg.v6.2.symbols.gmt.txt")
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/MSigDB_files/c3.tft.v6.2.symbols.gmt.txt","./data/MSigDB_files/c3.tft.v6.2.symbols.gmt.txt")
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/MSigDB_files/h.all.v6.2.symbols.gmt.txt","./data/MSigDB_files/h.all.v6.2.symbols.gmt.txt")
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/MSigDB_files/c2.cp.v6.2.symbols.gmt.txt","./data/MSigDB_files/c2.cp.v6.2.symbols.gmt.txt")
+  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/MSigDB_files/c5.bp.v6.2.symbols.gmt.txt","./data/MSigDB_files/c5.bp.v6.2.symbols.gmt.txt")
+}
+```
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Create a gene rank based on the gene expression
@@ -215,7 +220,6 @@ plotEnrichment(hallmark_pathways[["HALLMARK_MYC_TARGETS_V2"]],  gene_rank)
 * What if instead of the hallmark gene set, you use the GO? Try that.
 * How different are the results from EnrichR and GSEA using GO annotation? Remember to use the same comparison (i.e. t2 vs t0).
 
-***
 ## Online enrichment tools:
 
 Below you can find a list with the most commonly used online enrichment tools. Each one differs a bit on what they can do. The packages are sorted in order, we would like you to work on the workshop.
@@ -238,7 +242,6 @@ write.table(genes_cluster1, file=clip, sep = '\t', row.names = FALSE)
 close(clip)
 ```
 
-***
 ## Protein-protein interactions
 
 In the course we will not have much time to work on gene expression networks. However, there are some nice databases that allow you to easily visualize protein-protein interactions. Please paste the list of genes using the command above into those sites to have a visual insight on how the Up- or Down- regulated genes interact with each other.
