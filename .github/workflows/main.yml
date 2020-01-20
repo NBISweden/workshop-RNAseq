@@ -88,7 +88,7 @@ jobs:
           dirs=$(ls -d */ | sed 's/\///' | tac)
           for i in $dirs
           do
-           printf "<span style='display:block;'><a href='https://${str_user}.github.io/${repo}/${i}/'>20${i:0:2} ${months[${i:(-3)}]}</a></span>" >> index.md
+           printf "<span style='display:block;'><a href='https://${str_user}.github.io/${repo}/${i}/'>20${i:0:2} ${months[${i:(-2)}]}</a></span>" >> index.md
           done
           printf "</p></div>" >> index.md
 
