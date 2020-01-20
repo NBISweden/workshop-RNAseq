@@ -48,6 +48,7 @@ output:
 packages:
  packages_cran_student:
   - BiocManager
+  - devtools
   - dplyr
   - enrichR
   - ggplot2
@@ -65,7 +66,6 @@ packages:
  packages_cran_repo:
   - bookdown
   - captioner
-  - devtools
   - formattable
   - kableExtra
   - knitr

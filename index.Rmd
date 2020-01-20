@@ -31,7 +31,7 @@ output:
 <span style="display:block;">Quality control</span>
 <span style="display:block;">Mapping of short reads</span>
 <span style="display:block;">Quantification of gene expression</span>
-<span style="display:block;">Exploratory analyses</span>
+<span style="display:block;">Exploratory data analyses</span>
 <span style="display:block;">Differential gene expression</span>
 </p>
 </div>

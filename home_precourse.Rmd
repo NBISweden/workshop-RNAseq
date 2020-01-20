@@ -90,18 +90,21 @@ Note that it may take an hour or so from request approval, before you can actual
 
 For Linux and Mac users, you may have to install some extra OS specific libraries before installing the R packages. Pick the packages as needed based on your system below.
 
-> libcurl
+libcurl
+
 > * deb: libcurl4-openssl-dev (Debian, Ubuntu, etc)
 > * rpm: libcurl-devel (Fedora, CentOS, RHEL)
 > * csw: libcurl_dev (Solaris)
->
-> libssl
+
+libssl
+
 > * deb: libssl-dev (Debian, Ubuntu, etc)
 > * rpm: openssl-devel (Fedora, CentOS, RHEL)
 > * csw: libssl_dev (Solaris)
 > * brew: openssl@1.1 (Mac OSX)
->
-> libxml2
+
+libxml2
+
 > * deb: libxml2-dev (Debian, Ubuntu, etc)
 > * rpm: libxml2-devel (Fedora, CentOS, RHEL)
 > * csw: libxml2_dev (Solaris)

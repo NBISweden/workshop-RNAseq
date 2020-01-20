@@ -1,4 +1,4 @@
-name: render
+name: build
 on:
   push:
     branches-ignore:
@@ -14,6 +14,7 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@master
       - name: Install linux dependencies
         run: |
+          sudo apt-get update
           sudo apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev
       - name: Define variables
         run: |
@@ -39,11 +40,11 @@ jobs:
       - name: Install R dependencies
         if: steps.cache-rp.outputs.cache-hit != 'true'
         run: |
-          Rscript -e "install.packages('yaml')"
-          Rscript -e 'tryCatch({install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)},error=function(e){message("No packages to install.")})'
-          Rscript -e 'tryCatch({install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_student)},error=function(e){message("No packages to install.")})'
-          Rscript -e 'tryCatch({BiocManager::install(yaml::read_yaml("_site.yml")$packages$packages_bioc_repo)},error=function(e){message("No packages to install.")})'
-          Rscript -e 'tryCatch({BiocManager::install(yaml::read_yaml("_site.yml")$packages$packages_bioc_student)},error=function(e){message("No packages to install.")})'
+          Rscript -e 'install.packages("yaml")'
+          Rscript -e 'install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)'
+          Rscript -e 'install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_student)'
+          Rscript -e 'BiocManager::install(as.character(yaml::read_yaml("_site.yml")$packages$packages_bioc_repo))'
+          Rscript -e 'BiocManager::install(as.character(yaml::read_yaml("_site.yml")$packages$packages_bioc_student))'
           Rscript -e 'devtools::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_repo)'
           Rscript -e 'devtools::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_student)'
           echo "R directory size:"
@@ -76,13 +77,18 @@ jobs:
           ls -lh
 
           # Create index file
+          url_git=$(git config --get remote.origin.url)
+          echo "Repo: $url_git"
+          str_user=$(echo $url_git | sed -E 's/http.+github.com\/|\.git//g' | sed 's/\/.*//')
+          echo "User: $str_user"
+
           printf "All current and previous workshop materials are listed below.\n\n" > index.md
           printf "<div style='display:block;'><p>\n" >> index.md
           months=(Zero Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
           dirs=$(ls -d */ | sed 's/\///' | tac)
           for i in $dirs
           do
-           printf "<span style='display:block;'><a href='https://nbisweden.github.io/${repo}/${i}/'>20${i:0:2} ${months[${i:(-3)}]}</a></span>" >> index.md
+           printf "<span style='display:block;'><a href='https://${str_user}.github.io/${repo}/${i}/'>20${i:0:2} ${months[${i:(-3)}]}</a></span>" >> index.md
           done
           printf "</p></div>" >> index.md
 

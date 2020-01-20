@@ -1,4 +1,4 @@
-/* CSS Bootstrap custom style for course */
+/* CSS Bootstrap custom style for workshop */
 /* 2020 Roy Francis */
 
 /* define font */
@@ -175,7 +175,7 @@ blockquote {
 }
 
 .boxy-orange::before {
-  background-color: #EF7C00; !important
+  background-color: #EF7C00 !important;
 }
 
 .boxy > p:first-of-type {
@@ -189,7 +189,7 @@ blockquote {
   font-family: "Font Awesome 5 Free";
   font-size: 15px;
   font-weight: 900;
-  height: 24px; 
+  height: 24px;
   width: 24px;
   color: white;
   background-color: var(--primary);
@@ -568,7 +568,7 @@ ul.nav a:hover {
   background-repeat: no-repeat;
   background-size: contain;
   background-position: left bottom;
-  height: 580px;
+  height: 480px;
 }
 
 @media only screen and (max-width: 575px) {
@@ -579,7 +579,7 @@ ul.nav a:hover {
     text-align: center;
   }
   .landing-div {
-    height: 680px;
+    height: 600px;
   }
 }
 
@@ -623,4 +623,102 @@ ul.nav a:hover {
   background-color: var(--color-code-bg);
   border: none;
   border-left: 6px solid var(--color-border);
+}
+
+/* COLUMNS ------------------------------------------------------------------- */
+
+.pull-center{
+  width: 100%;
+}
+
+/* float 50%-50% width */
+.pull-right-50 {
+  width: 49%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-50 {
+  width: 49%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+
+/* float 30% 70% width */
+.pull-right-30 {
+  width: 29%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-right-70 {
+  width: 69%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-30 {
+  width: 29%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-70 {
+  width: 69%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+
+/* float 40% 60% width */
+.pull-right-40 {
+  width: 39%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-right-60 {
+  width: 59%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-40 {
+  width: 39%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-60 {
+  width: 59%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+
+/* float 30% 70% width */
+.pull-right-30 {
+  width: 29%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-right-70 {
+  width: 69%;
+  float: right;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-30 {
+  width: 29%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
+}
+.pull-left-70 {
+  width: 69%;
+  float: left;
+  margin-right: 0.5%;
+  margin-left: 0.5%;
 }
