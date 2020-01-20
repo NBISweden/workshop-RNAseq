@@ -1,12 +1,4 @@
-All current and previous workshop materials are listed below. Numbers denote year and month.
+All current and previous workshop materials are listed below.
 
-<a href='https://NBISweden.github.io/workshop-RNAseq/2005/'>2005</a>
-
-<a href='https://NBISweden.github.io/workshop-RNAseq/1911/'>1911</a>
-
-<a href='https://NBISweden.github.io/workshop-RNAseq/1906/'>1906</a>
-
-<a href='https://NBISweden.github.io/workshop-RNAseq/1905/'>1905</a>
-
-<a href='https://NBISweden.github.io/workshop-RNAseq/1811/'>1811</a>
-
+<div style='display:block;'><p>
+<span style='display:block;'><a href='https://nbisweden.github.io/workshop-RNAseq/2005/'>2020 May</a></span><span style='display:block;'><a href='https://nbisweden.github.io/workshop-RNAseq/1911/'>2019 </a></span><span style='display:block;'><a href='https://nbisweden.github.io/workshop-RNAseq/1906/'>2019 </a></span><span style='display:block;'><a href='https://nbisweden.github.io/workshop-RNAseq/1905/'>2019 </a></span><span style='display:block;'><a href='https://nbisweden.github.io/workshop-RNAseq/1811/'>2018 </a></span></p></div>

@@ -1,0 +1,104 @@
+<!-- rmd lab header -->
+
+```{r,include=FALSE,cache=FALSE}
+# load libraries
+library(knitr) # runs pandoc
+library(bookdown) # for markdown
+library(captioner) # for table and figure captions
+library(fontawesome) # icons
+
+# fontawesome dependency
+fa <- rmarkdown::html_dependency_font_awesome()
+fa$attachment <- "fonts/fontawesome-webfont.ttf"
+htmltools::tagList(fa)
+
+# prepare captions
+tc <- captioner::captioner(prefix="<b>Tab. </b>")
+fc <- captioner::captioner(prefix="<b>Fig. </b>")
+
+# knitr options
+knitr::opts_knit$set(progress=TRUE,verbose=TRUE)
+knitr::opts_chunk$set(dev="svg",results="hold",fig.show="hold",fig.align="left",
+                      echo=TRUE,warning=FALSE,message=FALSE,accordion=NULL,
+                      block.title=NULL)
+color_primary <- "#0093BD"
+color_text <- "#424949"
+```
+
+```{r,include=FALSE,cache=FALSE}
+# custom hooks
+## collapsible panel
+knitr::knit_hooks$set(accordion=function(before,options,envir) {
+  if(before) {
+    id <- paste0("acc",format(Sys.time(),"%Y%m%d%H%S"),sample(c(0:9),1),sample(c(0:9),1),sample(c(0:9),1),sample(c(0:9),1))
+    if(is.null(options$btntype)) {btntype <- "normal"}else{btntype <- options$btntype}
+    paste0('<p>',
+          '<button class="btn btn-sm btn-primary btn-collapse btn-collapse-',btntype,' collapsed" type="button" data-toggle="collapse" data-target="#',id,'" aria-expanded="false" aria-controls="',id,'">',
+          '</button>',
+          '</p>',
+          '<div class="collapse" id="',id,'">',
+          '<div class="card card-body">')
+  }else{
+    paste0("</div>","</div>")
+  }
+})
+
+## block title for code
+knitr::knit_hooks$set(block.title=function(before,options,envir) {
+
+out_class <- NULL
+if(is.null(options$class.output)) {
+if(options$echo) out_class <- options$engine
+if((!options$echo) & (options$results != "hide")) out_class <- "Output"
+}else{
+  out_class <- options$class.output
+}
+
+  if(before) {
+    paste0('<div class="block-title-parent"><div class="block-title small">',out_class,'</div>')
+  }else{
+    paste0('</div>')
+  }
+})
+
+# knit engine output
+
+eng_output <- function(options) {
+  out <- ''
+  engine_output(options, options$code, out)
+}
+
+knitr::knit_engines$set(output=eng_output)
+
+# custom fontawesome fa function
+fa1 <- function (name=NULL,style="height:0.8em;top:0.04em;position:relative;fill:#424949;",extra_style=NULL)
+{
+    full_name <- NULL
+    if (name %in% fontawesome:::fa_tbl$full_name) {
+        svg <- fontawesome:::fa_tbl[which(fontawesome:::fa_tbl$full_name == name), ][1, 4]
+    }
+    else if (name %in% fontawesome:::fa_tbl$name) {
+        svg <- fontawesome:::fa_tbl[which(fontawesome:::fa_tbl$name == name), ][1, 4]
+    }
+    else {
+        return("")
+    }
+
+    if(!is.null(extra_style)) style <- paste0(style,extra_style)
+    style <- paste0("style=\"", style, "\"")
+
+    if (!grepl(style, pattern = "style=\"\"")) {
+        svg <- gsub(pattern = "^<svg", replacement = paste0("<svg ",
+            style), x = svg)
+    }
+    svg <- htmltools::HTML(svg)
+    class(svg) <- c("fontawesome", class(svg))
+    return(paste0("<span>",svg,"</span>"))
+}
+
+fa2 <- function(name=NULL,style="height:0.8em;top:0.04em;position:relative;fill:white;margin-left:0.45em;margin-bottom: 0.1em;") {
+  return(fa1(name,style))
+}
+```
+
+<br>
