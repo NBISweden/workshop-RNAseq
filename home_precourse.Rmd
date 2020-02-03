@@ -142,7 +142,7 @@ The syllabus for this workshop are as follows.
 * Introduction to RNA-Seq technology and workflow
 * Assessing quality of raw Illumina short reads using FastQC
 * Mapping short reads to reference genome using STAR aligner
-* Post alignment QC
+* Post alignment QC using RSeqQC
 * Quantification of mapped reads using featureCounts
 * Exploratory data analyses using PCA and cluster analysis
 * Differential gene expression using DESeq2

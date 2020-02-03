@@ -33,6 +33,7 @@ A brief introduction to the world of RNA and RNA-Seq technology.
 A primer to working on the unix/linux command line and working on a remote computing cluster Uppmax.
 
 * [Introduction to Linux & Uppmax (Slide)](slide_uppmax_intro.pdf)
+* [Working on Uppmax (Lab)](lab_uppmax_intro.html)
 
 RNA-Seq analyses is usually carried out in R programming language and it will be useful to learn some basic R.
 

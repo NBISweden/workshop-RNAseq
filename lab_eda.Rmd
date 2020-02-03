@@ -20,25 +20,21 @@ library(rafalib)
 library(DESeq2)
 library(pvclust)
 library(biomaRt)
+
+# source download function
+source("https://raw.githubusercontent.com/NBISweden/workshop-RNASeq/assets/scripts.R")
 ```
 
 Load the sequencing data and the metadata data with sample information.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-#Load data and metadata
+# Load data and metadata
+
+download_data("data/counts_raw.txt")
+data <- read.delim("data/counts_raw.txt",header = T)
 
 # if file doesn't exist, download it
-if(!file.exists("data/count_raw.txt")) {
-  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/count_raw.txt","./data/count_raw.txt")
-}
-
-data <- read.delim("data/count_raw.txt",header = T)
-
-# if file doesn't exist, download it
-if(!file.exists("data/metadata_raw.csv")) {
-  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.csv")
-}
-
+download_data("data/metadata_raw.csv")
 metadata <- read.csv2("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T)
 
 #Convert ensembl IDs to gene names
@@ -48,11 +44,7 @@ metadata <- read.csv2("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T
 #annot <- getBM(c("ensembl_gene_id","external_gene_name"), mart=human)
 #write.csv2(annot,"data/human_biomaRt_annotation.csv",row.names = T)
 
-# if file doesn't exist, download it
-if(!file.exists("data/human_biomaRt_annotation.csv")) {
-  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/human_biomaRt_annotation.csv","./data/human_biomaRt_annotation.csv")
-}
-
+download_data("data/human_biomaRt_annotation.csv")
 annot <- read.csv2("data/human_biomaRt_annotation.csv", row.names = 1)
 
 gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
@@ -356,18 +348,10 @@ saveRDS(pvc,"./data/pvc.Rds")
 ```
 
 ```{r,echo=FALSE,block.title=NULL,fig.height=5,fig.width=10}
-# if file doesn't exist, download it
-if(!file.exists("data/mock_pvc.Rds")) {
-  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/mock_pvc.Rds","./data/mock_pvc.Rds")
-}
+download_data("data/mock_pvc.Rds")
+mock_pvc <- readRDS("data/mock_pvc.Rds")
 
-mock_pvc <- readRDS("data/pvc.Rds")
-
-# if file doesn't exist, download it
-if(!file.exists("data/mock_pvc.Rds")) {
-  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/pvc.Rds","./data/pvc.Rds")
-}
-
+download_data("data/pvc.Rds")
 pvc <- readRDS("data/pvc.Rds")
 
 mypar(1,2,mar=c(6,4,2,1))

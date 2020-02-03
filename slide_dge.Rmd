@@ -59,7 +59,7 @@ name: raw
 - Raw count table
 
 ```{r,eval=TRUE,echo=FALSE}
-cr <- read.table("./data/count_raw.txt",header=TRUE)
+cr <- read.table("./data/counts_raw.txt",header=TRUE)
 cr[1:6,1:6]
 ```
 

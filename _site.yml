@@ -2,6 +2,7 @@
 favicon: assets/favicon.png
 output_dir: 2005
 uppmax_project: g2020006
+uppmax_res_1: g2020006_1
 # location options are lund, umea or uppsala
 location: uppsala
 exclude: ["docs","README.md","schedule.csv","LICENSE","LICENSE.md","scripts","tmprepo"]
@@ -18,7 +19,7 @@ navbar:
       href: home_schedule.html
     - text: Content
       href: home_content.html
-    - text: Precourse
+    - text: Precourse   
       href: home_precourse.html
     - text: Info
       href: home_info.html
@@ -76,6 +77,7 @@ packages:
   - xaringan
   - yaml
  packages_bioc_repo:
- packages_github_student:
  packages_github_repo:
   - rstudio/fontawesome
+ packages_github_student:
+

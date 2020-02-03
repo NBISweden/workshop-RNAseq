@@ -59,6 +59,6 @@ cat(dfr$description)
 
 ## Contact
 
-If you would like to get in touch with us regarding the contents of this workshop, kindly submit an issue on the Github [issues](../../issues/) page.
+If you would like to get in touch with us regarding the contents of this workshop, kindly submit an issue on the Github [issues](https://github.com/NBISweden/workshop-RNAseq/issues) page.
 
 ***

@@ -14,14 +14,12 @@ library(lubridate)
 library(dplyr)
 library(kableExtra)
 library(formattable)
-
-# setting
-# set start time for the course (assumes same start time everyday)
-time_begin <- as.POSIXct("09:00:00",format="%T")
 ```
 
 ```{r,eval=TRUE,include=FALSE}
 s <- read.csv("schedule.csv",sep=";",stringsAsFactors=F,header=T,na.strings="",colClasses="character")
+# remove rows that are completely NA
+s <- s[!apply(s,1,function(x) all(is.na(x))),]
 
 s <- s %>%
   # missing values in date and room are filled
@@ -30,8 +28,8 @@ s <- s %>%
   dplyr::mutate(date=format(as_datetime(date,format="%d/%m/%Y"),"%d-%b-%Y")) %>%
   dplyr::mutate(day=format(as_datetime(date,format="%d-%b-%Y"),"%a")) %>%
   dplyr::group_by(date) %>%
-  dplyr::mutate(end=time_begin+minutes(cumsum(dur)),start=c(time_begin,end[-n()])) %>%
-  dplyr::mutate(start=format(start,"%H:%M"),end=format(end,"%H:%M")) %>%
+  dplyr::mutate(start_time=format(as_datetime(start_time,format="%H:%M"),"%H:%M"),
+                end_time=format(as_datetime(end_time,format="%H:%M"),"%H:%M")) %>%
   as.data.frame() %>%
   dplyr::mutate(room=ifelse(is.na(link_room),room,paste0("<a href='",link_room,"'>",room,"</a>"))) %>%
   # create day label (with date, day, room)
@@ -43,7 +41,7 @@ s <- s %>%
   # add links to topic
   dplyr::mutate(topic=ifelse(is.na(link_slide),topic,paste0("<span>",topic,"<a href='",link_slide,"'><i class='fas fa-file-powerpoint' style='margin-left:4px;margin-right:4px;'></i></a></span>"))) %>%
   mutate(topic=ifelse(is.na(link_lab),topic,paste0("<span>",topic,"<a href='",link_lab,"'><i class='fas fa-file-alt' style='margin-left:4px;margin-right:4px;'></i></a></span>"))) %>%
-  dplyr::mutate(time=paste0(start," - ",end,"<span style='color:lightgrey;margin-left:4px;'>(",dur," min)","</span>")) %>%
+  dplyr::mutate(time=paste0(start_time," - ",end_time)) %>%
   dplyr::mutate(teacher=ifelse(is.na(teacher),"",teacher)) %>%
   dplyr::mutate(assistant=ifelse(is.na(assistant),"",assistant)) %>%
   dplyr::select(date,room,time,topic,teacher,assistant)
@@ -63,7 +61,9 @@ s %>%
   dplyr::select(-date,-room) %>%
   setNames(cnames[1:ncol(.)]) %>%
   kable(format="html",escape=FALSE) %>%
-  kable_styling(bootstrap_options=c("hover","responsive","condensed"),position="left",full_width=FALSE) %>%
+  kable_styling(bootstrap_options=c("hover","condensed"),position="center",full_width=TRUE) %>%
+  column_spec(1,width="7em") %>%
+  column_spec(2,width="18em") %>%
   pack_rows(index=r,label_row_css="background:white;",escape=F,indent=FALSE)
 ```
 

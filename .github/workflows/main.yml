@@ -15,7 +15,7 @@ jobs:
       - name: Install linux dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev
+          sudo apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev libudunits2-dev libopenblas-base
       - name: Define variables
         run: |
           echo "::set-env name=path_repo::$(pwd)"
@@ -83,7 +83,7 @@ jobs:
           echo "User: $str_user"
 
           printf "All current and previous workshop materials are listed below.\n\n" > index.md
-          printf "<div style='display:block;'><p>\n" >> index.md
+          printf "<div style='display:block;'><p style='line-height:2;'>\n" >> index.md
           months=(Zero Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
           dirs=$(ls -d */ | sed 's/\///' | tac)
           for i in $dirs

@@ -1,0 +1,112 @@
+---
+title:  'Working on UPPMAX'
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+```{r,eval=TRUE,include=FALSE}
+library(yaml)
+upid <- yaml::read_yaml("_site.yml")$uppmax_project
+upres <- yaml::read_yaml("_site.yml")$uppmax_res_1
+```
+
+# Connect to UPPMAX
+
+The first step of this lab is to open a ssh connection to UPPMAX. You will need an SSH program to do this:
+
+<i class="fab fa-linux"></i> Linux: Use **Terminal** (Included by default).   
+<i class="fab fa-apple"></i> OSX: Use **Terminal** (Included by default).  
+<i class="fab fa-windows"></i> Windows: use [MobaXterm](https://mobaxterm.mobatek.net/). Download and install it if you haven't already done so.   
+
+Fire up the available SSH program and enter the following:
+
+```bash
+$ ssh -Y user@rackham.uppmax.uu.se
+```
+
+Replace **user** with your UPPMAX username. `-Y` means that X-forwarding is activated on the connection, which means graphical data can be transmitted if a program requests it, i.e. programs can use a graphical user interface (GUI) if they want to.
+
+Enter your password when prompted. As you type, nothing will show on screen.
+No stars, no dots. It is supposed to be that way. Just type the password and press enter, it will be fine.
+
+Now your screen should look something like this:
+
+```bash
+ssh -Y user@rackham.uppmax.uu.se
+
+Last login: Fri May 18 15:03:59 2018 from micro046.icm.uu.se
+ _   _ ____  ____  __  __    _    __  __
+| | | |  _ \|  _ \|  \/  |  / \   \ \/ /   | System:    rackham4
+| | | | |_) | |_) | |\/| | / _ \   \  /    | User:      user
+| |_| |  __/|  __/| |  | |/ ___ \  /  \    |
+ \___/|_|   |_|   |_|  |_/_/   \_\/_/\_\   |
+
+###############################################################################
+
+        User Guides: http://www.uppmax.uu.se/support/user-guides
+        FAQ: http://www.uppmax.uu.se/support/faq
+
+        Write to support@uppmax.uu.se, if you have questions or comments.
+```
+
+# Logon to a node
+
+Book resources for a compute node.
+
+```{r,echo=FALSE,comment="",class.output="bash"}
+cat(paste0("$ salloc -A ",upid," -t 07:00:00 -p core -n 6 --reservation=",upres))
+```
+
+Then check which node has been assigned to you (replace **username** with your UPPMAX username)
+
+```bash
+$ squeue -u username
+```
+
+should look something like this
+
+```bash
+usr@rackham2 work $ squeue -u user
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+           3132376      core       sh    user  R       0:04      1 r292
+```
+
+where **r292** is the name of the node I got (yours will probably be different).
+Note the numbers in the Time column. They show for how long the job has been running. When it reaches the time limit you requested (7 hours in this case) the session will shut down, and you will lose all unsaved data. Connect to this node from within UPPMAX.
+
+```bash
+$ ssh -Y r292
+```
+
+# Modules
+
+UPPMAX used modules to load and unload programs. To view which module you have loaded at the moment, type,
+
+```bash
+$ module list
+
+Currently Loaded Modules:
+  1) uppmax   2) bioinfo-tools   3) samtools/1.6
+```
+
+Let's say that you want to make sure you are using the latest version samtools. Look at which version you have loaded at the moment (`samtools/1.6`).
+
+Now type
+
+```bash
+$ module avail
+```
+
+to see which programs are available at UPPMAX. Can you find samtools in the list? Which is the latest version of samtools available at UPPMAX?
+
+To change which samtools module you have loaded, you have to unload the the module you have loaded and then load the other module. To unload a module, use
+
+```bash
+$ module unload <module name>
+
+```
+
+Look in the list from `$ module list` to see the name of the module you want to unload. When the old module is unloaded, load `samtools/0.1.19` (or try with the latest samtools module!).
+
+***

@@ -8,6 +8,11 @@ subtitle: "Workshop on RNA-Seq"
 
 This workflow runs transcript-level quantification using Kallisto followed by differential expression analysis using Sleuth.
 
+```{r}
+# source download function
+source("https://raw.githubusercontent.com/NBISweden/workshop-RNASeq/assets/scripts.R")
+```
+
 # Kallisto
 
 **Kallisto** is an "alignment-free" RNA-Seq quantification method that runs very fast with a small memory footprint, so that it can be run on most laptops. It is a command-line program that can be downloaded as binary executables for Linux or Mac, or in source code format. For a first insight into the program, read [here](https://liorpachter.wordpress.com/2015/05/10/near-optimal-rna-seq-quantification-with-kallisto/) and for the published article, see [here](http://www.nature.com/nbt/journal/vaop/ncurrent/full/nbt.3519.html). There is also a preprint [here](http://arxiv.org/abs/1505.02710).
@@ -140,11 +145,7 @@ Again, if there were other experimental factors involved, these could have been 
 Now we read in the transcript-gene mappings file. This was [previously](lab_annotations.html) downloaded.
 
 ```{r,eval=FALSE,block.title=TRUE}
-# if file doesn't exist, download it
-if(!file.exists("data/human_transcripts.txt")) {
-  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/human_transcripts.txt","./data/human_transcripts.txt")
-}
-
+download_data("data/human_transcripts.txt")
 t2g <- read.delim("data/human_transcripts.txt", header=TRUE,sep="\t", stringsAsFactors=F)
 t2g <- dplyr::rename(t2g,target_id=ensembl_transcript_id,
                      ens_gene=ensembl_gene_id,ext_gene=external_gene_name)

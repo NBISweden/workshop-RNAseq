@@ -23,22 +23,15 @@ library(biomaRt)
 library(enrichR)
 library(fgsea)
 
+# source download function
+source("https://raw.githubusercontent.com/NBISweden/workshop-RNASeq/assets/scripts.R")
+
 # read data
-
-# if file doesn't exist, download it
-if(!file.exists("data/cpm.csv")) {
-  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/cpm.csv","./data/cpm.csv")
-}
-
+download_data("data/cpm.csv")
 cpm <- read.csv2("data/cpm.csv",row.names = 1)
 
 # read metadata
-
-# if file doesn't exist, download it
-if(!file.exists("data/metadata_raw.csv")) {
-  download.file(url="https://raw.github.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.csv")
-}
-
+download_data("data/metadata_raw.csv")
 metadata <- read.csv2("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T)
 ```
 

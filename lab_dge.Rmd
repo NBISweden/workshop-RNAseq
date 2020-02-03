@@ -24,6 +24,9 @@ library(ggplot2)
 library(biomaRt) # annotation
 library(DESeq2) # rna-seq
 library(edgeR) # rna-seq
+
+# source download function
+source("https://raw.githubusercontent.com/NBISweden/workshop-RNASeq/assets/scripts.R")
 ```
 
 # Data preprocessing
@@ -31,12 +34,8 @@ library(edgeR) # rna-seq
 Data preprocessing is done in R. First, we read in the count table.
 
 ```{r}
-# if file doesn't exist, download it
-if(!file.exists("data/count_raw.txt")) {
-  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/count_raw.txt","./data/count_raw.txt")
-}
-
-cr <- read.table("./data/count_raw.txt",header=TRUE)
+  download_data("data/counts_raw.txt")
+  cr <- read.table("./data/counts_raw.txt",header=TRUE)
 head(cr)
 str(cr)
 ```
@@ -46,11 +45,7 @@ The count data shows read counts across samples and genes. The columns denote sa
 Read in the metadata. Each row corresponds to a sample. The sample names can be added as row names.
 
 ```{r}
-# if file doesn't exist, download it
-if(!file.exists("data/metadata_raw.txt")) {
-  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.txt")
-}
-
+download_data("data/metadata_raw.txt")
 mr <- read.csv2("./data/metadata_raw.txt",header=TRUE,stringsAsFactors=F)
 rownames(mr) <- mr$Sample_ID
 head(mr)
@@ -130,18 +125,10 @@ For analysis other than DGE, the data set must be corrected before use. The most
 We read in out filtered count data and metadata. We can use the function `cpm()` from R package **edgeR** for this.
 
 ```{r}
-# if file doesn't exist, download it
-if(!file.exists("data/counts_filtered.txt")) {
-  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/counts_filtered.txt","./data/counts_filtered.txt")
-}
-
+download_data("data/counts_filtered.txt")
 cf <- read.table("data/counts_filtered.txt",header=TRUE)
 
-# if file doesn't exist, download it
-if(!file.exists("data/metadata_raw.csv")) {
-  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.csv")
-}
-
+download_data("data/metadata_raw.csv")
 mr <- read.csv2("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
 rownames(mr) <- mr$Sample_ID
 ```
@@ -171,11 +158,7 @@ tpm <- function(counts,len) {
 We read in the annotation data, remove duplicated ensembl IDs and compute gene lengths.
 
 ```{r}
-# if file doesn't exist, download it
-if(!file.exists("data/human_genes.txt")) {
-  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/human_genes.txt","./data/human_genes.txt")
-}
-
+download_data("data/human_genes.txt")
 g <- read.delim("data/human_genes.txt",header=T,stringsAsFactors=F)
 g <- g[!duplicated(g$ensembl_gene_id),]
 g$len <- g$end_position-g$start_position
@@ -264,18 +247,10 @@ In this section, we are strictly not running any quantitative analyses or statis
 We will use the variance stabilized counts (VST) from the previous step for all exploratory analyses. Otherwise, the files below can also be copied from the data location mentioned at the beginning of this document.
 
 ```{r}
-# if file doesn't exist, download it
-if(!file.exists("data/counts_vst.txt")) {
-  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/counts_vst.txt","./data/counts_vst.txt")
-}
-
+download_data("data/counts_vst.txt")
 cv <- read.table("data/counts_vst.txt",header=TRUE)
 
-# if file doesn't exist, download it
-if(!file.exists("data/metadata_raw.csv")) {
-  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.csv")
-}
-
+download_data("data/metadata_raw.csv")
 mr <- read.csv2("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
 rownames(mr) <- mr$Sample_ID
 ```
@@ -361,18 +336,10 @@ Hierarchically clustered sample-to-sample euclidean distance matrix. Larger dist
 For differential gene expression, we use the **DESeq2** package. We use the raw filtered counts and metadata.
 
 ```{r}
-# if file doesn't exist, download it
-if(!file.exists("data/counts_filtered.txt")) {
-  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/counts_filtered.txt","./data/counts_filtered.txt")
-}
-
+download_data("data/counts_filtered.txt")
 cf <- read.table("data/counts_filtered.txt",header=TRUE)
 
-# if file doesn't exist, download it
-if(!file.exists("data/metadata_raw.csv")) {
-  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/metadata_raw.csv","./data/metadata_raw.csv")
-}
-
+download_data("data/metadata_raw.csv")
 mr <- read.csv2("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
 rownames(mr) <- mr$Sample_ID
 ```
@@ -647,12 +614,7 @@ df_res <- as.data.frame(res1)
 df_res$ensembl_gene_id <- rownames(df_res)
 
 # read genes info
-
-# if file doesn't exist, download it
-if(!file.exists("data/human_genes.txt")) {
-  download.file(url="https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/data/human_genes.txt","./data/human_genes.txt")
-}
-
+download_data("data/human_genes.txt")
 hg <- read.delim("data/human_genes.txt",header=T,sep="\t",stringsAsFactors=F)
 hg <- hg[!duplicated(hg$ensembl_gene_id),]
 

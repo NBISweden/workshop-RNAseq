@@ -18,4 +18,6 @@ library(bookdown) # for markdown
 # knitr options
 knitr::opts_knit$set(progress=TRUE,verbose=TRUE)
 knitr::opts_chunk$set(dev="svg",results="hold",fig.show="hold",fig.align="left",echo=TRUE,warning=FALSE,message=FALSE)
+
+source("scripts.R")
 ```
