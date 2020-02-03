@@ -26,7 +26,7 @@ library(DESeq2) # rna-seq
 library(edgeR) # rna-seq
 
 # source download function
-source("https://raw.githubusercontent.com/NBISweden/workshop-RNASeq/assets/scripts.R")
+source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
 ```
 
 # Data preprocessing

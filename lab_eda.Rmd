@@ -22,7 +22,7 @@ library(pvclust)
 library(biomaRt)
 
 # source download function
-source("https://raw.githubusercontent.com/NBISweden/workshop-RNASeq/assets/scripts.R")
+source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
 ```
 
 Load the sequencing data and the metadata data with sample information.

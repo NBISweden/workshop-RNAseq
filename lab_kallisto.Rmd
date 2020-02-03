@@ -10,7 +10,7 @@ This workflow runs transcript-level quantification using Kallisto followed by di
 
 ```{r}
 # source download function
-source("https://raw.githubusercontent.com/NBISweden/workshop-RNASeq/assets/scripts.R")
+source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
 ```
 
 # Kallisto
