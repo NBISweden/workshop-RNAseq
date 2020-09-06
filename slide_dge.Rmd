@@ -38,6 +38,7 @@ library(ggplot2)
 library(pheatmap)
 library(DESeq2)
 library(edgeR)
+library(gridExtra)
 ```
 
 ---
@@ -46,10 +47,10 @@ class: spaced
 
 ## Contents
 
-* [Preprocessing](#pp)
-* [Normalisation](#norm-1)
-* [Exploratory](#eda-cor)
-* [DGE](#dge)
+- [Preprocessing](#pp)
+- [Normalisation](#norm-1)
+- [Exploratory](#eda-cor)
+- [DGE](#dge)
 
 ---
 name: raw
@@ -129,7 +130,7 @@ h3 <- cf3 %>%
   theme(panel.border=element_blank(),
         axis.ticks=element_blank())
 
-ggpubr::ggarrange(h0,h1,h2,h3,nrow=1,ncol=4)
+gridExtra::grid.arrange(h0,h1,h2,h3,nrow=1,ncol=4)
 ```
 
 --
@@ -330,7 +331,7 @@ h4 <- cv %>%
   theme(panel.border=element_blank(),
         axis.ticks=element_blank())
 
-ggpubr::ggarrange(h0,h1,h2,h3,h4,nrow=1,ncol=5)
+gridExtra::grid.arrange(h0,h1,h2,h3,h4,nrow=1,ncol=5)
 ```
 
 ```{r,fig.height=1.8,fig.width=8,echo=FALSE}
@@ -389,7 +390,7 @@ h4 <- cv %>%
     theme(panel.border=element_blank(),
           axis.ticks=element_blank())
 
-ggpubr::ggarrange(h0,h1,h2,h3,h4,nrow=1,ncol=5)
+gridExtra::grid.arrange(h0,h1,h2,h3,h4,nrow=1,ncol=5)
 ```
 
 ---
@@ -397,7 +398,7 @@ name: eda-cor
 
 ## Exploratory | Correlation
 
-* Correlation between samples
+- Correlation between samples
 
 ```{r,ech=FALSE,fig.height=4.5,fig.width=5.5}
 dmat <- as.matrix(cor(cv,method="spearman"))
@@ -410,7 +411,7 @@ name: eda-dist
 
 ## Exploratory | Distance
 
-* Similarity between samples
+- Similarity between samples
 
 ```{r,echo=TRUE,fig.height=4.5,fig.width=5.5}
 dmat <- as.matrix(dist(t(cv)))
@@ -423,7 +424,7 @@ name: eda-pca
 
 ## Exploratory | PCA
 
-* Relationship between samples
+- Relationship between samples
 
 .pull-left-40[
 ```{r,echo=FALSE,fig.height=3.5,fig.width=3.5}
@@ -463,7 +464,7 @@ name: dge
 
 ## DGE
 
-* Create the DESeq2 object
+- Create the DESeq2 object
 
 ```{r}
 library(DESeq2)
@@ -472,7 +473,7 @@ d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Time)
 d
 ```
 
-* Model must be factors
+- Model must be factors
 
 - `~var`
 - `~covar+var`
@@ -482,7 +483,7 @@ name: dge-sf
 
 ## DGE | Size factors
 
-* Normalisation factors are computed
+- Normalisation factors are computed
 
 ```{r}
 d <- DESeq2::estimateSizeFactors(d,type="ratio")
@@ -494,7 +495,7 @@ name: dge-dispersion
 
 ## DGE | Dispersion
 
-* We need a measure variability of gene counts
+- We need a measure variability of gene counts
 
 ```{r}
 dm <- apply(cd,1,mean)
@@ -519,21 +520,21 @@ h2 <- ggplot(data.frame(mean=log10(dm+1),var=dc),
   geom_smooth(method="lm")+
   labs(x=expression('Log'[10]~'Mean counts'),y="Coefficient of variation")+
   theme_bw()
-ggpubr::ggarrange(h1,h2,nrow=1,ncol=2)
+gridExtra::grid.arrange(h1,h2,nrow=1,ncol=2)
 ```
 
-* Dispersion is a measure of variability in gene expression for a given mean
+- Dispersion is a measure of variability in gene expression for a given mean
 
 ---
 name: dge-dispersion-2
 
 ## DGE | Dispersion
 
-* D is unreliable for low mean counts
-* Genes with similar mean values must have similar dispersion
-* Estimate likely (ML) dispersion for each gene based on counts
-* Fit a curve through the gene-wise estimates
-* Shrink dispersion towards the curve
+- D is unreliable for low mean counts
+- Genes with similar mean values must have similar dispersion
+- Estimate likely (ML) dispersion for each gene based on counts
+- Fit a curve through the gene-wise estimates
+- Shrink dispersion towards the curve
 
 ```{r,fig.height=3,fig.width=3}
 d <- DESeq2::estimateDispersions(d)
@@ -546,7 +547,7 @@ name: dge-test
 
 ## DGE | Test
 
-* Log2 fold changes changes are computed after GLM fitting
+- Log2 fold changes changes are computed after GLM fitting
 
 ```{r}
 dg <- nbinomWaldTest(d)
@@ -555,13 +556,13 @@ resultsNames(dg)
 
 --
 
-* Use `results()` to customise/return results
-  * Set coefficients using `contrast` or `name`
-  * Filtering by fold change using `lfcThreshold`
-  * `cooksCutoff` removes outliers
-  * `independentFiltering`
-  * `pAdjustMethod`
-  * `alpha`
+- Use `results()` to customise/return results
+  - Set coefficients using `contrast` or `name`
+  - Filtering by fold change using `lfcThreshold`
+  - `cooksCutoff` removes outliers
+  - `independentFiltering`
+  - `pAdjustMethod`
+  - `alpha`
 
 ---
 name: dge-test-2
@@ -584,7 +585,7 @@ head(res1)
 
 --
 
-* Use `lfcShrink()` to correct fold changes for high dispersion genes
+- Use `lfcShrink()` to correct fold changes for high dispersion genes
 
 <!-- --------------------- Do not edit this and below --------------------- -->
 
@@ -592,9 +593,9 @@ head(res1)
 
 # Acknowledgements
 
-* [Normalising RNA-seq data](https://www.ebi.ac.uk/sites/ebi.ac.uk/files/content.ebi.ac.uk/materials/2012/121029_HTS/ernest_turro_normalising_rna-seq_data.pdf) by Ernest Turro  
-* RNA-seq analysis [Bioconductor vignette](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html)
-* [DGE Workshop](https://github.com/hbctraining/DGE_workshop/tree/master/lessons) by HBC training
+- [Normalising RNA-seq data](https://www.ebi.ac.uk/sites/ebi.ac.uk/files/content.ebi.ac.uk/materials/2012/121029_HTS/ernest_turro_normalising_rna-seq_data.pdf) by Ernest Turro  
+- RNA-seq analysis [Bioconductor vignette](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html)
+- [DGE Workshop](https://github.com/hbctraining/DGE_workshop/tree/master/lessons) by HBC training
 
 ---
 name: end_slide
