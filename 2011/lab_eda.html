@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>PCA and Clustering</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link id="font-awesome-1-attachment" rel="attachment" href="site_libs/font-awesome-5.1.0/fonts/fontawesome-webfont.ttf"/>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+#TOC {
+  display: none !important;
+}
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><img src="assets/logo.svg" id="logo" style="height:30px;margin:0;"/></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="home_schedule.html">Schedule</a>
+</li>
+<li>
+  <a href="home_content.html">Content</a>
+</li>
+<li>
+  <a href="home_precourse.html">Precourse</a>
+</li>
+<li>
+  <a href="home_info.html">Info</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">PCA and Clustering</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+
+</div>
+
+
+<!-- rmd lab header -->
+<p><br></p>
+<div class="boxy boxy-exclamation">
+<p>Create a directory named <code>data</code> in your current working directory for input and output files.</p>
+</div>
+<p>Load R packages.</p>
+<pre class="r"><code>library(pheatmap)
+library(rafalib)
+library(DESeq2)
+library(pvclust)
+library(biomaRt)
+
+# source download function
+source(&quot;https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R&quot;)</code></pre>
+<p>Load the sequencing data and the metadata data with sample information.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code># Load data and metadata
+
+download_data(&quot;data/counts_raw.txt&quot;)
+data &lt;- read.delim(&quot;data/counts_raw.txt&quot;,header = T)
+
+# if file doesn&#39;t exist, download it
+download_data(&quot;data/metadata_raw.csv&quot;)
+metadata &lt;- read.csv2(&quot;data/metadata_raw.csv&quot;,row.names = 1,stringsAsFactors = T)
+
+#Convert ensembl IDs to gene names
+
+# optionally, get annotation from biomart
+#human &lt;- useMart(&quot;ensembl&quot;, dataset = &quot;hsapiens_gene_ensembl&quot;)
+#annot &lt;- getBM(c(&quot;ensembl_gene_id&quot;,&quot;external_gene_name&quot;), mart=human)
+#write.csv2(annot,&quot;data/human_biomaRt_annotation.csv&quot;,row.names = T)
+
+download_data(&quot;data/human_biomaRt_annotation.csv&quot;)
+annot &lt;- read.csv2(&quot;data/human_biomaRt_annotation.csv&quot;, row.names = 1)
+
+gene_names &lt;- as.character ( annot[match(rownames(data),annot[,&quot;ensembl_gene_id&quot;]),&quot;external_gene_name&quot;] )
+gene_names[is.na(gene_names) ] &lt;- &quot;&quot;
+
+#Remove missing or fuse duplicated annotations
+data &lt;- rowsum(data, group = as.character(gene_names) ) #assign gene names and sum duplicates
+data &lt;- data[ rownames(data) != &quot;&quot; , ] #remove blank annotation
+data &lt;- data[ order(rownames(data)),]  #order genes alphabetically
+dim(data)
+
+#Remove genes with counts less than
+sel &lt;- apply(data, 1, function(x) {sum(x &gt; 5) &gt; 3} )
+data &lt;- data[sel,]
+dim(data)
+
+#Transform data to log2CPM
+cpm &lt;- t( round(t(data) / colSums(data) * 1e6))
+logcpm &lt;- log2( cpm + 1)
+if(!file.exists(&quot;data/cpm.csv&quot;)) write.csv2(cpm , &quot;data/cpm.csv&quot;,row.names = T)</code></pre>
+</div>
+<hr />
+<div id="pca" class="section level1">
+<h1><span class="header-section-number">1</span> PCA</h1>
+<p>Performing PCA has many useful applications and interpretations, which much depends on the data used. In the case of life sciences, we want to segregate samples based on gene expression patterns in the data.</p>
+<div id="z-score-normalization" class="section level2">
+<h2><span class="header-section-number">1.1</span> Z-score normalization</h2>
+<p>Now that the data is prepared, we now proceed with PCA. Since each gene has a different expression level, it means that genes with higher expression values will naturally have higher variation that will be captured by PCA. This means that we need to somehow give each gene a similar weight when performing PCA (see below). The common practice is to center and scale each gene before performing PCA. This exact scaling is called <strong>Z-score</strong> normalization it is very useful for PCA, clustering and plotting heatmaps.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>Znorm &lt;- t( apply(logcpm , 1 , function(x) scale( x , center = T, scale = T)) )
+colnames(Znorm) &lt;- colnames(logcpm)
+
+mypar(1,2,mar = c(5,3,2,1))
+boxplot( t(logcpm[1:30,])   , ylim=c(0,12), las=2 , col=&quot;grey&quot; , main=&quot;logCPM raw_data&quot; ,cex=.2)
+boxplot( t(Znorm[1:30,]) , ylim=c(-4,4), las=2 , col=&quot;grey&quot; , main=&quot;Z-score data&quot; ,cex=.2)
+abline(h=0, col=&quot;red&quot; ,lty=2)</code></pre>
+<img src="lab_eda_files/figure-html/unnamed-chunk-4-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<hr />
+</div>
+<div id="gene-selection" class="section level2">
+<h2><span class="header-section-number">1.2</span> Gene selection</h2>
+<p>As you can appreciate above, Z-score normalization have set each gene mean to 0 and changes the variances to a common scale. However, if we normalize all genes to the same scale, even genes that could be considered stable across samples (i.e. that do not vary across your samples) will be used for separation of samples. This might in turn add ‘noise’ to your data in form of ‘variation across samples that are not meaningful’. Therefore, we can also sort the genes by variance and use the top genes to filter/prioritize the data.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>#Compute the mean, variance and cv for each gene and sort them in decreasing order
+gene_stats &lt;- data.frame(row.names = rownames(data))
+means &lt;- rowMeans(logcpm)
+vars &lt;- apply(logcpm,1,var)
+
+#Plot the row means versus row means
+mypar(1,2,mar = c(5,3,2,1))
+plot(x=means, y=vars, cex=.1 )
+
+#Sort and select the top 500 highly variable genes from the data
+vars &lt;- sort( vars , decreasing=T)
+top_var &lt;- names( vars ) [1:500]
+boxplot( t(logcpm[ top_var[1:15],])   , ylim=c(0,12), las=2 , col=&quot;grey&quot; , main=&quot;logCPM (top var genes)&quot; ,cex=.2)</code></pre>
+<img src="lab_eda_files/figure-html/unnamed-chunk-5-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<hr />
+</div>
+<div id="computing-pca" class="section level2">
+<h2><span class="header-section-number">1.3</span> Computing PCA</h2>
+<p>Next, we can compute PCA using the <code>prcomp()</code> function. As additional parameters, we can already center and scale each gene already inside the function. This the same exact <strong>Z-score</strong> scaling above, but already inside the function.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>mypar(1,2,mar = c(3,3,2,1))
+PC &lt;-  prcomp( t( Znorm[ top_var, ]) ) #Method1
+PC &lt;-  prcomp( t( logcpm[ top_var, ]), center = TRUE, scale. = TRUE) #Method2
+
+mypar(1,2)
+plot(PC$x[,1] , PC$x[,2], cex=2, col=factor(metadata$Time), xlab=&quot;PC1&quot;, ylab=&quot;PC2&quot;, pch=16, main=&quot;PCA&quot;, las=1)
+text(PC$x[,1] , PC$x[,2], cex=.7, labels = paste0(metadata$Sample_Name), pos = 3)
+
+plot(PC$x[,3] , PC$x[,4], cex=2, col=factor(metadata$Time), xlab=&quot;PC3&quot;, ylab=&quot;PC4&quot;, pch=16, main=&quot;PCA&quot;, las=1)
+text(PC$x[,3] , PC$x[,4], cex=.7, labels = paste0(metadata$Sample_Name), pos = 3)</code></pre>
+<img src="lab_eda_files/figure-html/unnamed-chunk-6-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Which groups are clearly separated by PC1 and PC2?</li>
+<li>Which groups are clearly separated by PC3 and PC4?</li>
+<li>What happens if we include 2000 genes (rather than 500) in the PCA?</li>
+<li>What happens if we include all genes in the PCA?</li>
+<li>What happens if we use the raw CPM, rather than log2CPM for the PCA?</li>
+<li>What happens if we don’t scale or centralize the data?</li>
+<li>How does PC3 and PC4 look? Go back to the code above and change which PCs to plot.</li>
+<li>Do PC10 and PC11 still separate your samples as well as PC1 and PC2?</li>
+</ul>
+<hr />
+</div>
+<div id="computing-pc-variance" class="section level2">
+<h2><span class="header-section-number">1.4</span> Computing PC variance</h2>
+<p>The usefulness of PCA is that the principal components do have a meaning: They store the amount of variance in decreasing order, so some PCs are more important than others. Inside the <code>PC$sdev</code> object, we can get the standard deviation stored in each PC.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>PC_sd &lt;- setNames(PC$sdev , paste0(&quot;PC&quot;,1:length(PC$sdev)))
+PC_var_expl &lt;- ( PC_sd^2 ) / sum(PC_sd^2) * 100
+
+mypar(1,1)
+barplot(PC_var_expl, las=2, ylab=&quot;% variance explained&quot;)
+abline(h=2, lty=2)</code></pre>
+<img src="lab_eda_files/figure-html/unnamed-chunk-7-1.svg" width="480" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Which PCs explain at least 2% of variance?</li>
+<li>Instead of using our whole data set, could we use only the top PCs for downstream analysis ? Explain.</li>
+</ul>
+<hr />
+</div>
+<div id="leading-genes" class="section level2">
+<h2><span class="header-section-number">1.5</span> Leading genes</h2>
+<p>Now that you know that each PC stores a particular structure of the data, we could also explore with genes are more responsible for that separation (a.k.a. leading genes). For that, we can take a look inside the PC object.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>leading_genes &lt;- PC$rotation
+head(leading_genes)
+
+leading_PC1 &lt;- sort(leading_genes[,1],decreasing = T)
+leading_PC2 &lt;- sort(leading_genes[,2],decreasing = T)
+
+mypar(1,2,mar = c(10,4,2,2))
+barplot(leading_PC1[1:15], las=2)
+barplot(leading_PC2[1:15], las=2)</code></pre>
+<img src="lab_eda_files/figure-html/unnamed-chunk-8-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Which genes impact the most in PC1?</li>
+<li>Which genes impact the most in PC2?</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="hierarchical-clustering" class="section level1">
+<h1><span class="header-section-number">2</span> Hierarchical clustering</h1>
+<p>Hierarchical clustering is group of clustering methods used to group samples based on a hierarchy. The hierarchical clustering is done in two steps:</p>
+<ul>
+<li>Step1: Define the distances between samples. The most common are Euclidean distance (a.k.a. straight line between two points) or correlation coefficients.</li>
+<li>Step2: Define the dendrogram among all samples using <strong>Bottom-up</strong> or <strong>Top-down</strong> approach. <strong>Bottom-up</strong> is where samples start with their own cluster which end up merged pair-by-pair until only one cluster is left. <strong>Top-down</strong> is where samples start all in the same cluster that end up being split by 2 until each sample has its own cluster.</li>
+</ul>
+<hr />
+<div id="defining-distance-between-samples" class="section level2">
+<h2><span class="header-section-number">2.1</span> Defining distance between samples</h2>
+<p>The base R <code>stats</code> package already contains a function <code>dist()</code> that calculates distances between all pairs of samples. Since we want to compute distances between samples, rather than among genes, we need to transpose the data before applying it to the <code>dist()</code> function. This can be done by simply adding the transpose function <code>t()</code> to the data. When clustering on genes, it is wise to first define the gene selection to reduce the time to compute distances. A sensible choice is to do it on the differentially expressed genes only (including up to ~3000 genes).</p>
+<p>The distance methods available in <code>dist()</code> are: <em>euclidean</em>, <em>maximum</em>, <em>manhattan</em>, <em>canberra</em>, <em>binary</em> or <em>minkowski</em>.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>d &lt;- dist( t(logcpm) , method=&quot;euclidean&quot;)
+d</code></pre>
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>When printing the distance object, why is only half of the matrix shown?</li>
+</ul>
+<hr />
+<p>As you might have realized, correlation is not a method implemented in the <code>dist()</code> function. However, we can create our own distances and transform them to a distance object.</p>
+<p>We can first compute sample correlations using the <code>cor()</code> function. As you might already know, correlation range from -1 to 1, where 1 indicates that two samples are closest, -1 indicates that two samples are the furthest and 0 is somewhat in between. This, however, creates a problem in defining distances because a distance of 0 indicates that two samples are closest, 1 indicates that two samples are the furthest and distance of -1 is not meaningful. We thus need to transform the correlations to a positive scale (a.k.a. <strong>adjacency</strong>):</p>
+<p><span class="math display">\[adj = -\frac{cor - 1}{2}\]</span></p>
+<p>Once we transformed the correlations to a 0-1 scale, we can simply convert it to a distance object using <code>as.dist()</code> function. The transformation does not need to have a maximum of 1, but it is more intuitive to have it at 1, rather than at any other number.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>#Compute sample correlations
+sample_cor &lt;- cor( logcpm )
+round(sample_cor,4)
+
+#Transform the scale from correlations
+cor_distance &lt;- -(sample_cor - 1)/2
+round(cor_distance,4)
+
+#Convert it to a distance object
+d2 &lt;- as.dist(cor_distance)
+d2</code></pre>
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>What is the adjacency distance between two samples with correlation <span class="math inline">\(r\)</span> of 0.8 ?</li>
+<li>What is the adjacency distance between two samples with correlation <span class="math inline">\(r\)</span> of -0.6 ?</li>
+<li>What happens if instead of using the formula above, we used the absolute value of <span class="math inline">\(r\)</span> ( <span class="math inline">\(|r|\)</span> ) as adjacency (this way all values will be also between 0-1). Does this change affects the interpretation of adjacency distances ?</li>
+<li>What happens if instead of using the formula above, we used <span class="math inline">\(r^2\)</span> as adjacency (this way all values will be also between 0-1). Does this change affects the interpretation of adjacency distances ?</li>
+</ul>
+<hr />
+</div>
+<div id="clustering-samples" class="section level2">
+<h2><span class="header-section-number">2.2</span> Clustering samples</h2>
+<p>After having calculated the distances between samples calculated, we can now proceed with the hierarchical clustering per-se. We will use the function <code>hclust()</code> for this purpose, in which we can simply run it with the distance objects created above.</p>
+<p>The methods available are: <em>ward.D</em>, <em>ward.D2</em>, <em>single</em>, <em>complete</em>, <em>average</em>, <em>mcquitty</em>, <em>median</em> or <em>centroid</em>.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>#Clustering using euclidean distance
+mypar(1,2,mar=c(6,4,2,1))
+h &lt;- hclust(d, method=&quot;complete&quot;)
+plot( as.dendrogram(h) , las=1, main=&quot;d=euclidean\nh=complete&quot;)
+points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[h$order])
+
+h2 &lt;- hclust(d2, method=&quot;complete&quot;)
+plot( as.dendrogram(h2) , las=1, main=&quot;d=correlation\nh=complete&quot;)
+points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[h2$order])</code></pre>
+<img src="lab_eda_files/figure-html/unnamed-chunk-11-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Does the ordering of the samples in dendrogram has a meaning ?</li>
+<li>Why are the scales between those dendrograms so different ? Look at the distance matrices to get the intuition.</li>
+<li>Do the two methods represent the same results ? Which one would you trust the most ?</li>
+<li>Does the ordering of the dendrogram have a meaning ?</li>
+<li>Change the clustering method to <code>ward.D2</code>. How does it affect your results ?</li>
+<li>We used the whole dataset for clustering. Re-calculate the distances now using only the top 500 genes with highest CV. Does it change the results ?</li>
+<li>Instead of clustering on the raw data, could we cluster on the top <span class="math inline">\(N\)</span> principal components? Justify.</li>
+</ul>
+<hr />
+</div>
+<div id="defining-clusters" class="section level2">
+<h2><span class="header-section-number">2.3</span> Defining clusters</h2>
+<p>Once your dendrogram is created, the next step is to define which samples belong to a particular cluster. However, the sample groups are already known in this example, so clustering them does not add much information for us. What we can do instead is subdivide the genes into clusters. As for the PCA (above), the ideal scenario is to use the Z-score normalized gene expression table, because in this way we make sure that we are grouping together expression trends (going up vs. down), rather than expression level (genes with more counts vs less counts). This way, we can simply repeat the steps above using the transpose of the Z-score matrix, compute the correlation distances and cluster using ward.D2 linkage method. Since it is time consuming to cluster on all genes, this step is usually done only on the differentially expressed gene list (say up to ~3000 genes). Here, we can for instance cluster on the genes with highest variance <code>top_var</code>.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>gene_cor  &lt;- cor( t( Znorm[ top_var, ] ) )
+gene_dist &lt;- as.dist( -( gene_cor - 1 )/2 )
+gene_clus &lt;- hclust(gene_dist, method = &quot;complete&quot;)</code></pre>
+</div>
+<p>After identifying the dendrogram for the genes (below), we can now literally cut the tree at a fixed threshold (with <code>cutree</code>) at different levels to define the clusters.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>HEIGHT &lt;- 0.6
+gene_clusters &lt;- cutree(gene_clus, h = HEIGHT)
+gene_clusters
+
+mypar(1,1,mar=c(6,4,2,1))
+plot( as.dendrogram(gene_clus) , las=1, main=&quot;d=correlation\nh=complete&quot; )
+
+rect.hclust(gene_clus, h = HEIGHT)
+abline(h = HEIGHT, col=&quot;red&quot;, lty=2)
+points(1:length(gene_clusters) ,rep(0,length(gene_clusters)), pch= 16, cex=2, col=factor(gene_clusters)[gene_clus$order] )
+legend( &quot;topright&quot;, levels(factor(gene_clusters)) , pch = 16, col =  factor(levels(factor(gene_clusters))) )</code></pre>
+<img src="lab_eda_files/figure-html/unnamed-chunk-13-1.svg" width="960" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Check the dendrogram above, what is a sensible height to cut the tree?</li>
+<li>What is the maximum sensible amount of clusters I could have in my data?</li>
+</ul>
+<hr />
+</div>
+<div id="clustering-on-heatmap-optional" class="section level2">
+<h2><span class="header-section-number">2.4</span> Clustering on Heatmap (optional)</h2>
+<p>Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the <code>pheatmap</code> function, which by default will do the clustering of the rows and columns.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>pheatmap( logcpm[top_var,] , scale = &quot;row&quot; , color = colorRampPalette(c(&quot;navy&quot;,&quot;white&quot;,&quot;firebrick&quot;))(90), border_color = NA, cluster_cols = F)</code></pre>
+<img src="lab_eda_files/figure-html/unnamed-chunk-14-1.svg" width="384" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>Check the dendrograms on the side of the heatmap. Do they look familiar with the previous ones?</li>
+<li>What does the ‘scale’ parameter mean? What happens with the clustering if we change it to ‘none’ or to ‘columns’?</li>
+<li>Can you change the clustering to ‘ward.D2’? Explore the <code>pheatmap</code> function pressing tab.</li>
+<li>Can you cut your gene tree into 4 clusters? Explore the <code>pheatmap</code> function pressing tab.</li>
+</ul>
+<hr />
+</div>
+<div id="clustering-bootstrapping-optional" class="section level2">
+<h2><span class="header-section-number">2.5</span> Clustering bootstrapping (optional)</h2>
+<p>Let’s say that you have 12 samples, so that all samples have the exact same expression level (say 12000 genes). And to that you add 1 single gene which is more expressed in samples 6-12, than in 1-6. If you ran a bootstrapping in this <strong>mock example</strong>, you will see that the samples will seem to cluster very well enven though there is only 1 out 12000 genes that make that separation possible.</p>
+<p>One way to measure <strong>clustering robustness / accuracy</strong> is by selecting part of the data set (say 90% of the genes), performing the clustering and recording which samples fall together. Then, you repeat (iterate) with another selection of 90% of the genes up to 1000 times, recording the clustering results. In the end, you compare the results of all 1000 clusterings and check how often the same samples failed in the same group. This procedure is called <strong>bootstrapping</strong>, and it is measured as the “percentage of times an event can occur”. For more details on this, please read the webpage for the <code>pvclust()</code> which is full of examples on this:</p>
+<ul>
+<li><code>pvclust</code> website: <a href="http://stat.sys.i.kyoto-u.ac.jp/prog/pvclust/" class="uri">http://stat.sys.i.kyoto-u.ac.jp/prog/pvclust/</a></li>
+<li><code>pvclust</code> paper: <a href="https://academic.oup.com/bioinformatics/article/22/12/1540/207339" class="uri">https://academic.oup.com/bioinformatics/article/22/12/1540/207339</a></li>
+</ul>
+<p><i class="fas fa-exclamation-circle"></i> Note that bootstrapping procedure is very time consuming and computationally intensive.</p>
+<div class="block-title-parent">
+<div class="block-title small">
+R
+</div>
+<pre class="r"><code>mypar(1,2,mar=c(6,4,2,1))
+# Clustering on the MOCK dataset
+mock &lt;- matrix(rep(logcpm[,1],12),byrow = F,ncol = 12)
+mock &lt;- rbind( c(rep(2,6),rep(5,6)), mock)
+mock_pvc &lt;- pvclust( data = mock , method.dist = &quot;correlation&quot;, method.hclust = &quot;complete&quot;,parallel = T,r=1)
+plot(mock_pvc,las=2,hang = -0.5)
+
+# Clustering on our dataset (this step is slow)
+pvc &lt;- pvclust( data = logcpm , method.dist = &quot;correlation&quot;, method.hclust = &quot;complete&quot;,parallel = T)
+plot(pvc,las=2,hang = -0.5)
+pvrect(pvc, alpha = 0.9)
+points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[pvc$hclust$order])</code></pre>
+</div>
+<p><img src="lab_eda_files/figure-html/unnamed-chunk-17-1.svg" width="960" style="display: block; margin: auto auto auto 0;" /></p>
+<p><i class="fas fa-comments"></i> <strong>Exploratory Questions</strong></p>
+<ul>
+<li>With what percentages the samples 10, 11 and 12 fall together in the same cluster?</li>
+<li>With what percentages the samples other than 10, 11 and 12 fall together in the same cluster?</li>
+<li>With what percentages the samples 8, 7 and 9 fall together in the same cluster?</li>
+<li>With what percentages the samples 4 and 5 fall together in the same cluster?</li>
+<li>The orange rectangles represent 2 clusters. What do you think is the criteria used to define this clusters ? PS: it is not the height as in the previous examples.</li>
+</ul>
+<hr />
+</div>
+</div>
+
+
+<footer class="footer">
+<div class="container footer-container">
+<div class="row">
+  
+<div class="col-sm-8" style="text-align:left;vertical-align:middle;">
+<p class="small" style="color:#bdbdbd;">
+<b>2020</b> • NBIS • SciLifeLab
+</p>
+</div>
+
+<div class="col-sm-4" style="text-align:right;vertical-align:middle;">
+<p style="color:#bdbdbd;">
+<span>
+  <span class="footericon" style="padding-right:4px; padding-left:4px">
+    <a href="https://nbis.se/">
+      <svg style="height:0.8em;top:.04em;position:relative;fill:#bdbdbd;" viewBox="0 0 496 512"><path d="M248 8C111.03 8 0 119.03 0 256s111.03 248 248 248 248-111.03 248-248S384.97 8 248 8zm82.29 357.6c-3.9 3.88-7.99 7.95-11.31 11.28-2.99 3-5.1 6.7-6.17 10.71-1.51 5.66-2.73 11.38-4.77 16.87l-17.39 46.85c-13.76 3-28 4.69-42.65 4.69v-27.38c1.69-12.62-7.64-36.26-22.63-51.25-6-6-9.37-14.14-9.37-22.63v-32.01c0-11.64-6.27-22.34-16.46-27.97-14.37-7.95-34.81-19.06-48.81-26.11-11.48-5.78-22.1-13.14-31.65-21.75l-.8-.72a114.792 114.792 0 0 1-18.06-20.74c-9.38-13.77-24.66-36.42-34.59-51.14 20.47-45.5 57.36-82.04 103.2-101.89l24.01 12.01C203.48 89.74 216 82.01 216 70.11v-11.3c7.99-1.29 16.12-2.11 24.39-2.42l28.3 28.3c6.25 6.25 6.25 16.38 0 22.63L264 112l-10.34 10.34c-3.12 3.12-3.12 8.19 0 11.31l4.69 4.69c3.12 3.12 3.12 8.19 0 11.31l-8 8a8.008 8.008 0 0 1-5.66 2.34h-8.99c-2.08 0-4.08.81-5.58 2.27l-9.92 9.65a8.008 8.008 0 0 0-1.58 9.31l15.59 31.19c2.66 5.32-1.21 11.58-7.15 11.58h-5.64c-1.93 0-3.79-.7-5.24-1.96l-9.28-8.06a16.017 16.017 0 0 0-15.55-3.1l-31.17 10.39a11.95 11.95 0 0 0-8.17 11.34c0 4.53 2.56 8.66 6.61 10.69l11.08 5.54c9.41 4.71 19.79 7.16 30.31 7.16s22.59 27.29 32 32h66.75c8.49 0 16.62 3.37 22.63 9.37l13.69 13.69a30.503 30.503 0 0 1 8.93 21.57 46.536 46.536 0 0 1-13.72 32.98zM417 274.25c-5.79-1.45-10.84-5-14.15-9.97l-17.98-26.97a23.97 23.97 0 0 1 0-26.62l19.59-29.38c2.32-3.47 5.5-6.29 9.24-8.15l12.98-6.49C440.2 193.59 448 223.87 448 256c0 8.67-.74 17.16-1.82 25.54L417 274.25z"></path>
+      </svg>
+    </a>
+    </span>
+    <span class="footericon" style="padding-right:4px; padding-left:4px">
+      <a href="https://twitter.com/NBISwe"><svg style="height:0.8em;top:.04em;position:relative;fill:#bdbdbd;" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path>
+    </svg>
+    </a>
+    </span>
+    <span class="footericon" style="padding-left:4px">
+      <a href="https://www.linkedin.com/company/nbisweden/">
+        <svg style="height:0.8em;top:.04em;position:relative;fill:#bdbdbd;" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path>
+        </svg>
+    </a>
+    </span>
+  </span>
+</p>
+</div>
+
+</div>
+</div>
+</footer>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
