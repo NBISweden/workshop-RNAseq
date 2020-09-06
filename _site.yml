@@ -1,10 +1,13 @@
-﻿name: Analysis of RNA-Seq data
-favicon: assets/favicon.png
-output_dir: 2005
+name: Analysis of RNA-Seq data
+# output directory used on gh-pages branch. format: YYMM
+output_dir: 2011
+# used site-wide wherever uppmax project ids are used
 uppmax_project: g2020006
 uppmax_res_1: g2020006_1
-# location options are lund, umea or uppsala
+# location options are linkoping, lund, umea or uppsala
 location: uppsala
+assistants:
+favicon: assets/favicon.png
 exclude: ["docs","README.md","schedule.csv","LICENSE","LICENSE.md","scripts","tmprepo"]
 navbar:
   title: '<img src="assets/logo.svg" id="logo" style="height:30px;margin:0;"/>'
@@ -19,7 +22,7 @@ navbar:
       href: home_schedule.html
     - text: Content
       href: home_content.html
-    - text: Precourse   
+    - text: Precourse
       href: home_precourse.html
     - text: Info
       href: home_info.html
@@ -53,7 +56,7 @@ packages:
   - dplyr
   - enrichR
   - ggplot2
-  - ggpubr
+  - gridExtra
   - pheatmap
   - pvclust
   - rafalib
@@ -64,6 +67,7 @@ packages:
   - DESeq2
   - edgeR
   - fgsea
+ packages_github_student:
  packages_cran_repo:
   - bookdown
   - captioner
@@ -79,5 +83,3 @@ packages:
  packages_bioc_repo:
  packages_github_repo:
   - rstudio/fontawesome
- packages_github_student:
-
