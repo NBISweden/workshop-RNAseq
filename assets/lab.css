@@ -5,7 +5,7 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,600,600i|Ubuntu+Mono&display=swap&subset=latin-ext');
 
 :root {
-  --primary: #0093BD;
+  --color-primary: #4C979F;
   --color-border: #ccc;
   --color-text: #424949;
   --color-code-bg:  #f4f6f6;
@@ -125,8 +125,8 @@ code {
 .smallest{ font-size: 0.579em; }
 
 blockquote {
-  border-left: 5px solid var(--primary);
-  background: var(--color-boxy-bg);
+  border-left: 5px solid var(--color-primary);
+  background: var(--color-code-bg);
   padding: 10px;
   padding-left: 12px;
   margin-left: 16px;
@@ -160,10 +160,10 @@ blockquote {
 
 /** div style for instructions **/
 .boxy {
- /*border: 1px solid var(--primary);*/
+ /*border: 1px solid var(--color-primary);*/
  background-color: var(--color-boxy-bg);
  border: 1px solid var(--color-border);
- border-left: 6px solid var(--primary);
+ border-left: 6px solid var(--color-primary);
  border-radius: 0px 4px 4px 0px;
  padding: 10px 10px 0px 10px;
  margin: 10px 0px 10px 0px;
@@ -194,7 +194,7 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--primary);
+  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
@@ -213,7 +213,7 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--primary);
+  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
@@ -232,7 +232,7 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--primary);
+  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
@@ -251,7 +251,7 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--primary);
+  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
@@ -270,7 +270,7 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--primary);
+  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
@@ -289,7 +289,7 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--primary);
+  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
@@ -304,7 +304,7 @@ blockquote {
   display: inline-block;
   height: 1.4em;
   width: 1.4em;
-  background-color: var(--primary);
+  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   margin-left:-30px;
@@ -364,12 +364,12 @@ img {
 
 /* link colour */
 a, table a{
-  color: var(--primary);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
 a:hover, table a:hover {
-  color: var(--primary);
+  color: var(--color-primary);
   text-decoration: underline;
 }
 
@@ -417,17 +417,17 @@ button.btn-collapse {
 
 button.btn-collapse-normal {
   color: white;
-  border-color: var(--primary);
-  background-color: var(--primary);
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
 }
 
 button.btn-collapse-normal:hover {
     background-color: white;
-    color: var(--primary);
+    color: var(--color-primary);
     border-color: white;
-    box-shadow: 0px 3px 40px -9px var(--primary);
-    -webkit-box-shadow: 0px 3px 40px -9px var(--primary);
-    -moz-box-shadow: 0px 3px 40px -9px var(--primary);
+    box-shadow: 0px 3px 40px -9px var(--color-primary);
+    -webkit-box-shadow: 0px 3px 40px -9px var(--color-primary);
+    -moz-box-shadow: 0px 3px 40px -9px var(--color-primary);
 }
 
 button.btn-collapse-optional {
@@ -483,7 +483,7 @@ div.block-title {
 /* navbar ------------------------------------------------------------------- */
 
 div.navbar-inverse {
-  background-color: var(--primary);
+  background-color: var(--color-primary);
 }
 
 .navbar-inverse .navbar-nav li a {
@@ -498,7 +498,7 @@ div.navbar-inverse {
 }
 
 ul.nav a:hover {
-  color: var(--primary);
+  color: var(--color-primary);
 }
 
 .navbar-header a:hover {
@@ -512,7 +512,7 @@ ul.nav a:hover {
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
-  color: var(--primary);
+  color: var(--color-primary);
   background-color: white;
 }
 
@@ -552,7 +552,7 @@ ul.nav a:hover {
 }*/
 
 .footer a {
-  color: var(--primary);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
@@ -622,7 +622,7 @@ ul.nav a:hover {
 /* floating bar highlight */
 .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
   z-index: 2;
-  color: var(--primary);
+  color: var(--color-primary);
   font-weight: 600;
   background-color: var(--color-code-bg);
   border: none;

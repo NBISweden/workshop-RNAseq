@@ -21,7 +21,7 @@ knitr::opts_knit$set(progress=TRUE,verbose=TRUE)
 knitr::opts_chunk$set(dev="svg",results="hold",fig.show="hold",fig.align="left",
                       echo=TRUE,warning=FALSE,message=FALSE,accordion=NULL,
                       block.title=NULL)
-color_primary <- "#0093BD"
+color_primary <- "#4C979F"
 color_text <- "#424949"
 ```
 
@@ -99,8 +99,6 @@ fa1 <- function (name=NULL,style="height:0.8em;top:0.04em;position:relative;fill
 fa2 <- function(name=NULL,style="height:0.8em;top:0.04em;position:relative;fill:white;margin-left:0.45em;margin-bottom: 0.1em;") {
   return(fa1(name,style))
 }
-
-source("scripts.R")
 ```
 
 <br>
