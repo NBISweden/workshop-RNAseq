@@ -41,6 +41,13 @@ if(loc=="uppsala") {
                     description="Use the [UL website](www.ul.se) or the [UL app](https://www.ul.se/en/tickets/how-to-buy-a-ticket/the-UL-app/) for bus and train services around Uppsala. For buses from the Centralstation (Train/Bus), take Bus 4 (towards Gottsunda Centrum) or 8 (towards Sunnersta) and get off at the stop *Uppsala Science Park*. Bus tickets can be purchased in the app or directly from the driver using a credit card.",
                     stringsAsFactors=F)
 }
+if(loc=="linkoping") {
+  dfr <- data.frame(venue_lat=58.402748,
+                    venue_lon=15.578822,
+                    venue_address="<b>Linköping University</b>,Campus Valla, C-house, Entrance 12, 581 83 Linköping, Sweden",
+                    description="Use the [Östgötatrafiken website](https://www.ostgotatrafiken.se) or the [Östgötatrafiken app](https://www.ostgotatrafiken.se/kundservice/hur-kan-vi-hjalpa-dig/nya-appen/) for bus services around Linköping. Tickets can be bought in the app, or you can by a travel card in advance which you can load with tickets as described [here](https://www.ostgotatrafiken.se/biljetter/kopa-biljett/utan-app/). From Linköping Resecentrum, take bus 12 (towards Lambohov) or bus 543 (towards Slaka) and get off at the stop *Mäster Mattias väg*.",
+                    stringsAsFactors=F)
+}
 ```
 
 ```{r,eval=TRUE,echo=FALSE,block.title=NULL}
