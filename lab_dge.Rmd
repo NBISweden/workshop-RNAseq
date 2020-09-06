@@ -20,7 +20,7 @@ library(dplyr)
 
 # plotting
 library(ggplot2)
-
+library(gridExtra) # combining ggplots
 library(biomaRt) # annotation
 library(DESeq2) # rna-seq
 library(edgeR) # rna-seq
@@ -34,8 +34,8 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 Data preprocessing is done in R. First, we read in the count table.
 
 ```{r}
-  download_data("data/counts_raw.txt")
-  cr <- read.table("./data/counts_raw.txt",header=TRUE)
+download_data("data/counts_raw.txt")
+cr <- read.table("./data/counts_raw.txt",header=TRUE)
 head(cr)
 str(cr)
 ```
@@ -65,27 +65,36 @@ boxplot(log10(as.matrix(cr)+1),ylab=expression('Log'[10]~'Read counts'),las=2,
         main="Raw data")
 ```
 
-The median values are zero across all samples. This is a sign that the data set would benefit from a low count filtering.
+The median values are zero across all samples. Around half the values in each sample are zeros. This data set would benefit from a low count filtering.
 
 We can check if any samples need to be discarded based on the number of genes detected. We create a barplot of genes detected across samples.
 
 ```{r}
-{barplot(colSums(cr>5),ylab="Number of detected genes",las=2)
-abline(h=median(colSums(cr>5)))}
+{barplot(colSums(cr>3),ylab="Number of detected genes",las=2)
+abline(h=median(colSums(cr>3)))}
 ```
 
-None of the samples look bad enough to be removed.
+On average, about 15000 genes are detected. All samples are more or less close to the average. None of the samples look bad enough to be removed.
 
-<i class="fas fa-comments"></i> What does `cr>5` do? Why did we use 5? Is it better than using `cr>0`?
+<i class="fas fa-comments"></i> What does `cr>3` do? Why did we use 3? Is it better than using `cr>0`?
 
 And we can create a similar plot for detection rate across genes.
 
 ```{r}
-{barplot(rowSums(cr>5),xlab="Genes",ylab="Number of samples",las=2,names.arg="")
-abline(h=median(rowSums(cr>5)))}
+{barplot(rowSums(cr>3),xlab="Genes",ylab="Number of samples",names.arg="")
+abline(h=median(rowSums(cr>3)),col="red")}
 ```
 
-Some of the genes are not detected across most samples. These genes can be discarded. Below, rather than using zero are minimum value for detection, we used minimum of 1 count-per-million (CPM). This ignores noisy background counts. And we want to keep genes that have minimum 1 CPM across 2 samples (since each of test groups consist of 3 samples).
+This is harder to see. It's perhaps easier to plot a histogram.
+
+```{r}
+hist(rowSums(cr>3))
+```
+
+
+There are a lot of genes that are not expressed (ie; zero on x-axis). These can be removed completely. We are really interested in the peak on the right. These are genes that are expressed in all samples. We don't want to be too restrictive, so we will choose to keep genes that are expressed in atleast 3 samples.
+
+Below, rather than using zero as the minimum value for detection, we used minimum of 1 count-per-million (CPM). This ignores noisy background counts. And we want to keep genes that have minimum 1 CPM across 2 samples (since each of test groups consist of 3 samples).
 
 ```{r}
 # remove genes with low counts
@@ -94,6 +103,8 @@ cf <- cr[keepgenes,]
 ```
 
 <i class="fas fa-comments"></i> How would the results change if we used total number of samples (ie; 12 for this dataset) in the code above?
+
+Distribution of the filtered counts looks like below. Compare this to the previous boxplot above.
 
 ```{r}
 boxplot(log10(as.matrix(cf)+1),ylab=expression('Log'[10]~'Read counts'),las=2,
@@ -179,16 +190,23 @@ ct <- tpm(cf1,g1$len)
 boxplot(log10(as.matrix(ct)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="TPM")
 ```
 
+This is the distribution of TPM counts.
+
 ## DESeq2
 
 DESeq2 internally corrects counts for sequencing depth and RNA compositional bias using **Median of ratios** method. The details of this method are described further below under DGE size factors. To run this method, we create a DESeq2 object using the count data and metadata.
 
-```{r}
+```{r,eval=FALSE}
 library(DESeq2)
 mr$Time <- factor(mr$Time)
 d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Time)
 d <- DESeq2::estimateSizeFactors(d,type="ratio")
 cd <- counts(d,normalized=TRUE)
+saveRDS(cd,"data/counts_normalised_deseq2.Rds")
+```
+
+```{r}
+cd <- readRDS("data/counts_normalised_deseq2.Rds")
 boxplot(log10(as.matrix(cd)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="DESeq2")
 ```
 
@@ -244,7 +262,7 @@ par(mfrow=c(1,1))
 
 In this section, we are strictly not running any quantitative analyses or statistical test. This is a QC of the counts. We are running correlation to check similarity of gene counts between samples. We are running distance based clustering and PCA to estimate similarity between samples. This should give us an idea of the variation within your sample groups and detect possible outliers or mis-labelled samples.
 
-We will use the variance stabilized counts (VST) from the previous step for all exploratory analyses. Otherwise, the files below can also be copied from the data location mentioned at the beginning of this document.
+We will use the variance stabilized counts (VST) from the previous step for all exploratory analyses. Otherwise, the files below can also be downloaded.
 
 ```{r}
 download_data("data/counts_vst.txt")
@@ -305,7 +323,7 @@ p1 <- ggplot(pcamat2,aes(PC1,PC3,colour=Time))+
 p2 <- ggplot(pcamat2,aes(PC2,PC3,colour=Time))+
   geom_point()+
   theme_bw()
-ggpubr::ggarrange(p1,p2,nrow=1,ncol=2)
+gridExtra::grid.arrange(p1,p2,nrow=1,ncol=2)
 ```
 
 An alternative way to create a PCA plot is directly from the DESeq2 object using the DESeq2 function `plotPCA()`.
@@ -328,8 +346,8 @@ pheatmap(dmat,border_color=NA,annotation_col=mr[,"Time",drop=F],
 
 Hierarchically clustered sample-to-sample euclidean distance matrix. Larger distances mean lower similarity and vice-versa. In the matrix, red colour denotes larger distance (lower similarity) and blue denotes small distance (higher similarity). Annotation colours denote **Time** groups. The dendrogram helps to visualise sample clustering. Notice that samples group by **Time**.
 
-<i class="fas fa-clipboard-list"></i> Try to run the PCA using one of the other normalisation methods, say logCPM and/or DESeq2 normalised counts.   
-<i class="fas fa-comments"></i> How different are the results? How do samples group? Can these differences be explained?  
+<i class="fas fa-clipboard-list"></i> Try to run the PCA using one of the other normalisation methods, say logCPM and/or DESeq2 normalised counts.
+<i class="fas fa-comments"></i> How different are the results? How do samples group? Can these differences be explained?
 
 # DGE
 
@@ -630,7 +648,7 @@ Now we have annotated our DEG list with information such as gene names, genomic 
 This is an extra step to generate more accurate log2 fold changes. This step corrects the log2 fold changes for genes with high dispersion.
 
 ```{r,block.title=TRUE}
-lres1 <- lfcShrink(dg,coef="Time_t2_vs_t0",res=res1)
+lres1 <- lfcShrink(dg,coef="Time_t2_vs_t0",res=res1,type="normal")
 summary(lres1)
 ```
 
