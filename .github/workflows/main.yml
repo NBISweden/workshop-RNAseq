@@ -5,13 +5,18 @@ on:
       - gh-pages
 jobs:
   rmd-render-job:
-    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-18.04, r: '4.0.0'}
+    runs-on: ${{ matrix.config.os }}
     steps:
       - uses: actions/checkout@v1
       - uses: r-lib/actions/setup-r@master
-        with:
-          r-version: '3.6.1'
       - uses: r-lib/actions/setup-pandoc@master
+        with:
+          r-version: ${{ matrix.config.r }}
       - name: Install linux dependencies
         run: |
           sudo apt-get update
@@ -31,24 +36,32 @@ jobs:
           echo "Path export: ${path_export}"
           echo "Folder contents at $(pwd):"
           ls -lh
+      - name: Print R packages
+        run: |
+          # parse r packages from Rmd amd md files
+          # grep -Eroh "(^library\([A-Za-z0-9]+\))|(^require\([A-Za-z0-9]+\))" *md | sed 's/library\|(\|)//g' | sort | uniq > r-packages.txt
+          # parse r packages from _site.yml
+          awk '/^[^ ]/{ f=/^packages:/; next } f{ if (sub(/:$/,"")) pkg=$2; else print pkg, $2 }' _site.yml | uniq | sort > r-packages.txt
+          cat r-packages.txt
       - name: Cache R packages
         id: cache-rp
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
-          path: "/home/runner/work/_temp/Library"
-          key: ${{ runner.os }}-cache-rp-$(ls /home/runner/work/_temp/Library/ | sha256sum)
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ matrix.config.r }}-${{ hashFiles('r-packages.txt') }}
       - name: Install R dependencies
         if: steps.cache-rp.outputs.cache-hit != 'true'
         run: |
           Rscript -e 'install.packages("yaml")'
-          Rscript -e 'install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)'
-          Rscript -e 'install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_student)'
-          Rscript -e 'BiocManager::install(as.character(yaml::read_yaml("_site.yml")$packages$packages_bioc_repo))'
-          Rscript -e 'BiocManager::install(as.character(yaml::read_yaml("_site.yml")$packages$packages_bioc_student))'
-          Rscript -e 'devtools::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_repo)'
-          Rscript -e 'devtools::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_student)'
+          Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)) install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)'
+          Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_cran_student)) install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_student)'
+          Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_bioc_repo)) BiocManager::install(as.character(yaml::read_yaml("_site.yml")$packages$packages_bioc_repo))'
+          Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_bioc_student)) BiocManager::install(as.character(yaml::read_yaml("_site.yml")$packages$packages_bioc_student))'
+          Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_github_repo)) remotes::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_repo)'
+          Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_github_student)) remotes::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_student)'
+          Rscript -e 'installed.packages()'
           echo "R directory size:"
-          du -sh /home/runner/work/_temp/Library
+          du -sh ${{ env.R_LIBS_USER }}
       - name: Render site, pull repo, copy folder, create index, push repo
         run: |
           # Add git info
