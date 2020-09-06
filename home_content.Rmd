@@ -2,8 +2,8 @@
 title: "Content"
 output:
   bookdown::html_document2:
-    toc: true
-    number_sections: true
+    toc: false
+    number_sections: false
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
