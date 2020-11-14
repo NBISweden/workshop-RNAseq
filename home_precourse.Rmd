@@ -120,7 +120,12 @@ sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 
 
 ***
 
-### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Create a conda environment from file
+### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Create a conda 
+
+
+
+
+ronment from file
 
 To download the `environment_RNAseq2020.yml` file using the command on Terminal:
 
@@ -129,7 +134,7 @@ To download the `environment_RNAseq2020.yml` file using the command on Terminal:
 wget https://nbisweden.github.io/workshop-RNAseq/environment_RNAseq2020.yml
 
 #MacOSX
-curl -o environment_RNAseq2020.yml https://nbisweden.github.io/workshop-scRNAseq/labs/environment_RNAseq2020.yml
+curl -o environment_RNAseq2020.yml https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/environement_RNAseq2020.yml
 ```
 
 After this, you should have a file named `environment_RNAseq2020.yml` in your directory (it does not matter where). Next, type:
