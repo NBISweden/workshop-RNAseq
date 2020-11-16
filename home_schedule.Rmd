@@ -17,6 +17,10 @@ library(formattable)
 library(yaml)
 ```
 
+<div class="boxy boxy-warning boxy-exclamation">
+**Note:** The schedule and materials are not final and are subject to change.
+</div>
+
 ```{r,eval=TRUE,include=FALSE}
 s <- read.csv("schedule.csv",sep=";",stringsAsFactors=F,header=T,na.strings="",colClasses="character")
 # remove rows that are completely NA
