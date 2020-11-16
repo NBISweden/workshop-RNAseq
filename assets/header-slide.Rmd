@@ -18,6 +18,9 @@ library(bookdown) # for markdown
 color_primary <- "#4C979F"
 color_text <- "#424949"
 
+# turn off terminal colors
+options(crayon.enabled = FALSE)
+
 # knitr options
 knitr::opts_knit$set(progress=TRUE,verbose=TRUE)
 knitr::opts_chunk$set(dev="svg",results="hold",fig.show="hold",fig.align="left",echo=TRUE,warning=FALSE,message=FALSE)

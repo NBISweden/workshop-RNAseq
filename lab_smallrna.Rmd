@@ -6,7 +6,7 @@ subtitle: "Workshop on RNA-Seq"
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-<div class="boxy boxy-exclamation">
+<div class="boxy boxy-exclamation boxy-warning">
 This lab is to be run on Uppmax <i class="fas fa-cloud"></i>.
 </div>
 
@@ -254,7 +254,7 @@ If the library **pheatmap** isn't installed, you can download and install it wit
 install.packages("pheatmap")
 ```
 
-<div class="boxy boxy-exclamation">
+<div class="boxy boxy-exclamation boxy-warning">
 There may be some problems displaying plots etc. on UPPMAX when running in interactive mode. If you have trouble viewing the PCA plots and heatmaps, try:
 
 - Log out of UPPMAX

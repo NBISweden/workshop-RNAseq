@@ -8,7 +8,7 @@ subtitle: "Workshop on RNA-Seq"
 
 # Loading data
 
-<div class="boxy boxy-exclamation">
+<div class="boxy boxy-exclamation boxy-warning">
 Create a directory named `data` in your current working directory.
 </div>
 
@@ -47,7 +47,7 @@ vars <- sort( vars , decreasing=T)
 top_var <- names( vars ) [1:500]
 ```
 
-<div class="boxy boxy-exclamation">
+<div class="boxy boxy-exclamation boxy-warning">
 Here you would select genes based on p-values and logFC you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are selecting only the top 500 variable genes.
 </div>
 
@@ -145,7 +145,7 @@ HALLMARK | [h.all.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msig
 
 As you could already notice, the differences in gene expression between days t0 to t24 are very clear, but not the ones from t2. Here we will illustrate a gene set enrichment comparing t2 to t0 in order to explore which pathways are UP or DOWN regulated at the first 2 hours of the experiment.
 
-<div class="boxy boxy-exclamation">
+<div class="boxy boxy-exclamation boxy-warning">
 Here you would use the logFC values you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are using a simple difference in mean expression.
 </div>
 

@@ -10,7 +10,7 @@ subtitle: "Workshop on RNA-Seq"
 
 Integrated Genomics Viewer (IGV) is a visualization tool for interactive exploration of large, integrated genomic data sets. It supports a wide variety of data types, including array-based and next-generation sequence data, and genomic annotations. Our purpose of IGV is to visualise reads mapped to reference in BAM files. IGV is also useful in curating/verifying results from analyses pipelines.  
 
-<div class="boxy boxy-lightbulb">
+<div class="boxy boxy-lightbulb boxy-primary">
 
 IGV is installed on Uppmax, but since you would then access it over a network connection, the graphics might be sluggish. We recommend that you download and run IGV locally and download the files that you will look at locally. Alternatively, you can put the files in the webexport folder on Uppmax and view them from there. More information about that further down.
 

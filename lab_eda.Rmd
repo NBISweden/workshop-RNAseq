@@ -8,7 +8,7 @@ editor_options:
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-<div class="boxy boxy-exclamation">
+<div class="boxy boxy-exclamation boxy-warning">
 Create a directory named `data` in your current working directory for input and output files.
 </div>
 
@@ -113,16 +113,18 @@ boxplot( t(logcpm[ top_var[1:15],])   , ylim=c(0,12), las=2 , col="grey" , main=
 Next, we can compute PCA using the `prcomp()` function. As additional parameters, we can already center and scale each gene already inside the function. This the same exact **Z-score** scaling above, but already inside the function.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-mypar(1,2,mar = c(3,3,2,1))
-PC <-  prcomp( t( Znorm[ top_var, ]) ) #Method1
-PC <-  prcomp( t( logcpm[ top_var, ]), center = TRUE, scale. = TRUE) #Method2
-
-mypar(1,2)
-plot(PC$x[,1] , PC$x[,2], cex=2, col=factor(metadata$Time), xlab="PC1", ylab="PC2", pch=16, main="PCA", las=1)
-text(PC$x[,1] , PC$x[,2], cex=.7, labels = paste0(metadata$Sample_Name), pos = 3)
-
-plot(PC$x[,3] , PC$x[,4], cex=2, col=factor(metadata$Time), xlab="PC3", ylab="PC4", pch=16, main="PCA", las=1)
-text(PC$x[,3] , PC$x[,4], cex=.7, labels = paste0(metadata$Sample_Name), pos = 3)
+{
+  mypar(1,2,mar = c(3,3,2,1))
+  PC <-  prcomp( t( Znorm[ top_var, ]) ) #Method1
+  PC <-  prcomp( t( logcpm[ top_var, ]), center = TRUE, scale. = TRUE) #Method2
+  
+  mypar(1,2)
+  plot(PC$x[,1] , PC$x[,2], cex=2, col=factor(metadata$Time), xlab="PC1", ylab="PC2", pch=16, main="PCA", las=1)
+  text(PC$x[,1] , PC$x[,2], cex=.7, labels = paste0(metadata$Sample_Name), pos = 3)
+  
+  plot(PC$x[,3] , PC$x[,4], cex=2, col=factor(metadata$Time), xlab="PC3", ylab="PC4", pch=16, main="PCA", las=1)
+  text(PC$x[,3] , PC$x[,4], cex=.7, labels = paste0(metadata$Sample_Name), pos = 3)
+}
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**

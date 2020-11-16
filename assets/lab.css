@@ -11,6 +11,8 @@
   --color-code-bg:  #f4f6f6;
   --color-code-inline: #5d6d7e;
   --color-boxy-bg: #fbfcfc;
+  --color-shadow: #E0E0E0;
+  --color-optional: #bf6300;
   --font-base: 'Source Sans Pro';
   --font-highlight: 'Source Sans Pro';
   --font-code: 'Ubuntu Mono';
@@ -20,7 +22,7 @@
 /* body font family */
 body,p,h1,h2,h3,h4,h5,h6 {
   font-family: var(--font-base, 'Roboto', 'DIN', 'Helvetica', sans-serif);
-  color: var(--color-text);
+  /*color: var(--color-text);*/
   font-weight: 400;
   font-size: 17px;
   line-height: 1.55;
@@ -29,7 +31,7 @@ body,p,h1,h2,h3,h4,h5,h6 {
 /* title font family, weight and size */
 h1,h2,h3 {
   font-family: var(--font-highlight, 'Roboto', 'DIN', 'Helvetica', sans-serif);
-  color: var(--color-text);
+  /*color: var(--color-text);*/
   font-weight: 600;
 }
 
@@ -163,25 +165,81 @@ blockquote {
  /*border: 1px solid var(--color-primary);*/
  background-color: var(--color-boxy-bg);
  border: 1px solid var(--color-border);
- border-left: 6px solid var(--color-primary);
+ border-left: 6px solid var(--color-border);
  border-radius: 0px 4px 4px 0px;
  padding: 10px 10px 0px 10px;
  margin: 10px 0px 10px 0px;
  position: relative;
 }
 
+.boxy::before {
+  background-color: var(--color-border) !important;
+}
+
+.boxy-primary {
+  color: #3c787f;
+  background-color: #edf4f5;
+  border-color: #c9dfe2;
+  border-left-color: #3c787f;
+}
+
+.boxy-primary::before {
+  background-color: #3c787f !important;
+}
+
 .boxy-orange {
- /*border: 1px solid #EF7C00;*/
- background-color: var(--color-boxy-bg);
- border-color: #EF7C00;
+ color: #bf6300;
+ background-color: #fdf1e5;
+ border-color: #fad7b2;
+ border-left-color: #bf6300;
 }
 
 .boxy-orange::before {
-  background-color: #EF7C00 !important;
+  background-color: #bf6300 !important;
 }
 
-.boxy > p:first-of-type {
-  text-indent: 10px;
+.boxy-warning {
+ color: #8a6d3b;
+ background-color: #fcf8e3;
+ border-color: #faebcc;
+ border-left-color: #8a6d3b;
+}
+
+.boxy-warning::before {
+  background-color: #8a6d3b !important;
+}
+
+.boxy-success {
+ color: #3c763d;
+ background-color: #dff0d8;
+ border-color: #d6e9c6;
+ border-left-color: #3c763d;
+}
+
+.boxy-success::before {
+  background-color: #3c763d !important;
+}
+
+.boxy-danger {
+ color: #a94442;
+ background-color: #f2dede;
+ border-color: #ebccd1;
+ border-left-color: #a94442;
+}
+
+.boxy-danger::before {
+  background-color: #a94442 !important;
+}
+
+.boxy-info {
+ color: #31708f;
+ background-color: #d9edf7;
+ border-color: #bce8f1;
+ border-left-color: #31708f;
+}
+
+.boxy-info::before {
+  background-color: #31708f !important;
 }
 
 /* fa exclamation */
@@ -194,11 +252,11 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
   text-align: center;
+  text-indent: 1px;
   position: absolute;
   z-index: 1;
 }
@@ -213,11 +271,11 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
   text-align: center;
+  text-indent: 1px;
   position: absolute;
   z-index: 1;
 }
@@ -232,11 +290,11 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
   text-align: center;
+  text-indent: 1px;
   position: absolute;
   z-index: 1;
 }
@@ -251,11 +309,11 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
   text-align: center;
+  text-indent: 1px;
   position: absolute;
   z-index: 1;
 }
@@ -270,11 +328,11 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
   text-align: center;
+  text-indent: 1px;
   position: absolute;
   z-index: 1;
 }
@@ -289,33 +347,110 @@ blockquote {
   height: 24px;
   width: 24px;
   color: white;
-  background-color: var(--color-primary);
   border-radius: 50%;
   -moz-border-radius: 50%;
   left: -15px;
   text-align: center;
+  text-indent: 1px;
   position: absolute;
   z-index: 1;
 }
 
-
-/*
-.ifa {
-  display: inline-block;
-  height: 1.4em;
-  width: 1.4em;
-  background-color: var(--color-primary);
+/* fa check */
+.boxy-check::before {
+  content: "\f00c";
+  /*display: inline-block;*/
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  font-weight: 900;
+  height: 24px;
+  width: 24px;
+  color: white;
   border-radius: 50%;
   -moz-border-radius: 50%;
-  margin-left:-30px;
-  position: relative;
+  left: -15px;
+  text-align: center;
+  text-indent: 1px;
+  position: absolute;
+  z-index: 1;
 }
 
-.ifa-orange {
-  background-color: #EF7C00;
+/* fa times cross */
+.boxy-times::before {
+  content: "\f00d";
+  /*display: inline-block;*/
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  font-weight: 900;
+  height: 24px;
+  width: 24px;
+  color: white;
+  border-radius: 50%;
+  -moz-border-radius: 50%;
+  left: -15px;
+  text-align: center;
+  text-indent: 1px;
+  position: absolute;
+  z-index: 1;
 }
 
-*/
+/* fa skull */
+.boxy-skull::before {
+  content: "\f54c";
+  /*display: inline-block;*/
+  font-family: "Font Awesome 5 Free";
+  font-size: 15px;
+  font-weight: 900;
+  height: 24px;
+  width: 24px;
+  color: white;
+  border-radius: 50%;
+  -moz-border-radius: 50%;
+  left: -15px;
+  text-align: center;
+  text-indent: 1px;
+  position: absolute;
+  z-index: 1;
+}
+
+/* Indent first line when icon is present */
+.boxy-exclamation > p:first-child, .boxy-lightbulb > p:first-child, .boxy-clipboard-list > p:first-child, .boxy-comments > p:first-child, .boxy-desktop > p:first-child, .boxy-cloud > p:first-child, .boxy-check > p:first-child, .boxy-times > p:first-child, .boxy-skull > p:first-child {
+  text-indent: 10px;
+}
+
+/* change colours for blockquote and links inside boxy */
+.boxy-orange > a {
+  color: #bf6300;
+}
+.boxy-success > a {
+  color: #3c763d;
+}
+.boxy-warning > a {
+  color: #8a6d3b;
+}
+.boxy-danger > a {
+  color: #a94442;
+}
+.boxy-info > a {
+  color: #31708f;
+}
+
+.boxy-orange > blockquote {
+  border-left-color: #bf6300;
+}
+.boxy-success > blockquote {
+  border-left-color: #3c763d;
+}
+.boxy-warning > blockquote{
+  border-left-color: #8a6d3b;
+}
+.boxy-danger > blockquote {
+  border-left-color: #a94442;
+}
+.boxy-info > blockquote {
+  border-left-color: #31708f;
+}
+
 /* IMAGES ------------------------------------------------------------------- */
 
 /* image styling */
@@ -325,8 +460,10 @@ img {
 }
 
 .fancyimage {
-  box-shadow: 1px 1px 5px grey;
-  border-radius: 2px;
+  -webkit-box-shadow: 1px 1px 6px var(--color-shadow);
+  -moz-box-shadow: 1px 1px 6px var(--color-shadow);
+  box-shadow: 1px 1px 6px var(--color-shadow);
+  border-radius: 3px;
 }
 
 .logo-navbar {
@@ -383,9 +520,9 @@ a:hover, table a:hover {
   display: inline-block;
   padding: 25px;
   border-radius: 4px;
-  -webkit-box-shadow: 1px 1px 6px #E0E0E0;
-  -moz-box-shadow: 1px 1px 6px #E0E0E0;
-  box-shadow:1px 1px 6px #E0E0E0;
+  -webkit-box-shadow: 1px 1px 6px var(--color-shadow);
+  -moz-box-shadow: 1px 1px 6px var(--color-shadow);
+  box-shadow: 1px 1px 6px var(--color-shadow);
   margin-bottom: 20px;
 }
 
@@ -432,17 +569,77 @@ button.btn-collapse-normal:hover {
 
 button.btn-collapse-optional {
   color: white;
-  border-color: #EF7C00;
-  background-color: #EF7C00;
+  border-color: var(--color-optional);
+  background-color: var(--color-optional);
 }
 
 button.btn-collapse-optional:hover {
     background-color: white;
-    color: #EF7C00;
+    color: var(--color-optional);
     border-color: white;
-    box-shadow: 0px 3px 30px -9px #EF7C00;
-    -webkit-box-shadow: 0px 3px 30px -9px #EF7C00;
-    -moz-box-shadow: 0px 3px 30px -9px #EF7C00;
+    box-shadow: 0px 3px 30px -9px var(--color-optional);
+    -webkit-box-shadow: 0px 3px 30px -9px var(--color-optional);
+    -moz-box-shadow: 0px 3px 30px -9px var(--color-optional);
+}
+
+button.btn-collapse-warning {
+  color: white;
+  border-color: #8a6d3b;
+  background-color: #8a6d3b;
+}
+
+button.btn-collapse-warning:hover {
+    background-color: white;
+    color: #8a6d3b;
+    border-color: white;
+    box-shadow: 0px 3px 30px -9px #8a6d3b;
+    -webkit-box-shadow: 0px 3px 30px -9px #8a6d3b;
+    -moz-box-shadow: 0px 3px 30px -9px #8a6d3b;
+}
+
+button.btn-collapse-success {
+  color: white;
+  border-color: #3c763d;
+  background-color: #3c763d;
+}
+
+button.btn-collapse-success:hover {
+    background-color: white;
+    color: #3c763d;
+    border-color: white;
+    box-shadow: 0px 3px 30px -9px #3c763d;
+    -webkit-box-shadow: 0px 3px 30px -9px #3c763d;
+    -moz-box-shadow: 0px 3px 30px -9px #3c763d;
+}
+
+button.btn-collapse-danger {
+  color: white;
+  border-color: #a94442;
+  background-color: #a94442;
+}
+
+button.btn-collapse-danger:hover {
+    background-color: white;
+    color: #a94442;
+    border-color: white;
+    box-shadow: 0px 3px 30px -9px #a94442;
+    -webkit-box-shadow: 0px 3px 30px -9px #a94442;
+    -moz-box-shadow: 0px 3px 30px -9px #a94442;
+}
+
+button.btn-collapse-info {
+  color: white;
+  border-color: #31708f;
+  background-color: #31708f;
+}
+
+button.btn-collapse-info:hover {
+    background-color: white;
+    color: #31708f;
+    border-color: white;
+    box-shadow: 0px 3px 30px -9px #31708f;
+    -webkit-box-shadow: 0px 3px 30px -9px #31708f;
+    -moz-box-shadow: 0px 3px 30px -9px #31708f;
 }
 
 button.btn.collapsed:before
@@ -725,4 +922,57 @@ ul.nav a:hover {
   float: left;
   margin-right: 0.5%;
   margin-left: 0.5%;
+}
+
+/* blur panel -------------------------------------------------------------------------------- */
+
+.blur-title {
+  position: absolute;
+  z-index: 1;
+  font-weight: bold;
+}
+
+.blur-outer .blur-title {
+  transition: .3s ease;
+  opacity: 0;
+}
+
+.blur-outer:hover .blur-title {
+ transition: .3s ease;
+ opacity: 1;
+}
+
+.blur-content {
+  transition: .3s ease;
+  filter: blur(8px);
+  -webkit-filter: blur(8px);
+  -moz-filter: blur(8px);
+  -o-filter: blur(8px);
+  -ms-filter: blur(8px);
+}
+
+.blur-outer:active .blur-content {
+ transition: .3s ease;
+ filter: none;
+}
+
+.blur-outer:active .blur-title {
+ transition: .3s ease;
+ opacity: 0;
+}
+
+/* blur effect ------------------------------------------------------------------------------- */
+
+.blur-effect {
+  transition: .2s ease;
+  filter: blur(4px);
+  -webkit-filter: blur(4px);
+  -moz-filter: blur(4px);
+  -o-filter: blur(4px);
+  -ms-filter: blur(4px);
+}
+
+.blur-effect:active {
+ transition: .2s ease;
+ filter: none;
 }

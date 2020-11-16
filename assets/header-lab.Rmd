@@ -16,6 +16,9 @@ htmltools::tagList(fa)
 tc <- captioner::captioner(prefix="<b>Tab. </b>")
 fc <- captioner::captioner(prefix="<b>Fig. </b>")
 
+# turn off terminal colors
+options(crayon.enabled = FALSE)
+
 # knitr options
 knitr::opts_knit$set(progress=TRUE,verbose=TRUE)
 knitr::opts_chunk$set(dev="svg",results="hold",fig.show="hold",fig.align="left",
@@ -31,13 +34,25 @@ color_text <- "#424949"
 knitr::knit_hooks$set(accordion=function(before,options,envir) {
   if(before) {
     id <- paste0("acc",format(Sys.time(),"%Y%m%d%H%S"),sample(c(0:9),1),sample(c(0:9),1),sample(c(0:9),1),sample(c(0:9),1))
-    if(is.null(options$btntype)) {btntype <- "normal"}else{btntype <- options$btntype}
+    if(is.null(options$btn.type)) {btn.type <- "normal"}else{btn.type <- options$btn.type}
     paste0('<p>',
-          '<button class="btn btn-sm btn-primary btn-collapse btn-collapse-',btntype,' collapsed" type="button" data-toggle="collapse" data-target="#',id,'" aria-expanded="false" aria-controls="',id,'">',
+          '<button class="btn btn-sm btn-primary btn-collapse btn-collapse-',btn.type,' collapsed" type="button" data-toggle="collapse" data-target="#',id,'" aria-expanded="false" aria-controls="',id,'">',
           '</button>',
           '</p>',
           '<div class="collapse" id="',id,'">',
           '<div class="card card-body">')
+  }else{
+    paste0("</div>","</div>")
+  }
+})
+
+## blur panel
+knitr::knit_hooks$set(blur=function(before,options,envir) {
+  if(before) {
+    if(is.null(options$blur.title)) {blur.title <- ""}else{blur.title <- options$blur.title}
+    paste0('<div class="blur-outer">',
+           '<div class="blur-title">',blur.title,'</div>',
+           '<div class="blur-content">')
   }else{
     paste0("</div>","</div>")
   }

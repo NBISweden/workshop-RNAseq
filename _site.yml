@@ -10,7 +10,7 @@ assistants:
 favicon: assets/favicon.png
 exclude: ["docs","README.md","schedule.csv","LICENSE","LICENSE.md","scripts","tmprepo"]
 navbar:
-  title: '<img src="assets/logo.svg" id="logo" style="height:30px;margin:0;"/>'
+  title: '<img src="assets/logo.svg" id="logo" style="height:22px;margin:0;"/>'
   type: default
   logo:
     image: "assets/logo.svg"
@@ -24,8 +24,6 @@ navbar:
       href: home_content.html
     - text: Precourse
       href: home_precourse.html
-    - text: Info
-      href: home_info.html
 output:
   bookdown::html_document2:
     highlight: textmate
@@ -77,6 +75,7 @@ packages:
   - leaflet
   - lubridate
   - markdown
+  - pagedown
   - rmarkdown
   - xaringan
   - yaml

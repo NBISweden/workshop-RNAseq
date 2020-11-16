@@ -11,7 +11,7 @@ output:
 
 This page contains links to different lectures (slides) and practical exercises (labs) that are part of this workshop. The links below are similar to that under [Schedule](home_schedule.html) but organised here by topic.
 
-<div class="boxy boxy-lightbulb">
+<div class="boxy boxy-lightbulb boxy-primary">
 Input code blocks are displayed like shown below. The code language is displayed above the block. Shell scripts (**SH**) are to be executed in the linux terminal. **R** scripts are to be run in R either through the terminal, RGui or RStudio.
 
 ```{sh,eval=FALSE,block.title=TRUE}

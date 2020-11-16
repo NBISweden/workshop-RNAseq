@@ -21,11 +21,14 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev libudunits2-dev libopenblas-base
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install ./google-chrome-stable_current_amd64.deb
+          rm -rf google-chrome-stable_current_amd64.deb
       - name: Define variables
         run: |
-          echo "::set-env name=path_repo::$(pwd)"
-          echo "::set-env name=path_export::$(grep -E '^output_dir' _site.yml | sed 's/^output_dir://' | xargs)"
-          echo "::set-env name=repo::$(echo "$GITHUB_REPOSITORY" | sed 's/.*\///')"
+          echo "path_repo=$(pwd)" >> $GITHUB_ENV
+          echo "path_export=$(grep -E '^output_dir' _site.yml | sed 's/^output_dir://' | xargs)" >> $GITHUB_ENV
+          echo "repo=$(echo $GITHUB_REPOSITORY | sed 's/.*\///')" >> $GITHUB_ENV
       - name: Check R installation and variables
         run: |
           Rscript -e "print('R installation works!')"
@@ -34,8 +37,11 @@ jobs:
           echo "Github repo: ${repo}"
           echo "Path repo: ${path_repo}"
           echo "Path export: ${path_export}"
+          echo "---------------------------------------------------------------------------------------------"
           echo "Folder contents at $(pwd):"
           ls -lh
+          echo "---------------------------------------------------------------------------------------------"
+          printenv
       - name: Print R packages
         run: |
           # parse r packages from Rmd amd md files
@@ -52,7 +58,7 @@ jobs:
       - name: Install R dependencies
         if: steps.cache-rp.outputs.cache-hit != 'true'
         run: |
-          Rscript -e 'install.packages("yaml")'
+          Rscript -e 'install.packages(c("yaml","pagedown"))'
           Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)) install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)'
           Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_cran_student)) install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_student)'
           Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_bioc_repo)) BiocManager::install(as.character(yaml::read_yaml("_site.yml")$packages$packages_bioc_repo))'
@@ -70,6 +76,13 @@ jobs:
 
           # Render website
           Rscript -e "rmarkdown::render_site()"
+
+          # Generate PDFs
+          cd ${path_export}
+          Rscript -e "l <- list.files('.',pattern='slide.+html');if(length(l)!=0) {for(i in 1:length(l)) pagedown::chrome_print(l[i])};"
+          cd ..
+
+          # List folder contents
           echo "Folder contents at $(pwd):"
           ls -lh
           echo "Folder contents at ${path_repo}/${path_export}:"

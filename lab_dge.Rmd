@@ -6,7 +6,7 @@ subtitle: "Workshop on RNA-Seq"
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-<div class="boxy boxy-exclamation">
+<div class="boxy boxy-exclamation boxy-warning">
 Create a directory named `data` in your current working directory for input and output files.
 </div>
 
@@ -380,7 +380,7 @@ The first step is estimating size factors. The data is normalised for sequencing
 d <- DESeq2::estimateSizeFactors(d,type="ratio")
 ```
 
-<div class="boxy boxy-optional">
+<div class="boxy boxy-optional boxy-orange">
 **Optional**
 
 For those interested in the details of the *median-of-ratios* method, click below.
@@ -451,7 +451,7 @@ head(counts(d,normalized=TRUE))[,1:5]
 
 When it comes to comparing values between groups, some measure of variation is needed to estimate the variability in gene counts within groups. Dispersion is a measure of variation in a data set. Variance and standard deviation are not a good measure to estimate variability because it correlates with the mean.
 
-<div class="boxy boxy-optional">
+<div class="boxy boxy-optional boxy-orange">
 **Optional**
 
 For some more discussion on dispersion, click below.
@@ -568,7 +568,16 @@ The black points denote the maximum likelihood dispersion estimate for each gene
 
 Overdispersion is the reason why RNA-Seq data is better modelled as negative-binomial distribution rather than poisson distribution. Poisson distribution has a mean = variance relationship, while negative-binomial distribution has a variance > mean relationship. The last step in the DESeq2 workflow is fitting the Negative Binomial model for each gene and performing differential expression testing. This is based on the log fold change values computed on the corrected count estimates between groups.
 
-`logFC = log2 (corrected counts group A / corrected counts group B)`
+```
+FC = (corrected counts group B - corrected counts group A) / corrected counts group A
+logFC = log2(FC)
+```
+
+and the fold-change can be computed back from the log fold-change as such:
+
+```
+FC = 2^logFC
+```
 
 The most commonly used testing for comparing two groups in DESeq2 is the Walds's test. The null hypothesis is that the groups are not different and `logFC=0`. The list of contrasts can be seen using `resultsNames()`. Then we can pick our comparisons of interest.
 
