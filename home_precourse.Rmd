@@ -14,15 +14,25 @@ library(yaml)
 upid <- yaml::read_yaml("_site.yml")$uppmax_project
 ```
 
-# Precourse {.tabset .tabset-fade}
+# Precourse
 
-This workshop is aimed towards biologists, researchers, computer scientists or data analysts planning to run, analyse and interpret an RNA-Seq experiment. Basic knowledge of working on the Unix/Linux command line is expected.
+This workshop is aimed towards biologists, researchers, computer scientists or data analysts planning to run, analyse and interpret an RNA-Seq experiment. Basic knowledge of working on the Unix/Linux command line and in R **is expected**.
+
+We strongly recommend for those not yet familiar with UNIX and/or R to take this opportunity and take these online tutorials, since **those are requirements for the course**. This will help you to develop your programming skills and we can always learn a few tricks here and there, even if you are already experienced.
+- UNIX (part_1): [http://swcarpentry.github.io/shell-novice/](http://swcarpentry.github.io/shell-novice/)
+- UNIX (part_2): [https://carpentries-incubator.github.io/shell-extras/](https://carpentries-incubator.github.io/shell-extras/)
+- R (part_1): [https://swcarpentry.github.io/r-novice-inflammation/](https://swcarpentry.github.io/r-novice-inflammation/)
+- R (part_2): [http://swcarpentry.github.io/r-novice-gapminder/](http://swcarpentry.github.io/r-novice-gapminder/)
+
+After taking those courses (or any other equivalient course in programming in bash and R) will provide you with the basics in, for example:
+- file structure and manipulation in bash and R
+- loading, handling and manipulating vectors, matricies, factors and lists in R
+- creating for-loops in R and bash
+- using Rmarkdown for reports in R
+- editing and writing files in the command line and in R
+- and much more ...
 
 <br/>
-
-***
-
-## Preparation
 
 These are steps to be completed before the workshop. In this workshop you will use conda environments to run the exercises. This is because conda environments allow all students to have the save computing environment, i.e. package versions. This enforces reproducibility for you to run this material without the need to re-install or change your local versions. See and graphical example below:
 
@@ -43,41 +53,45 @@ You can [read more](https://nbis-reproducible-research.readthedocs.io/en/latest/
 
 ***
 
-### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Download and install Conda and Mamba
+## <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Download and install Conda and Mamba
 
 You should start by installing Conda. We suggest installing either Miniconda3 (NOT Anaconda). After [installing Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
 <br/>
 
-#### **On MacOSX**
+### **On MacOSX**
 
-```
+```{sh,eval=FALSE,block.title=TRUE}
 curl -o Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
 sh Miniconda3-latest-MacOSX-x86_64.sh
 ```
 
 Follow the instructions on screen replying `yes` when necessary. Restart your terminal window to apply modifications. After restarting, you can type the command below to install Mamba:
 
-```
+```{sh,eval=FALSE,block.title=TRUE}
 conda init
 conda install -n base -c conda-forge mamba
 ```
 
-#### **On Ubuntu**
+<br/>
 
-```
+### **On Ubuntu**
+
+```{sh,eval=FALSE,block.title=TRUE}
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 sh Miniconda3-latest-Linux-x86_64.sh
 ```
 
 Follow the instructions on screen replying `yes` when necessary. Restart your terminal window to apply modifications. After restarting, you can type the command below to install Mamba:
 
-```
+```{sh,eval=FALSE,block.title=TRUE}
 conda init
 conda install -n base -c conda-forge mamba
 ```
 
-#### **On Windows10**
+<br/>
+
+### **On Windows10**
 
 Unfortunately, not all packages available on conda are compatible with windows machines. The good news is that is changed on windows10, in which they offer native linux support via the Windows Subsystem for Linux (WSL2). This allows you to run linux/bash commands from within windows without the need of a virtual machine nor a dual-boot setup (i.e. having 2 operational systems). However, WSL does not offer a complete support for graphical interfaces (such as RStudio in our case), so we need an additional steps to make that happen.
 
@@ -90,26 +104,26 @@ Unfortunately, not all packages available on conda are compatible with windows m
 3. Inside MobaXterm, you will probably will see that your WSL is already listed on the left panel as an available connection. Just double-click it and you will be accessing it via MobaXterm. If by any chance you don't see it there, close MobaXterm and go to the WSL terminal, because probably the WSL is not allowing SSH connections. You can follow this [link](https://www.illuminiastudios.com/dev-diaries/ssh-on-windows-subsystem-for-linux/) for the instructions on how to do it. You need to complete until the step `Start or restart the SSH service`, while the further steps are optional, but might be useful.
 
 4. Inside MobaXterm, download Conda with the command:
-```
+```{sh,eval=FALSE,block.title=TRUE}
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 ```
 
 5. Inside MobaXterm, type the commands below to install Conda. Follow the instructions for the installation there.
-```
+```{sh,eval=FALSE,block.title=TRUE}
 cd ~/Downloads
 sh Miniconda3-latest-Linux-x86_64.sh
 ```
 
 6. Inside MobaXterm, Follow the instructions on screen replying `yes` when necessary. Restart your terminal window to apply modifications. After restarting, you can type the command below to install Mamba:
 
-```
+```{sh,eval=FALSE,block.title=TRUE}
 conda init
 conda install -n base -c conda-forge mamba
 ```
 
 7. Inside MobaXterm, type the commands below to install the X-server graphical packages that will be used to launch RStudio.
 [https://docs.anaconda.com/anaconda/install/linux/](https://docs.anaconda.com/anaconda/install/linux/)
-```
+```{sh,eval=FALSE,block.title=TRUE}
 sudo apt-get update
 sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
 ```
@@ -120,7 +134,7 @@ sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 
 
 ***
 
-### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Create a conda 
+## <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Create a conda 
 
 
 
@@ -129,7 +143,7 @@ ronment from file
 
 To download the `environment_RNAseq2020.yml` file using the command on Terminal:
 
-```
+```{sh,eval=FALSE,block.title=TRUE}
 #Ubuntu
 wget https://nbisweden.github.io/workshop-RNAseq/environment_RNAseq2020.yml
 
@@ -139,13 +153,13 @@ curl -o environment_RNAseq2020.yml https://raw.githubusercontent.com/NBISweden/w
 
 After this, you should have a file named `environment_RNAseq2020.yml` in your directory (it does not matter where). Next, type:
 
-```
+```{sh,eval=FALSE,block.title=TRUE}
 mamba env create -f environment_RNAseq2020.yml
 ```
 
 Several messages will show up on your screen and will tell you about the installation process. This may take a few minutes depending on how many packages are to be installed.
 
-```
+```{sh,eval=FALSE,block.title=TRUE}
 ##Collecting package metadata: done
 ##Solving environment: done
 ##
@@ -162,17 +176,17 @@ Several messages will show up on your screen and will tell you about the install
 
 ***
 
-### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Activate the environment
+## <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Activate the environment
 
 Once the environment is created, we need to activate it in order to use the softwares and packages inside it. To activate an environment type:
 
-```
+```{sh,eval=FALSE,block.title=TRUE}
 conda activate scRNAseq2020
 ```
 
 From this point on you can run any of the contents from the course. For instance, you can directly launch RStudio by typing `rstudio`. Here it is important to add the `&` symbol in the end to be able to use the command line at the same time if needed. You can open other files from Rstudio later as well.
 
-```
+```{sh,eval=FALSE,block.title=TRUE}
 rstudio ./my_script.Rmd &
 ```
 
@@ -180,11 +194,11 @@ rstudio ./my_script.Rmd &
 
 ***
 
-### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Deactivate the environment
+## <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Deactivate the environment
 
 After you've ran all your analyses, you can deactivate the environment by typing:
 
-```
+```{sh,eval=FALSE,block.title=TRUE}
 conda deactivate
 ```
 
@@ -193,7 +207,7 @@ conda deactivate
 
 ***
 
-### <img border="0" src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Virtualbox_logo.png" width="20" height="20"> Alternative option (VIRTUALBOX)
+## <img border="0" src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Virtualbox_logo.png" width="20" height="20"> Alternative option (VIRTUALBOX)
 
 
 If by any means you see that the installations are not working as it should on your computer, you can try to create a virtual machine to run UBUNTU and install everything there. But please keep this alternative as the last temporary resourse, as we recommend troubleshooting the installation o the up-mentioned methods.
@@ -218,24 +232,24 @@ If by any means you see that the installations are not working as it should on y
 
 7. Inside Ubuntu, open TERMINAL and type the commands below to install the X-server graphical packages that will be used to launch RStudio.
 [https://docs.anaconda.com/anaconda/install/linux/](https://docs.anaconda.com/anaconda/install/linux/)
-```
+```{sh,eval=FALSE,block.title=TRUE}
 sudo apt-get update
 sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
 ```
 
 8. Inside UBUNTU, Download conda:
-```
+```{sh,eval=FALSE,block.title=TRUE}
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 ```
 
 9. Inside UBUNTU, open the TERMINAL and type the commands below. Follow the instructions for the installation there.
-```
+```{sh,eval=FALSE,block.title=TRUE}
 cd ~/Downloads
 sh Miniconda3-latest-Linux-x86_64.sh
 ```
 
 10. Close Terminal to apply the CONDA updates. Then you can create a course folder, download the environment file and create the environment:
-```
+```{sh,eval=FALSE,block.title=TRUE}
 mkdir ~/Desktop/course
 cd ~/Desktop/course
 wget https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/environment_RNAseq2020.yml
@@ -243,29 +257,10 @@ conda env create -f environment_RNAseq2020.yml
 ```
 
 11. You can then follow the instructions above to activate/deactivate the environment.
-```
+```{sh,eval=FALSE,block.title=TRUE}
 conda activate RNAseq2020
 rstudio &
 ```
-
-<br/>
-
-***
-
-## Syllabus
-
-The syllabus for this workshop are as follows.
-
-* Introduction to RNA-Seq technology
-* Assessing quality of raw Illumina short reads
-* Mapping short reads to reference genome
-* Post alignment Quality Control
-* Quantification of mapped reads
-* Data normalization and pre-processing
-* Working with gene/transcript annotation
-* Exploratory data analyses using PCA and clustering
-* Differential gene expression
-* Gene Set Analysis
 
 <br/>
 
