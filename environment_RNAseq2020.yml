@@ -36,7 +36,6 @@ dependencies:
  - r-leaflet
  - r-lubridate
  - r-markdown
- - r-pagedown
  - r-rmarkdown
  - r-xaringan
  - r-yaml
