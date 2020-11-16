@@ -28,6 +28,8 @@ Please follow the intructions for instalations prior to the course:
 
 ## Requirements
 
+<img border="0" src="https://toppng.com/uploads/preview/knowledge-icon-icon-knowledge-icon-11553482729yd4gxvibcr.png" width="50" height="50">
+
 We strongly recommend for those not yet familiar with UNIX and/or R to take this opportunity and take these online tutorials, since **those are requirements for the course**. This will help you to develop your programming skills and we can always learn a few tricks here and there, even if you are already experienced.
 
 - UNIX (part_1): [http://swcarpentry.github.io/shell-novice/](http://swcarpentry.github.io/shell-novice/)
@@ -50,7 +52,7 @@ After taking those courses (or any other equivalient course in programming in ba
 
 <img border="0" src="https://image.flaticon.com/icons/png/512/2111/2111615.png" width="50" height="50">
 
-Make sure that you have the [**Slack**](https://slack.com/intl/en-se/downloads) installed because we will use it a lot during the course. Communication, troubleshooting and group discussions will happen via **Slack workspace NBIS-workshop-RNAseq**. All accepted students will receive an invitation link via email. Please add this workspace to your Slack application on the desktop and do **NOT** use it in the web.
+Make sure that you have the [**Slack**](https://slack.com/intl/en-se/downloads) installed because we will use it a lot during the course. Communication, troubleshooting and group discussions will happen via **Slack workspace** `NBIS-workshop-RNAseq`. All accepted students will receive an invitation link via email. Please add this workspace to your Slack application on your desktop and do **NOT** use it in the web.
 
 Please join the following channels once you are in the workspace:
 
@@ -184,7 +186,7 @@ To download the `environment_RNAseq2020.yml` file using the command on Terminal:
 
 ```{sh,eval=FALSE,block.title=TRUE}
 #Ubuntu
-wget https://nbisweden.github.io/workshop-RNAseq/environment_RNAseq2020.yml
+wget https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/environement_RNAseq2020.yml
 
 #MacOSX
 curl -o environment_RNAseq2020.yml https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/environement_RNAseq2020.yml
@@ -220,13 +222,13 @@ Several messages will show up on your screen and will tell you about the install
 Once the environment is created, we need to activate it in order to use the softwares and packages inside it. To activate an environment type:
 
 ```{sh,eval=FALSE,block.title=TRUE}
-conda activate scRNAseq2020
+conda activate RNAseq2020
 ```
 
 From this point on you can run any of the contents from the course. For instance, you can directly launch RStudio by typing `rstudio`. Here it is important to add the `&` symbol in the end to be able to use the command line at the same time if needed. You can open other files from Rstudio later as well.
 
 ```{sh,eval=FALSE,block.title=TRUE}
-rstudio ./my_script.Rmd &
+rstudio PATH/my_script.Rmd &
 ```
 
 <br/>
