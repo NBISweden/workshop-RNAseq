@@ -198,6 +198,8 @@ sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 
 
 #### VirtualBox
 
+<div class="boxy boxy-lightbulb">
+
 <img border="0" src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Virtualbox_logo.png" width="50" height="50">
 
 If by any means you see that the installations are not working as it should on your computer, you can try to create a virtual machine to run UBUNTU and install everything there. But please keep this alternative as the last temporary resourse, as we recommend troubleshooting the installation o the up-mentioned methods.
@@ -256,8 +258,9 @@ conda activate RNAseq2020
 rstudio &
 ```
 
-<br/>
+</div>
 
+<br/>
 
 ***
 
