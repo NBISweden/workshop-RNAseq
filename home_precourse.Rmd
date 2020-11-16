@@ -36,6 +36,7 @@ We strongly recommend for those not yet familiar with UNIX and/or R to take this
 - R (part_2): [http://swcarpentry.github.io/r-novice-gapminder/](http://swcarpentry.github.io/r-novice-gapminder/)
 
 After taking those courses (or any other equivalient course in programming in bash and R) will provide you with the basics in, for example:
+
 - file structure and manipulation in bash and R
 - loading, handling and manipulating vectors, matricies, factors and lists in R
 - creating for-loops in R and bash
@@ -47,10 +48,14 @@ After taking those courses (or any other equivalient course in programming in ba
 
 ## Slack
 
-Make sure that you have the **Slack** installed because we will use it a lot during the course. Communication, troubleshooting and group discussions will happen via **Slack workspace NBIS-workshop-RNAseq**. All accepted students will receive an invitation link via email. Please add this workspace to your Slack application on the desktop and do **NOT** use it in the web.
+<img border="0" src="https://image.flaticon.com/icons/png/512/2111/2111615.png" width="50" height="50">
 
-Please join the following channels once you are in the workspace
-- Questions about installations: #software-to-install
+Make sure that you have the [**Slack**](https://slack.com/intl/en-se/downloads) installed because we will use it a lot during the course. Communication, troubleshooting and group discussions will happen via **Slack workspace NBIS-workshop-RNAseq**. All accepted students will receive an invitation link via email. Please add this workspace to your Slack application on the desktop and do **NOT** use it in the web.
+
+Please join the following channels once you are in the workspace:
+
+- `#software-to-install` for questions about instalations
+- `#general` for overall questions about the course material
 
 Note: You should post your question in the channel and **NOT** directly to the teacher. Any student that knows the answer to any problem is encouraged to help too.
 
@@ -58,15 +63,21 @@ Note: You should post your question in the channel and **NOT** directly to the t
 
 ## Zoom
 
-Make sure that you have the **Zoom (version 5.0)** installed because we will use it a lot during the course for the lecture and groups discussions.
+<img border="0" src="https://simg.nicepng.com/png/small/1008-10087079_zoom-icon-zoom-video-conferencing-logo.png" width="50" height="50">
+
+Make sure that you have the latest [**Zoom (version 5.4.0 or above)**](https://zoom.us/download) installed because we will use it a lot during the course for the lecture and groups discussions.
+
+Previous Zoom versions will not work. If you already have Zoom installed, you can also update it by clicking in `Check for Updates ...` button in the main top menu.
 
 <br/>
 
 ## Conda
 
+<img border="0" src="https://hackernoon.com/hn-images/1*rW03Wtue71AKfxnx6XN_iQ.png" width="50" height="50">
+
 These are steps to be completed before the workshop. In this workshop you will use conda environments to run the exercises. This is because conda environments allow all students to have the save computing environment, i.e. package versions. This enforces reproducibility for you to run this material without the need to re-install or change your local versions. See and graphical example below:
 
-<img border="0" src="https://nbisweden.github.io/excelerate-scRNAseq/logos/conda_illustration.png" width="400">
+<img border="0" src="https://nbisweden.github.io/excelerate-scRNAseq/logos/conda_illustration.png" width="600">
 
 Conda environments](https://docs.conda.io/projects/conda/en/latest/user-guide/concepts/environments.html) are a self-contained directory that you can use in order to reproduce all your results.
 
@@ -83,7 +94,7 @@ You can [read more](https://nbis-reproducible-research.readthedocs.io/en/latest/
 
 ***
 
-### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Download and install Conda and Mamba
+### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Download and install Conda and Mamba {.tabset .tabset-fade}
 
 You should start by installing Conda. We suggest installing either Miniconda3 (NOT Anaconda). After [installing Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
