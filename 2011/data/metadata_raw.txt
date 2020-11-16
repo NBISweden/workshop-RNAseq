@@ -1,0 +1,13 @@
+Sample_ID;Sample_Name;Time;Replicate;Cell
+Sample_1;t0_A;t0;A;A431
+Sample_2;t0_B;t0;B;A431
+Sample_3;t0_C;t0;C;A431
+Sample_4;t2_A;t2;A;A431
+Sample_5;t2_B;t2;B;A431
+Sample_6;t2_C;t2;C;A431
+Sample_7;t6_A;t6;A;A431
+Sample_8;t6_B;t6;B;A431
+Sample_9;t6_C;t6;C;A431
+Sample_10;t24_A;t24;A;A431
+Sample_11;t24_B;t24;B;A431
+Sample_12;t24_C;t24;C;A431
