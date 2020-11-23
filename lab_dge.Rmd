@@ -25,7 +25,7 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 # Preparation
 
 For differential gene expression, we use the **DESeq2** package. We use the raw filtered counts and metadata.
-
+  
 ```{r}
 download_data("data/counts_filtered.txt")
 cf <- read.table("data/counts_filtered.txt",header=TRUE)
@@ -141,8 +141,8 @@ For some more clarification on dispersion, click below.
 We can create a mean counts vs variance plot for all genes in our data set.
 
 ```{r,fig.height=4.5,fig.width=4.5,block.title=TRUE}
-dm <- apply(cd,1,mean)
-dv <- apply(cd,1,var)
+dm <- apply(cf,1,mean)
+dv <- apply(cf,1,var)
 
 ggplot(data.frame(mean=log10(dm+1),var=log10(dv+1)),
        aes(mean,var))+
@@ -158,7 +158,7 @@ One option is the coefficient of variation (CV). Let's compute the CV for each g
 
 ```{r,fig.height=4.5,fig.width=4.5,block.title=TRUE}
 cva <- function(x) sd(x)/mean(x)
-dc <- apply(cd,1,cva)
+dc <- apply(cf,1,cva)
 
 ggplot(data.frame(mean=log10(dm+1),var=dc),
        aes(mean,var))+
@@ -173,14 +173,14 @@ Now, we see that genes with lower counts have higher variability and genes with 
 This becomes even more apparent if we compute the CV and mean over replicates within sample groups (Time).
 
 ```{r,fig.height=5,fig.width=5,block.title=TRUE}
-dx1 <- data.frame(t0=apply(cd[,1:3],1,cva),t2=apply(cd[,4:6],1,cva),
-            t6=apply(cd[,7:9],1,cva),t24=apply(cd[,10:12],1,cva))
+dx1 <- data.frame(t0=apply(cf[,1:3],1,cva),t2=apply(cf[,4:6],1,cva),
+            t6=apply(cf[,7:9],1,cva),t24=apply(cf[,10:12],1,cva))
 dx1$gene <- rownames(dx1)
 dx1 <- tidyr::gather(dx1,key=sample,value=cv,-gene)
 rownames(dx1) <- paste0(dx1$gene,"-",dx1$sample)
 
-dx2 <- data.frame(t0=apply(cd[,1:3],1,mean),t2=apply(cd[,4:6],1,mean),
-            t6=apply(cd[,7:9],1,mean),t24=apply(cd[,10:12],1,mean))
+dx2 <- data.frame(t0=apply(cf[,1:3],1,mean),t2=apply(cf[,4:6],1,mean),
+            t6=apply(cf[,7:9],1,mean),t24=apply(cf[,10:12],1,mean))
 dx2$gene <- rownames(dx2)
 dx2 <- tidyr::gather(dx2,key=sample,value=mean,-gene)
 rownames(dx2) <- paste0(dx2$gene,"-",dx2$sample)
@@ -198,14 +198,14 @@ ggplot(dx3,aes(x=log10(mean+1),y=cv))+
 We find that CV strongly declines with increasing counts. Genes with low counts show higher variability. For the sake of completeness, we can also plot the relationship between CV and variance for the same sample groups.
 
 ```{r,fig.height=5,fig.width=5,block.title=TRUE}
-dx1 <- data.frame(t0=apply(cd[,1:3],1,cva),t2=apply(cd[,4:6],1,cva),
-            t6=apply(cd[,7:9],1,cva),t24=apply(cd[,10:12],1,cva))
+dx1 <- data.frame(t0=apply(cf[,1:3],1,cva),t2=apply(cf[,4:6],1,cva),
+            t6=apply(cf[,7:9],1,cva),t24=apply(cf[,10:12],1,cva))
 dx1$gene <- rownames(dx1)
 dx1 <- tidyr::gather(dx1,key=sample,value=cv,-gene)
 rownames(dx1) <- paste0(dx1$gene,"-",dx1$sample)
 
-dx2 <- data.frame(t0=apply(cd[,1:3],1,var),t2=apply(cd[,4:6],1,var),
-            t6=apply(cd[,7:9],1,var),t24=apply(cd[,10:12],1,var))
+dx2 <- data.frame(t0=apply(cf[,1:3],1,var),t2=apply(cf[,4:6],1,var),
+            t6=apply(cf[,7:9],1,var),t24=apply(cf[,10:12],1,var))
 dx2$gene <- rownames(dx2)
 dx2 <- tidyr::gather(dx2,key=sample,value=var,-gene)
 rownames(dx2) <- paste0(dx2$gene,"-",dx2$sample)
