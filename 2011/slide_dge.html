@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Differential Gene Expression</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="NBIS | 23-Nov-2020" />
+    <meta name="keywords" content="bioinformatics, course, scilifelab, nbis" />
+    <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+    <link id="font-awesome-1-attachment" rel="attachment" href="site_libs/font-awesome-5.1.0/fonts/fontawesome-webfont.ttf"/>
+    <link rel="stylesheet" href="assets/slide.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Differential Gene Expression
+## Workshop on RNA-Seq
+### <b>NBIS</b> | 23-Nov-2020
+### NBIS, SciLifeLab
+
+---
+
+exclude: true
+count: false
+
+
+&lt;link href="https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&amp;amp;subset=latin-ext" rel="stylesheet"&gt;
+&lt;link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous"&gt;
+
+
+
+
+
+&lt;!-- ------------ Only edit title, subtitle &amp; author above this ------------ --&gt;
+
+
+
+
+
+---
+name: dge
+
+## Preparation
+
+- Create the DESeq2 object
+
+
+```r
+library(DESeq2)
+mr$Time &lt;- factor(mr$Time)
+d &lt;- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Time)
+d
+```
+
+```
+## class: DESeqDataSet 
+## dim: 14578 12 
+## metadata(1): version
+## assays(1): counts
+## rownames(14578): ENSG00000000003 ENSG00000000419 ... ENSG00000266865
+##   ENSG00000266876
+## rowData names(0):
+## colnames(12): Sample_1 Sample_2 ... Sample_11 Sample_12
+## colData names(5): Sample_ID Sample_Name Time Replicate Cell
+```
+
+- Categorical variables must be factors
+- Building GLM models: `~var`, `~covar+var`
+
+???
+
+- The model `~var` asks DESeq2 to find DEGs between the levels under the variable *var*.
+- The model `~covar+var` asks DESeq2 to find DEGs between the levels under the variable *var* while controlling for the covariate *covar*.
+
+---
+name: dge-sf
+
+## Size factors
+
+- Normalisation factors are computed
+
+
+```r
+d &lt;- DESeq2::estimateSizeFactors(d,type="ratio")
+sizeFactors(d)
+```
+
+```
+##  Sample_1  Sample_2  Sample_3  Sample_4  Sample_5  Sample_6  Sample_7  Sample_8 
+## 0.9003753 0.8437393 0.5106445 1.1276451 1.0941383 0.8133849 0.7553903 1.1744008 
+##  Sample_9 Sample_10 Sample_11 Sample_12 
+## 1.0189325 1.3642797 1.2325485 1.8555904
+```
+
+---
+name: dge-dispersion
+
+## Dispersion
+
+- We need to measure the variability of gene counts
+
+
+```r
+dm &lt;- apply(cd,1,mean)
+dv &lt;- apply(cd,1,var)
+cva &lt;- function(x) sd(x)/mean(x)
+dc &lt;- apply(cd,1,cva)
+```
+
+--
+
+&lt;img src="slide_dge_files/figure-html/unnamed-chunk-7-1.svg" style="display: block; margin: auto auto auto 0;" /&gt;
+
+- Dispersion is a measure of variability in gene expression for a given mean
+
+---
+name: dge-dispersion-2
+
+## Dispersion
+
+- Dispersion is unreliable for low mean counts
+- Genes with similar mean values must have similar dispersion
+- Estimate likely (ML) dispersion for each gene based on counts
+- Fit a curve through the gene-wise estimates
+- Shrink dispersion towards the curve
+
+
+```r
+d &lt;- DESeq2::estimateDispersions(d)
+{par(mar=c(4,4,1,1))
+plotDispEsts(d)}
+```
+
+&lt;img src="slide_dge_files/figure-html/unnamed-chunk-8-1.svg" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+name: dge-test
+
+## Testing
+
+- Log2 fold changes changes are computed after GLM fitting
+
+
+```r
+dg &lt;- nbinomWaldTest(d)
+resultsNames(dg)
+```
+
+```
+## [1] "Intercept"      "Time_t2_vs_t0"  "Time_t24_vs_t0" "Time_t6_vs_t0"
+```
+
+--
+
+- Use `results()` to customise/return results
+  - Set coefficients using `contrast` or `name`
+  - Filtering results by fold change using `lfcThreshold`
+  - `cooksCutoff` removes outliers
+  - `independentFiltering` removes low count genes
+  - `pAdjustMethod` sets method for multiple testing correction
+  - `alpha` set the significance threshold
+
+---
+name: dge-test-2
+
+## Testing
+
+
+```r
+res1 &lt;- results(dg,name="Time_t2_vs_t0",alpha=0.05)
+summary(res1)
+```
+
+```
+## 
+## out of 14578 with nonzero total read count
+## adjusted p-value &lt; 0.05
+## LFC &gt; 0 (up)       : 413, 2.8%
+## LFC &lt; 0 (down)     : 696, 4.8%
+## outliers [1]       : 0, 0%
+## low counts [2]     : 2261, 16%
+## (mean count &lt; 26)
+## [1] see 'cooksCutoff' argument of ?results
+## [2] see 'independentFiltering' argument of ?results
+```
+
+---
+name: dge-test-3
+
+## Testing
+
+
+```r
+head(res1)
+```
+
+```
+## log2 fold change (MLE): Time t2 vs t0 
+## Wald test p-value: Time t2 vs t0 
+## DataFrame with 6 rows and 6 columns
+##                  baseMean log2FoldChange     lfcSE      stat    pvalue
+##                 &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
+## ENSG00000000003  490.0172      0.2206198 0.1127611  1.956524 0.0504034
+## ENSG00000000419  817.7807      0.0592720 0.1014813  0.584068 0.5591746
+## ENSG00000000457   82.0788      0.2077486 0.2204049  0.942577 0.3458972
+## ENSG00000000460  356.0716     -0.1291864 0.1151392 -1.122002 0.2618616
+## ENSG00000001036  919.6068      0.0288827 0.0851501  0.339198 0.7344609
+## ENSG00000001084  529.5940      0.2119648 0.0929811  2.279655 0.0226281
+##                      padj
+##                 &lt;numeric&gt;
+## ENSG00000000003  0.263505
+## ENSG00000000419  0.830262
+## ENSG00000000457  0.689946
+## ENSG00000000460  0.612625
+## ENSG00000001036  0.909639
+## ENSG00000001084  0.159263
+```
+
+--
+
+- Use `lfcShrink()` to correct fold changes for high dispersion genes
+
+&lt;!-- --------------------- Do not edit this and below --------------------- --&gt;
+
+---
+
+# Acknowledgements
+
+- RNA-seq analysis [Bioconductor vignette](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html)
+- [DGE Workshop](https://github.com/hbctraining/DGE_workshop/tree/master/lessons) by HBC training
+
+---
+name: end_slide
+class: end-slide, middle
+count: false
+
+# Thank you. Questions?
+
+
+
+.end-text[
+&lt;p&gt;R version 4.0.3 (2020-10-10)&lt;br&gt;&lt;p&gt;Platform: x86_64-pc-linux-gnu (64-bit)&lt;/p&gt;&lt;p&gt;OS: Ubuntu 18.04.5 LTS&lt;/p&gt;&lt;br&gt;
+
+&lt;hr&gt;
+
+&lt;span class="small"&gt;Built on : &lt;i class='fa fa-calendar' aria-hidden='true'&gt;&lt;/i&gt; 23-Nov-2020 at &lt;i class='fa fa-clock-o' aria-hidden='true'&gt;&lt;/i&gt; 09:29:15&lt;/span&gt;  
+
+&lt;b&gt;2020&lt;/b&gt; • [SciLifeLab](https://www.scilifelab.se/) • [NBIS](https://nbis.se/)
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="assets/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "4:3",
+"highlightLanguage": "r",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%/%total%"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
