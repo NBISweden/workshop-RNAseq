@@ -13,14 +13,14 @@ date;room;start_time;end_time;topic;teacher;assistant;link_slide;link_lab;link_r
 ;;12:00;13:00;Lunch;;;;;
 ;;13:00;14:00;R refresher;Roy Francis;;;lab_download.html;
 ;;14:00;14:30;Coffee Break;;;;;
-;;14:30;16:00;Preprocessing & Normalisation;Roy Francis;;slide_dge.html;lab_dge.html;
+;;14:30;16:00;Preprocessing & Normalisation;Roy Francis;;slide_preprocessing.html;lab_preprocessing.html;
 02/12/2020;Online;09:00;10:00;Exploratory Analyses;Paulo Czarnewski;;;;
 ;;10:00;10:30;Coffee Break;;;;;
 ;;10:30;12:00;PCA;Paulo Czarnewski;;slide_pca.pdf;lab_eda.html;
 ;;12:00;13:00;Lunch;;;;;
 ;;13:00;14:00;Hierarchical Clustering;Paulo Czarnewski;;slide_clustering.pdf;lab_eda.html;
 ;;14:00;14:30;Coffee Break;;;;;
-;;14:30;16:00;DGE;Roy Francis;;;;
+;;14:30;16:00;DGE;Roy Francis;;slide_dge.html;lab_dge.html;
 03/12/2020;Online;09:00;10:00;DGE Visualisation;Roy Francis;;;;
 ;;10:00;10:30;Coffee Break;;;;;
 ;;10:30;12:00;GSA & GSEA;Paulo Czarnewski;;slide_functional.pdf;;
