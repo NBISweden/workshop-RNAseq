@@ -30,24 +30,18 @@ Load the sequencing data and the metadata data with sample information.
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Load data and metadata
 
-download_data("data/counts_raw.csv")
-data <- read.csv("data/counts_raw.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+download_data("data/counts_filtered.csv")
+data <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 
 # if file doesn't exist, download it
 download_data("data/metadata_raw.csv")
 metadata <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=TRUE,row.names=1)
 
 #Convert ensembl IDs to gene names
-
-# optionally, get annotation from biomart
-#human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
-#annot <- getBM(c("ensembl_gene_id","external_gene_name"), mart=human)
-#write.csv2(annot,"data/human_biomaRt_annotation.csv",row.names = T)
-
 download_data("data/mouse_genes.txt")
-annot <- read.csv("data/mouse_genes.txt",row.names=1,stringsAsFactors=FALSE)
+annot <- read.delim("data/mouse_genes.txt",stringsAsFactors=FALSE)
 
-gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
+gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"hgnc_symbol"] )
 gene_names[is.na(gene_names) ] <- ""
 
 #Remove missing or fuse duplicated annotations
@@ -64,7 +58,7 @@ dim(data)
 #Transform data to log2CPM
 cpm <- t( round(t(data) / colSums(data) * 1e6))
 logcpm <- log2( cpm + 1)
-if(!file.exists("data/cpm.csv")) write.csv2(cpm , "data/cpm.csv",row.names = T)
+if(!file.exists("data/cpm.csv")) write.csv(cpm ,"data/cpm.csv",row.names=T)
 ```
 
 ***
