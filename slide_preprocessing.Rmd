@@ -1,7 +1,7 @@
 ---
 title: "Data Preprocessing"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>NBIS</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
+author: "`r paste0('<b>Roy Francis</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
 institute: NBIS, SciLifeLab
 keywords: bioinformatics, course, scilifelab, nbis
 output:
@@ -49,15 +49,14 @@ name: raw
 - Raw count table
 
 ```{r,eval=TRUE,echo=FALSE}
-cr <- read.table("./data/counts_raw.txt",header=TRUE)
+cr <- read.csv("./data/counts_raw.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 cr[1:6,1:6]
 ```
 
 - Metadata
 
 ```{r,eval=TRUE,echo=FALSE}
-mr <- read.csv2("./data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
-rownames(mr) <- mr$Sample_ID
+mr <- read.csv("./data/metadata_raw.csv",header=TRUE,stringsAsFactors=F,row.names=1)
 mr[1:6,]
 ```
 
@@ -74,7 +73,7 @@ name: pp
 
 ```{r,echo=TRUE}
 cf1 <- cr[rowSums(cr>0) >= 2, ]
-cf2 <- cr[rowSums(cr>5) >= 2, ]
+cf2 <- cr[rowSums(cr>3) >= 2, ]
 cf3 <- cr[rowSums(edgeR::cpm(cr)>1) >= 2, ]
 ```
 
@@ -242,6 +241,8 @@ name: norm-3a
 - RPKM, FPKM and TPM control for sequencing depth and gene length
 - TPM enables better comparison between samples and between experiments
 
+--
+
 **Normalisation by distribution**
 
 - Assumes technical effects are same for DE and non-DE genes
@@ -275,12 +276,16 @@ name: norm-3b
 - Tolerates a larger difference in number of over and under expressed genes between conditions
 - Methods include PoissonSeq, DEGES
 
+--
+
 **Normalisation using Controls**
 
 - Assumes controls are not affected by experimental condition and technical effects are similar to all other genes
 - Useful in conditions with global shift in expression
 - Controls could be house-keeping genes or spike-ins
 - Methods include RUV, CLS
+
+--
 
 **Stabilizing variance**
 - Variance is stabilised across the range of mean values
@@ -311,7 +316,7 @@ tpm <- function(counts,len) {
 }
 
 #tpm
-g <- read.delim("./data/human_genes.txt",header=T,stringsAsFactors=F)
+g <- read.delim("./data/mouse_genes.txt",header=T,stringsAsFactors=F)
 g <- g[!duplicated(g$ensembl_gene_id),]
 g$len <- g$end_position-g$start_position
 rownames(g) <- g$ensembl_gene_id
@@ -321,15 +326,12 @@ cf1 <- cf[igenes,]
 ct <- tpm(cf1,g1$len)
 
 # deseq2
-mr$Time <- factor(mr$Time)
-d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Time)
+mr$Group <- factor(mr$Group)
+d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Group)
 d <- DESeq2::estimateSizeFactors(d,type="ratio")
 cd <- counts(d,normalized=TRUE)
 
 # vst
-mr$Time <- factor(mr$Time)
-d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Time)
-d <- DESeq2::estimateSizeFactors(d,type="ratio")
 d <- DESeq2::estimateDispersions(d)
 cv <- as.data.frame(assay(varianceStabilizingTransformation(d,blind=T)),check.names=F)
 ```
@@ -460,8 +462,8 @@ name: eda-cor
 
 ```{r,ech=FALSE,fig.height=4.5,fig.width=5.5}
 dmat <- as.matrix(cor(cv,method="spearman"))
-pheatmap::pheatmap(dmat,border_color=NA,annotation_col=mr[,"Time",drop=F],
-         annotation_row=mr[,"Time",drop=F],annotation_legend=T)
+pheatmap::pheatmap(dmat,border_color=NA,annotation_col=mr[,"Group",drop=F],
+         annotation_row=mr[,"Group",drop=F],annotation_legend=T)
 ```
 
 ---
@@ -473,8 +475,8 @@ name: eda-dist
 
 ```{r,echo=TRUE,fig.height=4.5,fig.width=5.5}
 dmat <- as.matrix(dist(t(cv)))
-pheatmap(dmat,border_color=NA,annotation_col=mr[,"Time",drop=F],
-         annotation_row=mr[,"Time",drop=F],annotation_legend=T)
+pheatmap(dmat,border_color=NA,annotation_col=mr[,"Group",drop=F],
+         annotation_row=mr[,"Group",drop=F],annotation_legend=T)
 ```
 
 ---
@@ -499,7 +501,7 @@ barplot(round(pcaobj$sdev^2/sum(pcaobj$sdev^2)*100,2),las=2,
 pcamat1 <- as.data.frame(pcaobj$x)
 pcamat2 <- merge(pcamat1,mr,by=0)
 
-ggplot(pcamat2,aes(PC1,PC2,colour=Time))+
+ggplot(pcamat2,aes(PC1,PC2,colour=Group))+
   geom_point()+
   theme_bw()+
   theme(panel.border=element_blank(),
@@ -509,10 +511,10 @@ ggplot(pcamat2,aes(PC1,PC2,colour=Time))+
 ```{r,eval=FALSE,include=FALSE}
 # plotly pca
 library(plotly)
-pcamat2$tt <- paste0("<b>ID: </b>",pcamat2$Sample_ID,"\n",
-                   "<b>Name: </b>",pcamat2$Sample_Name)
+pcamat2$tt <- paste0("<b>ID: </b>",pcamat2$SampleID,"\n",
+                   "<b>Name: </b>",pcamat2$SampleName)
 p1 <- plot_ly(pcamat2,x=~PC1,y=~PC2,z=~PC3,text=~tt,hoverinfo="text")
-add_markers(p1,color=~Time)
+add_markers(p1,color=~Group)
 ```
 
 ]

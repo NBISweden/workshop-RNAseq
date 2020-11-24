@@ -39,21 +39,21 @@ library(dplyr)
 listMarts()
 ```
 
-We will use the code below to find the name of the Human ensembl genes dataset under ensembl mart.
+We will use the code below to find the name of the Mouse ensembl genes dataset under ensembl mart.
 
 ```{r}
 mart <- useMart("ENSEMBL_MART_ENSEMBL")
 ds <- as.data.frame(listDatasets(mart=mart))
 
-# find all rows in dataset 'ds' where column 'description' contains the string 'human'
-ds[grepl("human",tolower(ds$description)),]
+# find all rows in dataset 'ds' where column 'description' contains the string 'mouse'
+ds[grepl("mouse",tolower(ds$description)),]
 ```
 
 Now that we know the name of the dataset, we can list all the columns (filters) in this dataset.
 
 ```{r}
 mart <- useMart("ENSEMBL_MART_ENSEMBL")
-mart <- useDataset(mart=mart,dataset="hsapiens_gene_ensembl")
+mart <- useDataset(mart=mart,dataset="mmusculus_gene_ensembl")
 la <- listAttributes(mart=mart)
 head(la)
 ```
@@ -68,8 +68,8 @@ We create a vector of our columns of interest.
 
 ```{r,eval=FALSE}
 myattributes <- c("ensembl_gene_id",
-                  "entrezgene",
-                  "external_gene_name",
+                  "entrezgene_id",
+                  "hgnc_symbol",
                   "chromosome_name",
                   "start_position",
                   "end_position",
@@ -82,53 +82,53 @@ We then use this to download our data. Note that this can be a slow step.
 
 ```{r,eval=FALSE}
 mart <- useMart("ENSEMBL_MART_ENSEMBL")
-mart <- useDataset(mart=mart,dataset="hsapiens_gene_ensembl")
+mart <- useDataset(mart=mart,dataset="mmusculus_gene_ensembl")
 bdata <- getBM(mart=mart,attributes=myattributes,uniqueRows=T)
 head(bdata)
 ```
 
 ```
-  ensembl_gene_id entrezgene external_gene_name chromosome_name start_position
-1 ENSG00000210049         NA              MT-TF              MT            577
-2 ENSG00000211459         NA            MT-RNR1              MT            648
-3 ENSG00000210077         NA              MT-TV              MT           1602
-4 ENSG00000210082         NA            MT-RNR2              MT           1671
-5 ENSG00000209082         NA             MT-TL1              MT           3230
-6 ENSG00000198888       4535             MT-ND1              MT           3307
-  end_position strand   gene_biotype
-1          647      1        Mt_tRNA
-2         1601      1        Mt_rRNA
-3         1670      1        Mt_tRNA
-4         3229      1        Mt_rRNA
-5         3304      1        Mt_tRNA
-6         4262      1 protein_coding
-                                                                                               description
-1                              mitochondrially encoded tRNA-Phe (UUU/C) [Source:HGNC Symbol;Acc:HGNC:7481]
-2                                       mitochondrially encoded 12S RNA [Source:HGNC Symbol;Acc:HGNC:7470]
-3                                mitochondrially encoded tRNA-Val (GUN) [Source:HGNC Symbol;Acc:HGNC:7500]
-4                                       mitochondrially encoded 16S RNA [Source:HGNC Symbol;Acc:HGNC:7471]
-5                            mitochondrially encoded tRNA-Leu (UUA/G) 1 [Source:HGNC Symbol;Acc:HGNC:7490]
-6 mitochondrially encoded NADH:ubiquinone oxidoreductase core subunit 1 [Source:HGNC Symbol;Acc:HGNC:7455]
+     ensembl_gene_id entrezgene_id hgnc_symbol chromosome_name start_position end_position
+1 ENSMUSG00000118554        631145     CXorf58               X       94339903     94364570
+2 ENSMUSG00000118505        546801       ETV3L               3       87550099     87561109
+3 ENSMUSG00000064336            NA                          MT              1           68
+4 ENSMUSG00000064337            NA                          MT             70         1024
+5 ENSMUSG00000064338            NA                          MT           1025         1093
+6 ENSMUSG00000064339            NA                          MT           1094         2675
+  strand   gene_biotype
+1     -1 protein_coding
+2      1 protein_coding
+3      1        Mt_tRNA
+4      1        Mt_rRNA
+5      1        Mt_tRNA
+6      1        Mt_rRNA
+                                                                    description
+1  family with sequence similarity 90, member A1B [Source:NCBI gene;Acc:631145]
+2                              ets variant 3-like [Source:NCBI gene;Acc:546801]
+3 mitochondrially encoded tRNA phenylalanine [Source:MGI Symbol;Acc:MGI:102487]
+4           mitochondrially encoded 12S rRNA [Source:MGI Symbol;Acc:MGI:102493]
+5        mitochondrially encoded tRNA valine [Source:MGI Symbol;Acc:MGI:102472]
+6           mitochondrially encoded 16S rRNA [Source:MGI Symbol;Acc:MGI:102492]
 ```
 
 We find that there are several duplicates for all the IDs. This needs to be fixed when this information is to be used downstream.
 
 ```{r,eval=FALSE}
 sum(duplicated(bdata$ensembl_gene_id))
-sum(duplicated(bdata$entrezgene))
-sum(duplicated(bdata$external_gene_name))
+sum(duplicated(bdata$entrezgene_id))
+sum(duplicated(bdata$hgnc_symbol))
 ```
 
 ```
-252
-45751
-6417
+[1] 292
+[1] 35207
+[1] 56593
 ```
 
 ```{r,eval=FALSE}
 # arrange table by chr name and start position
 bdata <- dplyr::arrange(bdata,chromosome_name,start_position)
-write.table(bdata,"./data/human_genes.txt",row.names=F,quote=F,col.names=T,sep="\t")
+write.table(bdata,"./data/mouse_genes.txt",sep="\t",dec=".",row.names=FALSE,quote=FALSE)
 ```
 
 ## Transcript
@@ -136,9 +136,9 @@ write.table(bdata,"./data/human_genes.txt",row.names=F,quote=F,col.names=T,sep="
 Here we download transcript to gene mappings. Notice that we can specify the `mart` and `dataset` in the `useMart()` function.
 
 ```{r,eval=FALSE}
-mart <- useMart(biomart="ensembl",dataset="hsapiens_gene_ensembl")
+mart <- useMart(biomart="ensembl",dataset="mmusculus_gene_ensembl")
 t2g <- getBM(attributes=c("ensembl_transcript_id","ensembl_gene_id","external_gene_name"),mart=mart)
-write.table(t2g,"./data/human_transcripts.txt",row.names=F,quote=F,col.names=T,sep="\t")
+write.table(t2g,"./data/mouse_transcripts.txt",sep="\t",dec=".",row.names=F,quote=F)
 ```
 
 The transcipt information file is saved to a file and will be used in the lab on [Kallisto](lab_kallisto.html).
@@ -148,30 +148,31 @@ The transcipt information file is saved to a file and will be used in the lab on
 Similarly, we can get entrez gene ID to GO ID relationships. List all the GO related filters:
 
 ```{r,eval=FALSE}
-mart <- biomaRt::useMart(biomart="ensembl",dataset="hsapiens_gene_ensembl")
-lf <- listFilters(mart=mart)
+mart <- biomaRt::useMart(biomart="ensembl",dataset="mmusculus_gene_ensembl")
+la <- listAttributes(mart=mart)
 
 # find all rows in dataset 'lf' where column 'name' contains the string 'go'
-lf[grepl("go",tolower(lf$name)),]
+head(la[grepl("go",tolower(la$name)),])
 ```
 
 ```
-                   name                        description
-1               with_go                      With GO ID(s)
-2       with_goslim_goa              With GOSlim GOA ID(s)
-3                    go         GO ID(s) [e.g. GO:0000002]
-4            goslim_goa GOSlim GOA ID(s) [e.g. GO:0000003]
-5        go_parent_term              Parent term accession
-6        go_parent_name                   Parent term name
-7      go_evidence_code                   GO Evidence code
-8   with_cdingo_homolog            Orthologous Dingo Genes
-9 with_ggorilla_homolog          Orthologous Gorilla Genes
+                     name                           description
+18                with_go                         With GO ID(s)
+19        with_goslim_goa                 With GOSlim GOA ID(s)
+70                     go            GO ID(s) [e.g. GO:0000002]
+71             goslim_goa    GOSlim GOA ID(s) [e.g. GO:0000003]
+169        go_parent_term                 Parent term accession
+170        go_parent_name                      Parent term name
+171      go_evidence_code                      GO Evidence code
+212   with_cgobio_homolog Orthologous Channel bull blenny Genes
+233  with_cldingo_homolog               Orthologous Dingo Genes
+257 with_ggorilla_homolog             Orthologous Gorilla Genes
 ```
 
 ```{r,eval=FALSE}
-mart <- biomaRt::useMart(biomart="ensembl",dataset="hsapiens_gene_ensembl")
-bdata <- getBM(mart=mart,attributes=c("entrezgene","go","go_evidence_code"),uniqueRows=T)
-write.table(bdata,"./data/go.txt",row.names=F,quote=F,col.names=T,sep="\t")
+mart <- biomaRt::useMart(biomart="ensembl",dataset="mmusculus_gene_ensembl")
+bdata <- getBM(mart=mart,attributes=c("entrezgene_id","go_id","go_linkage_type"),uniqueRows=T)
+write.table(bdata,"./data/mouse_go.txt",sep="\t",dec=".",row.names=FALSE,quote=FALSE)
 ```
 
 ## ID conversion
@@ -184,7 +185,7 @@ Here is an example where we convert a few mouse ensembl IDs to Human Hugo gene I
 mouse_genes <- c("ENSMUSG00000035847","ENSMUSG00000000214")
 mouse <- useMart("ensembl",dataset="mmusculus_gene_ensembl")
 human <- useMart("ensembl",dataset="hsapiens_gene_ensembl")
-human_genes <- getLDS(attributes=c("ensembl_gene_id"),filters="ensembl_gene_id",values=mouse_genes,mart=mouse, attributesL=c("hgnc_symbol"),martL=human,valuesL="hgnc_symbol",uniqueRows=F)[,1]
+getLDS(attributes=c("ensembl_gene_id"),filters="ensembl_gene_id",values=mouse_genes,mart=mouse, attributesL=c("hgnc_symbol"),martL=human,valuesL="hgnc_symbol",uniqueRows=F)
 ```
 
 ```
@@ -193,9 +194,4 @@ human_genes <- getLDS(attributes=c("ensembl_gene_id"),filters="ensembl_gene_id",
 2 ENSMUSG00000035847         IDS
 ```
 
-# Session info
-
-```{r,echo=FALSE}
-sessionInfo()
-```
 ***

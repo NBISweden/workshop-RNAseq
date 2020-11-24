@@ -27,22 +27,21 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 For differential gene expression, we use the **DESeq2** package. We use the raw filtered counts and metadata.
   
 ```{r}
-download_data("data/counts_filtered.txt")
-cf <- read.table("data/counts_filtered.txt",header=TRUE)
+download_data("data/counts_filtered.csv")
+cf <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 
 download_data("data/metadata_raw.csv")
-mr <- read.csv2("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
-rownames(mr) <- mr$Sample_ID
+mr <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F,row.names=1)
 ```
 
-The data is converted to a DESeq2 object. The GLM model we use is simple since we only have one variable of interest `~Time`.
+The data is converted to a DESeq2 object. The GLM model we use is simple since we only have one variable of interest `~Group`.
 
-If we had other covariates to control for, we would add them to the model like so `~var+Time`. The variable of interest appears in the end. This model asks to find differentially expressed genes between groups under 'time' variable while controlling for the effect of 'var'. Similarily, batch effects can be controlled by specifying them in the model `~batch+Time`.
+If we had other covariates to control for, we would add them to the model like so `~var+Group`. The variable of interest appears in the end. This model asks to find differentially expressed genes between groups under 'Group' variable while controlling for the effect of 'var'. Similarily, batch effects can be controlled by specifying them in the model `~batch+Group`.
 
 ```{r}
 library(DESeq2)
-mr$Time <- factor(mr$Time)
-d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Time)
+mr$Group <- factor(mr$Group)
+d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Group)
 ```
 
 # Size factors
@@ -172,15 +171,13 @@ Now, we see that genes with lower counts have higher variability and genes with 
 
 This becomes even more apparent if we compute the CV and mean over replicates within sample groups (Time).
 
-```{r,fig.height=5,fig.width=5,block.title=TRUE}
-dx1 <- data.frame(t0=apply(cf[,1:3],1,cva),t2=apply(cf[,4:6],1,cva),
-            t6=apply(cf[,7:9],1,cva),t24=apply(cf[,10:12],1,cva))
+```{r,fig.height=3.5,fig.width=5,block.title=TRUE}
+dx1 <- data.frame(day00=apply(cf[,1:3],1,cva),day07=apply(cf[,4:6],1,cva))
 dx1$gene <- rownames(dx1)
 dx1 <- tidyr::gather(dx1,key=sample,value=cv,-gene)
 rownames(dx1) <- paste0(dx1$gene,"-",dx1$sample)
 
-dx2 <- data.frame(t0=apply(cf[,1:3],1,mean),t2=apply(cf[,4:6],1,mean),
-            t6=apply(cf[,7:9],1,mean),t24=apply(cf[,10:12],1,mean))
+dx2 <- data.frame(day00=apply(cf[,1:3],1,mean),day07=apply(cf[,4:6],1,mean))
 dx2$gene <- rownames(dx2)
 dx2 <- tidyr::gather(dx2,key=sample,value=mean,-gene)
 rownames(dx2) <- paste0(dx2$gene,"-",dx2$sample)
@@ -197,15 +194,13 @@ ggplot(dx3,aes(x=log10(mean+1),y=cv))+
 
 We find that CV strongly declines with increasing counts. Genes with low counts show higher variability. For the sake of completeness, we can also plot the relationship between CV and variance for the same sample groups.
 
-```{r,fig.height=5,fig.width=5,block.title=TRUE}
-dx1 <- data.frame(t0=apply(cf[,1:3],1,cva),t2=apply(cf[,4:6],1,cva),
-            t6=apply(cf[,7:9],1,cva),t24=apply(cf[,10:12],1,cva))
+```{r,fig.height=3.5,fig.width=5,block.title=TRUE}
+dx1 <- data.frame(day00=apply(cf[,1:3],1,cva),day07=apply(cf[,4:6],1,cva))
 dx1$gene <- rownames(dx1)
 dx1 <- tidyr::gather(dx1,key=sample,value=cv,-gene)
 rownames(dx1) <- paste0(dx1$gene,"-",dx1$sample)
 
-dx2 <- data.frame(t0=apply(cf[,1:3],1,var),t2=apply(cf[,4:6],1,var),
-            t6=apply(cf[,7:9],1,var),t24=apply(cf[,10:12],1,var))
+dx2 <- data.frame(day00=apply(cf[,1:3],1,var),day07=apply(cf[,4:6],1,var))
 dx2$gene <- rownames(dx2)
 dx2 <- tidyr::gather(dx2,key=sample,value=var,-gene)
 rownames(dx2) <- paste0(dx2$gene,"-",dx2$sample)
@@ -268,22 +263,18 @@ resultsNames(dg)
 And we can get the result tables for the three different comparisons. The summary of the result object shows the number of genes that are differentially expressed with positive or negative fold-change and outliers.
 
 ```{r,block.title=TRUE}
-res1 <- results(dg,name="Time_t2_vs_t0",alpha=0.05)
-summary(res1)
-res2 <- results(dg,name="Time_t24_vs_t0",alpha=0.05)
-summary(res2)
-res3 <- results(dg,name="Time_t6_vs_t0",alpha=0.05)
-summary(res3)
+res <- results(dg,name="Group_day07_vs_day00",alpha=0.05)
+summary(res)
 ```
 
-You can also build up the comparison using **contrasts**. Contrasts need the condition, level to compare and the reference level (base level). For example, `results(dg,contrast=c("Time","t2","t0"),alpha=0.05)`.
+You can also build up the comparison using **contrasts**. Contrasts need the condition, level to compare and the reference level (base level). For example, `results(dg,contrast=c("Group","day07","day00"),alpha=0.05)`.
 
-Note that in both cases above, `t0` is the reference level and other levels are compared to this. Therefore, a fold-change of 2 would mean that, a gene is 2 fold higher expressed in the test level compared to `t0`.
+Note that `day00` is the reference level and other levels are compared to this. Therefore, a fold-change of 2 would mean that, a gene is 2 fold higher expressed in `day07` compared to `day00`.
 
 The `results()` function has many useful arguments. One can set a threshold on the logFC values using `lfcThreshold`. By default, no filtering is performed based on logFC values. Outliers are detected and p-values are set to NA automatically using `cooksCutoff`. `independentFiltering=TRUE` remove genes with low counts.
 
 ```{r,block.title=TRUE}
-head(res1)
+head(res)
 ```
 
 The result table contains mean expression value (baseMean), log2 fold change (log2FoldChange), log2 fold change standard error (lfcSE), wald test statistic (stat), wald test p-value (pvalue) and BH adjusted p-value (padj) for each gene.
@@ -293,7 +284,7 @@ The result table contains mean expression value (baseMean), log2 fold change (lo
 It is a good idea to look at the distribution of unadjusted p-values.
 
 ```{r,fig.height=5,fig.width=5}
-hist(res1$pvalue,main="res1 Pval distribution",xlab="P-values")
+hist(res$pvalue,main="Pval distribution",xlab="P-values")
 ```
 
 This is the kind of distribution to be expected when the p-values are "well-behaved". For more explanation on p-value distributions, see [here](http://varianceexplained.org/statistics/interpreting-pvalue-histogram/). If this distribution is very different or strange, then it might indicate an underlying problem.
@@ -301,8 +292,8 @@ This is the kind of distribution to be expected when the p-values are "well-beha
 ```{r,eval=FALSE,include=FALSE}
 # qqplot and inflation
 ci <- 0.95
-n <- length(res1$pvalue)
-pv <- res1$pvalue
+n <- length(res$pvalue)
+pv <- res$pvalue
 dfr <- data.frame(observed = -log10(sort(pv)),
                   expected = -log10(ppoints(n)),
                   clower = -log10(qbeta(p=(1-ci)/2, shape1=1:n, shape2=n:1)),
@@ -327,31 +318,31 @@ We can filter the results table as needed.
 
 ```{r,block.title=TRUE}
 # all genes
-nrow(as.data.frame(res1))
+nrow(as.data.frame(res))
 # only genes with padj <0.05
-nrow(dplyr::filter(as.data.frame(res1),padj<0.05))
+nrow(dplyr::filter(as.data.frame(res),padj<0.05))
 # only genes with padj <0.05 and an absolute fold change >2
-nrow(dplyr::filter(as.data.frame(res1),padj<0.05,abs(log2FoldChange)>2))
+nrow(dplyr::filter(as.data.frame(res),padj<0.05,abs(log2FoldChange)>2))
 ```
 
 Note that manually filtering by **log2FoldChange** on the results table is not the same as setting the `lfcThreshold` argument in the `results()` function.
 
-Finally, we can add additional information to our results to make the interpretation and downstream analyses easier. We read in the gene info downloaded through biomaRt.
+Finally, we can add additional information to our results to make the interpretation and downstream analyses easier. We read in the gene info previously downloaded through the R package **biomaRt**.
 
 ```{r}
 # convert res to data.frame
-df_res <- as.data.frame(res1)
+df_res <- as.data.frame(res)
 # add row names as a new column
 df_res$ensembl_gene_id <- rownames(df_res)
 
 # read genes info
-download_data("data/human_genes.txt")
-hg <- read.delim("data/human_genes.txt",header=T,sep="\t",stringsAsFactors=F)
-hg <- hg[!duplicated(hg$ensembl_gene_id),]
+download_data("data/mouse_genes.txt")
+mm <- read.delim("data/mouse_genes.txt",header=T,sep="\t",stringsAsFactors=F)
+mm <- mm[!duplicated(mm$ensembl_gene_id),]
 
 # merge dataframes
-df_res1 <- merge(df_res,hg,by="ensembl_gene_id")
-head(df_res1)
+df_res <- merge(df_res,mm,by="ensembl_gene_id")
+head(df_res)
 ```
 
 Now we have annotated our DEG list with information such as gene names, genomic coordinates, biotype etc.
@@ -361,20 +352,20 @@ Now we have annotated our DEG list with information such as gene names, genomic 
 This is an optional extra step to generate more accurate log2 fold changes. This step corrects the log2 fold changes for genes with high dispersion. This does not change the p-values or the list of DE genes.
 
 ```{r,block.title=TRUE}
-lres1 <- lfcShrink(dg,coef="Time_t2_vs_t0",res=res1,type="normal")
-summary(lres1)
+lres <- lfcShrink(dg,coef="Group_day07_vs_day00",res=res,type="normal")
+summary(lres)
 ```
 
 ```{r,block.title=TRUE}
-head(lres1)
+head(lres)
 ```
 
 We see that the number of genes up and down has not changed. But, we can see that the logFC distribution has changed in the density plot below.
 
 ```{r,fig.height=4,fig.width=8}
 par(mfrow=c(1,2))
-plot(density(na.omit(res1$log2FoldChange)),main="log2FC")
-plot(density(na.omit(lres1$log2FoldChange)),main="log2FC lfcShrink")
+plot(density(na.omit(res$log2FoldChange)),main="log2FC")
+plot(density(na.omit(lres$log2FoldChange)),main="log2FC lfcShrink")
 par(mfrow=c(1,1))
 ```
 
@@ -391,7 +382,7 @@ In this section, we can explore some useful visualisation of the differential ge
 The MA plot shows mean expression vs log fold change for all genes. The `plotMA()` function from DESeq2 takes a results object as input. Differentially expressed genes are marked in bright colour.
 
 ```{r,fig.height=5.5,fig.width=5,block.title=TRUE}
-DESeq2::plotMA(res1)
+DESeq2::plotMA(res)
 ```
 
 <i class="fas fa-comments"></i> How does this plot change if you set log fold change filtering to minimum value of 1. How does the plot change when you use `lfcShrink()`?
@@ -402,8 +393,8 @@ A volcano plot is similar to the MA plot. It plots log fold change vs adjusted p
 
 ```{r,fig.height=5,fig.width=5,block.title=TRUE}
 ggplot()+
-  geom_point(data=as.data.frame(res1),aes(x=log2FoldChange,y=-log10(padj)),col="grey80",alpha=0.5)+
-  geom_point(data=filter(as.data.frame(res1),padj<0.05),aes(x=log2FoldChange,y=-log10(padj)),col="red",alpha=0.7)+
+  geom_point(data=as.data.frame(res),aes(x=log2FoldChange,y=-log10(padj)),col="grey80",alpha=0.5)+
+  geom_point(data=filter(as.data.frame(res),padj<0.05),aes(x=log2FoldChange,y=-log10(padj)),col="red",alpha=0.7)+
   geom_hline(aes(yintercept=-log10(0.05)),alpha=0.5)+
   theme_bw()
 ```
@@ -417,10 +408,10 @@ X axis denotes log fold change and the y axis denotes -log10 adjusted p-value. T
 It can be a good idea to manually verify some of these genes by plotting out it's actual read count values. We can use the function `plotCounts()` to visualise the data points for a gene of interest. Below, we see the counts before and after normalisation.
 
 ```{r,fig.height=5,fig.width=5,block.title=TRUE}
-plotCounts(d,gene=rownames(res1)[1],intgroup="Time",normalized=F)
-plotCounts(d,gene=rownames(res1)[1],intgroup="Time",normalized=T)
+plotCounts(d,gene=rownames(res)[1],intgroup="Group",normalized=F)
+plotCounts(d,gene=rownames(res)[1],intgroup="Group",normalized=T)
 ```
 
-<i class="fas fa-comments"></i> By looking at the count plots, do you agree that the top DE genes differ  significantly between the groups compared? Does the fold change make sense given that `t0` is the reference group?
+<i class="fas fa-comments"></i> By looking at the count plots, do you agree that the top DE genes differ  significantly between the groups compared? Does the fold change make sense given the reference group?
 
 ***

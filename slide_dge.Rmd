@@ -1,7 +1,7 @@
 ---
 title: "Differential Gene Expression"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>NBIS</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
+author: "`r paste0('<b>Roy Francis</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
 institute: NBIS, SciLifeLab
 keywords: bioinformatics, course, scilifelab, nbis
 output:
@@ -39,15 +39,16 @@ library(pheatmap)
 library(DESeq2)
 library(edgeR)
 library(gridExtra)
+
+source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
 ```
 
 ```{r,eval=TRUE,include=FALSE}
-download_data("data/counts_filtered.txt")
-cf <- read.table("data/counts_filtered.txt",header=TRUE)
+download_data("data/counts_filtered.csv")
+cf <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 
 download_data("data/metadata_raw.csv")
-mr <- read.csv2("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F)
-rownames(mr) <- mr$Sample_ID
+mr <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 ```
 
 ---
@@ -59,8 +60,8 @@ name: dge
 
 ```{r}
 library(DESeq2)
-mr$Time <- factor(mr$Time)
-d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Time)
+mr$Group <- factor(mr$Group)
+d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Group)
 d
 ```
 
@@ -92,10 +93,10 @@ name: dge-dispersion
 - We need to measure the variability of gene counts
 
 ```{r}
-dm <- apply(cd,1,mean)
-dv <- apply(cd,1,var)
+dm <- apply(cf,1,mean)
+dv <- apply(cf,1,var)
 cva <- function(x) sd(x)/mean(x)
-dc <- apply(cd,1,cva)
+dc <- apply(cf,1,cva)
 ```
 
 --
@@ -164,7 +165,7 @@ name: dge-test-2
 ## Testing
 
 ```{r}
-res1 <- results(dg,name="Time_t2_vs_t0",alpha=0.05)
+res1 <- results(dg,name="Group_day07_vs_day00",alpha=0.05)
 summary(res1)
 ```
 
@@ -202,7 +203,7 @@ count: false
 
 ```{r,include=FALSE,eval=FALSE}
 # manually run this to render this document to HTML
-rmarkdown::render("presentation_dge.Rmd")
+rmarkdown::render("slide_dge.Rmd")
 # manually run this to convert HTML to PDF
 #pagedown::chrome_print("presentation_dge.html",output="presentation_dge.pdf")
 ```
