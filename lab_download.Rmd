@@ -69,7 +69,7 @@ We create a vector of our columns of interest.
 ```{r,eval=FALSE}
 myattributes <- c("ensembl_gene_id",
                   "entrezgene_id",
-                  "hgnc_symbol",
+                  "external_gene_name",
                   "chromosome_name",
                   "start_position",
                   "end_position",
@@ -88,27 +88,27 @@ head(bdata)
 ```
 
 ```
-     ensembl_gene_id entrezgene_id hgnc_symbol chromosome_name start_position end_position
-1 ENSMUSG00000118554        631145     CXorf58               X       94339903     94364570
-2 ENSMUSG00000118505        546801       ETV3L               3       87550099     87561109
-3 ENSMUSG00000064336            NA                          MT              1           68
-4 ENSMUSG00000064337            NA                          MT             70         1024
-5 ENSMUSG00000064338            NA                          MT           1025         1093
-6 ENSMUSG00000064339            NA                          MT           1094         2675
-  strand   gene_biotype
-1     -1 protein_coding
-2      1 protein_coding
-3      1        Mt_tRNA
-4      1        Mt_rRNA
-5      1        Mt_tRNA
-6      1        Mt_rRNA
-                                                                    description
-1  family with sequence similarity 90, member A1B [Source:NCBI gene;Acc:631145]
-2                              ets variant 3-like [Source:NCBI gene;Acc:546801]
-3 mitochondrially encoded tRNA phenylalanine [Source:MGI Symbol;Acc:MGI:102487]
-4           mitochondrially encoded 12S rRNA [Source:MGI Symbol;Acc:MGI:102493]
-5        mitochondrially encoded tRNA valine [Source:MGI Symbol;Acc:MGI:102472]
-6           mitochondrially encoded 16S rRNA [Source:MGI Symbol;Acc:MGI:102492]
+     ensembl_gene_id entrezgene_id external_gene_name chromosome_name start_position
+1 ENSMUSG00000064336            NA              mt-Tf              MT              1
+2 ENSMUSG00000064337            NA            mt-Rnr1              MT             70
+3 ENSMUSG00000064338            NA              mt-Tv              MT           1025
+4 ENSMUSG00000064339            NA            mt-Rnr2              MT           1094
+5 ENSMUSG00000064340            NA             mt-Tl1              MT           2676
+6 ENSMUSG00000064341         17716             mt-Nd1              MT           2751
+  end_position strand   gene_biotype
+1           68      1        Mt_tRNA
+2         1024      1        Mt_rRNA
+3         1093      1        Mt_tRNA
+4         2675      1        Mt_rRNA
+5         2750      1        Mt_tRNA
+6         3707      1 protein_coding
+                                                                      description
+1   mitochondrially encoded tRNA phenylalanine [Source:MGI Symbol;Acc:MGI:102487]
+2             mitochondrially encoded 12S rRNA [Source:MGI Symbol;Acc:MGI:102493]
+3          mitochondrially encoded tRNA valine [Source:MGI Symbol;Acc:MGI:102472]
+4             mitochondrially encoded 16S rRNA [Source:MGI Symbol;Acc:MGI:102492]
+5       mitochondrially encoded tRNA leucine 1 [Source:MGI Symbol;Acc:MGI:102482]
+6 mitochondrially encoded NADH dehydrogenase 1 [Source:MGI Symbol;Acc:MGI:101787]
 ```
 
 We find that there are several duplicates for all the IDs. This needs to be fixed when this information is to be used downstream.
@@ -116,13 +116,13 @@ We find that there are several duplicates for all the IDs. This needs to be fixe
 ```{r,eval=FALSE}
 sum(duplicated(bdata$ensembl_gene_id))
 sum(duplicated(bdata$entrezgene_id))
-sum(duplicated(bdata$hgnc_symbol))
+sum(duplicated(bdata$external_gene_name))
 ```
 
 ```
 [1] 292
 [1] 35207
-[1] 56593
+[1] 1103
 ```
 
 ```{r,eval=FALSE}
@@ -185,13 +185,14 @@ Here is an example where we convert a few mouse ensembl IDs to Human Hugo gene I
 mouse_genes <- c("ENSMUSG00000035847","ENSMUSG00000000214")
 mouse <- useMart("ensembl",dataset="mmusculus_gene_ensembl")
 human <- useMart("ensembl",dataset="hsapiens_gene_ensembl")
-getLDS(attributes=c("ensembl_gene_id"),filters="ensembl_gene_id",values=mouse_genes,mart=mouse, attributesL=c("hgnc_symbol"),martL=human,valuesL="hgnc_symbol",uniqueRows=F)
+getLDS(attributes=c("ensembl_gene_id"),filters="ensembl_gene_id",values=mouse_genes,mart=mouse, attributesL=c("external_gene_name"),martL=human,valuesL="external_gene_name",uniqueRows=F)
 ```
 
 ```
-      Gene.stable.ID HGNC.symbol
-1 ENSMUSG00000000214          TH
-2 ENSMUSG00000035847         IDS
+      Gene.stable.ID  Gene.name
+1 ENSMUSG00000000214         TH
+2 ENSMUSG00000035847        IDS
+3 ENSMUSG00000035847 AC244197.3
 ```
 
 ***
