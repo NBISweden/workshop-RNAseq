@@ -41,7 +41,7 @@ metadata <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=TRUE,r
 download_data("data/mouse_genes.txt")
 annot <- read.delim("data/mouse_genes.txt",stringsAsFactors=FALSE)
 
-gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"hgnc_symbol"] )
+gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
 gene_names[is.na(gene_names) ] <- ""
 
 #Remove missing or fuse duplicated annotations
@@ -113,11 +113,11 @@ Next, we can compute PCA using the `prcomp()` function. As additional parameters
   PC <-  prcomp( t( logcpm[ top_var, ]), center = TRUE, scale. = TRUE) #Method2
   
   mypar(1,2)
-  plot(PC$x[,1] , PC$x[,2], cex=2, col=factor(metadata$Time), xlab="PC1", ylab="PC2", pch=16, main="PCA", las=1)
-  text(PC$x[,1] , PC$x[,2], cex=.7, labels = paste0(metadata$Sample_Name), pos = 3)
+  plot(PC$x[,1] , PC$x[,2], cex=2, col=factor(metadata$Group), xlab="PC1", ylab="PC2", pch=16, main="PCA", las=1)
+  text(PC$x[,1] , PC$x[,2], cex=.7, labels = paste0(metadata$SampleName), pos = 3)
   
-  plot(PC$x[,3] , PC$x[,4], cex=2, col=factor(metadata$Time), xlab="PC3", ylab="PC4", pch=16, main="PCA", las=1)
-  text(PC$x[,3] , PC$x[,4], cex=.7, labels = paste0(metadata$Sample_Name), pos = 3)
+  plot(PC$x[,3] , PC$x[,4], cex=2, col=factor(metadata$Group), xlab="PC3", ylab="PC4", pch=16, main="PCA", las=1)
+  text(PC$x[,3] , PC$x[,4], cex=.7, labels = paste0(metadata$SampleName), pos = 3)
 }
 ```
 
@@ -239,11 +239,11 @@ The methods available are: *ward.D*, *ward.D2*, *single*, *complete*, *average*,
 mypar(1,2,mar=c(6,4,2,1))
 h <- hclust(d, method="complete")
 plot( as.dendrogram(h) , las=1, main="d=euclidean\nh=complete")
-points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[h$order])
+points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Group[h$order])
 
 h2 <- hclust(d2, method="complete")
 plot( as.dendrogram(h2) , las=1, main="d=correlation\nh=complete")
-points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[h2$order])
+points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Group[h2$order])
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
@@ -330,7 +330,7 @@ plot(mock_pvc,las=2,hang = -0.5)
 pvc <- pvclust( data = logcpm , method.dist = "correlation", method.hclust = "complete",parallel = T)
 plot(pvc,las=2,hang = -0.5)
 pvrect(pvc, alpha = 0.9)
-points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[pvc$hclust$order])
+points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Group[pvc$hclust$order])
 ```
 
 ```{r,eval=FALSE,include=FALSE}
@@ -354,7 +354,7 @@ mypar(1,2,mar=c(6,4,2,1))
 plot(mock_pvc,las=2,hang = -0.5)
 plot(pvc,las=2,hang = -0.5)
 pvrect(pvc, alpha = 0.9)
-points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Time[pvc$hclust$order])
+points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Group[pvc$hclust$order])
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
