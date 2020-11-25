@@ -119,7 +119,7 @@ We can check if any samples need to be discarded based on the number of genes de
 abline(h=median(colSums(cr>3)))}
 ```
 
-On average, about `r sprintf("%0.5f",mean(colSums(cr>3))` genes are detected. All samples are more or less close to the average. None of the samples look bad enough to be removed.
+On average, about `r sprintf("%0.5f",mean(colSums(cr>3)))` genes are detected. All samples are more or less close to the average. None of the samples look bad enough to be removed.
 
 <i class="fas fa-comments"></i> What does `cr>3` do? Why did we use 3? Is it better than using `cr>0`?
 
