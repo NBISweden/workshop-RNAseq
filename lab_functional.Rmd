@@ -28,8 +28,8 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 
 
 # read data
-download_data("data/counts_vst.csv")
-data <- read.csv("data/counts_vst.csv",row.names = 1)
+download_data("data/gene_counts_vst.csv")
+data <- read.csv("data/gene_counts_vst.csv",row.names = 1)
 dim(data)
 
 # read metadata

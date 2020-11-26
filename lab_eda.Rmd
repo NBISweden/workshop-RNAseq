@@ -30,8 +30,8 @@ Load the sequencing data and the metadata data with sample information.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Load data and metadata
-download_data("data/counts_vst.csv")
-data <- read.csv("data/counts_vst.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+download_data("data/gene_counts_vst.csv")
+data <- read.csv("data/gene_counts_vst.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 
 # if file doesn't exist, download it
 download_data("data/metadata_raw.csv")

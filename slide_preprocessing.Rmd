@@ -49,7 +49,7 @@ name: raw
 - Raw count table
 
 ```{r,eval=TRUE,echo=FALSE}
-cr <- read.csv("./data/counts_raw.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+cr <- read.csv("./data/gene_counts_raw.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 cr[1:6,1:6]
 ```
 
