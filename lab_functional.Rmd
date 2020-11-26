@@ -1,7 +1,6 @@
 ---
 title: "Gene Function Annotation"
 subtitle: Workshop on RNA-Seq
-output: pdf_document
 ---
 
 ```{r,child="assets/header-lab.Rmd"}

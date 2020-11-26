@@ -1,6 +1,5 @@
 ---
 title: "Data preprocessing"
-output: pdf_document
 subtitle: Workshop on RNA-Seq
 editor_options:
   chunk_output_type: console
