@@ -330,5 +330,52 @@ conda deactivate
 
 <br/>
 
+## Data
+
+<img border="0" src="https://www.svgrepo.com/show/20109/database.svg" width="50" height="50">
+
+The data being used in this workshop is available [here](https://export.uppmax.uu.se/uppstore2017171/workshops/RNAseq). However, we recommend you to download it using terminal, which simplify things a lot.
+
+Go to your home folder and caunch the course environment:
+
+```{sh,eval=FALSE,block.title=TRUE}
+cd ~/
+
+conda activate RNAseq2020
+```
+
+Then you can simply run the `wget` command below to download the whole data for the course. This will take a long time since files are quite big.
+
+```{sh,eval=FALSE,block.title=TRUE}
+wget -r -nH --cut-dirs=2 --no-parent --reject="index.html*" https://export.uppmax.uu.se/uppstore2017171/workshops/RNAseq
+```
+
+After downloading, you will have a folder
+Do not rename nor place those folder elsewhere, since they will be used as is. You can now type:
+
+```{sh,eval=FALSE,block.title=TRUE}
+ls ~/RNAseq/
+```
+
+You now have 3 main folders there with data.
+
+<br/>
 
 
+## Code
+
+<img border="0" src="https://www.svgrepo.com/show/26279/code-file.svg" width="50" height="50">
+
+The code from the course can be downloaded directly from [Github](https://github.com/NBISweden/workshop-RNAseq).
+
+But it is much easier to do it from the command line:
+
+```{sh,eval=FALSE,block.title=TRUE}
+mkdir ~/RNAseq   #Run this line if you have not downloaded the data for the course yet
+cd ~/RNAseq
+
+for i in lab_annotation.Rmd lab_dge.Rmd lab_download.Rmd lab_eda.Rmd lab_functional.Rmd lab_preprocessing.Rmd
+do
+  curl -o $i https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/$i
+done
+```

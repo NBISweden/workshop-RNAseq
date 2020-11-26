@@ -10,7 +10,7 @@ channels:
  - psi4
 
 dependencies:
- - r-base>=4.0.0
+ - r-base
  - rstudio
  - bioconductor-biomart
  - bioconductor-edger

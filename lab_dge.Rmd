@@ -1,6 +1,8 @@
 ---
 title: "Differential Gene Expression"
 subtitle: "Workshop on RNA-Seq"
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -27,8 +29,8 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 For differential gene expression, we use the **DESeq2** package. We use the raw filtered counts and metadata.
   
 ```{r}
-download_data("data/counts_filtered.csv")
-cf <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+download_data("data/gene_counts.csv")
+cf <- as.matrix( read.csv("data/gene_counts.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1) )
 
 download_data("data/metadata_raw.csv")
 mr <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F,row.names=1)
@@ -264,7 +266,10 @@ And we can get the result tables for the three different comparisons. The summar
 
 ```{r,block.title=TRUE}
 res <- results(dg,name="Group_day07_vs_day00",alpha=0.05)
+res$padj[is.na(res$padj)] <- 1
+# res <- na.omit(res)
 summary(res)
+write.csv(res,"data/dge_results.csv",row.names=T)
 ```
 
 You can also build up the comparison using **contrasts**. Contrasts need the condition, level to compare and the reference level (base level). For example, `results(dg,contrast=c("Group","day07","day00"),alpha=0.05)`.
@@ -289,31 +294,6 @@ hist(res$pvalue,main="Pval distribution",xlab="P-values")
 
 This is the kind of distribution to be expected when the p-values are "well-behaved". For more explanation on p-value distributions, see [here](http://varianceexplained.org/statistics/interpreting-pvalue-histogram/). If this distribution is very different or strange, then it might indicate an underlying problem.
 
-```{r,eval=FALSE,include=FALSE}
-# qqplot and inflation
-ci <- 0.95
-n <- length(res$pvalue)
-pv <- res$pvalue
-dfr <- data.frame(observed = -log10(sort(pv)),
-                  expected = -log10(ppoints(n)),
-                  clower = -log10(qbeta(p=(1-ci)/2, shape1=1:n, shape2=n:1)),
-                  cupper = -log10(qbeta(p=(1+ci)/2, shape1=1:n, shape2=n:1)))
-qu <- quantile(pv,0.90)
-pv1 <- pv[pv<qu]
-median(qchisq(pv1,df=1,lower.tail=FALSE))/qchisq(0.5, 1)
-
-ggplot(dfr) +
-    geom_point(aes(expected, observed), shape=16, size=2,color="grey60")+
-    geom_abline(intercept=0, slope=1, color="tomato") +
-    geom_line(aes(expected, cupper), linetype=2, color="tomato")+
-    geom_line(aes(expected, clower), linetype=2, color="tomato")+
-    scale_x_continuous(limits=c(0,NA))+
-    scale_y_continuous(limits=c(0,NA))+
-    labs(x=expression("Expected -log"[10]~plain(P-values)),
-         y=expression("Observed -log"[10]~plain(P-values)),
-         subtitle=paste0(" n=",length(pv)))
-```
-
 We can filter the results table as needed.
 
 ```{r,block.title=TRUE}
@@ -326,26 +306,6 @@ nrow(dplyr::filter(as.data.frame(res),padj<0.05,abs(log2FoldChange)>2))
 ```
 
 Note that manually filtering by **log2FoldChange** on the results table is not the same as setting the `lfcThreshold` argument in the `results()` function.
-
-Finally, we can add additional information to our results to make the interpretation and downstream analyses easier. We read in the gene info previously downloaded through the R package **biomaRt**.
-
-```{r}
-# convert res to data.frame
-df_res <- as.data.frame(res)
-# add row names as a new column
-df_res$ensembl_gene_id <- rownames(df_res)
-
-# read genes info
-download_data("data/mouse_genes.txt")
-mm <- read.delim("data/mouse_genes.txt",header=T,sep="\t",stringsAsFactors=F)
-mm <- mm[!duplicated(mm$ensembl_gene_id),]
-
-# merge dataframes
-df_res <- merge(df_res,mm,by="ensembl_gene_id")
-head(df_res)
-```
-
-Now we have annotated our DEG list with information such as gene names, genomic coordinates, biotype etc.
 
 ### lfcShrink
 
@@ -412,6 +372,6 @@ plotCounts(d,gene=rownames(res)[1],intgroup="Group",normalized=F)
 plotCounts(d,gene=rownames(res)[1],intgroup="Group",normalized=T)
 ```
 
-<i class="fas fa-comments"></i> By looking at the count plots, do you agree that the top DE genes differ  significantly between the groups compared? Does the fold change make sense given the reference group?
+<i class="fas fa-comments"></i> By looking at the count plots, do you agree that the top DE genes differ significantly between the groups compared? Does the fold change make sense given the reference group?
 
 ***
