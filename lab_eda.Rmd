@@ -81,7 +81,7 @@ Znorm <- t( apply(data , 1 , function(x) scale( x , center = T, scale = T)) )
 colnames(Znorm) <- colnames(data)
 
 mypar(1,2,mar = c(5,3,2,1))
-boxplot( t(data[1:30,])   , ylim=c(0,12), las=2 , col="grey" , main="logCPM raw_data" ,cex=.2)
+boxplot( t(data[1:30,])   , ylim=c(0,12), las=2 , col="grey" , main="data raw_data" ,cex=.2)
 boxplot( t(Znorm[1:30,]) , ylim=c(-4,4), las=2 , col="grey" , main="Z-score data" ,cex=.2)
 abline(h=0, col="red" ,lty=2)
 ```
@@ -104,7 +104,7 @@ plot(means, vars, cex=.1 )
 #Sort and select the top 500 highly variable genes from the data
 vars <- sort( vars , decreasing=T)
 top_var <- names( vars ) [1:100]
-boxplot( t(data[ top_var[1:15],])   , ylim=c(0,12), las=2 , col="grey" , main="logCPM (top var genes)" ,cex=.2)
+boxplot( t(data[ top_var[1:15],])   , ylim=c(0,12), las=2 , col="grey" , main="data (top var genes)" ,cex=.2)
 ```
 
 ***
@@ -197,7 +197,7 @@ The base R `stats` package already contains a function `dist()` that calculates 
 The distance methods available  in `dist()` are: *euclidean*, *maximum*, *manhattan*, *canberra*, *binary* or *minkowski*.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-d <- dist( t(logcpm) , method="euclidean")
+d <- dist( t(data) , method="euclidean")
 d
 ```
 
@@ -216,7 +216,7 @@ Once we transformed the correlations to a 0-1 scale, we can simply convert it to
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 #Compute sample correlations
-sample_cor <- cor( logcpm )
+sample_cor <- cor( data )
 round(sample_cor,4)
 pheatmap(sample_cor)
 
@@ -305,7 +305,7 @@ legend( "topright", levels(factor(gene_clusters)) , pch = 16, col =  factor(leve
 Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the `pheatmap` function, which by default will do the clustering of the rows and columns.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=4}
-pheatmap( logcpm[top_var,] , scale = "row" , color = colorRampPalette(c("navy","white","firebrick"))(90), border_color = NA, cluster_cols = F)
+pheatmap( data[top_var,] , scale = "row" , color = colorRampPalette(c("navy","white","firebrick"))(90), border_color = NA, cluster_cols = F)
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
@@ -330,7 +330,7 @@ One way to measure **clustering robustness / accuracy** is by selecting part of 
 
 ```{r,eval=T,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Clustering on our dataset (this step is slow)
-pvc <- pvclust( data = logcpm[top_var[1:100],] , method.dist = "correlation", method.hclust = "complete")
+pvc <- pvclust( data = data[top_var[1:100],] , method.dist = "correlation", method.hclust = "complete")
 mypar()
 plot(pvc,las=2,hang = -0.5)
 pvrect(pvc, alpha = 0.9)
