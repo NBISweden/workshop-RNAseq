@@ -269,7 +269,7 @@ res <- results(dg,name="Group_day07_vs_day00",alpha=0.05)
 res$padj[is.na(res$padj)] <- 1
 res <- na.omit(res)
 summary(res)
-write.csv(res,"data/DGE_results.csv",row.names = T)
+write.csv(res,"data/dge_results.csv",row.names=T)
 ```
 
 You can also build up the comparison using **contrasts**. Contrasts need the condition, level to compare and the reference level (base level). For example, `results(dg,contrast=c("Group","day07","day00"),alpha=0.05)`.
