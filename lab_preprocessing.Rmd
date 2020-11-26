@@ -1,6 +1,8 @@
 ---
 title: "Data preprocessing"
 subtitle: "Workshop on RNA-Seq"
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -67,6 +69,27 @@ Inspect the new count table and metadata table. Ensure that labels match.
 head(cr)
 mr
 all.equal(colnames(cr),rownames(mr))
+```
+
+# Convert ensembl IDs to gene names
+
+A useful step is to convert ENSEMBL gene/transcript IDs into meaningful gene names. This can be done in many way using a gtf file or using the `biomaRt` function in R.
+
+```{r}
+download_data("data/mouse_genes.txt")
+annot <- read.delim("data/mouse_genes.txt",stringsAsFactors=FALSE)
+
+gene_names <- as.character ( annot[match(rownames(cr),annot[,"ensembl_gene_id"]),"external_gene_name"] )
+gene_names[is.na(gene_names) ] <- ""
+```
+
+Remove missing or fuse duplicated annotations and sum transcripts into genes.
+
+```{r}
+cr <- rowsum(cr, group = as.character(gene_names) ) #assign gene names and sum duplicates
+cr <- cr[ rownames(cr) != "" , ] #remove blank annotation
+cr <- cr[ order(rownames(cr)),]  #order genes alphabetically
+dim(cr)
 ```
 
 Finally save the data in the **data** directory.

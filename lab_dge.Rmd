@@ -1,6 +1,8 @@
 ---
 title: "Differential Gene Expression"
 subtitle: "Workshop on RNA-Seq"
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -265,6 +267,7 @@ And we can get the result tables for the three different comparisons. The summar
 ```{r,block.title=TRUE}
 res <- results(dg,name="Group_day07_vs_day00",alpha=0.05)
 summary(res)
+write.csv(res,"data/DGE_results.csv",row.names = T)
 ```
 
 You can also build up the comparison using **contrasts**. Contrasts need the condition, level to compare and the reference level (base level). For example, `results(dg,contrast=c("Group","day07","day00"),alpha=0.05)`.

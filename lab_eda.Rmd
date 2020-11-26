@@ -37,28 +37,10 @@ data <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,r
 download_data("data/metadata_raw.csv")
 metadata <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=TRUE,row.names=1)
 
-#Convert ensembl IDs to gene names
-download_data("data/mouse_genes.txt")
-annot <- read.delim("data/mouse_genes.txt",stringsAsFactors=FALSE)
-
-gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
-gene_names[is.na(gene_names) ] <- ""
-
-#Remove missing or fuse duplicated annotations
-data <- rowsum(data, group = as.character(gene_names) ) #assign gene names and sum duplicates
-data <- data[ rownames(data) != "" , ] #remove blank annotation
-data <- data[ order(rownames(data)),]  #order genes alphabetically
-dim(data)
-
-#Remove genes with counts less than
-sel <- apply(data, 1, function(x) {sum(x > 5) > 3} )
-data <- data[sel,]
-dim(data)
-
 #Transform data to log2CPM
-cpm <- t( round(t(data) / colSums(data) * 1e6))
+cpm <- t( t(data) / colSums(data) * 1e6 )
 logcpm <- log2( cpm + 1)
-if(!file.exists("data/cpm.csv")) write.csv(cpm ,"data/cpm.csv",row.names=T)
+write.csv(cpm ,"data/cpm.csv",row.names=T)
 ```
 
 ***
@@ -88,16 +70,16 @@ As you can appreciate above, Z-score normalization have set each gene mean to 0 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 #Compute the mean, variance and cv for each gene and sort them in decreasing order
 gene_stats <- data.frame(row.names = rownames(data))
-means <- rowMeans(logcpm)
+means <- apply(logcpm,1,mean)
 vars <- apply(logcpm,1,var)
 
 #Plot the row means versus row means
 mypar(1,2,mar = c(5,3,2,1))
-plot(x=means, y=vars, cex=.1 )
+plot(means, vars, cex=.1 )
 
 #Sort and select the top 500 highly variable genes from the data
 vars <- sort( vars , decreasing=T)
-top_var <- names( vars ) [1:500]
+top_var <- names( vars ) [1:100]
 boxplot( t(logcpm[ top_var[1:15],])   , ylim=c(0,12), las=2 , col="grey" , main="logCPM (top var genes)" ,cex=.2)
 ```
 
@@ -143,12 +125,12 @@ PC_var_expl <- ( PC_sd^2 ) / sum(PC_sd^2) * 100
 
 mypar(1,1)
 barplot(PC_var_expl, las=2, ylab="% variance explained")
-abline(h=2, lty=2)
+abline(h=10, lty=2)
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
 
-* Which PCs explain at least 2% of variance?
+* Which PCs explain at least 10% of variance?
 * Instead of using our whole data set, could we use only the top PCs for downstream analysis ? Explain.
 
 ***
@@ -163,9 +145,9 @@ head(leading_genes)
 leading_PC1 <- sort(leading_genes[,1],decreasing = T)
 leading_PC2 <- sort(leading_genes[,2],decreasing = T)
 
-mypar(1,2,mar = c(10,4,2,2))
-barplot(leading_PC1[1:15], las=2)
-barplot(leading_PC2[1:15], las=2)
+mypar(1,2,mar = c(3,4,2,2))
+barplot(leading_PC1[15:1], las=2,horiz = T,cex.names = .8,cex.axis = .8)
+barplot(leading_PC2[15:1], las=2,horiz = T,cex.names = .8,cex.axis = .8)
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
@@ -210,10 +192,12 @@ Once we transformed the correlations to a 0-1 scale, we can simply convert it to
 #Compute sample correlations
 sample_cor <- cor( logcpm )
 round(sample_cor,4)
+pheatmap(sample_cor)
 
 #Transform the scale from correlations
 cor_distance <- -(sample_cor - 1)/2
 round(cor_distance,4)
+pheatmap(cor_distance)
 
 #Convert it to a distance object
 d2 <- as.dist(cor_distance)
@@ -271,12 +255,12 @@ After identifying the dendrogram for the genes (below), we can now literally cut
 
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-HEIGHT <- 0.6
+HEIGHT <- 0.9
 gene_clusters <- cutree(gene_clus, h = HEIGHT)
 gene_clusters
 
 mypar(1,1,mar=c(6,4,2,1))
-plot( as.dendrogram(gene_clus) , las=1, main="d=correlation\nh=complete" )
+plot( as.dendrogram(gene_clus) , las=1, main="d=correlation\nh=complete")
 
 rect.hclust(gene_clus, h = HEIGHT)
 abline(h = HEIGHT, col="red", lty=2)
@@ -316,42 +300,12 @@ One way to measure **clustering robustness / accuracy** is by selecting part of 
 * `pvclust` website: http://stat.sys.i.kyoto-u.ac.jp/prog/pvclust/
 * `pvclust` paper: https://academic.oup.com/bioinformatics/article/22/12/1540/207339
 
-<i class="fas fa-exclamation-circle"></i> Note that bootstrapping procedure is very time consuming and computationally intensive.
+<i class="fas fa-exclamation-circle"></i> Note that bootstrapping procedure is very time consuming and computationally intensive. For this  purpose, we will run it only on the top 100 most variable genes in the dataset.
 
-```{r,eval=FALSE,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-mypar(1,2,mar=c(6,4,2,1))
-# Clustering on the MOCK dataset
-mock <- matrix(rep(logcpm[,1],12),byrow = F,ncol = 12)
-mock <- rbind( c(rep(2,6),rep(5,6)), mock)
-mock_pvc <- pvclust( data = mock , method.dist = "correlation", method.hclust = "complete",parallel = T,r=1)
-plot(mock_pvc,las=2,hang = -0.5)
-
+```{r,eval=T,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Clustering on our dataset (this step is slow)
-pvc <- pvclust( data = logcpm , method.dist = "correlation", method.hclust = "complete",parallel = T)
-plot(pvc,las=2,hang = -0.5)
-pvrect(pvc, alpha = 0.9)
-points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Group[pvc$hclust$order])
-```
-
-```{r,eval=FALSE,include=FALSE}
-# slow, not displayed, not executed during runtime
-mock <- matrix(rep(logcpm[,1],12),byrow = F,ncol = 12)
-mock <- rbind( c(rep(2,6),rep(5,6)), mock)
-mock_pvc <- pvclust( data = mock , method.dist = "correlation", method.hclust = "complete",parallel = F,r=1)
-saveRDS(mock_pvc,"./data/mock_pvc.Rds")
-pvc <- pvclust( data = logcpm , method.dist = "correlation", method.hclust = "complete",parallel = F)
-saveRDS(pvc,"./data/pvc.Rds")
-```
-
-```{r,echo=FALSE,block.title=NULL,fig.height=5,fig.width=10}
-download_data("data/mock_pvc.Rds")
-mock_pvc <- readRDS("data/mock_pvc.Rds")
-
-download_data("data/pvc.Rds")
-pvc <- readRDS("data/pvc.Rds")
-
-mypar(1,2,mar=c(6,4,2,1))
-plot(mock_pvc,las=2,hang = -0.5)
+pvc <- pvclust( data = logcpm[top_var[1:100],] , method.dist = "correlation", method.hclust = "complete")
+mypar()
 plot(pvc,las=2,hang = -0.5)
 pvrect(pvc, alpha = 0.9)
 points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Group[pvc$hclust$order])
@@ -359,10 +313,9 @@ points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Group[pvc$h
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
 
-* With what percentages the samples 10, 11 and 12 fall together in the same cluster?
-* With what percentages the samples other than 10, 11 and 12 fall together in the same cluster?
-* With what percentages the samples 8, 7 and 9 fall together in the same cluster?
-* With what percentages the samples 4 and 5 fall together in the same cluster?
-* The orange rectangles represent 2 clusters. What do you think is the criteria used to define this clusters ? PS: it is not the height as in the previous examples.
+* With what percentages the samples from DSSd00_1 and DSSd00_3 fall together in the same cluster?
+* With what percentages the samples from DSSd07_1 and DSSd07_2 fall together in the same cluster?
+* With what percentages the samples DSSd00 and DSSd07 fall together in the same cluster?
+* The orange rectangles represent 2 clusters. What do you think is the criteria used to define this clusters ? PS: it is not the height as in the previous examples. Check the code above.
 
 ***

@@ -26,18 +26,28 @@ library(fgsea)
 # source download function
 source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
 
+
 # read data
 download_data("data/cpm.csv")
-cpm <- read.csv2("data/cpm.csv",row.names = 1)
+cpm <- read.csv("data/cpm.csv",row.names = 1)
 
 # read metadata
 download_data("data/metadata_raw.csv")
-metadata <- read.csv2("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T)
+metadata <- read.csv("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T)
 ```
 
-CPM counts are converted to log scale and row-wise variance is computed.
 
+Here you would select genes based on p-values and logFC you obtained from differential expression. 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+res <- read.csv("data/DGE_results.csv",row.names = 1)
+
+selected_genes <- rownames(res)[  ( res$pvalue < 0.001 ) & ( abs(res$log2FoldChange) > 1 ) ]
+```
+
+<div class="boxy boxy-exclamation boxy-warning">
+There are many ways of selecting gene lists. One could for example select only the top 500 variable genes. CPM counts are converted to log scale and row-wise variance is computed.
+
+```{r,eval=F,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 logcpm <- log2( cpm + 1)
 dim(logcpm)
 
@@ -46,9 +56,6 @@ vars <- apply(logcpm,1,var)
 vars <- sort( vars , decreasing=T)
 top_var <- names( vars ) [1:500]
 ```
-
-<div class="boxy boxy-exclamation boxy-warning">
-Here you would select genes based on p-values and logFC you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are selecting only the top 500 variable genes.
 </div>
 
 ## Clustering on Heatmap
@@ -56,7 +63,7 @@ Here you would select genes based on p-values and logFC you obtained from differ
 Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the `pheatmap()` function, which by default will do the clustering of the rows and columns.
 
 ```{r,results='hide',block.title=TRUE,fig.height=7,fig.width=5}
-cl <- pheatmap( logcpm[top_var,] , scale = "row" , color = colorRampPalette(c("navy","white","firebrick"))(90), border_color = NA, cluster_cols = F,cutree_rows = 2)
+cl <- pheatmap( logcpm[selected_genes,] , scale = "row" , color = colorRampPalette(c("navy","white","firebrick"))(90), border_color = NA, cluster_cols = F,cutree_rows = 2)
 
 gene_clusters <- cutree(cl$tree_row,k = 2)
 ```
@@ -93,13 +100,13 @@ head(logcpm[genes_cluster2,])
 ### GO enrichment
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-go_cluster2 <- enrichr(genes = genes_cluster2,databases = "GO_Biological_Process_2018")
-go_cluster2 <- go_cluster2$GO_Biological_Process_2018
-go_cluster2 <- go_cluster2[order(go_cluster2$P.value),]
-go_cluster2[1:5,]
+go_cluster <- enrichr(genes = genes_cluster2,databases = "GO_Biological_Process_2018")
+go_cluster <- go_cluster$GO_Biological_Process_2018
+go_cluster <- go_cluster[order(go_cluster$P.value),]
+go_cluster[1:5,]
 
 mypar(1,1,mar=c(2,20,2,2))
-barplot( -log10(go_cluster2$P.value[15:1]), horiz = T, names.arg = go_cluster2$Term[15:1],las=1)
+barplot( -log10(go_cluster$P.value[15:1]), horiz = T, names.arg = go_cluster$Term[15:1],las=1)
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
@@ -113,13 +120,13 @@ What is the percentage of genes out of the total list that defines the GO term?
 ### KEGG enrichment
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-kegg_cluster2 <- enrichr(genes = genes_cluster2,databases = "KEGG_2019_Human")
-kegg_cluster2 <- kegg_cluster2$KEGG_2019_Human
-kegg_cluster2 <- kegg_cluster2[order(kegg_cluster2$P.value),]
-kegg_cluster2[1:5,]
+kegg_cluster <- enrichr(genes = genes_cluster2,databases = "KEGG_2019_Human")
+kegg_cluster <- kegg_cluster$KEGG_2019_Human
+kegg_cluster <- kegg_cluster[order(kegg_cluster$P.value),]
+kegg_cluster[1:5,]
 
 mypar(1,1,mar=c(2,20,2,2))
-barplot( -log10(kegg_cluster2$P.value[15:1]), horiz = T, names.arg = kegg_cluster2$Term[15:1],las=1)
+barplot( -log10(kegg_cluster$P.value[15:1]), horiz = T, names.arg = kegg_cluster$Term[15:1],las=1)
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
@@ -163,9 +170,7 @@ if(!dir.exists("data/MSigDB_files/")) {
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Create a gene rank based on the gene expression
-mean_t0 <- rowMeans( logcpm[,metadata$Time == "t0"] )
-mean_t2 <- rowMeans( logcpm[,metadata$Time == "t2"] )
-gene_rank <- mean_t0 - mean_t2
+gene_rank <- setNames( res$log2FoldChange , casefold(rownames(res),upper = T) )
 
 # Load hallmark pathways
 hallmark_pathways <- gmtPathways("data/MSigDB_files/h.all.v6.2.symbols.gmt.txt")
@@ -196,11 +201,19 @@ plotGseaTable(hallmark_pathways[topPathways], gene_rank, fgseaRes, gseaParam = 0
 
 Checking for individual enrichment:
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+```{r,results='hide',block.title=TRUE,fig.height=2,fig.width=3}
 topPathways
 
 # Nice plot to see enrichment of one specific pathway
-plotEnrichment(hallmark_pathways[["HALLMARK_MYC_TARGETS_V2"]],  gene_rank)
+p <- list()
+for (i in c(topPathwaysUp[1:3],topPathwaysDown[3:1])){
+  # source("https://raw.githubusercontent.com/czarnewski/niceRplots/master/R/helper_functions.R")
+  # mypar(3,2)
+  # plot_enrich(i,hallmark_pathways,gene_rank,fgseaRes)
+  p[[i]] <- plotEnrichment(hallmark_pathways[[i]],  gene_rank)
+  ggplot2::ggtitle(i)
+}
+p
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
