@@ -1,5 +1,6 @@
 ---
 title: "Data preprocessing"
+output: pdf_document
 subtitle: Workshop on RNA-Seq
 editor_options:
   chunk_output_type: console
@@ -63,18 +64,6 @@ colnames(cr) <- substr(colnames(cr),42,43)
 mr <- mo[mo$No %in% as.integer(colnames(cr)),]
 colnames(cr) <- mr$SampleName
 rownames(mr) <- mr$SampleName
-```
-
-Then, we replace Ensembl gene IDs with Gene names. Remove NAs and duplicates.
-
-```{r}
-mouse <- biomaRt::useMart("ensembl",dataset="mmusculus_gene_ensembl")
-egn <- biomaRt::getLDS(attributes=c("ensembl_gene_id"),filters="ensembl_gene_id",values=rownames(cr),mart=mouse,attributesL=c("external_gene_name"),martL=mouse,valuesL="external_gene_name",uniqueRows=F)
-egn <- na.omit(egn)
-egn <- egn[!duplicated(egn$Gene.name),]
-cr <- cr[rownames(cr) %in% egn$Gene.stable.ID,]
-
-rownames(cr) <- egn$Gene.name
 ```
 
 Inspect the new count table and metadata table. Ensure that labels match.
@@ -158,7 +147,7 @@ Below, rather than using zero as the minimum value for detection, we used minimu
 
 ```{r}
 # remove genes with low counts
-keep_genes <- rowSums(edgeR::cpm(cr)>1) >= 2
+keep_genes <- rowSums(cr>5) >= 3
 cf <- cr[keep_genes,]
 ```
 
@@ -232,27 +221,31 @@ tpm <- function(counts,len) {
 }
 ```
 
-We read in the annotation data and find shared genes between count data and annotation data and match their order.
+We read in the annotation data, remove duplicated ensembl IDs and compute gene lengths.
 
 ```{r}
 download_data("data/mouse_genes.txt")
-g <- read.delim("data/mouse_genes.txt",stringsAsFactors=F)
-g <- g[!duplicated(g$external_gene_name),]
+mouse <- biomaRt::useMart(biomart="ensembl", dataset="mmusculus_gene_ensembl")
+g <- biomaRt::getBM(attributes = c("ensembl_gene_id","transcript_length"),mart = mouse)
+g <- g[!duplicated(g$ensembl_gene_id),]
+rownames(g) <- g$ensembl_gene_id
+```
 
-igenes <- intersect(rownames(cf),g$external_gene_name)
-g1 <- g[g$external_gene_name %in% igenes,]
-cf1 <- cf[rownames(cf) %in% igenes,]
+Next, we find shared genes between count data and annotation data and match their order.
 
-g1 <- g1[match(rownames(cf1),g1$external_gene_name),]
-g1$len <- g1$end_position - g1$start_position
-all.equal(rownames(cf1),g1$external_gene_name)
+```{r}
+igenes <- intersect(rownames(cf),g$ensembl_gene_id)
+g1 <- g[igenes,]
+cf1 <- cf[igenes,]
+all.equal(rownames(cf1),g1$ensembl_gene_id)
 ```
 
 And then we run the `tpm()` function on the count data using the gene lengths. And then we create a boxplot of the resulting values.
 
 ```{r}
-ct <- tpm(cf1,g1$len)
+ct <- tpm(cf1,g1$transcript_length)
 boxplot(log2(as.matrix(ct)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="TPM")
+write.csv(ct,"./data/counts_tpm.csv",quote=F)
 ```
 
 This is the distribution of TPM counts.

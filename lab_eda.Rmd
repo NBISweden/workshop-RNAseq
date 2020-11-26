@@ -30,13 +30,52 @@ Load the sequencing data and the metadata data with sample information.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Load data and metadata
-download_data("data/counts_vst.csv")
-data <- read.csv("data/counts_vst.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+download_data("data/counts_tpm.csv")
+tpm <- read.csv("data/counts_tpm.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+data <- log2( tpm + 1 )
 
 # if file doesn't exist, download it
 download_data("data/metadata_raw.csv")
 metadata <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=TRUE,row.names=1)
 ```
+
+
+# Convert ensembl IDs to gene names
+
+A useful step is to convert ENSEMBL gene/transcript IDs into meaningful gene names. This can be done in many way using a gtf file or using the `biomaRt` function in R.
+
+```{r}
+download_data("data/mouse_genes.txt")
+mouse <- biomaRt::useMart(biomart="ensembl", dataset="mmusculus_gene_ensembl")
+annot <- biomaRt::getBM(attributes = c("ensembl_gene_id","external_gene_name"),mart = mouse)
+
+gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
+gene_names[is.na(gene_names) ] <- ""
+```
+
+Remove missing or fuse duplicated annotations and sum transcripts into genes.
+
+```{r}
+data <- rowsum(data, group = as.character(gene_names) ) #assign gene names and sum duplicates
+data <- data[ rownames(data) != "" , ] #remove blank annotation
+data <- data[ rownames(data) != "NA" , ] #remove blank annotation
+data <- data[ order(rownames(data)),]  #order genes alphabetically
+dim(data)
+```
+
+We can now save this counts for later use
+
+```{r}
+write.csv(data ,"data/gene_tpm_counts.csv",row.names=T)
+
+cf <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+cf <- rowsum(cf, group = as.character(gene_names) ) #assign gene names and sum duplicates
+cf <- cf[ rownames(cf) != "" , ] #remove blank annotation
+cf <- cf[ rownames(cf) != "NA" , ] #remove blank annotation
+cf <- cf[ order(rownames(cf)),]  #order genes alphabetically
+write.csv(cf ,"data/gene_counts.csv",row.names=T)
+```
+
 
 ***
 # PCA

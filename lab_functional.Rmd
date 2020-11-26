@@ -28,8 +28,8 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 
 
 # read data
-download_data("data/counts_vst.csv")
-data <- read.csv("data/counts_vst.csv",row.names = 1)
+download_data("data/gene_counts.csv")
+data <- read.csv("data/gene_counts.csv",row.names = 1)
 dim(data)
 
 # read metadata
@@ -208,15 +208,15 @@ Checking for individual enrichment:
 
 ```{r,results='hide',block.title=TRUE,fig.height=2,fig.width=3}
 topPathways
+source("https://raw.githubusercontent.com/czarnewski/niceRplots/master/R/helper_functions.R")
+mypar(3,2)
 
 # Nice plot to see enrichment of one specific pathway
 p <- list()
 for (i in c(topPathwaysUp[1:3],topPathwaysDown[3:1])){
-  # source("https://raw.githubusercontent.com/czarnewski/niceRplots/master/R/helper_functions.R")
-  # mypar(3,2)
-  # plot_enrich(i,hallmark_pathways,gene_rank,fgseaRes)
-  p[[i]] <- plotEnrichment(hallmark_pathways[[i]],  gene_rank)
-  ggplot2::ggtitle(i)
+  plot_enrich(i,hallmark_pathways,gene_rank)
+  # p[[i]] <- plotEnrichment(hallmark_pathways[[i]],  gene_rank)
+  # ggplot2::ggtitle(i)
 }
 p
 ```
@@ -224,12 +224,12 @@ p
 <i class="fas fa-comments"></i> **Exploratory Questions**
 
 * What do the black lines in the X-axis mean?
-* By looking at the green line distribution, and the comparison made (t0 - t2), at which time point is this pathways enriched.
+* By looking at the green line distribution, and the comparison made (day00 - day07), at which time point is this pathways enriched.
 
 <i class="fas fa-comments"></i> **Exploratory Questions (optional)**
 
 * What if instead of the hallmark gene set, you use the GO? Try that.
-* How different are the results from EnrichR and GSEA using GO annotation? Remember to use the same comparison (i.e. t2 vs t0).
+* How different are the results from EnrichR and GSEA using GO annotation? Remember to use the same comparison (i.e. day07 vs day00).
 
 ## Online enrichment tools:
 
