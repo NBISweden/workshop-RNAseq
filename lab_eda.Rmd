@@ -38,7 +38,7 @@ download_data("data/metadata_raw.csv")
 metadata <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=TRUE,row.names=1)
 
 #Transform data to log2CPM
-cpm <- t( t(data) / colSums(data) * 1e6 )
+cpm <- edgeR::cpm(data)
 logcpm <- log2( cpm + 1)
 write.csv(cpm ,"data/cpm.csv",row.names=T)
 ```
@@ -146,8 +146,10 @@ leading_PC1 <- sort(leading_genes[,1],decreasing = T)
 leading_PC2 <- sort(leading_genes[,2],decreasing = T)
 
 mypar(1,2,mar = c(3,4,2,2))
-barplot(leading_PC1[15:1], las=2,horiz = T,cex.names = .8,cex.axis = .8)
-barplot(leading_PC2[15:1], las=2,horiz = T,cex.names = .8,cex.axis = .8)
+barplot(leading_PC1[15:1], las=2,horiz = T,cex.names = .8,cex.axis = .8,yaxs="i")
+abline(v=0,lwd=2)
+barplot(leading_PC2[15:1], las=2,horiz = T,cex.names = .8,cex.axis = .8,yaxs="i")
+abline(v=0,lwd=2)
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
