@@ -30,6 +30,8 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 # read data
 download_data("data/cpm.csv")
 cpm <- read.csv("data/cpm.csv",row.names = 1)
+logcpm <- log2( cpm + 1)
+dim(logcpm)
 
 # read metadata
 download_data("data/metadata_raw.csv")
@@ -48,9 +50,6 @@ selected_genes <- rownames(res)[  ( res$pvalue < 0.001 ) & ( abs(res$log2FoldCha
 There are many ways of selecting gene lists. One could for example select only the top 500 variable genes. CPM counts are converted to log scale and row-wise variance is computed.
 
 ```{r,eval=F,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-logcpm <- log2( cpm + 1)
-dim(logcpm)
-
 # Gene selection
 vars <- apply(logcpm,1,var)
 vars <- sort( vars , decreasing=T)
@@ -105,8 +104,10 @@ go_cluster <- go_cluster$GO_Biological_Process_2018
 go_cluster <- go_cluster[order(go_cluster$P.value),]
 go_cluster[1:5,]
 
-mypar(1,1,mar=c(2,20,2,2))
-barplot( -log10(go_cluster$P.value[15:1]), horiz = T, names.arg = go_cluster$Term[15:1],las=1)
+mypar(1,1,mar=c(2,25,2,2))
+barplot( -log10(go_cluster$P.value[15:1]), horiz = T, border=F,yaxs="i",
+         names.arg = go_cluster$Term[15:1],las=1,cex.names = .8)
+abline(v=0,lwd=2)
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
@@ -125,8 +126,10 @@ kegg_cluster <- kegg_cluster$KEGG_2019_Human
 kegg_cluster <- kegg_cluster[order(kegg_cluster$P.value),]
 kegg_cluster[1:5,]
 
-mypar(1,1,mar=c(2,20,2,2))
-barplot( -log10(kegg_cluster$P.value[15:1]), horiz = T, names.arg = kegg_cluster$Term[15:1],las=1)
+mypar(1,1,mar=c(2,25,2,2))
+barplot( -log10(kegg_cluster$P.value[15:1]), horiz = T, border=F,yaxs="i",
+         names.arg = kegg_cluster$Term[15:1],las=1,cex.names =.8)
+abline(v=0,lwd=2)
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
