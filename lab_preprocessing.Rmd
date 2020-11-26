@@ -66,6 +66,18 @@ colnames(cr) <- mr$SampleName
 rownames(mr) <- mr$SampleName
 ```
 
+Then, we replace Ensembl gene IDs with Gene names. Remove NAs and duplicates.
+
+```{r}
+mouse <- biomaRt::useMart("ensembl",dataset="mmusculus_gene_ensembl")
+egn <- biomaRt::getLDS(attributes=c("ensembl_gene_id"),filters="ensembl_gene_id",values=rownames(cr),mart=mouse,attributesL=c("external_gene_name"),martL=mouse,valuesL="external_gene_name",uniqueRows=F)
+egn <- na.omit(egn)
+egn <- egn[!duplicated(egn$Gene.name),]
+cr <- cr[rownames(cr) %in% egn$Gene.stable.ID,]
+
+rownames(cr) <- egn$Gene.name
+```
+
 Inspect the new count table and metadata table. Ensure that labels match.
 
 ```{r}
@@ -221,23 +233,20 @@ tpm <- function(counts,len) {
 }
 ```
 
-We read in the annotation data, remove duplicated ensembl IDs and compute gene lengths.
+We read in the annotation data and find shared genes between count data and annotation data and match their order.
 
 ```{r}
 download_data("data/mouse_genes.txt")
 g <- read.delim("data/mouse_genes.txt",stringsAsFactors=F)
-g <- g[!duplicated(g$ensembl_gene_id),]
-g$len <- g$end_position-g$start_position
-rownames(g) <- g$ensembl_gene_id
-```
+g <- g[!duplicated(g$external_gene_name),]
 
-Next, we find shared genes between count data and annotation data and match their order.
+igenes <- intersect(rownames(cf),g$external_gene_name)
+g1 <- g[g$external_gene_name %in% igenes,]
+cf1 <- cf[rownames(cf) %in% igenes,]
 
-```{r}
-igenes <- intersect(rownames(cf),g$ensembl_gene_id)
-g1 <- g[igenes,]
-cr1 <- cr[igenes,]
-all.equal(rownames(cf1),g1$ensembl_gene_id)
+g1 <- g1[match(rownames(cf1),g1$external_gene_name),]
+g1$len <- g1$end_position - g1$start_position
+all.equal(rownames(cf1),g1$external_gene_name)
 ```
 
 And then we run the `tpm()` function on the count data using the gene lengths. And then we create a boxplot of the resulting values.

@@ -30,13 +30,13 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 
 # read data
 download_data("data/cpm.csv")
-cpm <- read.csv("data/cpm.csv",row.names = 1)
-data <- log2( cpm + 1)
+cpm <- read.csv("data/cpm.csv",row.names=1)
+data <- log2(cpm+1)
 dim(data)
 
 # read metadata
 download_data("data/metadata_raw.csv")
-metadata <- read.csv("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T)
+metadata <- read.csv("data/metadata_raw.csv",row.names = 1,stringsAsFactors=T)
 ```
 
 
@@ -44,7 +44,8 @@ Here you would select genes based on p-values and logFC you obtained from differ
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 res <- read.csv("data/DGE_results.csv",row.names=1)
-selected_genes <- rownames(res)[(res$pvalue < 0.001) & (abs(res$log2FoldChange) > 1)]
+res1 <- na.omit(res)
+selected_genes <- rownames(res1)[(res1$pvalue < 0.001) & (abs(res1$log2FoldChange) > 1)]
 ```
 
 <div class="boxy boxy-lightbulb boxy-primary">
@@ -53,8 +54,8 @@ There are many ways of selecting gene lists. One could for example select only t
 ```{r,eval=F,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Gene selection
 vars <- apply(data,1,var)
-vars <- sort( vars , decreasing=T)
-top_var <- names( vars ) [1:500]
+vars <- sort(vars,decreasing=T)
+top_var <- names(vars)[1:500]
 ```
 </div>
 
@@ -63,7 +64,7 @@ top_var <- names( vars ) [1:500]
 Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the `pheatmap()` function, which by default will do the clustering of the rows and columns.
 
 ```{r,results='hide',block.title=TRUE,fig.height=7,fig.width=5}
-cl <- pheatmap( data[selected_genes,] , scale = "row" , color = colorRampPalette(c("navy","white","firebrick"))(90), border_color = NA, cluster_cols = F,cutree_rows = 2)
+cl <- pheatmap( data[rownames(data) %in% selected_genes,],scale="row",color=colorRampPalette(c("navy","white","firebrick"))(90),border_color=NA,cluster_cols=F,cutree_rows=2)
 
 gene_clusters <- cutree(cl$tree_row,k=2)
 ```
@@ -91,8 +92,8 @@ You can list all available databases by using the command `listEnrichrDbs()` fun
 genes_cluster1 <- names(gene_clusters)[gene_clusters == 1]
 genes_cluster2 <- names(gene_clusters)[gene_clusters == 2]
 
-head(data[genes_cluster1,])
-head(data[genes_cluster2,])
+head(data[genes_cluster1, ])
+head(data[genes_cluster2, ])
 ```
 
 ### GO enrichment
@@ -105,7 +106,7 @@ go_cluster[1:5,]
 
 {
   mypar(1,1,mar=c(2,25,2,2))
-  barplot( -log10(go_cluster$P.value[15:1]),horiz=T,border=F,yaxs="i",
+  barplot(-log10(go_cluster$P.value[15:1]),horiz=T,border=F,yaxs="i",
            names.arg=go_cluster$Term[15:1],las=1,cex.names=0.8)
   abline(v=0,lwd=2)
 }
