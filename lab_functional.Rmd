@@ -1,6 +1,8 @@
 ---
 title: "Gene Function Annotation"
 subtitle: Workshop on RNA-Seq
+editor_options:
+  chunk_output_type: console
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
