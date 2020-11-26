@@ -62,7 +62,7 @@ top_var <- names( vars ) [1:500]
 
 Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the `pheatmap()` function, which by default will do the clustering of the rows and columns.
 
-```{r,results='hide',block.title=TRUE,fig.height=7,fig.width=5}
+```{r heatmap,results='hide',block.title=TRUE,fig.height=7,fig.width=5}
 cl <- pheatmap( data[selected_genes,] , scale = "row" , color = colorRampPalette(c("navy","white","firebrick"))(90), border_color = NA, cluster_cols = F,cutree_rows = 2)
 
 gene_clusters <- cutree(cl$tree_row, k = 2)
