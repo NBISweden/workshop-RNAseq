@@ -14,12 +14,6 @@ Once all the read samples have been mapped to the reference we want to quantify 
 
 In our case we are going to use a program called __featureCounts__ that is fast and reliable.
 
-First load  the modules.
-
-```{sh,eval=FALSE,block.title=TRUE}
-module load bioinfo-tools
-module load subread/1.5.2
-```
 
 Then by providing the mapped read files and the annotation you can quantify how many reads that mapped to your reference. There are many settings that you can use to decide how you want to do the counting. In our case we will count the reads that are in the annotated exons (`-t exon`) and sum them up per gene (`-g gene`) . In __featureCounts__, this is done by the following command.
 
@@ -34,3 +28,19 @@ featureCounts -T {threads} -p -t exon -g gene_id -a {input.gtf} -o {output.count
 This will create a file that contains a matrix were the rows represents the genes and the columns represent the samples. Feature count will also include some information per gene to see were it is annotated in the reference. The file is easy to open in R for further analysis.
 
 ***
+
+```{sh ,eval=FALSE,block.title=TRUE}
+
+
+##########################################
+###  RUN featureCounts     ###
+#########################################
+
+mkdir featureCounts
+
+featureCounts -T 4 -s 2 -t exon -g gene_id \
+-a references/annotations/Mus_musculus.GRCm38.101.gtf \
+-o featureCounts/allSamples.featureCounts \
+hisat2_results/*1M.sorted.bam \
+> featureCounts/allSamples.featureCounts.log
+

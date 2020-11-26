@@ -10,45 +10,10 @@ These steps are to be carried out after the fastq files have been aligned to the
 
 # Mapper log files
 
-The first step after you have finished your mapping is to get a general feel of how the mapping went. Most mapping programs produce some sort of summary output, either to a file or to standard out. For example, if using the mapper Bowtie you need to pipe that output to a file to see the summary statistics. In this case, the samples were mapped with STAR, that by default creates a file called **Log.final.out** in the mapping directory. Here is one example of **Log.final.out** content:
-
-```
-                           Started job on |       Oct 16 20:21:39
-                       Started mapping on |       Oct 16 20:27:04
-                              Finished on |       Oct 16 20:29:14
- Mapping speed, Million of reads per hour |       366.35
-
-                    Number of input reads |       13229276
-                Average input read length |       202
-                              UNIQUE READS:
-             Uniquely mapped reads number |       11913568
-                  Uniquely mapped reads % |       90.05%
-                    Average mapped length |       198.41
-                 Number of splices: Total |       9523918
-      Number of splices: Annotated (sjdb) |       9443434
-                 Number of splices: GT/AG |       9432792
-                 Number of splices: GC/AG |       71488
-                 Number of splices: AT/AC |       10675
-         Number of splices: Non-canonical |       8963
-                Mismatch rate per base, % |       0.33%
-                   Deletion rate per base |       0.01%
-                  Deletion average length |       1.75
-                  Insertion rate per base |       0.01%
-                 Insertion average length |       1.39
-                       MULTI-MAPPING READS:
-  Number of reads mapped to multiple loci |       356839
-       % of reads mapped to multiple loci |       2.70%
-  Number of reads mapped to too many loci |       2102
-       % of reads mapped to too many loci |       0.02%
-                            UNMAPPED READS:
- % of reads unmapped: too many mismatches |       0.00%
-           % of reads unmapped: too short |       7.21%
-               % of reads unmapped: other |       0.02%
-```
+The first step after you have finished your mapping is to get a general feel of how the mapping went. Most mapping programs produce some sort of summary output, either to a file or to standard out. For example, if using the mapper Bowtie you need to pipe that output to a file to see the summary statistics. 
 
 The most important parts to look at are the proportion of uniquely mapping, multi-mapping and unmapped reads. We ideally want the uniquely mapping reads to be as high as possible. Multi-mapping or unmapped reads could indicate poor quality of the reads, adapter contamination or other reasons for low quality scores.
 
-Another key point is the mismatch and indel rates. If they are very high, this could indicate that there has been some problems during the sequencing or during the library preparation.
 
 ## MultiQC logs summary
 
@@ -56,8 +21,8 @@ After mapping with star of all samples, we ran MultiQC to summarize all the logf
 
 ```{sh,eval=FALSE,block.title=TRUE}
 # OBS! do not run now, just for reference
-module load bioinfo-tools
-module load MultiQC/0.8
+
+
 multiqc -d -dd 2 .
 ```
 
@@ -69,40 +34,21 @@ The RSeQC package is one of many tools to get basic mapping statistics from your
 
 The RSeQC package contains many steps that are equivalent to FastQC analysis, e.g. read quality, sequence composition (NVC), GC-bias etc, but the results may be different since many of the low quality reads may not map to the genome and therefore will not be included in the BAM file.
 
-Running all the QC steps takes a long time, so to save time, we only run the QC on a random selection of 10% of the reads. Random selection of reads can be performed with many different programs. Here we will use samtools:
-
-```{sh,eval=FALSE,block.title=TRUE}
-samtools view -b -s 0.1 Aligned.out.sorted.bam > Aligned.out.0.1.bam
-# then index the bamfile
-# (it is already sorted since you extracted reads from a sorted BAM file)
-samtools index Aligned.out.0.1.bam
-```
-
-The RSeQC package is already installed on UPPMAX. Load the package:
-
-```{sh,eval=FALSE,block.title=TRUE}
-module add bioinfo-tools
-module add rseqc/2.6.4
-```
 
 Some steps of the RSeQC package require a file with gene annotations in BED format. These can be downloaded from sources such as UCSC, RefSeq and Ensembl. In this case, the RSeQC team have already created annotation files in some common formats that can be downloaded from their website, but if you have data for a less studied organism you may need to create a BED-file on your own.
 
-Two annotation files have already been downloaded into `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/annotation` for you to use. These are: **hg19.HouseKeepingGenes.bed** and **hg19_RefSeq.bed**. The folder also contains a reduced annotation file **hg19_RefSeq_top1000.bed** to speed things up.
+
+Two annotation files have already been downloaded into `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/annotation` for you to use. These are: **hg19.HouseKeepingGenes.bed** and **hg19_RefSeq.bed**. 
 
 In this tutorial, we will not run all the different parts of the RSeQC package, only the most relevant ones for this experiment. The different scripts in the RSeQC package are well described on [their website](http://rseqc.sourceforge.net/), so read the instructions there and specify the input/output files to fit your file names and folder structure.
 
 The steps that we are going to run are:
 
 1. geneBody_coverage.py
-2. inner_distance.py
 3. junction_saturation.py
 4. read_distribution.py
 
-<i class="fas fa-exclamation-circle"></i> The **geneBody_coverage.py** script takes a very long time to run, so we have created a subsection of annotations to run it on. Use the file ` hg19_RefSeq_top1000.bed`. This file was created with the command:
-
-```{sh,eval=FALSE,block.title=TRUE}
-head -n 1000 hg19_RefSeq.bed > hg19_RefSeq_top1000.bed
-```
+<i class="fas fa-exclamation-circle"></i> The **geneBody_coverage.py** script takes a very long time to run, so we have created a subsection of annotations to run it on. Use the file ` Mus_musculus.GRCm38.101.HouseKeepingGenes.bed`
 
 <i class="fas fa-lightbulb"></i> When running **read_distribution.py**, an outfile cannot be specified. Instead you need to pipe (`>`) the output to a file, or look at the output in the terminal.
 
@@ -111,19 +57,76 @@ head -n 1000 hg19_RefSeq.bed > hg19_RefSeq_top1000.bed
 * Do most of your reads map to genes?
 * Do you have even coverage along the genes?
 * Do the reads cover most splice junctions?
-* Based on the inner distance plots, what do you think the average fragment size of the libraries was?
 
-## MultiQC RSeQC summary
+## MultiQC summary
 
-We have ran RSeQC and MultiQC on all the samples in the project. The summary report from MultiQC can be found on UPPMAX `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/output/multiqc_report_rseqc.html` .
+
+MutliQC also includes the informaiton from  RSeQC. Rerun MultiQC after you have done your RSeQC steps.
 
 It was created using commands:
 
 ```{sh,eval=FALSE,block.title=TRUE}
 multiqc -f -d -dd 3 .
-# since folder structure like: sample_name/qc/read_distribution.txt and so on for the other file types.
+
 ```
 
 <i class="fas fa-comments"></i> Have a look at the reports. What is your conclusion, do your samples look good? Is there anything that looks strange in any sample, or do you feel comfortable using all the samples in your analysis?
 
 ***
+# Code to run all the steps above on data on course data 
+```{sh ,eval=FALSE,block.title=TRUE}
+
+
+##########################################
+###  RUN RSEQC scripts on bamfiles     ###
+#########################################
+
+mkdir RSeQCresults
+mkdir RSeQCresults/geneBody_coverage
+
+head -n 500 references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.bed > references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.first500.bed
+ 
+geneBody_coverage.py -r references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.first500.bed \
+  -i hisat2_results/  -o RSeQCresults/geneBody_coverage/allSamples
+
+
+ mkdir RSeQCresults/read_distribution
+ mkdir RSeQCresults/infer_experiment
+ mkdir RSeQCresults/junction_saturation
+ mkdir RSeQCresults/junction_annotation
+
+ 
+
+for i in $(ls hisat2_results/*.sorted.bam); do
+ 
+ sample=${i%.sorted.bam}
+ sample=${sample#hisat2_results/}
+ 
+ 
+ ECHO "running read distribution on $sample"
+
+ read_distribution.py  -i $i \
+ -r references/annotations/Mus_musculus.GRCm38.101.bed \
+ >RSeQCresults/read_distribution/$sample.readCoverage.txt
+
+ infer_experiment.py  -i $i  \
+ -r references/annotations/Mus_musculus.GRCm38.101.bed \
+ >RSeQCresults/infer_experiment/$sample.infer_experiment.txt
+
+junction_saturation.py -i $i  \
+-r references/annotations/Mus_musculus.GRCm38.101.bed \
+ -o RSeQCresults/junction_saturation/$sample
+
+junction_annotation.py -i $i  \
+-r references/annotations/Mus_musculus.GRCm38.101.bed \
+-o RSeQCresults/junction_annotation/$sample
+
+
+done
+
+
+multiqc -f -d -dd 3 .
+
+
+```
+
