@@ -364,3 +364,22 @@ ls ~/RNAseq/
 You now have 3 main folders there with data.
 
 <br/>
+
+
+## Code
+
+The code from the course can be downloaded directly from [Github](https://github.com/NBISweden/workshop-RNAseq).
+
+First
+
+But it is much easier to do it from the command line:
+
+```
+mkdir ~/RNAseq   #Run this line if you have not downloaded the data for the course yet
+cd ~/RNAseq
+
+for i in lab_annotation.Rmd lab_dge.Rmd lab_download.Rmd lab_eda.Rmd lab_functional.Rmd lab_preprocessing.Rmd
+do
+  curl -o $i https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/$i
+done
+```
