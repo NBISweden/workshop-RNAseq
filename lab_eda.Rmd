@@ -20,6 +20,7 @@ library(rafalib)
 library(DESeq2)
 library(pvclust)
 library(biomaRt)
+library(pvclust)
 
 # source download function
 source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
@@ -39,8 +40,8 @@ metadata <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=TRUE,r
 
 #Transform data to log2CPM
 cpm <- edgeR::cpm(data)
-logcpm <- log2( cpm + 1)
-write.csv(cpm ,"data/cpm.csv",row.names=T)
+logcpm <- log2(cpm+1)
+write.csv(cpm,"data/cpm.csv",row.names=T)
 ```
 
 ***
@@ -52,14 +53,16 @@ Performing PCA has many useful applications and interpretations, which much depe
 
 Now that the data is prepared, we now proceed with PCA. Since each gene has a different expression level, it means that genes with higher expression values will naturally have higher variation that will be captured by PCA. This means that we need to somehow give each gene a similar weight when performing PCA (see below). The common practice is to center and scale each gene before performing PCA. This exact scaling is called **Z-score** normalization it is very useful for PCA, clustering and plotting heatmaps.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-Znorm <- t( apply(logcpm , 1 , function(x) scale( x , center = T, scale = T)) )
+```{r,results='hide',block.title=TRUE,fig.height=6,fig.width=10}
+Znorm <- t(apply(logcpm,1,function(x) scale(x,center=T,scale=T)))
 colnames(Znorm) <- colnames(logcpm)
 
-mypar(1,2,mar = c(5,3,2,1))
-boxplot( t(logcpm[1:30,])   , ylim=c(0,12), las=2 , col="grey" , main="logCPM raw_data" ,cex=.2)
-boxplot( t(Znorm[1:30,]) , ylim=c(-4,4), las=2 , col="grey" , main="Z-score data" ,cex=.2)
-abline(h=0, col="red" ,lty=2)
+{
+  mypar(1,2,mar=c(5,3,2,1))
+  boxplot(t(logcpm[1:30,]),ylim=c(0,12),las=2,col="grey",main="logCPMraw_data",cex=.2)
+  boxplot(t(Znorm[1:30,]),ylim=c(-4,4),las=2 ,col="grey",main="Z-score data",cex=.2)
+  abline(h=0,col="red",lty=2)
+}
 ```
 
 ***
@@ -68,19 +71,21 @@ abline(h=0, col="red" ,lty=2)
 As you can appreciate above, Z-score normalization have set each gene mean to 0 and changes the variances to a common scale. However, if we normalize all genes to the same scale, even genes that could be considered stable across samples (i.e. that do not vary across your samples) will be used for separation of samples. This might in turn add 'noise' to your data in form of 'variation across samples that are not meaningful'. Therefore, we can also sort the genes by variance and use the top genes to filter/prioritize the data.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-#Compute the mean, variance and cv for each gene and sort them in decreasing order
-gene_stats <- data.frame(row.names = rownames(data))
+# Compute the mean, variance and cv for each gene and sort them in decreasing order
+gene_stats <- data.frame(row.names=rownames(data))
 means <- apply(logcpm,1,mean)
 vars <- apply(logcpm,1,var)
 
-#Plot the row means versus row means
-mypar(1,2,mar = c(5,3,2,1))
-plot(means, vars, cex=.1 )
-
-#Sort and select the top 500 highly variable genes from the data
-vars <- sort( vars , decreasing=T)
-top_var <- names( vars ) [1:100]
-boxplot( t(logcpm[ top_var[1:15],])   , ylim=c(0,12), las=2 , col="grey" , main="logCPM (top var genes)" ,cex=.2)
+{
+  # Plot the row means versus row means
+  mypar(1,2,mar=c(5,3,2,1))
+  plot(means,vars,cex=.1)
+  
+  # Sort and select the top 500 highly variable genes from the data
+  vars <- sort(vars,decreasing=T)
+  top_var <- names(vars)[1:100]
+  boxplot(t(logcpm[top_var[1:15],]),ylim=c(0,12),las=2,col="grey",main="logCPM(top var genes)",cex=.2)
+}
 ```
 
 ***
@@ -91,15 +96,15 @@ Next, we can compute PCA using the `prcomp()` function. As additional parameters
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 {
   mypar(1,2,mar = c(3,3,2,1))
-  PC <-  prcomp( t( Znorm[ top_var, ]) ) #Method1
-  PC <-  prcomp( t( logcpm[ top_var, ]), center = TRUE, scale. = TRUE) #Method2
+  PC <-  prcomp(t(Znorm[ top_var, ]) ) #Method1
+  PC <-  prcomp(t(logcpm[ top_var, ]),center=TRUE,scale.=TRUE) #Method2
   
   mypar(1,2)
-  plot(PC$x[,1] , PC$x[,2], cex=2, col=factor(metadata$Group), xlab="PC1", ylab="PC2", pch=16, main="PCA", las=1)
-  text(PC$x[,1] , PC$x[,2], cex=.7, labels = paste0(metadata$SampleName), pos = 3)
+  plot(PC$x[,1],PC$x[,2],cex=2,col=factor(metadata$Group),xlab="PC1",ylab="PC2",pch=16,main="PCA",las=1)
+  text(PC$x[,1],PC$x[,2],cex=.7,labels = paste0(metadata$SampleName),pos=3)
   
-  plot(PC$x[,3] , PC$x[,4], cex=2, col=factor(metadata$Group), xlab="PC3", ylab="PC4", pch=16, main="PCA", las=1)
-  text(PC$x[,3] , PC$x[,4], cex=.7, labels = paste0(metadata$SampleName), pos = 3)
+  plot(PC$x[,3],PC$x[,4],cex=2,col=factor(metadata$Group),xlab="PC3",ylab="PC4",pch=16,main="PCA",las=1)
+  text(PC$x[,3],PC$x[,4],cex=.7,labels = paste0(metadata$SampleName),pos=3)
 }
 ```
 
@@ -120,12 +125,14 @@ Next, we can compute PCA using the `prcomp()` function. As additional parameters
 The usefulness of PCA is that the principal components do have a meaning: They store the amount of variance in decreasing order, so some PCs are more important than others. Inside the `PC$sdev` object, we can get the standard deviation stored in each PC.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=5}
-PC_sd <- setNames(PC$sdev , paste0("PC",1:length(PC$sdev)))
-PC_var_expl <- ( PC_sd^2 ) / sum(PC_sd^2) * 100
+PC_sd <- setNames(PC$sdev,paste0("PC",1:length(PC$sdev)))
+PC_var_expl <- (PC_sd^2)/sum(PC_sd^2)*100
 
-mypar(1,1)
-barplot(PC_var_expl, las=2, ylab="% variance explained")
-abline(h=10, lty=2)
+{
+  mypar(1,1)
+  barplot(PC_var_expl,las=2,ylab="% variance explained")
+  abline(h=10,lty=2)
+}
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
@@ -142,14 +149,16 @@ Now that you know that each PC stores a particular structure of the data, we cou
 leading_genes <- PC$rotation
 head(leading_genes)
 
-leading_PC1 <- sort(leading_genes[,1],decreasing = T)
-leading_PC2 <- sort(leading_genes[,2],decreasing = T)
+leading_PC1 <- sort(leading_genes[,1],decreasing=T)
+leading_PC2 <- sort(leading_genes[,2],decreasing=T)
 
-mypar(1,2,mar = c(3,4,2,2))
-barplot(leading_PC1[15:1], las=2,horiz = T,cex.names = .8,cex.axis = .8,yaxs="i")
-abline(v=0,lwd=2)
-barplot(leading_PC2[15:1], las=2,horiz = T,cex.names = .8,cex.axis = .8,yaxs="i")
-abline(v=0,lwd=2)
+{
+  mypar(1,2,mar=c(3,4,2,2))
+  barplot(leading_PC1[15:1],las=2,horiz=T,cex.names=.8,cex.axis=0.8,yaxs="i")
+  abline(v=0,lwd=2)
+  barplot(leading_PC2[15:1],las=2,horiz=T,cex.names=.8,cex.axis=0.8,yaxs="i")
+  abline(v=0,lwd=2)
+}
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
@@ -166,14 +175,14 @@ Hierarchical clustering is group of clustering methods used to group samples bas
 * Step2: Define the dendrogram among all samples using **Bottom-up** or **Top-down** approach. **Bottom-up** is where samples start with their own cluster which end up merged pair-by-pair until only one cluster is left. **Top-down** is where samples start all in the same cluster that end up being split by 2 until each sample has its own cluster.
 
 ***
-## Defining distance between samples
+## Distance between samples
 
 The base R `stats` package already contains a function `dist()` that calculates distances between all pairs of samples. Since we want to compute distances between samples, rather than among genes, we need to transpose the data before applying it to the `dist()` function. This can be done by simply adding the transpose function `t()` to the data. When clustering on genes, it is wise to first define the gene selection to reduce the time to compute distances. A sensible choice is to do it on the differentially expressed genes only (including up to ~3000 genes).
 
 The distance methods available  in `dist()` are: *euclidean*, *maximum*, *manhattan*, *canberra*, *binary* or *minkowski*.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-d <- dist( t(logcpm) , method="euclidean")
+d <- dist(t(logcpm),method="euclidean")
 d
 ```
 
@@ -192,12 +201,12 @@ Once we transformed the correlations to a 0-1 scale, we can simply convert it to
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 #Compute sample correlations
-sample_cor <- cor( logcpm )
+sample_cor <- cor(logcpm)
 round(sample_cor,4)
 pheatmap(sample_cor)
 
 #Transform the scale from correlations
-cor_distance <- -(sample_cor - 1)/2
+cor_distance <- -(sample_cor-1)/2
 round(cor_distance,4)
 pheatmap(cor_distance)
 
@@ -223,13 +232,13 @@ The methods available are: *ward.D*, *ward.D2*, *single*, *complete*, *average*,
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 #Clustering using euclidean distance
 mypar(1,2,mar=c(6,4,2,1))
-h <- hclust(d, method="complete")
-plot( as.dendrogram(h) , las=1, main="d=euclidean\nh=complete")
-points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Group[h$order])
+h <- hclust(d,method="complete")
+plot( as.dendrogram(h),las=1,main="d=euclidean\nh=complete")
+points(1:ncol(data),rep(0,ncol(data)),pch=16,cex=2,col=metadata$Group[h$order])
 
-h2 <- hclust(d2, method="complete")
-plot( as.dendrogram(h2) , las=1, main="d=correlation\nh=complete")
-points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Group[h2$order])
+h2 <- hclust(d2,method="complete")
+plot( as.dendrogram(h2),las=1, main="d=correlation\nh=complete")
+points(1:ncol(data),rep(0,ncol(data)),pch=16,cex=2, col=metadata$Group[h2$order])
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
@@ -248,9 +257,9 @@ points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Group[h2$or
 Once your dendrogram is created, the next step is to define which samples belong to a particular cluster. However, the sample groups are already known in this example, so clustering them does not add much information for us. What we can do instead is subdivide the genes into clusters. As for the PCA (above), the ideal scenario is to use the Z-score normalized gene expression table, because in this way we make sure that we are grouping together expression trends (going up vs. down), rather than expression level (genes with more counts vs less counts). This way, we can simply repeat the steps above using the transpose of the Z-score matrix, compute the correlation distances and cluster using ward.D2 linkage method. Since it is time consuming to cluster on all genes, this step is usually done only on the differentially expressed gene list (say up to ~3000 genes). Here, we can for instance cluster on the genes with highest variance `top_var`.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=5}
-gene_cor  <- cor( t( Znorm[ top_var, ] ) )
-gene_dist <- as.dist( -( gene_cor - 1 )/2 )
-gene_clus <- hclust(gene_dist, method = "complete")
+gene_cor  <- cor(t(Znorm[top_var, ]))
+gene_dist <- as.dist(-(gene_cor-1)/2)
+gene_clus <- hclust(gene_dist,method="complete")
 ```
 
 After identifying the dendrogram for the genes (below), we can now literally cut the tree at a fixed threshold (with `cutree`) at different levels to define the clusters.
@@ -258,16 +267,18 @@ After identifying the dendrogram for the genes (below), we can now literally cut
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 HEIGHT <- 0.9
-gene_clusters <- cutree(gene_clus, h = HEIGHT)
+gene_clusters <- cutree(gene_clus,h=HEIGHT)
 gene_clusters
 
-mypar(1,1,mar=c(6,4,2,1))
-plot( as.dendrogram(gene_clus) , las=1, main="d=correlation\nh=complete")
-
-rect.hclust(gene_clus, h = HEIGHT)
-abline(h = HEIGHT, col="red", lty=2)
-points(1:length(gene_clusters) ,rep(0,length(gene_clusters)), pch= 16, cex=2, col=factor(gene_clusters)[gene_clus$order] )
-legend( "topright", levels(factor(gene_clusters)) , pch = 16, col =  factor(levels(factor(gene_clusters))) )
+{
+  mypar(1,1,mar=c(6,4,2,1))
+  plot( as.dendrogram(gene_clus),las=1,main="d=correlation\nh=complete")
+  
+  rect.hclust(gene_clus,h=HEIGHT)
+  abline(h=HEIGHT,col="red",lty=2)
+  points(1:length(gene_clusters),rep(0,length(gene_clusters)),pch=16,cex=2, col=factor(gene_clusters)[gene_clus$order])
+  legend("topright",levels(factor(gene_clusters)),pch=16,col=  factor(levels(factor(gene_clusters))))
+}
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
@@ -281,7 +292,9 @@ legend( "topright", levels(factor(gene_clusters)) , pch = 16, col =  factor(leve
 Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the `pheatmap` function, which by default will do the clustering of the rows and columns.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=4}
-pheatmap( logcpm[top_var,] , scale = "row" , color = colorRampPalette(c("navy","white","firebrick"))(90), border_color = NA, cluster_cols = F)
+pheatmap(logcpm[top_var, ],scale="row",
+         color=colorRampPalette(c("navy","white","firebrick"))(90),
+         border_color=NA,cluster_cols=F)
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
@@ -306,11 +319,14 @@ One way to measure **clustering robustness / accuracy** is by selecting part of 
 
 ```{r,eval=T,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Clustering on our dataset (this step is slow)
-pvc <- pvclust( data = logcpm[top_var[1:100],] , method.dist = "correlation", method.hclust = "complete")
-mypar()
-plot(pvc,las=2,hang = -0.5)
-pvrect(pvc, alpha = 0.9)
-points(1:ncol(data) ,rep(0,ncol(data)), pch= 16, cex=2, col=metadata$Group[pvc$hclust$order])
+pvc <- pvclust(data=logcpm[top_var[1:100], ],method.dist="correlation", method.hclust="complete")
+
+{
+  mypar()
+  plot(pvc,las=2,hang=-0.5)
+  pvrect(pvc,alpha=0.9)
+  points(1:ncol(data),rep(0,ncol(data)),pch=16,cex=2,col=metadata$Group[pvc$hclust$order])
+}
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
