@@ -64,6 +64,12 @@ We can now save this counts for later use
 
 ```{r}
 write.csv(data ,"data/gene_counts_vst.csv",row.names=T)
+
+counts <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+counts <- rowsum(counts, group = as.character(gene_names) ) #assign gene names and sum duplicates
+counts <- counts[ rownames(counts) != "" , ] #remove blank annotation
+counts <- counts[ order(rownames(counts)),]  #order genes alphabetically
+write.csv( counts ,"data/gene_counts_filtered.csv",row.names=T)
 ```
 
 
