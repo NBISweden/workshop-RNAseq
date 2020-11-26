@@ -29,8 +29,8 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 
 
 # read data
-download_data("data/gene_counts_vst.csv")
-data <- read.csv("data/gene_counts_vst.csv",row.names = 1)
+download_data("data/counts_vst.csv")
+data <- read.csv("data/counts_vst.csv",row.names = 1)
 dim(data)
 
 # read metadata
@@ -42,7 +42,7 @@ metadata <- read.csv("data/metadata_raw.csv",row.names = 1,stringsAsFactors=T)
 Here you would select genes based on p-values and logFC you obtained from differential expression.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-res <- read.csv("data/DGE_results.csv",row.names=1)
+res <- read.csv("data/dge_results.csv",row.names=1)
 res1 <- na.omit(res)
 selected_genes <- rownames(res1)[(res1$pvalue < 0.001) & (abs(res1$log2FoldChange) > 1)]
 ```
