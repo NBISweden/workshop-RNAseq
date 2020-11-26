@@ -1,0 +1,58 @@
+name: RNAseq2020
+
+channels:
+ - conda-forge
+ - bioconda
+ - defaults
+ - anaconda
+ - r
+ - rdonnelly
+ - psi4
+
+dependencies:
+ - r-base
+ - rstudio
+ - bioconductor-biomart
+ - bioconductor-edger
+ - bioconductor-deseq2
+ - bioconductor-fgsea
+ - r-biocmanager
+ - r-devtools
+ - r-dplyr
+ - r-enrichr
+ - r-ggplot2
+ - r-gridextra
+ - r-pheatmap
+ - r-pvclust
+ - r-rafalib
+ - r-stringr
+ - r-stringi
+ - r-tidyr
+ - r-bookdown
+ - r-captioner
+ - r-formattable
+ - r-kableExtra
+ - r-knitr
+ - r-leaflet
+ - r-lubridate
+ - r-markdown
+ - r-rmarkdown
+ - r-xaringan
+ - r-yaml
+ - hisat2
+ - kallisto
+ - fastqc
+ - multiqc
+ - r-fastqcr
+ - compilers
+ - subread
+ - htseq
+ - rsem
+ - igv
+ - wget
+ - pip
+ - pip:
+   - psrecord
+   - sysstat
+   - matplotlib
+   - tk
