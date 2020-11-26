@@ -56,6 +56,8 @@ Remove missing or fuse duplicated annotations and sum transcripts into genes.
 ```{r}
 data <- rowsum(data, group = as.character(gene_names) ) #assign gene names and sum duplicates
 data <- data[ rownames(data) != "" , ] #remove blank annotation
+data <- data[ rownames(data) != "NA" , ] #remove blank annotation
+data <- data[ !is.na( rownames(data) ) , ] #remove blank annotation
 data <- data[ order(rownames(data)),]  #order genes alphabetically
 dim(data)
 ```
@@ -68,6 +70,8 @@ write.csv(data ,"data/gene_counts_vst.csv",row.names=T)
 counts <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 counts <- rowsum(counts, group = as.character(gene_names) ) #assign gene names and sum duplicates
 counts <- counts[ rownames(counts) != "" , ] #remove blank annotation
+counts <- counts[ rownames(counts) != "NA" , ] #remove blank annotation
+counts <- na.omit(counts)
 counts <- counts[ order(rownames(counts)),]  #order genes alphabetically
 write.csv( counts ,"data/gene_counts_filtered.csv",row.names=T)
 ```

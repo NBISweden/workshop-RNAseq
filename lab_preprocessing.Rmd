@@ -141,13 +141,13 @@ This is hard to see. It's perhaps easier to plot a histogram.
 hist(rowSums(cr>3))
 ```
 
-There are a lot of genes that are not expressed (ie; zero on x-axis) in any sample. These can be removed completely. We are mostly interested in the peak on the right. These are genes that are expressed in all samples. We don't want to be too restrictive, so we will choose to keep genes that are expressed in atleast 3 samples since our groups have 3 samples each.
+There are a lot of genes that are not expressed (ie; zero on x-axis) in any sample. These can be removed completely. We are mostly interested in the peak on the right. These are genes that are expressed in all samples. We don't want to be too restrictive, so we will choose to keep genes that are expressed in at least 3 samples since our groups have 3 samples each.
 
-Below, rather than using zero as the minimum value for detection, we used minimum of 1 count-per-million (CPM). This ignores noisy background counts. And we want to keep genes that have minimum 1 CPM across 2 samples (since each of test groups consist of 3 samples).
+Below, rather than using zero as the minimum value for detection, we used minimum of 5 reads in at least samples (since each of test groups consist of 3 samples).
 
 ```{r}
 # remove genes with low counts
-keep_genes <- rowSums(edgeR::cpm(cr)>1) >= 2
+keep_genes <- rowSums(cr > 5) >= 3
 cf <- cr[keep_genes,]
 ```
 
@@ -236,7 +236,7 @@ Next, we find shared genes between count data and annotation data and match thei
 ```{r}
 igenes <- intersect(rownames(cf),g$ensembl_gene_id)
 g1 <- g[igenes,]
-cr1 <- cr[igenes,]
+cf1 <- cf[igenes,]
 all.equal(rownames(cf1),g1$ensembl_gene_id)
 ```
 
