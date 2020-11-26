@@ -15,11 +15,12 @@ Create a directory named `data` in your current working directory for input and 
 Load R packages.
 
 ```{r}
-library(pheatmap)
-library(rafalib)
-library(DESeq2)
-library(pvclust)
-library(biomaRt)
+library(pheatmap) #plot heatmap
+library(DESeq2) #differential gene expression for RNA-seq
+library(pvclust) #clustering bootstrapping
+library(biomaRt) #gene annotation
+library(rafalib) #nice plot arrangement
+rafalib::mypar(mar=c(6,2.5,2.5,1)) #sets nice arrangement for the whole document
 
 # source download function
 source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
@@ -30,18 +31,41 @@ Load the sequencing data and the metadata data with sample information.
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Load data and metadata
 
-download_data("data/counts_filtered.csv")
-data <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+download_data("data/counts_vst.csv")
+data <- read.csv("data/counts_vst.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 
 # if file doesn't exist, download it
 download_data("data/metadata_raw.csv")
 metadata <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=TRUE,row.names=1)
-
-#Transform data to log2CPM
-cpm <- edgeR::cpm(data)
-logcpm <- log2( cpm + 1)
-write.csv(cpm ,"data/cpm.csv",row.names=T)
 ```
+
+# Convert ensembl IDs to gene names
+
+A useful step is to convert ENSEMBL gene/transcript IDs into meaningful gene names. This can be done in many way using a gtf file or using the `biomaRt` function in R.
+
+```{r}
+download_data("data/mouse_genes.txt")
+annot <- read.delim("data/mouse_genes.txt",stringsAsFactors=FALSE)
+
+gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
+gene_names[is.na(gene_names) ] <- ""
+```
+
+Remove missing or fuse duplicated annotations and sum transcripts into genes.
+
+```{r}
+data <- rowsum(data, group = as.character(gene_names) ) #assign gene names and sum duplicates
+data <- data[ rownames(data) != "" , ] #remove blank annotation
+data <- data[ order(rownames(data)),]  #order genes alphabetically
+dim(data)
+```
+
+We can now save this counts for later use
+
+```{r}
+write.csv(data ,"data/gene_counts_vst.csv",row.names=T)
+```
+
 
 ***
 # PCA
@@ -53,11 +77,11 @@ Performing PCA has many useful applications and interpretations, which much depe
 Now that the data is prepared, we now proceed with PCA. Since each gene has a different expression level, it means that genes with higher expression values will naturally have higher variation that will be captured by PCA. This means that we need to somehow give each gene a similar weight when performing PCA (see below). The common practice is to center and scale each gene before performing PCA. This exact scaling is called **Z-score** normalization it is very useful for PCA, clustering and plotting heatmaps.
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-Znorm <- t( apply(logcpm , 1 , function(x) scale( x , center = T, scale = T)) )
-colnames(Znorm) <- colnames(logcpm)
+Znorm <- t( apply(data , 1 , function(x) scale( x , center = T, scale = T)) )
+colnames(Znorm) <- colnames(data)
 
 mypar(1,2,mar = c(5,3,2,1))
-boxplot( t(logcpm[1:30,])   , ylim=c(0,12), las=2 , col="grey" , main="logCPM raw_data" ,cex=.2)
+boxplot( t(data[1:30,])   , ylim=c(0,12), las=2 , col="grey" , main="logCPM raw_data" ,cex=.2)
 boxplot( t(Znorm[1:30,]) , ylim=c(-4,4), las=2 , col="grey" , main="Z-score data" ,cex=.2)
 abline(h=0, col="red" ,lty=2)
 ```
@@ -70,8 +94,8 @@ As you can appreciate above, Z-score normalization have set each gene mean to 0 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 #Compute the mean, variance and cv for each gene and sort them in decreasing order
 gene_stats <- data.frame(row.names = rownames(data))
-means <- apply(logcpm,1,mean)
-vars <- apply(logcpm,1,var)
+means <- apply(data,1,mean)
+vars <- apply(data,1,var)
 
 #Plot the row means versus row means
 mypar(1,2,mar = c(5,3,2,1))
@@ -80,7 +104,7 @@ plot(means, vars, cex=.1 )
 #Sort and select the top 500 highly variable genes from the data
 vars <- sort( vars , decreasing=T)
 top_var <- names( vars ) [1:100]
-boxplot( t(logcpm[ top_var[1:15],])   , ylim=c(0,12), las=2 , col="grey" , main="logCPM (top var genes)" ,cex=.2)
+boxplot( t(data[ top_var[1:15],])   , ylim=c(0,12), las=2 , col="grey" , main="logCPM (top var genes)" ,cex=.2)
 ```
 
 ***
@@ -92,7 +116,7 @@ Next, we can compute PCA using the `prcomp()` function. As additional parameters
 {
   mypar(1,2,mar = c(3,3,2,1))
   PC <-  prcomp( t( Znorm[ top_var, ]) ) #Method1
-  PC <-  prcomp( t( logcpm[ top_var, ]), center = TRUE, scale. = TRUE) #Method2
+  PC <-  prcomp( t( data[ top_var, ]), center = TRUE, scale. = TRUE) #Method2
   
   mypar(1,2)
   plot(PC$x[,1] , PC$x[,2], cex=2, col=factor(metadata$Group), xlab="PC1", ylab="PC2", pch=16, main="PCA", las=1)

@@ -334,8 +334,33 @@ conda deactivate
 
 <img border="0" src="https://simg.nicepng.com/png/small/1008-10087079_zoom-icon-zoom-video-conferencing-logo.png" width="50" height="50">
 
-The data being used in this workshop is available [here](https://drive.google.com/drive/u/0/folders/1mDMZFdx5oXm0HSVq6hm9j2AC_ebg4cM3).
+The data being used in this workshop is available [here](https://drive.google.com/drive/u/0/folders/1mDMZFdx5oXm0HSVq6hm9j2AC_ebg4cM3). However, we recommend you to download it using terminal, which simplify things a lot.
 
+Go to your home folder:
 
+```
+cd ~/
+```
+
+Launch the course environment:
+
+```
+conda activate RNAseq2020
+```
+
+Then you can simply run the `wget` command below to download the whole data for the course. This will take a long time since files are quite big.
+
+```
+wget -r -nH --cut-dirs=2 --no-parent --reject="index.html*" https://export.uppmax.uu.se/uppstore2017171/workshops/RNAseq
+```
+
+After downloading, you will have a folder
+Do not rename nor place those folder elsewhere, since they will be used as is. You can now type:
+
+```
+ls ~/RNAseq/
+```
+
+You now have 3 main folders there with data.
 
 <br/>

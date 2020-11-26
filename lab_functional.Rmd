@@ -1,6 +1,7 @@
 ---
 title: "Gene Function Annotation"
-subtitle: "Workshop on RNA-Seq"
+subtitle: Workshop on RNA-Seq
+output: pdf_document
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -39,7 +40,8 @@ metadata <- read.csv("data/metadata_raw.csv",row.names = 1,stringsAsFactors = T)
 ```
 
 
-Here you would select genes based on p-values and logFC you obtained from differential expression. 
+Here you would select genes based on p-values and logFC you obtained from differential expression.
+
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 res <- read.csv("data/DGE_results.csv",row.names = 1)
 
@@ -153,7 +155,7 @@ KEGG | [c2.cp.kegg.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msi
 GO_BP | [c5.bp.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/c5.bp.v6.2.symbols.gmt)
 HALLMARK | [h.all.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msigdb/download_file.jsp?filePath=/resources/msigdb/6.2/h.all.v6.2.symbols.gmt)
 
-As you could already notice, the differences in gene expression between days t0 to t24 are very clear, but not the ones from t2. Here we will illustrate a gene set enrichment comparing t2 to t0 in order to explore which pathways are UP or DOWN regulated at the first 2 hours of the experiment.
+As you could already notice, the differences in gene expression between days 0 to 7 are very clear. Here we will illustrate a gene set enrichment to explore which pathways are UP or DOWN regulated.
 
 <div class="boxy boxy-exclamation boxy-warning">
 Here you would use the logFC values you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are using a simple difference in mean expression.
@@ -179,7 +181,7 @@ gene_rank <- setNames( res$log2FoldChange , casefold(rownames(res),upper = T) )
 hallmark_pathways <- gmtPathways("data/MSigDB_files/h.all.v6.2.symbols.gmt.txt")
 ```
 
-Once our list of genes are sorted (from highest to lowest expression in t2), we can proceed with the enrichment itself. Here, we will be using the `fgsea()` function. This will result in a table containing information for several pathways. We can then sort and filter those pathways to visualize only the top ones. You can select/filter them by either `p-value` or normalized enrichemnet score (`NES`).
+Once our list of genes are sorted (from highest to lowest expression in day 7), we can proceed with the enrichment itself. Here, we will be using the `fgsea()` function. This will result in a table containing information for several pathways. We can then sort and filter those pathways to visualize only the top ones. You can select/filter them by either `p-value` or normalized enrichemnet score (`NES`).
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Perform enrichemnt analysis
@@ -196,11 +198,11 @@ plotGseaTable(hallmark_pathways[topPathways], gene_rank, fgseaRes, gseaParam = 0
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
 
-* Which is the most significantly up-regulated pathway at time t2?
+* Which is the most significantly up-regulated pathway at day 7?
 * What do the length of the black bars mean?
-* Is there any pathway that is significantly down-regulated at t2? Which columns tells you what is Up of downregulated?
-* Which is the most enriched pathway at time t6?
-* What happens if you do `t2-t0` instead of `t0-t2` ? What changes and why?
+* Is there any pathway that is significantly down-regulated at 0? Which columns tells you what is Up of downregulated?
+* Which is the most enriched pathway at day 0?
+* What happens if we use `-res$log2FoldChange` as gene rank ? What changes and why?
 
 Checking for individual enrichment:
 
