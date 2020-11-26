@@ -131,11 +131,11 @@ Next, we can compute PCA using the `prcomp()` function. As additional parameters
   mypar(1,2,mar = c(3,3,2,1))
   PC <-  prcomp( t( Znorm[ top_var, ]) ) #Method1
   PC <-  prcomp( t( data[ top_var, ]), center = TRUE, scale. = TRUE) #Method2
-  
+
   mypar(1,2)
   plot(PC$x[,1],PC$x[,2],cex=2,col=factor(metadata$Group),xlab="PC1",ylab="PC2",pch=16,main="PCA",las=1)
   text(PC$x[,1],PC$x[,2],cex=.7,labels = paste0(metadata$SampleName),pos=3)
-  
+
   plot(PC$x[,3],PC$x[,4],cex=2,col=factor(metadata$Group),xlab="PC3",ylab="PC4",pch=16,main="PCA",las=1)
   text(PC$x[,3],PC$x[,4],cex=.7,labels = paste0(metadata$SampleName),pos=3)
 }
@@ -311,7 +311,7 @@ gene_clusters
 {
   mypar(1,1,mar=c(6,4,2,1))
   plot( as.dendrogram(gene_clus),las=1,main="d=correlation\nh=complete")
-  
+
   rect.hclust(gene_clus,h=HEIGHT)
   abline(h=HEIGHT,col="red",lty=2)
   points(1:length(gene_clusters),rep(0,length(gene_clusters)),pch=16,cex=2, col=factor(gene_clusters)[gene_clus$order])

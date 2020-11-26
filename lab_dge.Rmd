@@ -294,31 +294,6 @@ hist(res$pvalue,main="Pval distribution",xlab="P-values")
 
 This is the kind of distribution to be expected when the p-values are "well-behaved". For more explanation on p-value distributions, see [here](http://varianceexplained.org/statistics/interpreting-pvalue-histogram/). If this distribution is very different or strange, then it might indicate an underlying problem.
 
-```{r,eval=FALSE,include=FALSE}
-# qqplot and inflation
-ci <- 0.95
-n <- length(res$pvalue)
-pv <- res$pvalue
-dfr <- data.frame(observed = -log10(sort(pv)),
-                  expected = -log10(ppoints(n)),
-                  clower = -log10(qbeta(p=(1-ci)/2, shape1=1:n, shape2=n:1)),
-                  cupper = -log10(qbeta(p=(1+ci)/2, shape1=1:n, shape2=n:1)))
-qu <- quantile(pv,0.90)
-pv1 <- pv[pv<qu]
-median(qchisq(pv1,df=1,lower.tail=FALSE))/qchisq(0.5, 1)
-
-ggplot(dfr) +
-    geom_point(aes(expected, observed), shape=16, size=2,color="grey60")+
-    geom_abline(intercept=0, slope=1, color="tomato") +
-    geom_line(aes(expected, cupper), linetype=2, color="tomato")+
-    geom_line(aes(expected, clower), linetype=2, color="tomato")+
-    scale_x_continuous(limits=c(0,NA))+
-    scale_y_continuous(limits=c(0,NA))+
-    labs(x=expression("Expected -log"[10]~plain(P-values)),
-         y=expression("Observed -log"[10]~plain(P-values)),
-         subtitle=paste0(" n=",length(pv)))
-```
-
 We can filter the results table as needed.
 
 ```{r,block.title=TRUE}
