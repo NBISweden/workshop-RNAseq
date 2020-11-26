@@ -29,9 +29,8 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 
 
 # read data
-download_data("data/cpm.csv")
-cpm <- read.csv("data/cpm.csv",row.names = 1)
-data <- log2( cpm + 1)
+download_data("data/gene_counts_vst.csv")
+data <- read.csv("data/gene_counts_vst.csv",row.names = 1)
 dim(data)
 
 # read metadata
@@ -66,7 +65,7 @@ Now that you understand the concepts of hierarchical clustering both at the samp
 ```{r,results='hide',block.title=TRUE,fig.height=7,fig.width=5}
 cl <- pheatmap( data[selected_genes,] , scale = "row" , color = colorRampPalette(c("navy","white","firebrick"))(90), border_color = NA, cluster_cols = F,cutree_rows = 2)
 
-gene_clusters <- cutree(cl$tree_row,k = 2)
+gene_clusters <- cutree(cl$tree_row, k = 2)
 ```
 
 # Functional Analysis
@@ -101,15 +100,17 @@ head(data[genes_cluster2,])
 ### GO enrichment
 
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
-go_cluster <- enrichr(genes = genes_cluster2,databases = "GO_Biological_Process_2018")
-go_cluster <- go_cluster$GO_Biological_Process_2018
-go_cluster <- go_cluster[order(go_cluster$P.value),]
-go_cluster[1:5,]
-
-mypar(1,1,mar=c(2,25,2,2))
-barplot( -log10(go_cluster$P.value[15:1]), horiz = T, border=F,yaxs="i",
-         names.arg = go_cluster$Term[15:1],las=1,cex.names = .8)
-abline(v=0,lwd=2)
+{
+  go_cluster <- enrichr(genes = genes_cluster2,databases = "GO_Biological_Process_2018")
+  go_cluster <- go_cluster$GO_Biological_Process_2018
+  go_cluster <- go_cluster[order(go_cluster$P.value),]
+  go_cluster[1:5,]
+  
+  mypar(1,1,mar=c(2,25,2,2))
+  barplot( -log10(go_cluster$P.value[15:1]), horiz = T, border=F,yaxs="i",
+           names.arg = go_cluster$Term[15:1],las=1,cex.names = .8)
+  abline(v=0,lwd=2)
+}
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
