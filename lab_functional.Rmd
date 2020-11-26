@@ -208,7 +208,7 @@ plotGseaTable(hallmark_pathways[topPathways], gene_rank, fgseaRes, gseaParam = 0
 
 Checking for individual enrichment:
 
-```{r,results='hide',block.title=TRUE,fig.height=2,fig.width=3}
+```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 topPathways
 source("https://raw.githubusercontent.com/czarnewski/niceRplots/master/R/helper_functions.R")
 mypar(3,2)
