@@ -1,7 +1,8 @@
 ---
 title: "Data preprocessing"
-subtitle: "Workshop on RNA-Seq"
-editor_options: 
+output: pdf_document
+subtitle: Workshop on RNA-Seq
+editor_options:
   chunk_output_type: console
 ---
 
@@ -17,6 +18,8 @@ Data preprocessing is done in R. Load the necessary R packages and source the do
 ```{r}
 # plotting
 library(DESeq2) # rna-seq
+library(rafalib) # nice plot arrangement
+rafalib::mypar(mar=c(6,2.5,2.5,1)) #sets nice arrangement for the whole document
 
 # source download function
 source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
@@ -71,27 +74,6 @@ mr
 all.equal(colnames(cr),rownames(mr))
 ```
 
-# Convert ensembl IDs to gene names
-
-A useful step is to convert ENSEMBL gene/transcript IDs into meaningful gene names. This can be done in many way using a gtf file or using the `biomaRt` function in R.
-
-```{r}
-download_data("data/mouse_genes.txt")
-annot <- read.delim("data/mouse_genes.txt",stringsAsFactors=FALSE)
-
-gene_names <- as.character ( annot[match(rownames(cr),annot[,"ensembl_gene_id"]),"external_gene_name"] )
-gene_names[is.na(gene_names) ] <- ""
-```
-
-Remove missing or fuse duplicated annotations and sum transcripts into genes.
-
-```{r}
-cr <- rowsum(cr, group = as.character(gene_names) ) #assign gene names and sum duplicates
-cr <- cr[ rownames(cr) != "" , ] #remove blank annotation
-cr <- cr[ order(rownames(cr)),]  #order genes alphabetically
-dim(cr)
-```
-
 Finally save the data in the **data** directory.
 
 ```{r}
@@ -130,7 +112,7 @@ all.equal(colnames(cr),rownames(mr))
 Let's create a boxplot to visualise the distribution of counts.
 
 ```{r}
-boxplot(log10(as.matrix(cr)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="Raw data")
+boxplot(log2(as.matrix(cr)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="Raw data")
 ```
 
 The median values are zero across all samples. This means that half the values in each sample are zeros. This data set would benefit from a low count filtering.
@@ -174,7 +156,7 @@ cf <- cr[keep_genes,]
 Distribution of the filtered counts looks like below. Compare this to the previous boxplot above.
 
 ```{r}
-boxplot(log10(as.matrix(cf)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="Filtered data")
+boxplot(log2(as.matrix(cf)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="Filtered data")
 ```
 
 In addition, compare the histogram of filtered counts below to the raw data above.
@@ -219,7 +201,7 @@ all.equal(colnames(cf),rownames(mr))
 
 ```{r}
 cc <- edgeR::cpm(cf)
-boxplot(log10(as.matrix(cc)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="CPM")
+boxplot(log2(as.matrix(cc)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="CPM")
 ```
 
 But, CPM data has some drawbacks. It is not suitable for within-sample comparisons. The total number of reads per sample varies from sample to sample. This also makes it harder to compare one experiment to another. In addition, gene length is not controlled for in this correction. RPKM/FPKM normalisations correct for gene length, but they are not recommended because they are not comparable between samples.
@@ -254,7 +236,7 @@ Next, we find shared genes between count data and annotation data and match thei
 ```{r}
 igenes <- intersect(rownames(cf),g$ensembl_gene_id)
 g1 <- g[igenes,]
-cf1 <- cf[igenes,]
+cr1 <- cr[igenes,]
 all.equal(rownames(cf1),g1$ensembl_gene_id)
 ```
 
@@ -262,7 +244,7 @@ And then we run the `tpm()` function on the count data using the gene lengths. A
 
 ```{r}
 ct <- tpm(cf1,g1$len)
-boxplot(log10(as.matrix(ct)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="TPM")
+boxplot(log2(as.matrix(ct)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="TPM")
 ```
 
 This is the distribution of TPM counts.
@@ -282,7 +264,7 @@ saveRDS(cd,"data/counts_normalised_deseq2.Rds")
 
 ```{r}
 cd <- readRDS("data/counts_normalised_deseq2.Rds")
-boxplot(log10(as.matrix(cd)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="DESeq2")
+boxplot(log2(as.matrix(cd)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="DESeq2")
 ```
 
 ## VST
@@ -297,23 +279,21 @@ d <- DESeq2::estimateSizeFactors(d,type="ratio")
 d <- DESeq2::estimateDispersions(d)
 cv <- as.data.frame(assay(varianceStabilizingTransformation(d,blind=T)),check.names=F)
 
-if(!file.exists("./data/counts_vst.csv")) {
-  write.csv(cv,"./data/counts_vst.csv",quote=FALSE)
-}
+write.csv(cv,"./data/counts_vst.csv",quote=FALSE)
 
-boxplot(log10(as.matrix(cv)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="VST")
+boxplot(log2(as.matrix(cv)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="VST")
 ```
 
 The effect of VST transformation can be clearly seen in a mean vs variance plot.
 
 ```{r,fig.height=7,fig.width=7}
 rowVar <- function(x) apply(x,1,var)
-par(mfrow=c(2,2))
-plot(log10(rowMeans(cf)+1),log10(rowVar(cf)+1),xlab=expression('Log'[10]~'Mean count'),ylab=expression('Log'[10]~'Variance'),main="Filtered")
-plot(log10(rowMeans(ct)+1),log10(rowVar(ct)+1),xlab=expression('Log'[10]~'Mean count'),ylab=expression('Log'[10]~'Variance'),main="TPM")
-plot(log10(rowMeans(cd)+1),log10(rowVar(cd)+1),xlab=expression('Log'[10]~'Mean count'),ylab=expression('Log'[10]~'Variance'),main="DESeq2")
-plot(rowMeans(cv),rowVar(cv),xlab='Mean count',ylab='Variance',main="VST")
-par(mfrow=c(1,1))
+rafalib::mypar(mfrow=c(2,2))
+plot(rowMeans(log2(cf+1)),rowVar(log2(cf+1)),xlab=expression('Log'[2]~'Mean count'),ylab=expression('Log'[2]~'Variance'),main="Filtered",cex=.1)
+plot(rowMeans(log2(ct+1)),rowVar(log2(ct+1)),xlab=expression('Log'[2]~'Mean count'),ylab=expression('Log'[2]~'Variance'),main="TPM",cex=.1)
+plot(rowMeans(log2(cd+1)),rowVar(log2(cd+1)),xlab=expression('Log'[2]~'Mean count'),ylab=expression('Log'[2]~'Variance'),main="DESeq2",cex=.1)
+plot(rowMeans(cv),rowVar(cv),xlab=expression('Log'[2]~'Mean count'),ylab=expression('Log'[2]~'Variance'),main="VST",cex=.1)
+rafalib::mypar(mar=c(6,2.5,2.5,1))
 ```
 
 For RNA-seq data, as the mean count value increases, the variance increases. There is a strong almost linear relationship as seen in the figures. The statistical methods such as PCA expects similar variance across the range of mean values. If not, the higher variance genes will contribute more than the lower variance genes. Such data is said to be heteroscedastic and needs to be corrected. One option is log transformation (with pseudocount), but this tends to inflate the contribution of the low variance genes. To obtain similar variance across the whole range of mean values, DESeq2 offers two methods VST (variance stabilising transformation) and RLOG (regularised log transformation).
@@ -325,12 +305,12 @@ As the name suggests, VST transformation stabilizes variance across the whole ra
 Finally, we can compare all of the various transformations in a single plot.
 
 ```{r,fig.height=3.5,fig.width=9}
-par(mfrow=c(1,4))
-boxplot(log10(as.matrix(cf)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="Filtered")
-boxplot(log10(as.matrix(ct)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="TPM")
-boxplot(log10(as.matrix(cd)+1),ylab=expression('Log'[10]~'Read counts'),las=2,main="DESeq2")
-boxplot(as.matrix(cv),ylab='Read counts',las=2,main="VST")
-par(mfrow=c(1,1))
+rafalib::mypar(1,4,mar=c(6,2.5,2.5,1) )
+boxplot(log2(as.matrix(cf)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="Filtered")
+boxplot(log2(as.matrix(ct)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="TPM")
+boxplot(log2(as.matrix(cd)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="DESeq2")
+boxplot(as.matrix(cv),ylab=expression('Log'[2]~'Read counts'),las=2,main="VST")
+rafalib::mypar(mar=c(6,2.5,2.5,1))
 ```
 
 <i class="fas fa-comments"></i> Would it be possible to have one perfect normalisation method for all types of analyses? Is there any drawback to using gene length corrected counts in differential gene expression analyses?
