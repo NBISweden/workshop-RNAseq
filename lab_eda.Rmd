@@ -31,8 +31,7 @@ Load the sequencing data and the metadata data with sample information.
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 # Load data and metadata
 download_data("data/counts_tpm.csv")
-tpm <- read.csv("data/counts_tpm.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
-data <- log2( tpm + 1 )
+data <- read.csv("data/counts_tpm.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 
 # if file doesn't exist, download it
 download_data("data/metadata_raw.csv")
