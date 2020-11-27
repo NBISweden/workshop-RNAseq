@@ -44,8 +44,8 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 ```
 
 ```{r,eval=TRUE,include=FALSE}
-download_data("data/gene_counts_filtered.csv")
-cf <- read.csv("data/gene_counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+download_data("data/counts_filtered.csv")
+cf <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 
 download_data("data/metadata_raw.csv")
 mr <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
