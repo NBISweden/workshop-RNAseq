@@ -340,7 +340,6 @@ pheatmap( data[top_var,] , scale="row" , color = colorRampPalette(c("navy","whit
 * Can you change the clustering to 'ward.D2'? Explore the `pheatmap` function pressing tab.
 * Can you cut your gene tree into 4 clusters? Explore the `pheatmap` function pressing tab.
 
-
 ***
 ## Clustering bootstrapping (optional)
 
