@@ -334,7 +334,7 @@ conda deactivate
 
 <img border="0" src="https://www.svgrepo.com/show/20109/database.svg" width="50" height="50">
 
-The data being used in this workshop is available [here](https://drive.google.com/drive/u/0/folders/1mDMZFdx5oXm0HSVq6hm9j2AC_ebg4cM3). However, we recommend you to download it using terminal, which simplify things a lot.
+The data being used in this workshop is available [here](https://export.uppmax.uu.se/uppstore2017171/workshops/RNAseq). However, we recommend you to download it using terminal, which simplify things a lot.
 
 Go to your home folder and caunch the course environment:
 
