@@ -76,7 +76,7 @@ all.equal(colnames(cr),rownames(mr))
 Finally save the data in the **data** directory.
 
 ```{r}
-write.csv(cr,file="data/gene_counts_raw.csv",quote=FALSE)
+write.csv(cr,file="data/counts_raw.csv",quote=FALSE)
 write.csv(mr,file="data/metadata_raw.csv",quote=FALSE)
 ```
 
@@ -85,8 +85,8 @@ write.csv(mr,file="data/metadata_raw.csv",quote=FALSE)
 The next step is to remove samples and genes that are uninformative. We read in the count table (*You can skip this step if continuing from the previous step*).
 
 ```{r}
-download_data("data/gene_counts_raw.csv")
-cr <- read.csv("./data/gene_counts_raw.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+download_data("data/counts_raw.csv")
+cr <- read.csv("./data/counts_raw.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 head(cr)
 str(cr)
 ```
@@ -142,11 +142,11 @@ hist(rowSums(cr>3))
 
 There are a lot of genes that are not expressed (ie; zero on x-axis) in any sample. These can be removed completely. We are mostly interested in the peak on the right. These are genes that are expressed in all samples. We don't want to be too restrictive, so we will choose to keep genes that are expressed in atleast 3 samples since our groups have 3 samples each.
 
-Below, rather than using zero as the minimum value for detection, we used minimum of 1 count-per-million (CPM). This ignores noisy background counts. And we want to keep genes that have minimum 1 CPM across 2 samples (since each of test groups consist of 3 samples).
+Below, rather than using zero as the minimum value for detection, we used minimum of 5 reads in at least 3 samples (since each of test groups consist of 3 samples).
 
 ```{r}
 # remove genes with low counts
-keep_genes <- rowSums(cr>5) >= 3
+keep_genes <- rowSums( cr > 5 ) >= 3
 cf <- cr[keep_genes,]
 ```
 
@@ -175,7 +175,7 @@ all.equal(colnames(cf),rownames(mr))
 At this point, we can save the filtered data.
 
 ```{r}
-write.csv(cf,"./data/gene_counts_filtered.csv",quote=F)
+write.csv(cf,"./data/counts_filtered.csv",quote=F)
 ```
 
 # Normalisation
@@ -184,13 +184,11 @@ The raw count data needs to be corrected for various biases before statistical i
 
 ## CPM/TPM
 
-For analysis other than DGE, the data set must be corrected before use. The most basic correction required is sequencing depth. This is achieved using rescaling the counts to counts per million.
-
-We read in out filtered count data and metadata. We can use the function `cpm()` from R package **edgeR** for this.
+For analysis other than DGE, the data set must be corrected before use. The most basic correction required is sequencing depth. This is achieved using rescaling the counts to counts per 1 million (CPM).
 
 ```{r}
-download_data("data/gene_counts_filtered.csv")
-cf <- read.csv("data/gene_counts_filtered.csv",stringsAsFactors=F,row.names=1)
+download_data("data/counts_filtered.csv")
+cf <- read.csv("data/counts_filtered.csv",stringsAsFactors=F,row.names=1)
 
 download_data("data/metadata_raw.csv")
 mr <- read.csv("data/metadata_raw.csv",stringsAsFactors=F,row.names=1)
@@ -199,8 +197,9 @@ all.equal(colnames(cf),rownames(mr))
 ```
 
 ```{r}
-cc <- edgeR::cpm(cf)
-boxplot(log2(as.matrix(cc)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="CPM")
+cc <- t( t(cf) / colSums(cf) * 1e6 )
+cc <- log2( cc + 1 )
+boxplot(cc,ylab=expression('Log'[2]~'Read counts'),las=2,main="CPM")
 ```
 
 But, CPM data has some drawbacks. It is not suitable for within-sample comparisons. The total number of reads per sample varies from sample to sample. This also makes it harder to compare one experiment to another. In addition, gene length is not controlled for in this correction. RPKM/FPKM normalisations correct for gene length, but they are not recommended because they are not comparable between samples.
@@ -223,11 +222,19 @@ tpm <- function(counts,len) {
 We read in the annotation data, remove duplicated ensembl IDs and compute gene lengths.
 
 ```{r}
-download_data("data/mouse_genes.txt")
+#If you DON'T have the gene length information in the quantification results
 mouse <- biomaRt::useMart(biomart="ensembl", dataset="mmusculus_gene_ensembl")
 g <- biomaRt::getBM(attributes = c("ensembl_gene_id","transcript_length"),mart = mouse)
 g <- g[!duplicated(g$ensembl_gene_id),]
 rownames(g) <- g$ensembl_gene_id
+
+
+#If you DO have the gene length information in the quantification results
+co <- read.delim("data/gene_counts_original.tsv",sep="\t",header=TRUE,stringsAsFactors=F,comment.char="#")
+g <- data.frame( ensembl_gene_id = co$Geneid , 
+                 transcript_length = co$Length,
+                 stringsAsFactors = F, row.names = co$Geneid)
+g <- g[!duplicated(g$ensembl_gene_id),]
 ```
 
 Next, we find shared genes between count data and annotation data and match their order.
@@ -243,7 +250,8 @@ And then we run the `tpm()` function on the count data using the gene lengths. A
 
 ```{r}
 ct <- tpm(cf1,g1$transcript_length)
-boxplot(log2(as.matrix(ct)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="TPM")
+ct <- log2( ct + 1 )
+boxplot(ct,ylab=expression('Log'[2]~'Read counts'),las=2,main="TPM")
 write.csv(ct,"./data/counts_tpm.csv",quote=F)
 ```
 
@@ -258,13 +266,13 @@ library(DESeq2)
 mr$Group <- factor(mr$Group)
 d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Group)
 d <- DESeq2::estimateSizeFactors(d,type="ratio")
-cd <- counts(d,normalized=TRUE)
+cd <- log2( counts(d,normalized=TRUE) + 1 ) 
 saveRDS(cd,"data/gene_counts_normalised_deseq2.Rds")
 ```
 
 ```{r}
 cd <- readRDS("data/gene_counts_normalised_deseq2.Rds")
-boxplot(log2(as.matrix(cd)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="DESeq2")
+boxplot(cd,ylab=expression('Log'[2]~'Read counts'),las=2,main="DESeq2")
 ```
 
 ## VST
@@ -281,7 +289,7 @@ cv <- as.data.frame(assay(varianceStabilizingTransformation(d,blind=T)),check.na
 
 #write.csv(cv,"./data/gene_counts_vst.csv",quote=FALSE)
 
-boxplot(log2(as.matrix(cv)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="VST")
+boxplot(cv,ylab=expression('Log'[2]~'Read counts'),las=2,main="VST")
 ```
 
 The effect of VST transformation can be clearly seen in a mean vs variance plot.
@@ -289,9 +297,9 @@ The effect of VST transformation can be clearly seen in a mean vs variance plot.
 ```{r,fig.height=7,fig.width=7}
 rowVar <- function(x) apply(x,1,var)
 rafalib::mypar(mfrow=c(2,2))
-plot(rowMeans(log2(cf+1)),rowVar(log2(cf+1)),xlab=expression('Log'[2]~'Mean count'),ylab=expression('Log'[2]~'Variance'),main="Filtered",cex=.1)
-plot(rowMeans(log2(ct+1)),rowVar(log2(ct+1)),xlab=expression('Log'[2]~'Mean count'),ylab=expression('Log'[2]~'Variance'),main="TPM",cex=.1)
-plot(rowMeans(log2(cd+1)),rowVar(log2(cd+1)),xlab=expression('Log'[2]~'Mean count'),ylab=expression('Log'[2]~'Variance'),main="DESeq2",cex=.1)
+plot(rowMeans(cc),rowVar(cc),xlab=expression('Log'[2]~'Mean count'),ylab=expression('Log'[2]~'Variance'),main="CPM",cex=.1)
+plot(rowMeans(ct),rowVar(ct),xlab=expression('Log'[2]~'Mean count'),ylab=expression('Log'[2]~'Variance'),main="TPM",cex=.1)
+plot(rowMeans(cd),rowVar(cd),xlab=expression('Log'[2]~'Mean count'),ylab=expression('Log'[2]~'Variance'),main="DESeq2",cex=.1)
 plot(rowMeans(cv),rowVar(cv),xlab=expression('Log'[2]~'Mean count'),ylab=expression('Log'[2]~'Variance'),main="VST",cex=.1)
 rafalib::mypar(mar=c(6,2.5,2.5,1))
 ```
@@ -306,11 +314,21 @@ Finally, we can compare all of the various transformations in a single plot.
 
 ```{r,fig.height=3.5,fig.width=9}
 rafalib::mypar(1,4,mar=c(6,2.5,2.5,1) )
-boxplot(log2(as.matrix(cf)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="Filtered")
-boxplot(log2(as.matrix(ct)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="TPM")
-boxplot(log2(as.matrix(cd)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="DESeq2")
+boxplot(as.matrix(cc),ylab=expression('Log'[2]~'Read counts'),las=2,main="CPM")
+boxplot(as.matrix(ct),ylab=expression('Log'[2]~'Read counts'),las=2,main="TPM")
+boxplot(as.matrix(cd),ylab=expression('Log'[2]~'Read counts'),las=2,main="DESeq2")
 boxplot(as.matrix(cv),ylab=expression('Log'[2]~'Read counts'),las=2,main="VST")
 rafalib::mypar(mar=c(6,2.5,2.5,1))
+```
+
+
+At this point, we can save the filtered data.
+
+```{r}
+# write.csv(cc,"./data/counts_cpm.csv",quote=F)
+write.csv(ct,"./data/counts_tpm.csv",quote=F)
+# write.csv(cd,"./data/counts_deseq2.csv",quote=F)
+# write.csv(cv,"./data/counts_vst.csv",quote=F)
 ```
 
 <i class="fas fa-comments"></i> Would it be possible to have one perfect normalisation method for all types of analyses? Is there any drawback to using gene length corrected counts in differential gene expression analyses?
