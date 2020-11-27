@@ -121,13 +121,16 @@ The most relevant metadata columns are **sampleName** and **Group**. It is impor
 all.equal(colnames(cr),rownames(mr))
 ```
 
-Let's create a boxplot to visualise the distribution of counts.
+Let's visualise the distribution of counts using a boxplot and density plot.
 
 ```{r}
+rafalib::mypar(1,2,mar=c(6,3,3,2))
 boxplot(log2(as.matrix(cr)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="Raw data")
+hist(log2(as.matrix(cr)+1),ylab="",las=2,main="Raw data")
+par(mfrow=c(1,1))
 ```
 
-The median values are zero across all samples. This means that half the values in each sample are zeros. This data set would benefit from a low count filtering.
+On the boxplot, the median values are zero across all samples. This means that half the values in each sample are zeros. On the histogram, we see a huge peak of zeros. This data set would benefit from a low count filtering.
 
 We can check if any samples need to be discarded based on the number of genes detected. We create a barplot of genes detected across samples.
 
@@ -203,10 +206,10 @@ We read in out filtered count data and metadata. We can use the function `cpm()`
 
 ```{r}
 download_data("data/gene_counts_filtered.csv")
-cf <- read.csv("data/gene_counts_filtered.csv",stringsAsFactors=F,row.names=1)
+if(!exists(cf)) cf <- read.csv("data/gene_counts_filtered.csv",stringsAsFactors=F,row.names=1)
 
 download_data("data/metadata_raw.csv")
-mr <- read.csv("data/metadata_raw.csv",stringsAsFactors=F,row.names=1)
+if(!exists(mr)) mr <- read.csv("data/metadata_raw.csv",stringsAsFactors=F,row.names=1)
 
 all.equal(colnames(cf),rownames(mr))
 ```
@@ -290,7 +293,7 @@ cv <- as.data.frame(assay(varianceStabilizingTransformation(d,blind=T)),check.na
 
 write.csv(cv,"./data/gene_counts_vst.csv",quote=FALSE)
 
-boxplot(log2(as.matrix(cv)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="VST")
+boxplot(as.matrix(cv),ylab=expression('Log'[2]~'Read counts'),las=2,main="VST")
 ```
 
 The effect of VST transformation can be clearly seen in a mean vs variance plot.
@@ -314,11 +317,20 @@ As the name suggests, VST transformation stabilizes variance across the whole ra
 Finally, we can compare all of the various transformations in a single plot.
 
 ```{r,fig.height=3.5,fig.width=9}
-rafalib::mypar(1,4,mar=c(6,2.5,2.5,1) )
+rafalib::mypar(1,4,mar=c(6,2.5,2.5,1))
 boxplot(log2(as.matrix(cf)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="Filtered")
 boxplot(log2(as.matrix(ct)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="TPM")
 boxplot(log2(as.matrix(cd)+1),ylab=expression('Log'[2]~'Read counts'),las=2,main="DESeq2")
 boxplot(as.matrix(cv),ylab=expression('Log'[2]~'Read counts'),las=2,main="VST")
+rafalib::mypar(mar=c(6,2.5,2.5,1))
+```
+
+```{r,fig.height=3.5,fig.width=9}
+rafalib::mypar(1,4,mar=c(3,2.5,2,1))
+hist(log2(as.matrix(cf)+1),ylab="",xlab="",main="Filtered")
+hist(log2(as.matrix(ct)+1),ylab="",xlab="",main="TPM")
+hist(log2(as.matrix(cd)+1),ylab="",xlab="",main="DESeq2")
+hist(as.matrix(cv),ylab="",xlab="",main="VST")
 rafalib::mypar(mar=c(6,2.5,2.5,1))
 ```
 
