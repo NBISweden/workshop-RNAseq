@@ -16,6 +16,8 @@ dependencies:
  - bioconductor-edger
  - bioconductor-deseq2
  - bioconductor-fgsea
+ - bioconductor-tximport
+ - bioconductor-rhdf5
  - r-biocmanager
  - r-devtools
  - r-dplyr

@@ -1,0 +1,177 @@
+---
+title: 'Kallisto '
+subtitle: Workshop on RNA-Seq
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+
+# Kallisto
+
+**Kallisto** is an "alignment-free" RNA-Seq quantification method that runs very fast with a small memory footprint, so that it can be run on most laptops. It is a command-line program that can be downloaded as binary executables for Linux or Mac, or in source code format. For a first insight into the program, read [here](https://liorpachter.wordpress.com/2015/05/10/near-optimal-rna-seq-quantification-with-kallisto/) and for the published article, see [here](http://www.nature.com/nbt/journal/vaop/ncurrent/full/nbt.3519.html). 
+
+Kallisto is geared towards quantification on the transcript (isoform) level, rather than the gene-level (although the latter can also be done by post-processing Kallisto output.) However, read assignment to transcript isoforms cannot (in general) be done unambiguously, so there is an intrinsic "quantification noise" or variability in this process. Kallisto can thus be run either in a single step (which is very fast) or in "bootstrap" mode (which takes longer, but can be done on several processors in parallel) in order to get uncertainty estimates for the expression levels - a kind of error bars for the quantification process. Running with bootstraps is mandatory if you want to perform differential expression analysis of isoforms with Sleuth (see below).
+
+Kallisto is primarily meant for quantification of an existing set of FASTA sequences, that is, it does not perform transcript assembly and it cannot quantify the expression of novel transcripts that are not in the transcript index that you provide to it. With that said, you can of course use contigs from an assembly that you have produced in some other program in your Kallisto index. It would also be possible to use the software for eg: metagenomics or metatranscriptomics quantification.
+
+
+
+
+Download the cDNA reference and create a index file to run on (This has already been done!)
+
+
+```{sh,eval=FALSE,block.title=TRUE}
+#mkdir references/ref_kallisto
+   
+#cd references/ref_kallisto
+
+#wget ftp://ftp.ensembl.org/pub/release-101/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz
+
+#wait
+
+
+#kallisto index \
+#  --index kallisto_mm10_transcriptome_index.idx \
+#  Mus_musculus.GRCm38.cdna.all.fa.gz
+
+#wait
+
+# cd ../..
+
+```
+
+
+It takes less than 10 minutes.
+
+
+Now you can pseudoalign all your reads to the kalisto index using kalisto quantification
+
+```{sh,eval=FALSE,block.title=TRUE}
+
+
+  mkdir kallisto_quantification
+
+ for sample_name in $(ls fastq/*.clean.fq.gz.1M_reads.fq.gz); do
+
+    file=${sample_name#fastq/}
+    sample=${file%.clean.fq.gz.1M_reads.fq.gz}
+   
+   echo $sample
+
+     
+    mkdir kallisto_quantification/$sample
+
+    kallisto quant \
+      --index references/ref_kallisto/kallisto_mm10_transcriptome_index.idx \
+      --output-dir kallisto_quantification/$sample \
+      --threads 3 \
+      --single \
+      --fragment-length 200 \
+      --sd 20 \
+     $sample_name
+
+  done
+
+```
+
+
+
+# Convert from transcript estimation to gene estimations.
+
+
+This is done based on the [txImport vignette](https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html)
+
+For the program to work it needs a trancript to gene converter. This is written in the cDNA names in the fasta file. 
+
+```{sh,eval=FALSE,block.title=FALSE}
+   
+gzcat references/ref_kallisto/Mus_musculus.GRCm38.cdna.all.fa.gz| \
+grep '>' |
+awk '{FS= " "}BEGIN{ print "TXNAME,GENEID"};{print substr($1,2) "," substr($4,6)};' \
+>references/ref_kallisto/tx2gene.mm.GRCm38.cdna.csv 
+
+```
+
+
+The next steps are carried out in R so make sure you start R with the correct packages. 
+
+```{r ,eval=FALSE,block.title=FALSE}
+library(dplyr) # data wrangling
+library(ggplot2) # plotting
+library(DESeq2) # rna-seq
+library(edgeR) # rna-seq
+library(tximport) # importing kalisto transcript counts to geneLevels
+library(readr) # Fast readr of files.
+library(rhdf5) # read/convert kalisto output files.  
+
+
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#  install.packages("BiocManager")
+
+#BiocManager::install("tximport")
+#BiocManager::install("rhdf5")
+
+
+# source download function
+source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
+
+# download metadata
+
+download_data("data/metadata_raw.csv")
+mr <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F,row.names=1)
+
+
+```
+
+
+
+# Read Kalisto files 
+
+```{r Kalisto files ,eval=FALSE,block.title=FALSE}
+files <- paste("kallisto_quantification" ,  
+               list.files(path = "kallisto_quantification",pattern = "abundance.tsv", recursive = TRUE),
+               sep = "/")
+names(files) <- mr$SampleName
+
+
+tx2gene <- read_csv("references/ref_kallisto/tx2gene.mm.GRCm38.cdna.csv")
+
+
+txi.kallisto.tsv <- tximport(files, type = "kallisto", tx2gene = tx2gene, ignoreAfterBar = TRUE)
+```
+
+
+# Convert to a DEseq2 object for analysis
+
+```{r ,eval=FALSE,block.title=FALSE}
+mr = mr %>% mutate(Day = as.factor(Day))
+dds <- DESeqDataSetFromTximport(txi.kallisto.tsv, mr, ~Day)
+
+```
+
+# Convert to a edgeR object for analysis
+
+```{r convert into EdgeR object,eval=FALSE,block.title=FALSE}
+cts <- txi.kallisto.tsv$counts
+normMat <- txi.kallisto.tsv$length
+normMat <- normMat/exp(rowMeans(log(normMat)))
+library(edgeR)
+o <- log(calcNormFactors(cts/normMat)) + log(colSums(cts/normMat))
+y <- DGEList(cts)
+y$offset <- t(t(log(normMat)) + o)
+
+# y is now ready for estimate dispersion functions see edgeR User's Guide
+
+
+
+```
+
+
+# Session info
+
+```{r,echo=FALSE}
+sessionInfo()
+```
+
+***
