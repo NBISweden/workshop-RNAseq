@@ -142,7 +142,7 @@ txi.kallisto.tsv <- tximport(files, type = "kallisto", tx2gene = tx2gene, ignore
 ```
 
 
-# Convert to a DEseq2 object for analysis
+# Convert to DEseq2 object for analysis
 
 ```{r ,eval=FALSE,block.title=FALSE}
 mr = mr %>% mutate(Day = as.factor(Day))

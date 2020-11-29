@@ -6,8 +6,7 @@ subtitle: "Workshop on RNA-Seq"
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-
-FastQ reads are mapped to a reference genome using splice-aware RNA-seq aligner HISAT2
+In this tutorial we will use a splice aware aligner HISAT2 that is the best solution when using a laptop or a personal computer with less than 16GB. If you have a computer or access to computer cluster it is worthwhile to consider using STAR and compare the results. 
 
 
 # HISAT2
@@ -40,14 +39,25 @@ hisat2 -p N  -x path/to/index/fileName \
   -2 path/to/reads/sample_2.fastq \
   -S outDir/hisat2.sam \
   --summary-file outDir/hisat2_summary.txt
+  
+  
+# for single end reads 
+hisat2 -p N  -x path/to/index/fileName \
+  -U path/to/reads/sample.fastq \
+  -S outDir/hisat2.sam \
+  --summary-file outDir/hisat2_summary.txt
+  
+  
+  
 ```    
+
 The flags used are:
 
 *  ``-p N`` specifies the number of threads that will be used by the program
-*  ``--dta-cufflinks`` will generate output that is optimal for downstream analysis with Cufflinks
 * ``-x /path/to/index/fileName`` specifies the path to the pre-built genome index. Note that the index consists of multiple files ending in ``.ht2``, and only the shared part of the filename should be indicated (e.g. ``genome`` if the files are called ``genome.1.ht2``, ``genome.2.ht2``, etc).
-*  `` -1 /path/to/reads/sample_1.fastq `` is where you should list the first-read FASTQ files that you wish to map
-*  `` -2 /path/to/reads/sample_2.fastq `` is where you should list the second-read FASTQ files that you wish to map
+*  `` -1 /path/to/reads/sample_1.fastq `` is where you should list the first-read FASTQ file of paired end reads that you wish to map
+*  `` -2 /path/to/reads/sample_2.fastq `` is where you should list the second-read FASTQ file of paired end reads that you wish to map
+*  `` -U /path/to/reads/sample.fastq `` is where you should list the single end read FASTQ file that you wish to map
 *  ``-S outDir/hisat2.sam`` is the name of the result file that will be created
 *  ``--summary-file outDir/hisat2_summary.txt`` is the name of a file for summary information about the alignments
 
@@ -69,16 +79,9 @@ To answer these questions, you should look at the input to and output from HISAT
 
 If you were able to run HISAT2 and STAR successfully, this should have produced files with mapped reads in SAM format. These files need to be converted to *sorted* and *indexed* BAM files for efficient downstream analysis.
 
-You should try to give the BAM files representable names, in order to make it easier to manage your files. A good naming scheme for BAM files is to use names that indicate what you mapped and how. As an example, if you mapped sample 12 using HISAT2 you could create a file named `sample12_RAB11FIP5.hg19.HISAT2.bam`.
+You should try to give the BAM files representable names, in order to make it easier to manage your files. A good naming scheme for BAM files is to use names that indicate what you mapped and how. As an example, if you mapped sample 12 using HISAT2 you could create a file named `sample12.mmusculus.HISAT2.bam`.
 
 The most commonly used tool for converting from SAM to BAM is [Samtools](http://www.htslib.org/doc/samtools.html) (follow the link for more information about Samtools).
-
-To load the Samtools module on UPPMAX, execute:
-
-```{sh,eval=FALSE,block.title=TRUE}
-module load bioinfo-tools
-module load samtools/1.9
-```
 
 The Samtools command to convert from SAM to a sorted BAM file is:
 
@@ -101,6 +104,12 @@ samtools flagstat properName.sorted.bam > properName.sorted.flagstat
 ```
 
 <i class="fas fa-lightbulb"></i> Since the BAM file contains all the information from the original SAM file, remember to remove the SAM file once you are finished, in order to free up disk space.
+
+```{sh,eval=FALSE,block.title=TRUE}
+rm input.sam
+```
+
+
 
 ***
 
