@@ -48,7 +48,7 @@ The steps that we are going to run are:
 3. junction_saturation.py
 4. read_distribution.py
 
-<i class="fas fa-exclamation-circle"></i> The **geneBody_coverage.py** script takes a very long time to run, so we have created a subsection of annotations to run it on. Use the file ` Mus_musculus.GRCm38.101.HouseKeepingGenes.bed`. If you want to run multiple files this might take to long also. Then you can even further reduce the file by only using the first 500 house keeping genes. For more details look at code below how to do that and how to run all files in a for loop.
+<i class="fas fa-exclamation-circle"></i> The **geneBody_coverage.py** script takes a very long time to run, so we have created a subsection of annotations to run it on. Use the file ` Mus_musculus.GRCm38.101.HouseKeepingGenes.bed`. If you want to run multiple files this might take to long also. Then you can even further reduce the file by only using the first 500 house keeping genes. For more details look at code below how to do that and how to run all files in a loop. 
 
 <i class="fas fa-lightbulb"></i> When running **read_distribution.py**, an out file cannot be specified. Instead you need to pipe (`>`) the output to a file, or look at the output in the terminal.
 
@@ -58,6 +58,28 @@ The steps that we are going to run are:
 * Are the RNAseq data stranded or unstranded and if so on what strand is the read coming from? 
 * Do you have even coverage along the genes?
 * Do the reads cover most splice junctions?
+
+## Creating Bed12 file 
+
+**Optional**
+
+If you are working on a organism that does not have a annotation file in bed12 that is needed to use this RSeQC it is possible to transform a GTF file to Bed12 file. This is done by using tools from uscs and needs a extra step to first go from GTF to genePred and then from genePred to bed. *gtfToGenePred* and *genePredToBed*  can both be downloaded from ucsc utilities homepage. 
+
+
+```{sh,eval=FALSE,block.title=TRUE}
+
+
+
+ gtfToGenePred \
+   references/annotations/Mus_musculus.GRCm38.101.gtf \
+   references/annotations/Mus_musculus.GRCm38.101.genePred
+
+ genePredToBed \
+   references/annotations/Mus_musculus.GRCm38.101.genePred\
+   references/annotations/Mus_musculus.GRCm38.101.bed
+
+
+```
 
 
 
@@ -69,7 +91,7 @@ MutliQC can also include the information from  RSeQC. Rerun MultiQC after you ha
 It was created using commands:
 
 ```{sh,eval=FALSE,block.title=TRUE}
-multiqc -f -d -dd 3 .
+multiqc -f -d -dd 2 .
 
 ```
 
