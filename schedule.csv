@@ -27,7 +27,7 @@ date;room;start_time;end_time;topic;teacher;assistant;link_slide;link_lab;link_r
 ;;12:00;13:00;Lunch;;;;;
 ;;13:00;14:00;Free Exercises;;;;;
 ;;14:00;14:30;Coffee Break;;;;;
-;;14:30;16:00;Repositories & Public databases;Paulo Czarnewski;;slide_repositories.pdf;;
+;;14:30;16:00;Repositories & Public databases;Paulo Czarnewski;;slide_repositories.pdf;lab_geoquery.html;
 04/12/2020;Online;09:00;10:00;Pseudoaligners;Johan Reimegård;;slide_pseudoaligners.pdf;lab_kallisto.html;
 ;;10:00;10:30;Coffee Break;;;;;
 ;;10:30;12:00;Free Exercises;;;;;
