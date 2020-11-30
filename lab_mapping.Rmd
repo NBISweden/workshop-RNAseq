@@ -6,7 +6,7 @@ subtitle: "Workshop on RNA-Seq"
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-In this tutorial we will use a splice aware aligner HISAT2 that is the best solution when using a laptop or a personal computer with less than 16GB. If you have a computer or access to computer cluster it is worthwhile to consider using STAR and compare the results. 
+In this tutorial we will use a splice aware aligner HISAT2 that is the best solution when using a laptop or a personal computer with less than 16GB. If you have a computer or access to computer cluster it is worthwhile to consider using STAR and compare the results.
 
 
 # HISAT2
@@ -19,7 +19,7 @@ A pre-built mouse genome index for HISAT2 can be found in the  `references/hisat
 
 ## Mapping
 
-Here, you will map the reads to the mouse reference genome using the RNA-seq aligner **HISAT2**. 
+Here, you will map the reads to the mouse reference genome using the RNA-seq aligner **HISAT2**.
 
 
 There are many features that can be tweaked using HISAT2. For more information on all flags that can be used go [here](https://ccb.jhu.edu/software/hisat2/manual.shtml).
@@ -33,22 +33,22 @@ Now you can map the reads from one of the samples (or several; it's up to you wh
 ```{sh,eval=FALSE,block.title=TRUE}
 mkdir outDir
 
-# for paired end reads 
-hisat2 -p N  -x path/to/index/fileName \
+# for paired end reads
+hisat2 -p N -x path/to/index/fileName \
   -1 path/to/reads/sample_1.fastq \
   -2 path/to/reads/sample_2.fastq \
   -S outDir/hisat2.sam \
   --summary-file outDir/hisat2_summary.txt
-  
-  
-# for single end reads 
+
+
+# for single end reads
 hisat2 -p N  -x path/to/index/fileName \
   -U path/to/reads/sample.fastq \
   -S outDir/hisat2.sam \
   --summary-file outDir/hisat2_summary.txt
-  
-  
-  
+
+
+
 ```    
 
 The flags used are:
@@ -114,7 +114,7 @@ rm input.sam
 ***
 
 
-# Code to run all the steps above on data on course data 
+# Code to run all the steps above on data on course data
 ```{sh ,eval=FALSE,block.title=TRUE}
 
 
@@ -139,7 +139,7 @@ mkdir hisat2_results
 
 #map all the small files
  for i in $(ls fastq/*.clean.fq.gz.1M_reads.fq.gz); do
-    
+
     file=${i#fastq/}
     sample=${file%.clean.fq.gz.1M_reads.fq.gz}
    #Single-end read
@@ -155,7 +155,7 @@ mkdir hisat2_results
 
 #map  the large file
  for i in $(ls fastq/*.clean.fq.gz); do
-    
+
     file=${i#fastq/}
     sample=${file%.clean.fq.gz}
    #Single-end read
@@ -182,10 +182,10 @@ for i in $(ls hisat2_results/*.sam); do
     file=${i#hisat2_results/}
     sample=${file%.sam}
 
-  samtools view -bS -o hisat2_results/$sample.bam hisat2_results/$sample.sam 
-  samtools sort  hisat2_results/$sample.bam hisat2_results/$sample.sorted
-  samtools index hisat2_results/$sample.sorted.bam	
-  samtools flagstat hisat2_results/$sample.sorted.bam	>$sample.sorted.flagstat
+  samtools view -bS -o hisat2_results/$sample.bam hisat2_results/$sample.sam
+  samtools sort hisat2_results/$sample.sorted.bam hisat2_results/$sample.sam
+  samtools index hisat2_results/$sample.sorted.bam
+  samtools flagstat hisat2_results/$sample.sorted.bam > $sample.sorted.flagstat
 
 done
 
@@ -202,7 +202,7 @@ for i in $(ls hisat2_results/*.sorted.bam); do
 
  if test -f "hisat2_results/$sample.sorted.bam"; then
     echo "$sample.sorted.bam exists. Removing $sample.sam and $sample.bam"
-    rm hisat2_results/$sample.sam 
+    rm hisat2_results/$sample.sam
     rm hisat2_results/$sample.bam
  fi
 
