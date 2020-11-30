@@ -174,6 +174,7 @@ mkdir hisat2_results
 
 ############################
 ####   CONVERT TO BAM   ####
+
 ############################
 
 
@@ -181,9 +182,14 @@ for i in $(ls hisat2_results/*.sam); do
 
     file=${i#hisat2_results/}
     sample=${file%.sam}
-
-  samtools view -bS -o hisat2_results/$sample.bam hisat2_results/$sample.sam
-  samtools sort hisat2_results/$sample.sorted.bam hisat2_results/$sample.sam
+ 
+ 
+ # This is how it was done in a older version of samtools  (Version: 0.1.19-44428cd)
+  #samtools view -bS -o hisat2_results/$sample.bam hisat2_results/$sample.sam 
+  #samtools sort  hisat2_results/$sample.bam hisat2_results/$sample.sorted
+  
+ # This is how it should be done in the version that is used in our conda enviroment (Version: 1.10 (using htslib 1.10.2))
+  samtools sort -o hisat2_results/$sample.sorted.bam hisat2_results/$sample.sam
   samtools index hisat2_results/$sample.sorted.bam
   samtools flagstat hisat2_results/$sample.sorted.bam > $sample.sorted.flagstat
 
@@ -194,7 +200,7 @@ done
 ############################
 
 
-# Remove the itermediate sam and bamfiles.
+# Remove the intermediate sam and bamfiles.
 for i in $(ls hisat2_results/*.sorted.bam); do
 
     file=${i#hisat2_results/}
@@ -203,7 +209,9 @@ for i in $(ls hisat2_results/*.sorted.bam); do
  if test -f "hisat2_results/$sample.sorted.bam"; then
     echo "$sample.sorted.bam exists. Removing $sample.sam and $sample.bam"
     rm hisat2_results/$sample.sam
-    rm hisat2_results/$sample.bam
+
+    # This intermediate step is no longer needed anymore 
+    #rm hisat2_results/$sample.bam
  fi
 
 done
