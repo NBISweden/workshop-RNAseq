@@ -1,0 +1,127 @@
+---
+title: "PCA and Clustering"
+subtitle: "Workshop on RNA-Seq"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r,child="assets/header-lab.Rmd"}
+```
+
+<div class="boxy boxy-exclamation boxy-warning">
+Create a directory named `data` in your current working directory for input and output files.
+</div>
+
+Load R packages.
+
+
+```{r, eval=F}
+# BiocManager::install("GEOquery")
+library(GEOquery)
+library(Biobase)
+library(rafalib)
+rafalib::mypar(mar=c(6,2.5,2.5,1)) #sets nice arrangement for the whole document
+
+# source download function
+source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
+```
+
+
+## Loading a dataset from GEO using GEOquery
+
+For this exercise, let's try getting the full count matrix from the original  [GSE131032](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131032) dataset.
+
+In some cases the simple `getGEO` will download the data, metadata and gene annotation into a ExpressionSet format, where you can then extract the information about the gene counts, metadata and gene annotations. 
+
+```{r, eval=F}
+#Get the GSE object from it
+gset <- GEOquery::getGEO("GSE131032")[[1]]
+gset
+
+#Get the count matrix from the GSE objetc
+data <- gset@assayData$exprs
+dim(data)
+
+#Get the sample metadata / phenotypic from the GSE object 
+metadata <- gset@phenoData@data
+dim(metadata)
+
+#Get the gene annotation data from the GSE object 
+annot <- gset@featureData@data
+dim(annot)
+```
+
+However, in most cases (in our experience) that is not the case since every dataset is a bit unique. So we recommend checking the files deposited individually and download what is most relevant for you. We can first list the files deposited: 
+
+```{r, eval=F}
+file_list <- GEOquery::getGEOSuppFiles("GSE131032",fetch_files = F)
+print(file_list)
+```
+
+You can see the `RAW.tar` file, which contains the original count file deposited individually for every sample (under the GSM). The command below will dowlaod the file into a folder with the GSE name. This is a `.tar` compressed file that can be extracted.
+
+```{r, eval=F}
+GEOquery::getGEOSuppFiles("GSE131032",fetch_files = T,filter_regex = "_RAW.tar")
+list.files("GSE131032")
+
+#extract tar using bash (within R, but can be done outside too)
+system("cd GSE131032; tar -xvf GSE131032_RAW.tar")
+system("cd GSE131032; rm GSE131032_RAW.tar")
+
+list.files("GSE131032")
+
+system("cd GSE131032; gunzip *.gz")
+```
+
+Having the individual files, we can combine them using a for loop or apply function:
+
+```{r, eval=F}
+#list the files
+list.files("GSE131032")
+
+#Check the column names from the 1st file
+head( read.delim(paste0("GSE131032/",list.files("GSE131032")[1])) )
+
+#Do an apply function to get all the estimated counts from each file and compile into a single matrix
+data <- sapply(list.files("GSE131032",pattern = ".tsv"), function(x){
+  x <- read.delim(paste0("GSE131032/",x))[,"est_counts"]
+  return(x)
+})
+rownames(data)
+colnames(data)
+
+#Add the gene names and sample names
+rownames(data) <- read.delim(paste0("GSE131032/",list.files("GSE131032")[1]))[,"target_id"]
+colnames(data) <- sub("_.*","",colnames(data))
+
+#Check the column names from the 1st file
+rownames(metadata) == colnames(data)
+
+#Rename data
+colnames(data) <- metadata$title
+head(data)
+```
+
+Alternativelly, in the `file_list` above we could also simply load the count matrix.
+
+```{r, eval=F}
+#list files available
+print(file_list)
+
+#Download  and extract the full matrix
+GEOquery::getGEOSuppFiles("GSE131032",fetch_files = T,filter_regex = "GSE131032_kallisto_counts.csv.gz")
+system("cd GSE131032; gunzip GSE131032_kallisto_counts.csv.gz")
+
+#Read the file (note that the sample names here are not the GSM accesccion, but the investigator's IDs)
+data <- read.delim(paste0("GSE131032/GSE131032_kallisto_counts.csv"),sep = ",",row.names = 1)
+colnames(data)
+
+#Those sample IDs are stored in one of the metadata columns
+metadata$description
+metadata$description == colnames(data)
+
+#Rename data
+colnames(data) <- metadata$title
+head(data)
+```
+

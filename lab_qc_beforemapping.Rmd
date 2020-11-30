@@ -8,12 +8,8 @@ subtitle: Workshop on RNA-Seq
 
 In this tutorial we will go through some of the key steps in performing a quality control on your samples. We will start with the read based quality control, using FastQC. This will analyse your RNA fragments and see if there are any biases 
 
-All the data you need for this lab is available in the subfolder `` of the data folder that you have downloaded to this course :.
+All the data you need for this lab is available in the subfolder `fastq` of the data folder that you have downloaded to this course .
 
-This folder contains:
-
-* On **Lab**.
-* 
 # FastQC on single file
 
 FastQC aims to provide a simple way to do some quality control checks on raw sequence data coming from high throughput sequencing pipelines. It provides a modular set of analyses which you can use to get a quick impression of whether your data has any problems of which you should be aware before doing any further analysis.
@@ -36,6 +32,7 @@ You can read more about the program and have a look at example reports at [the F
 
 # To see help information on the FastQC package:
 fastqc --help
+
 # Run for one FASTQ file:
 fastqc -o outdir fastqfile
 

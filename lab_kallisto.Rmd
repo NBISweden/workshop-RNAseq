@@ -16,9 +16,9 @@ Kallisto is geared towards quantification on the transcript (isoform) level, rat
 Kallisto is primarily meant for quantification of an existing set of FASTA sequences, that is, it does not perform transcript assembly and it cannot quantify the expression of novel transcripts that are not in the transcript index that you provide to it. With that said, you can of course use contigs from an assembly that you have produced in some other program in your Kallisto index. It would also be possible to use the software for eg: metagenomics or metatranscriptomics quantification.
 
 
+## Build index
 
-
-Download the cDNA reference and create a index file to run on (This has already been done!)
+Download the cDNA reference and create a index file to run on (This has already been done!). But if you want to do it yourself you can uncomment the code and run it yourselves. 
 
 
 ```{sh,eval=FALSE,block.title=TRUE}
@@ -45,7 +45,9 @@ Download the cDNA reference and create a index file to run on (This has already 
 It takes less than 10 minutes.
 
 
-Now you can pseudoalign all your reads to the kalisto index using kalisto quantification
+## Pseudoalign reads
+
+Now you can pseudoalign all your reads to the Kalisto index using Kalisto quantification
 
 ```{sh,eval=FALSE,block.title=TRUE}
 
@@ -76,16 +78,20 @@ Now you can pseudoalign all your reads to the kalisto index using kalisto quanti
 ```
 
 
+# Quantification
 
-# Convert from transcript estimation to gene estimations.
+## Get gene quantifications
+Since Kalisto uses transcripts estimates and many programs, like DEseq and EdgeR, works better with gene counts there are programs to get gene counts from transctipt estimates in our case we will use txImport. TxImport can import estimates from a lot of different sources. You can read more about it in the [txImport vignette](https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html)
 
+For the program to work it needs a two column file that assigns each transcript to a gene. This can found using ensembl database or other public databases. In our case the relationship between the transcripts and gene is found in the sequencenames in the cDNA file that we downloaded. By using awk we can extract the transcript gene dependency and write it to a file. 
 
-This is done based on the [txImport vignette](https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html)
-
-For the program to work it needs a trancript to gene converter. This is written in the cDNA names in the fasta file. 
 
 ```{sh,eval=FALSE,block.title=FALSE}
-   
+# Example of a sequence name in file 
+#  >ENSMUST00000177564.1 cdna chromosome:GRCm38:14:54122226:54122241:1 gene:ENSMUSG00000096176.1 gene_biotype:TR_D_gene transcript_biotype:TR_D_gene gene_symbol:Trdd2 description:T cell receptor delta diversity 2 [Source:MGI Symbol;Acc:MGI:4439546]
+
+
+# Extract all transcriptnames (1st) and genenames (4th) from  sequence names and write to a file.   
 gzcat references/ref_kallisto/Mus_musculus.GRCm38.cdna.all.fa.gz| \
 grep '>' |
 awk '{FS= " "}BEGIN{ print "TXNAME,GENEID"};{print substr($1,2) "," substr($4,6)};' \
@@ -93,6 +99,8 @@ awk '{FS= " "}BEGIN{ print "TXNAME,GENEID"};{print substr($1,2) "," substr($4,6)
 
 ```
 
+
+## TxImport
 
 The next steps are carried out in R so make sure you start R with the correct packages. 
 
@@ -105,13 +113,22 @@ library(tximport) # importing kalisto transcript counts to geneLevels
 library(readr) # Fast readr of files.
 library(rhdf5) # read/convert kalisto output files.  
 
+```
+
+
+If R complains that you have not installed *tximport* and *rhdf5* you can to that using the code here below. 
+```{r ,eval=FALSE,block.title=FALSE} 
 
 #if (!requireNamespace("BiocManager", quietly = TRUE))
 #  install.packages("BiocManager")
 
 #BiocManager::install("tximport")
 #BiocManager::install("rhdf5")
+```
 
+
+Load the metadata for the samples. 
+```{}
 
 # source download function
 source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
@@ -126,7 +143,9 @@ mr <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F,row.names=
 
 
 
-# Read Kalisto files 
+###  Convert ot gene counts 
+
+Read in the Kalisto transcript abundances and and convert the TxImport
 
 ```{r Kalisto files ,eval=FALSE,block.title=FALSE}
 files <- paste("kallisto_quantification" ,  
@@ -142,7 +161,7 @@ txi.kallisto.tsv <- tximport(files, type = "kallisto", tx2gene = tx2gene, ignore
 ```
 
 
-# Convert to a DEseq2 object for analysis
+### Convert to DEseq2 object for analysis
 
 ```{r ,eval=FALSE,block.title=FALSE}
 mr = mr %>% mutate(Day = as.factor(Day))
@@ -150,7 +169,7 @@ dds <- DESeqDataSetFromTximport(txi.kallisto.tsv, mr, ~Day)
 
 ```
 
-# Convert to a edgeR object for analysis
+### Convert to a edgeR object for analysis
 
 ```{r convert into EdgeR object,eval=FALSE,block.title=FALSE}
 cts <- txi.kallisto.tsv$counts

@@ -17,11 +17,9 @@ The most important parts to look at are the proportion of uniquely mapping, mult
 
 ## MultiQC logs summary
 
-After mapping with star of all samples, we ran MultiQC to summarize all the logfiles. In this case we had a folder structure with **sample_name/Log.final.out**, so to make sure that MultiQC understands what is the sample name, we used the `-dd 2` command (e.g. it splits up the path and names the samples after the second last part).
+After mapping with star of all samples, we ran MultiQC to summarize all the log-files. In this case we had a folder structure with **sampleName.hisat2_summary.txt**, so to make sure that MultiQC understands what is the sample name, we used the `-dd 2` command (e.g. it splits up the path and names the samples after the second last part).
 
 ```{sh,eval=FALSE,block.title=TRUE}
-# OBS! do not run now, just for reference
-
 
 multiqc -d -dd 2 .
 ```
@@ -38,42 +36,71 @@ The RSeQC package contains many steps that are equivalent to FastQC analysis, e.
 Some steps of the RSeQC package require a file with gene annotations in BED format. These can be downloaded from sources such as UCSC, RefSeq and Ensembl. In this case, the RSeQC team have already created annotation files in some common formats that can be downloaded from their website, but if you have data for a less studied organism you may need to create a BED-file on your own.
 
 
-Two annotation files have already been downloaded into `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/annotation` for you to use. These are: **hg19.HouseKeepingGenes.bed** and **hg19_RefSeq.bed**. 
+Two annotation files have already been downloaded into subdirectory `references/annotations` for you to use. These are: **Mus_musculus.GRCm38.101.HouseKeepingGenes.bed** and **Mus_musculus.GRCm38.101.bed**. 
+
 
 In this tutorial, we will not run all the different parts of the RSeQC package, only the most relevant ones for this experiment. The different scripts in the RSeQC package are well described on [their website](http://rseqc.sourceforge.net/), so read the instructions there and specify the input/output files to fit your file names and folder structure.
 
 The steps that we are going to run are:
 
 1. geneBody_coverage.py
+2. infer_experiment.py
 3. junction_saturation.py
 4. read_distribution.py
 
-<i class="fas fa-exclamation-circle"></i> The **geneBody_coverage.py** script takes a very long time to run, so we have created a subsection of annotations to run it on. Use the file ` Mus_musculus.GRCm38.101.HouseKeepingGenes.bed`
+<i class="fas fa-exclamation-circle"></i> The **geneBody_coverage.py** script takes a very long time to run, so we have created a subsection of annotations to run it on. Use the file ` Mus_musculus.GRCm38.101.HouseKeepingGenes.bed`. If you want to run multiple files this might take to long also. Then you can even further reduce the file by only using the first 500 house keeping genes. For more details look at code below how to do that and how to run all files in a loop. 
 
-<i class="fas fa-lightbulb"></i> When running **read_distribution.py**, an outfile cannot be specified. Instead you need to pipe (`>`) the output to a file, or look at the output in the terminal.
+<i class="fas fa-lightbulb"></i> When running **read_distribution.py**, an out file cannot be specified. Instead you need to pipe (`>`) the output to a file, or look at the output in the terminal.
 
 <i class="fas fa-clipboard-list"></i> Run RSeQC for one sample and have a look at your output.
 
 * Do most of your reads map to genes?
+* Are the RNAseq data stranded or unstranded and if so on what strand is the read coming from? 
 * Do you have even coverage along the genes?
 * Do the reads cover most splice junctions?
+
+## Creating Bed12 file 
+
+**Optional**
+
+If you are working on a organism that does not have a annotation file in bed12 that is needed to use this RSeQC it is possible to transform a GTF file to Bed12 file. This is done by using tools from uscs and needs a extra step to first go from GTF to genePred and then from genePred to bed. *gtfToGenePred* and *genePredToBed*  can both be downloaded from ucsc utilities homepage. 
+
+
+```{sh,eval=FALSE,block.title=TRUE}
+
+
+
+ gtfToGenePred \
+   references/annotations/Mus_musculus.GRCm38.101.gtf \
+   references/annotations/Mus_musculus.GRCm38.101.genePred
+
+ genePredToBed \
+   references/annotations/Mus_musculus.GRCm38.101.genePred\
+   references/annotations/Mus_musculus.GRCm38.101.bed
+
+
+```
+
+
 
 ## MultiQC summary
 
 
-MutliQC also includes the informaiton from  RSeQC. Rerun MultiQC after you have done your RSeQC steps.
+MutliQC can also include the information from  RSeQC. Rerun MultiQC after you have done your RSeQC steps.
 
 It was created using commands:
 
 ```{sh,eval=FALSE,block.title=TRUE}
-multiqc -f -d -dd 3 .
+multiqc -f -d -dd 2 .
 
 ```
 
 <i class="fas fa-comments"></i> Have a look at the reports. What is your conclusion, do your samples look good? Is there anything that looks strange in any sample, or do you feel comfortable using all the samples in your analysis?
 
 ***
-# Code to run all the steps above on data on course data 
+# Code 
+
+This is all that is needed to run all the steps above on data on course data. 
 ```{sh ,eval=FALSE,block.title=TRUE}
 
 
@@ -125,7 +152,7 @@ junction_annotation.py -i $i  \
 done
 
 
-multiqc -f -d -dd 3 .
+multiqc -f -d -dd 2 .
 
 
 ```

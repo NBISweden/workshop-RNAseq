@@ -65,6 +65,7 @@ packages:
   - DESeq2
   - edgeR
   - fgsea
+  - GEOquery
  packages_github_student:
  packages_cran_repo:
   - bookdown

@@ -211,16 +211,15 @@ Checking for individual enrichment:
 ```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
 topPathways
 source("https://raw.githubusercontent.com/czarnewski/niceRplots/master/R/helper_functions.R")
-mypar(3,2)
+mypar(2,3)
 
 # Nice plot to see enrichment of one specific pathway
 p <- list()
 for (i in c(topPathwaysUp[1:3],topPathwaysDown[3:1])){
   plot_enrich(i,hallmark_pathways,gene_rank)
-  # p[[i]] <- plotEnrichment(hallmark_pathways[[i]],  gene_rank)
-  # ggplot2::ggtitle(i)
+  # p[[i]] <- plotEnrichment(hallmark_pathways[[i]],  gene_rank) + ggplot2::ggtitle(i)
 }
-p
+# p
 ```
 
 <i class="fas fa-comments"></i> **Exploratory Questions**
