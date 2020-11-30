@@ -84,6 +84,11 @@ Gene counts are quantified from BAM files using featureCounts.
 * [Quantification (Slide)](slide_quantification.pdf)
 * [Quantification (Lab)](lab_quantification.html)
 
+## Filtering & Normalisation
+
+* [Filtering & Normalisation (Slide)](slide_preprocessing.html)
+* [Filtering & Normalisation (Lab)](lab_preprocessing.html)
+
 ## Exploratory data analyses
 
 Before commencing any quantitative analyses, it is important to run some exploratory analyses to access similarity between samples. This is a vital step to identify mislabelled samples, poor-quality samples and/or replicates that differ considerably. This section dives deeper into exploratory analyses PCA and hierarchical clustering.
@@ -97,7 +102,7 @@ Before commencing any quantitative analyses, it is important to run some explora
 We find genes that are differentially expressed between our time points.
 
 * [Differential gene expression (Slide)](slide_dge.html)  
-* [DGE workflow using DESeq2 (Lab)](lab_dge.html)  
+* [DGE using DESeq2 (Lab)](lab_dge.html)  
 
 ## Functional analysis
 
