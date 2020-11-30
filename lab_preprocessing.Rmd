@@ -194,7 +194,7 @@ download_data("data/counts_filtered.csv")
 cf <- read.csv("data/counts_filtered.csv",stringsAsFactors=F,row.names=1)
 
 download_data("data/metadata_raw.csv")
-if(!exists(mr)) mr <- read.csv("data/metadata_raw.csv",stringsAsFactors=F,row.names=1)
+if(!exists("mr")) mr <- read.csv("data/metadata_raw.csv",stringsAsFactors=F,row.names=1)
 
 all.equal(colnames(cf),rownames(mr))
 ```
