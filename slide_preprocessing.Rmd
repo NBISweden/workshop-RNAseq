@@ -62,7 +62,7 @@ mr[1:6,]
 
 ???
 
-A glimpse into the count table and metadata table. It is important to make sure before any analyses that the count column names match the metadata row names perfectly. Make sure the column in both tables are of the correct data type; ie; numbers are numeric and groups are factors.
+A glimpse into the count table and metadata table. It is important to make sure before any analyses that the count column names match the metadata row names exactly. Make sure the column in both tables are of the correct data type; ie; numbers are numeric and groups are factors.
 
 ---
 name: pp
@@ -72,9 +72,9 @@ name: pp
 - Remove genes and samples with low counts
 
 ```{r,echo=TRUE}
-cf1 <- cr[rowSums(cr>0) >= 2, ]
-cf2 <- cr[rowSums(cr>3) >= 2, ]
-cf3 <- cr[rowSums(edgeR::cpm(cr)>1) >= 2, ]
+cf1 <- cr[rowSums(cr>0) >= 3, ]
+cf2 <- cr[rowSums(cr>3) >= 3, ]
+cf3 <- cr[rowSums(edgeR::cpm(cr)>5) >= 3, ]
 ```
 
 - Inspect distribution
@@ -83,7 +83,7 @@ cf3 <- cr[rowSums(edgeR::cpm(cr)>1) >= 2, ]
 h0 <- cr %>%
   mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
-  ggplot(aes(x=log10(value+1),group=sample))+
+  ggplot(aes(x=log2(value+1),group=sample))+
   geom_density()+
   labs(x=expression('Log'[10]~'Read counts'),y="Density",title="Raw")+
   theme_bw()+
@@ -93,7 +93,7 @@ h0 <- cr %>%
 h1 <- cf1 %>%
   mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
-  ggplot(aes(x=log10(value+1),group=sample))+
+  ggplot(aes(x=log2(value+1),group=sample))+
   geom_density()+
   labs(x=expression('Log'[10]~'Read counts'),y="Density",title="Method 1")+
   theme_bw()+
@@ -103,7 +103,7 @@ h1 <- cf1 %>%
 h2 <- cf2 %>%
   mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
-  ggplot(aes(x=log10(value+1),group=sample))+
+  ggplot(aes(x=log2(value+1),group=sample))+
   geom_density()+
   labs(x=expression('Log'[10]~'Read counts'),y="Density",title="Method 2")+
   theme_bw()+
@@ -113,7 +113,7 @@ h2 <- cf2 %>%
 h3 <- cf3 %>%
   mutate(gene=rownames(.)) %>%
   gather(key="sample",value="value",-gene) %>%
-  ggplot(aes(x=log10(value+1),group=sample))+
+  ggplot(aes(x=log2(value+1),group=sample))+
   geom_density()+
   labs(x=expression('Log'[10]~'Read counts'),y="Density",title="Method 3")+
   theme_bw()+
@@ -123,7 +123,7 @@ h3 <- cf3 %>%
 gridExtra::grid.arrange(h0,h1,h2,h3,nrow=1,ncol=4)
 ```
 
-- Inspect the number of rows (genes)
+- Inspect the number of rows (genes) available after filtering
 
 ```{r,eval=TRUE,echo=FALSE}
 cat(paste0("Raw: ",nrow(cr),", Method 1: ",nrow(cf1),", Method 2: ",nrow(cf2),", Method 3: ",nrow(cf3)))
@@ -137,11 +137,11 @@ Lowly expressed genes are removed to improve the signal-to-noise ratio. Genes no
 
 In the above example, raw data has a huge number of zeros and the distribution of over higher value counts are barely visible. Three different levels of low count filtering are shown.
 
-In method 1, the detection limit is set at 1 count, ie; any value above 0 is considered as an expressed gene. And we aim to have expression in atleast 2 samples.
+In method 1, the detection limit is set at 1 count, ie; any value above 0 is considered as an expressed gene. And we aim to have expression in atleast 3 samples.
 
-In method 2, the detection limit is set at 5 counts, ie; any value above 5 is considered an expressed gene. A value below 5 is considered noise and is disregarded. And we aim to have 5 count expression in atleast 2 samples. Note that changing the minimum limit of detection has a dramatic effect on the count distribution. Notice how many rows (genes) are discarded.
+In method 2, the detection limit is set at 3 counts, ie; any value above 3 is considered an expressed gene. A value below 3 is considered noise and is disregarded. And we aim to have 3 count expression in atleast 3 samples. Note that changing the minimum limit of detection has a dramatic effect on the count distribution. Notice how many rows (genes) are discarded.
 
-In method 3, the limit of detection is a bit less subjective. A count that is greater than 1 count per million reads is considered a positive detection. This is the most stringent method at the expense of losing the most number of genes.
+In method 3, the limit of detection is a bit less subjective. A count that is greater than 5 count per million reads is considered a positive detection. This is a stringent and fairly robust method at the expense of losing the most number of genes.
 
 ---
 name: norm-1
@@ -157,8 +157,8 @@ name: norm-1
 ```{r,echo=FALSE}
 dfr <- data.frame(A=c(20,25,15),B=c(6,6,4))
 rownames(dfr) <- c("x","y","z")
-dfr$A_tc <- round(dfr$A/sum(dfr$s1),2)
-dfr$B_tc <- round(dfr$B/sum(dfr$s2),2)
+dfr$A_tc <- round(dfr$A/sum(dfr$A),2)
+dfr$B_tc <- round(dfr$B/sum(dfr$B),2)
 dfr
 ```
 ]
@@ -182,8 +182,8 @@ Quantile normalisation, Upper quartile normalisation and Median normalisation al
 ```{r,echo=FALSE}
 dfr <- data.frame(A=c(0,25,15,100),B=c(20,25,4,2))
 rownames(dfr) <- c("x","y","z","de")
-dfr$A_tc <- round(dfr$A/sum(dfr$s1),2)
-dfr$B_tc <- round(dfr$B/sum(dfr$s2),2)
+dfr$A_tc <- round(dfr$A/sum(dfr$A),2)
+dfr$B_tc <- round(dfr$B/sum(dfr$B),2)
 dfr
 #dfr$s3_tc <- round(dfr$s3/sum(dfr$s3),2)
 #sf <- apply(dfr[,1:3]/(apply(dfr[,1:3],1,mean)),2,median)
@@ -239,9 +239,54 @@ name: norm-3a
 - Assumes total expression is the same under different experimental conditions
 - Methods include TC, RPKM, FPKM, TPM
 - RPKM, FPKM and TPM control for sequencing depth and gene length
-- TPM enables better comparison between samples and between experiments
+- Total number of RPKM/FPKM normalized counts for each sample will be different, therefore, you cannot compare the normalized counts for each gene equally between samples.
+- TPM enables better comparison between samples because total per sample sums to equal value
 
---
+```{r,echo=FALSE}
+dfr <- data.frame(A=c(20,25,4),B=c(6,6,15),len=c(2*10^4,4*10^4,1*10^4))
+rownames(dfr) <- c("x","y","z")
+dfr$A_rpm <- round(dfr$A/(sum(dfr$A)/(10^6)))
+dfr$B_rpm <- round(dfr$B/(sum(dfr$B)/(10^6)))
+dfr$A_rpkm <- round(dfr$A_rpm/dfr$len,2)
+dfr$B_rpkm <- round(dfr$B_rpm/dfr$len,2)
+dfr$A_rpk <- dfr$A/dfr$len
+dfr$B_rpk <- dfr$B/dfr$len
+dfr$A_tpm <- round((dfr$A_rpk*10^6)/sum(dfr$A_rpk))
+dfr$B_tpm <- round((dfr$B_rpk*10^6)/sum(dfr$B_rpk))
+
+cs <- as.data.frame(t(as.data.frame(colSums(dfr))))
+rownames(cs) <- "sum"
+rbind(dfr,cs)
+```
+
+???
+
+Normalisation strategies can be roughly grouped into four approaches: Normalisation by library size, normalisation by distribution, normalisation by testing and normalisation using controls.
+
+Normalisation by library size is the most basic. TPM is probably the only method that must be used.
+
+**RPKM**
+
+RPKM in each sample sums up to different totals which make it hard to compare a gene from one sample to another sample.
+
+```
+RPM = count / (total_counts / 10^6)
+RPKM = RPM / transcript_length
+```
+
+**TPM**
+
+TPM in every sample sums up to 1 million. This makes it easier to compare a gene from one sample to another.
+
+```
+RPK = count / transcript length
+TPM = (RPK * 10^6)/total_RPK
+```
+
+---
+name: norm-3b
+
+## Normalisation
 
 **Normalisation by distribution**
 
@@ -254,18 +299,40 @@ name: norm-3a
 - Does not correct for gene length
 - **[geTMM](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2246-7)** is gene length corrected TMM
 
+
+```{r,echo=FALSE}
+dfr <- data.frame(A=c(20,25,4),B=c(6,6,15),len=c(2*10^4,4*10^4,1*10^4))
+rownames(dfr) <- c("x","y","z")
+
+dfr$ref <- round(sqrt(dfr$A*dfr$B),2)
+dfr$A_ratio <- round(dfr$A/dfr$ref,2)
+dfr$B_ratio <- round(dfr$B/dfr$ref,2)
+noA <- median(dfr$A_ratio)
+noB <- median(dfr$B_ratio)
+dfr$A_mrn <- dfr$A/noA
+dfr$B_mrn <- dfr$B/noB
+dfr
+```
+
 .citation[
 .cite[<i class="fas fa-link"></i> Evans, Ciaran, Johanna Hardin, and Daniel M. Stoebel. "Selecting between-sample RNA-Seq normalization methods from the perspective of their assumptions." [Briefings in bioinformatics (2017)](https://arxiv.org/abs/1609.00959)]  
 ]
 
 ???
 
-Normalisation strategies can be roughly grouped into four approaches: Normalisation by library size, normalisation by distribution, normalisation by testing and normalisation using controls.
+**MRN**
 
-Normalisation by library size is the most basic. TPM is probably the only method that must be used. Normalisation by distribution controls for composition bias. Most software use a mix of different approaches.
+MRN method assumes most samples are not differentially expressed
+
+- Find a reference sample for each gene.
+- Divide each count by the reference sample to create a ratio
+- Compute median of this ratio for each sample
+- Divide counts by this median ratio
+
+Normalisation by distribution controls for composition bias. Most software use a mix of different approaches.
 
 ---
-name: norm-3b
+name: norm-3c
 
 ## Normalisation
 
@@ -296,6 +363,20 @@ name: norm-3b
 
 ---
 name: norm-4
+exclude: true
+
+## Normalisation
+
+| Method |	Description |	Accounted factors	| Recommendation |
+| ---- | ---- | ---- | ---- |
+| CPM	| counts scaled by total number of reads 	| sequencing depth |	compare counts between replicates of the same group; NOT for within sample comparisons or DE analysis |
+| TPM|	counts per length of transcript (kb) per million reads mapped |	sequencing depth and gene length |	gene count comparisons within a sample or between samples of the same sample group; NOT for DE analysis |
+| RPKM/FPKM |	similar to TPM |	sequencing depth and gene length	| compare counts between genes within a sample; NOT for between sample comparisons or DE analysis |
+| DESeq2 MRN |	counts divided by sample-specific size factors determined by median ratio of gene counts relative to geometric mean per gene |	sequencing depth and RNA composition 	| compare counts between samples and for DE analysis; NOT for within sample comparisons |
+| EdgeR TMM |	uses a weighted trimmed mean of the log expression ratios between samples |	sequencing depth, RNA composition, and gene length |	compare counts between and within samples and for DE analysis |
+
+---
+name: norm-5
 
 ## Normalisation
 
@@ -309,214 +390,8 @@ name: norm-4
 
 --
 
-```{r,include=FALSE}
-tpm <- function(counts,len) {
-  x <- counts/len
-  return(t(t(x)*1e6/colSums(x)))
-}
-
-#tpm
-g <- read.delim("./data/mouse_genes.txt",header=T,stringsAsFactors=F)
-g <- g[!duplicated(g$ensembl_gene_id),]
-g$len <- g$end_position-g$start_position
-rownames(g) <- g$ensembl_gene_id
-igenes <- intersect(rownames(cf),g$ensembl_gene_id)
-g1 <- g[igenes,]
-cf1 <- cf[igenes,]
-ct <- tpm(cf1,g1$len)
-
-# deseq2
-mr$Group <- factor(mr$Group)
-d <- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Group)
-d <- DESeq2::estimateSizeFactors(d,type="ratio")
-cd <- counts(d,normalized=TRUE)
-
-# vst
-d <- DESeq2::estimateDispersions(d)
-cv <- as.data.frame(assay(varianceStabilizingTransformation(d,blind=T)),check.names=F)
-```
-
-```{r,fig.height=1.8,fig.width=8,echo=FALSE}
-h0 <- cf %>%
-  mutate(gene=rownames(.)) %>%
-  gather(key="sample",value="value",-gene) %>%
-  ggplot(aes(x=log10(value+1),group=sample))+
-  geom_density()+
-  labs(x=expression('Log'[10]~'Read counts'),y="Density",title="Raw")+
-  theme_bw()+
-  theme(panel.border=element_blank(),
-        axis.ticks=element_blank())
-
-h1 <- as.data.frame(edgeR::cpm(cf)) %>%
-  mutate(gene=rownames(.)) %>%
-  gather(key="sample",value="value",-gene) %>%
-  ggplot(aes(x=log10(value+1),group=sample))+
-  geom_density()+
-  labs(x=expression('Log'[10]~'Read counts'),y="Density",title="CPM")+
-  theme_bw()+
-  theme(panel.border=element_blank(),
-        axis.ticks=element_blank())
-
-h2 <- as.data.frame(ct) %>%
-  mutate(gene=rownames(.)) %>%
-  gather(key="sample",value="value",-gene) %>%
-  ggplot(aes(x=log10(value+1),group=sample))+
-  geom_density()+
-  labs(x=expression('Log'[10]~'Read counts'),y="Density",title="TPM")+
-  theme_bw()+
-  theme(panel.border=element_blank(),
-        axis.ticks=element_blank())
-
-h3 <- as.data.frame(cd) %>%
-  mutate(gene=rownames(.)) %>%
-  gather(key="sample",value="value",-gene) %>%
-  ggplot(aes(x=log10(value+1),group=sample))+
-  geom_density()+
-  labs(x=expression('Log'[10]~'Read counts'),y="Density",title="DESeq2")+
-  theme_bw()+
-  theme(panel.border=element_blank(),
-        axis.ticks=element_blank())
-
-h4 <- cv %>%
-  mutate(gene=rownames(.)) %>%
-  gather(key="sample",value="value",-gene) %>%
-  ggplot(aes(x=value,group=sample))+
-  geom_density()+
-  labs(x='Read counts',y="Density",title="VST")+
-  theme_bw()+
-  theme(panel.border=element_blank(),
-        axis.ticks=element_blank())
-
-gridExtra::grid.arrange(h0,h1,h2,h3,h4,nrow=1,ncol=5)
-```
-
-```{r,fig.height=1.8,fig.width=8,echo=FALSE}
-h0 <- cf %>%
-    mutate(gene=rownames(.)) %>%
-    gather(key="sample",value="value",-gene) %>%
-    group_by(gene) %>% summarise(mean=mean(value),var=var(value)) %>%
-    ggplot(aes(x=log10(mean+1),y=log10(var+1)))+
-    geom_point(alpha=0.3)+
-    labs(x=expression('Log'[10]~'mean'),y=expression('Log'[10]~'variance'),title="Raw")+
-    theme_bw()+
-    theme(panel.border=element_blank(),
-          axis.ticks=element_blank())
-
-h1 <- as.data.frame(edgeR::cpm(cf)) %>%
-    mutate(gene=rownames(.)) %>%
-    gather(key="sample",value="value",-gene) %>%
-    group_by(gene) %>% summarise(mean=mean(value),var=var(value)) %>%
-    ggplot(aes(x=log10(mean+1),y=log10(var+1)))+
-    geom_point(alpha=0.3)+
-    labs(x=expression('Log'[10]~'mean'),y=expression('Log'[10]~'variance'),title="CPM")+
-    theme_bw()+
-    theme(panel.border=element_blank(),
-          axis.ticks=element_blank())
-
-h2 <- as.data.frame(ct) %>%
-    mutate(gene=rownames(.)) %>%
-    gather(key="sample",value="value",-gene) %>%
-    group_by(gene) %>% summarise(mean=mean(value),var=var(value)) %>%
-    ggplot(aes(x=log10(mean+1),y=log10(var+1)))+
-    geom_point(alpha=0.3)+
-    labs(x=expression('Log'[10]~'mean'),y=expression('Log'[10]~'variance'),title="TPM")+
-    theme_bw()+
-    theme(panel.border=element_blank(),
-          axis.ticks=element_blank())
-
-h3 <- as.data.frame(cd) %>%
-    mutate(gene=rownames(.)) %>%
-    gather(key="sample",value="value",-gene)%>%
-    group_by(gene) %>% summarise(mean=mean(value),var=var(value)) %>%
-    ggplot(aes(x=log10(mean+1),y=log10(var+1)))+
-    geom_point(alpha=0.3)+
-    labs(x=expression('Log'[10]~'mean'),y=expression('Log'[10]~'variance'),title="DESeq2")+
-    theme_bw()+
-    theme(panel.border=element_blank(),
-          axis.ticks=element_blank())
-
-h4 <- cv %>%
-    mutate(gene=rownames(.)) %>%
-    gather(key="sample",value="value",-gene) %>%
-    group_by(gene) %>% summarise(mean=mean(value),var=var(value)) %>%
-    ggplot(aes(x=mean,y=var))+
-    geom_point(alpha=0.3)+
-    labs(x='Mean',y='Variance',title="VST")+
-    theme_bw()+
-    theme(panel.border=element_blank(),
-          axis.ticks=element_blank())
-
-gridExtra::grid.arrange(h0,h1,h2,h3,h4,nrow=1,ncol=5)
-```
-
 .citation[
 .cite[<i class="fas fa-link"></i> Dillies, Marie-Agnes, *et al*. "A comprehensive evaluation of normalization methods for Illumina high-throughput RNA sequencing data analysis." [Briefings in bioinformatics 14.6 (2013): 671-683](https://www.ncbi.nlm.nih.gov/pubmed/22988256)]
-]
-
----
-name: eda-cor
-
-## Exploratory | Correlation
-
-- Correlation between samples
-
-```{r,ech=FALSE,fig.height=4.5,fig.width=5.5}
-dmat <- as.matrix(cor(cv,method="spearman"))
-pheatmap::pheatmap(dmat,border_color=NA,annotation_col=mr[,"Group",drop=F],
-         annotation_row=mr[,"Group",drop=F],annotation_legend=T)
-```
-
----
-name: eda-dist
-
-## Exploratory | Distance
-
-- Similarity between samples
-
-```{r,echo=TRUE,fig.height=4.5,fig.width=5.5}
-dmat <- as.matrix(dist(t(cv)))
-pheatmap(dmat,border_color=NA,annotation_col=mr[,"Group",drop=F],
-         annotation_row=mr[,"Group",drop=F],annotation_legend=T)
-```
-
----
-name: eda-pca
-
-## Exploratory | PCA
-
-- Relationship between samples
-
-.pull-left-40[
-```{r,echo=FALSE,fig.height=3.5,fig.width=3.5}
-pcaobj <- prcomp(x=t(cv))
-{par(mar=c(4,4,0.5,0))
-barplot(round(pcaobj$sdev^2/sum(pcaobj$sdev^2)*100,2),las=2,
-        names.arg=colnames(pcaobj$x),ylab="% Variance explained",
-        xlab="PCA principal components")}
-```
-]
-
-.pull-right-60[
-```{r,echo=FALSE,fig.height=4,fig.width=4.5}
-pcamat1 <- as.data.frame(pcaobj$x)
-pcamat2 <- merge(pcamat1,mr,by=0)
-
-ggplot(pcamat2,aes(PC1,PC2,colour=Group))+
-  geom_point()+
-  theme_bw()+
-  theme(panel.border=element_blank(),
-        axis.ticks=element_blank())
-```
-
-```{r,eval=FALSE,include=FALSE}
-# plotly pca
-library(plotly)
-pcamat2$tt <- paste0("<b>ID: </b>",pcamat2$SampleID,"\n",
-                   "<b>Name: </b>",pcamat2$SampleName)
-p1 <- plot_ly(pcamat2,x=~PC1,y=~PC2,z=~PC3,text=~tt,hoverinfo="text")
-add_markers(p1,color=~Group)
-```
-
 ]
 
 ---

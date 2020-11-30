@@ -231,7 +231,6 @@ g <- biomaRt::getBM(attributes = c("ensembl_gene_id","transcript_length"),mart =
 g <- g[!duplicated(g$ensembl_gene_id),]
 rownames(g) <- g$ensembl_gene_id
 
-
 #If you DO have the gene length information in the quantification results
 co <- read.delim("data/gene_counts_original.tsv",sep="\t",header=TRUE,stringsAsFactors=F,comment.char="#")
 g <- data.frame( ensembl_gene_id = co$Geneid , 
