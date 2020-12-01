@@ -19,11 +19,13 @@ Then by providing the mapped read files and the annotation you can quantify how 
 
 ```{sh,eval=FALSE,block.title=TRUE}
 # With only one bam file
-featureCounts -T {threads} -p -t exon -g gene_id -a {input.gtf} -o {output.countTable} bamFiles/file1.bam > results/Counts.featureCount.log
+featureCounts -T {threads} -s 2 -t exon -g gene_id -a {input.gtf} -o {output.countTable} bamFiles/file1.bam > results/Counts.featureCount.log
 
 # Or multiple bamfiles.
-featureCounts -T {threads} -p -t exon -g gene_id -a {input.gtf} -o {output.countTable} bamFiles/*.bam > results/Counts.featureCount.log
+featureCounts -T {threads} -s 2 -t exon -g gene_id -a {input.gtf} -o {output.countTable} bamFiles/*.bam > results/Counts.featureCount.log
 ```
+
+
 
 This will create a file that contains a matrix were the rows represents the genes and the columns represent the samples. Feature count will also include some information per gene to see were it is annotated in the reference. The file is easy to open in R for further analysis.
 
