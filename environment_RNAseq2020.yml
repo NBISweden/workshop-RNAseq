@@ -50,6 +50,7 @@ dependencies:
  - compilers
  - subread
  - htseq
+ - rseqc
  - rsem
  - igv
  - wget
