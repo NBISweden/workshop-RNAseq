@@ -10,7 +10,7 @@ These steps are to be carried out after the fastq files have been aligned to the
 
 # Mapper log files
 
-The first step after you have finished your mapping is to get a general feel of how the mapping went. Most mapping programs produce some sort of summary output, either to a file or to standard out. For example, if using the mapper Bowtie you need to pipe that output to a file to see the summary statistics. 
+The first step after you have finished your mapping is to get a general feel of how the mapping went. Most mapping programs produce some sort of summary output, either to a file or to standard out. For example, if using the mapper Bowtie you need to pipe that output to a file to see the summary statistics.
 
 The most important parts to look at are the proportion of uniquely mapping, multi-mapping and unmapped reads. We ideally want the uniquely mapping reads to be as high as possible. Multi-mapping or unmapped reads could indicate poor quality of the reads, adapter contamination or other reasons for low quality scores.
 
@@ -24,7 +24,6 @@ After mapping with star of all samples, we ran MultiQC to summarize all the log-
 multiqc -d -dd 2 .
 ```
 
-You can find the output from that MultiQC report on UPPMAX   `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/QC/output/multiqc_report_star.html`.
 
 # RSeQC
 
@@ -36,7 +35,7 @@ The RSeQC package contains many steps that are equivalent to FastQC analysis, e.
 Some steps of the RSeQC package require a file with gene annotations in BED format. These can be downloaded from sources such as UCSC, RefSeq and Ensembl. In this case, the RSeQC team have already created annotation files in some common formats that can be downloaded from their website, but if you have data for a less studied organism you may need to create a BED-file on your own.
 
 
-Two annotation files have already been downloaded into subdirectory `references/annotations` for you to use. These are: **Mus_musculus.GRCm38.101.HouseKeepingGenes.bed** and **Mus_musculus.GRCm38.101.bed**. 
+Two annotation files have already been downloaded into subdirectory `references/annotations` for you to use. These are: **Mus_musculus.GRCm38.101.HouseKeepingGenes.bed** and **Mus_musculus.GRCm38.101.bed**.
 
 
 In this tutorial, we will not run all the different parts of the RSeQC package, only the most relevant ones for this experiment. The different scripts in the RSeQC package are well described on [their website](http://rseqc.sourceforge.net/), so read the instructions there and specify the input/output files to fit your file names and folder structure.
@@ -48,22 +47,22 @@ The steps that we are going to run are:
 3. junction_saturation.py
 4. read_distribution.py
 
-<i class="fas fa-exclamation-circle"></i> The **geneBody_coverage.py** script takes a very long time to run, so we have created a subsection of annotations to run it on. Use the file ` Mus_musculus.GRCm38.101.HouseKeepingGenes.bed`. If you want to run multiple files this might take to long also. Then you can even further reduce the file by only using the first 500 house keeping genes. For more details look at code below how to do that and how to run all files in a loop. 
+<i class="fas fa-exclamation-circle"></i> The **geneBody_coverage.py** script takes a very long time to run, so we have created a subsection of annotations to run it on. Use the file ` Mus_musculus.GRCm38.101.HouseKeepingGenes.bed`. If you want to run multiple files this might take to long also. Then you can even further reduce the file by only using the first 500 house keeping genes. For more details look at code below how to do that and how to run all files in a loop.
 
 <i class="fas fa-lightbulb"></i> When running **read_distribution.py**, an out file cannot be specified. Instead you need to pipe (`>`) the output to a file, or look at the output in the terminal.
 
 <i class="fas fa-clipboard-list"></i> Run RSeQC for one sample and have a look at your output.
 
 * Do most of your reads map to genes?
-* Are the RNAseq data stranded or unstranded and if so on what strand is the read coming from? 
+* Are the RNAseq data stranded or unstranded and if so on what strand is the read coming from?
 * Do you have even coverage along the genes?
 * Do the reads cover most splice junctions?
 
-## Creating Bed12 file 
+## Creating Bed12 file
 
 **Optional**
 
-If you are working on a organism that does not have a annotation file in bed12 that is needed to use this RSeQC it is possible to transform a GTF file to Bed12 file. This is done by using tools from uscs and needs a extra step to first go from GTF to genePred and then from genePred to bed. *gtfToGenePred* and *genePredToBed*  can both be downloaded from ucsc utilities homepage. 
+If you are working on a organism that does not have a annotation file in bed12 that is needed to use this RSeQC it is possible to transform a GTF file to Bed12 file. This is done by using tools from uscs and needs a extra step to first go from GTF to genePred and then from genePred to bed. *gtfToGenePred* and *genePredToBed*  can both be downloaded from ucsc utilities homepage.
 
 
 ```{sh,eval=FALSE,block.title=TRUE}
@@ -98,9 +97,9 @@ multiqc -f -d -dd 2 .
 <i class="fas fa-comments"></i> Have a look at the reports. What is your conclusion, do your samples look good? Is there anything that looks strange in any sample, or do you feel comfortable using all the samples in your analysis?
 
 ***
-# Code 
+# Code
 
-This is all that is needed to run all the steps above on data on course data. 
+This is all that is needed to run all the steps above on data on course data.
 ```{sh ,eval=FALSE,block.title=TRUE}
 
 
@@ -112,7 +111,7 @@ mkdir RSeQCresults
 mkdir RSeQCresults/geneBody_coverage
 
 head -n 500 references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.bed > references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.first500.bed
- 
+
 geneBody_coverage.py -r references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.first500.bed \
   -i hisat2_results/  -o RSeQCresults/geneBody_coverage/allSamples
 
@@ -122,14 +121,14 @@ geneBody_coverage.py -r references/annotations/Mus_musculus.GRCm38.101.HouseKeep
  mkdir RSeQCresults/junction_saturation
  mkdir RSeQCresults/junction_annotation
 
- 
+
 
 for i in $(ls hisat2_results/*.sorted.bam); do
- 
+
  sample=${i%.sorted.bam}
  sample=${sample#hisat2_results/}
- 
- 
+
+
  ECHO "running read distribution on $sample"
 
  read_distribution.py  -i $i \
@@ -156,4 +155,3 @@ multiqc -f -d -dd 2 .
 
 
 ```
-
