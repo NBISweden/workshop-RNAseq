@@ -67,7 +67,8 @@ If you are working on a organism that does not have a annotation file in bed12 t
 
 ```{sh,eval=FALSE,block.title=TRUE}
 
-
+#To unzip all annotation files if you don't have
+gunzip references/annotations/*.gz
 
  gtfToGenePred \
    references/annotations/Mus_musculus.GRCm38.101.gtf \
@@ -76,7 +77,6 @@ If you are working on a organism that does not have a annotation file in bed12 t
  genePredToBed \
    references/annotations/Mus_musculus.GRCm38.101.genePred\
    references/annotations/Mus_musculus.GRCm38.101.bed
-
 
 ```
 
