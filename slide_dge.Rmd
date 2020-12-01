@@ -90,41 +90,7 @@ name: dge-dispersion
 
 ## Dispersion
 
-- We need to measure the variability of gene counts
-
-```{r}
-dm <- apply(cf,1,mean)
-dv <- apply(cf,1,var)
-cva <- function(x) sd(x)/mean(x)
-dc <- apply(cf,1,cva)
-```
-
---
-
-```{r,echo=FALSE,fig.height=2.5,fig.width=5}
-h1 <- ggplot(data.frame(mean=log10(dm+1),var=log10(dv+1)),
-       aes(mean,var))+
-  geom_point(alpha=0.2)+
-  geom_smooth(method="lm")+
-  labs(x=expression('Log'[10]~'Mean counts'),y=expression('Log'[10]~'Variance'))+
-  theme_bw()
-
-h2 <- ggplot(data.frame(mean=log10(dm+1),var=dc),
-       aes(mean,var))+
-  geom_point(alpha=0.2)+
-  geom_smooth(method="lm")+
-  labs(x=expression('Log'[10]~'Mean counts'),y="Coefficient of variation")+
-  theme_bw()
-gridExtra::grid.arrange(h1,h2,nrow=1,ncol=2)
-```
-
 - Dispersion is a measure of variability in gene expression for a given mean
-
----
-name: dge-dispersion-2
-
-## Dispersion
-
 - Dispersion is unreliable for low mean counts
 - Genes with similar mean values must have similar dispersion
 - Estimate likely (ML) dispersion for each gene based on counts
@@ -133,8 +99,10 @@ name: dge-dispersion-2
 
 ```{r,fig.height=3,fig.width=3}
 d <- DESeq2::estimateDispersions(d)
-{par(mar=c(4,4,1,1))
-plotDispEsts(d)}
+{
+  par(mar=c(4,4,1,1))
+  plotDispEsts(d)
+}
 ```
 
 ---
@@ -165,9 +133,16 @@ name: dge-test-2
 ## Testing
 
 ```{r}
-res1 <- results(dg,name="Group_day07_vs_day00",alpha=0.05)
-summary(res1)
+res <- results(dg,name="Group_day07_vs_day00",alpha=0.05)
+summary(res)
 ```
+
+Alternative way to specify contrast
+
+```{r,eval=FALSE}
+results(dg,contrast=c("Group","day07","day00"),alpha=0.05)
+```
+
 
 ---
 name: dge-test-3
@@ -175,12 +150,15 @@ name: dge-test-3
 ## Testing
 
 ```{r}
-head(res1)
+head(res)
 ```
 
 --
 
-- Use `lfcShrink()` to correct fold changes for high dispersion genes
+- Use `lfcShrink()` to correct fold changes for genes with high dispersion or low counts
+- Does not change number of DE genes
+
+![](data/lfc_shrink.png)
 
 <!-- --------------------- Do not edit this and below --------------------- -->
 
