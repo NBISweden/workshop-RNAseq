@@ -99,10 +99,8 @@ name: dge-dispersion
 
 ```{r,fig.height=3,fig.width=3}
 d <- DESeq2::estimateDispersions(d)
-{
-  par(mar=c(4,4,1,1))
-  plotDispEsts(d)
-}
+{par(mar=c(4,4,1,1))
+plotDispEsts(d)}
 ```
 
 ---
@@ -137,7 +135,7 @@ res <- results(dg,name="Group_day07_vs_day00",alpha=0.05)
 summary(res)
 ```
 
-Alternative way to specify contrast
+- Alternative way to specify contrast
 
 ```{r,eval=FALSE}
 results(dg,contrast=c("Group","day07","day00"),alpha=0.05)
@@ -153,7 +151,10 @@ name: dge-test-3
 head(res)
 ```
 
---
+---
+name: dge-test-4
+
+## Testing
 
 - Use `lfcShrink()` to correct fold changes for genes with high dispersion or low counts
 - Does not change number of DE genes

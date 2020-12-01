@@ -356,7 +356,7 @@ name: norm-3c
 
 **Stabilizing variance**
 - Variance is stabilised across the range of mean values
-- Mwthods include VST, RLOG, VOOM
+- Methods include VST, RLOG, VOOM
 - For use in exploratory analyses. Not for DE.
 - `vst()` and `rlog()` functions from *DESeq2*
 - `voom()` function from *Limma* converts data to normal distribution
