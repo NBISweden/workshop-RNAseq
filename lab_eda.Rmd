@@ -46,7 +46,7 @@ A useful step is to convert ENSEMBL gene/transcript IDs into meaningful gene nam
 ```{r}
 download_data("data/mouse_genes.txt")
 mouse <- biomaRt::useMart(biomart="ensembl", dataset="mmusculus_gene_ensembl")
-annot <- biomaRt::getBM(attributes = c("ensembl_gene_id","external_gene_name"),mart = mouse)
+annot <- biomaRt::getBM(attributes = c("ensembl_gene_id","external_gene_name"),mart = mouse,useCache=FALSE)
 
 gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
 gene_names[is.na(gene_names) ] <- ""
