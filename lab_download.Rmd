@@ -1,5 +1,5 @@
 ---
-title: "Downloads"
+title: "Annotation data"
 subtitle: "Workshop on RNA-Seq"
 ---
 
@@ -7,17 +7,8 @@ subtitle: "Workshop on RNA-Seq"
 ```
 
 ```{r,include=FALSE}
-# data handling
 library(dplyr)
-#library(tidyr)
-#library(stringr)
-
-# plotting
-library(ggplot2)
-
-library(biomaRt) # annotation
-library(DESeq2) # rna-seq
-library(edgeR) # rna-seq
+library(biomaRt)
 ```
 
 # Genomic data
@@ -33,9 +24,6 @@ You can also go directly to their FTP site [ftp://ftp.ensembl.org/pub/release-96
 In this section, we will download annotation data using R package **biomaRt**. Annotations refer to known features (verified experimentally or predicted) in the genome. Usually, our features of interest in RNA-Seq are genes, their IDs, position in the genome, gene biotype (protein coding, non-coding etc) etc. We will also use the **dplyr** package to pipe data through functions.
 
 ```{r}
-library(biomaRt)
-library(dplyr)
-
 listMarts()
 ```
 
@@ -46,7 +34,7 @@ mart <- useMart("ENSEMBL_MART_ENSEMBL")
 ds <- as.data.frame(listDatasets(mart=mart))
 
 # find all rows in dataset 'ds' where column 'description' contains the string 'mouse'
-ds[grepl("mouse",tolower(ds$description)),]
+ds %>% filter(grepl("mouse",tolower(description)))
 ```
 
 Now that we know the name of the dataset, we can list all the columns (filters) in this dataset.
@@ -83,7 +71,8 @@ We then use this to download our data. Note that this can be a slow step.
 ```{r,eval=FALSE}
 mart <- useMart("ENSEMBL_MART_ENSEMBL")
 mart <- useDataset(mart=mart,dataset="mmusculus_gene_ensembl")
-bdata <- getBM(mart=mart,attributes=myattributes,uniqueRows=T)
+bdata <- getBM(mart=mart,attributes=myattributes,uniqueRows=T,
+               useCache=FALSE)
 head(bdata)
 ```
 
@@ -137,7 +126,7 @@ Here we download transcript to gene mappings. Notice that we can specify the `ma
 
 ```{r,eval=FALSE}
 mart <- useMart(biomart="ensembl",dataset="mmusculus_gene_ensembl")
-t2g <- getBM(attributes=c("ensembl_transcript_id","ensembl_gene_id","external_gene_name"),mart=mart)
+t2g <- getBM(attributes=c("ensembl_transcript_id","ensembl_gene_id","external_gene_name"),mart=mart,useCache=FALSE)
 write.table(t2g,"./data/mouse_transcripts.txt",sep="\t",dec=".",row.names=F,quote=F)
 ```
 
@@ -171,7 +160,7 @@ head(la[grepl("go",tolower(la$name)),])
 
 ```{r,eval=FALSE}
 mart <- biomaRt::useMart(biomart="ensembl",dataset="mmusculus_gene_ensembl")
-bdata <- getBM(mart=mart,attributes=c("entrezgene_id","go_id","go_linkage_type"),uniqueRows=T)
+bdata <- getBM(mart=mart,attributes=c("entrezgene_id","go_id","go_linkage_type"),uniqueRows=T,useCache=FALSE)
 write.table(bdata,"./data/mouse_go.txt",sep="\t",dec=".",row.names=FALSE,quote=FALSE)
 ```
 
