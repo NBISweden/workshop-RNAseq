@@ -67,7 +67,7 @@ A glimpse into the count table and metadata table. It is important to make sure 
 ---
 name: pp
 
-## Preprocessing
+## Filtering
 
 - Remove genes and samples with low counts
 
