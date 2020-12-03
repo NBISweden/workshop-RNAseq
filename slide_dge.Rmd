@@ -127,7 +127,7 @@ name: dge-test
 
 ## Testing
 
-- Log2 fold changes changes are computed after GLM fitting
+- Log2 fold changes changes are computed after GLM fitting `FC = counts group B / counts group A`
 
 ```{r}
 dg <- nbinomWaldTest(d)
