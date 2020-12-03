@@ -86,12 +86,31 @@ sizeFactors(d)
 ```
 
 ---
-name: dge-dispersion
+name: dge-dispersion-1
 
 ## Dispersion
 
 - Dispersion is a measure of variability in gene expression for a given mean
 - Dispersion is unreliable for low mean counts
+
+```{r,fig.height=4,fig.width=8,echo=FALSE}
+cv <- function(x) sd(x)/mean(x)
+rowCv <- function(x) apply(x,1,cv)
+
+{
+  par(mfrow=c(1,2))
+  plot(x=log10(rowMeans(cf)+1),y=log10(rowVars(as.matrix(cf))),xlab="Log10 Mean counts",ylab="Log10 Mean Variance")
+  plot(x=log10(rowMeans(cf)+1),y=log10(rowCv(as.matrix(cf))),xlab="Log10 Mean counts",ylab="Log10 Mean CV")
+  par(mfrow=c(1,1))
+}
+```
+
+
+---
+name: dge-dispersion-2
+
+## Dispersion
+
 - Genes with similar mean values must have similar dispersion
 - Estimate likely (ML) dispersion for each gene based on counts
 - Fit a curve through the gene-wise estimates
@@ -99,16 +118,16 @@ name: dge-dispersion
 
 ```{r,fig.height=3,fig.width=3}
 d <- DESeq2::estimateDispersions(d)
-{par(mar=c(4,4,1,1))
-plotDispEsts(d)}
 ```
+
+![](data/deseq_dispersion.png)
 
 ---
 name: dge-test
 
 ## Testing
 
-- Log2 fold changes changes are computed after GLM fitting
+- Log2 fold changes changes are computed after GLM fitting `FC = counts group B / counts group A`
 
 ```{r}
 dg <- nbinomWaldTest(d)

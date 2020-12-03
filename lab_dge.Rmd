@@ -245,7 +245,7 @@ Overdispersion is the reason why RNA-Seq data is better modelled as negative-bin
 The log fold change is computed from the corrected count values as such:
 
 ```
-FC = (corrected counts group B - corrected counts group A) / corrected counts group A
+FC = corrected counts group B / corrected counts group A
 logFC = log2(FC)
 ```
 
