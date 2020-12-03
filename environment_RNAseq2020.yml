@@ -18,7 +18,7 @@ dependencies:
  - bioconductor-fgsea
  - bioconductor-tximport
  - bioconductor-rhdf5
- - bioconductor-GEOquery
+ - bioconductor-geoquery
  - r-biocmanager
  - r-devtools
  - r-dplyr
