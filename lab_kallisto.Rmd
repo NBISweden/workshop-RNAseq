@@ -28,14 +28,12 @@ Download the cDNA reference and create a index file to run on (This has already 
 
 #wget ftp://ftp.ensembl.org/pub/release-101/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz
 
-#wait
 
 
 #kallisto index \
 #  --index kallisto_mm10_transcriptome_index.idx \
 #  Mus_musculus.GRCm38.cdna.all.fa.gz
 
-#wait
 
 # cd ../..
 
@@ -116,7 +114,7 @@ library(rhdf5) # read/convert kalisto output files.
 ```
 
 
-If R complains that you have not installed *tximport* and *rhdf5* you can to that using the code here below. 
+If *tximport* and *rhdf5* are not installed you can install them now. 
 ```{r ,eval=FALSE,block.title=FALSE} 
 
 #if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -128,7 +126,7 @@ If R complains that you have not installed *tximport* and *rhdf5* you can to tha
 
 
 Load the metadata for the samples. 
-```{}
+```{r  ,eval=FALSE,block.title=FALSE}
 
 # source download function
 source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R")
@@ -138,16 +136,19 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 download_data("data/metadata_raw.csv")
 mr <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=F,row.names=1)
 
-
+mr
 ```
 
 
 
-###  Convert ot gene counts 
+###  Convert to gene counts 
 
-Read in the Kalisto transcript abundances and and convert the TxImport
+Read in the Kalisto transcript abundances and and convert the TxImport.
 
-```{r Kalisto files ,eval=FALSE,block.title=FALSE}
+TxImport is created to 
+
+```{r  ,eval=FALSE,block.title=FALSE}
+setwd("~/RNAseq")
 files <- paste("kallisto_quantification" ,  
                list.files(path = "kallisto_quantification",pattern = "abundance.tsv", recursive = TRUE),
                sep = "/")
@@ -167,11 +168,18 @@ txi.kallisto.tsv <- tximport(files, type = "kallisto", tx2gene = tx2gene, ignore
 mr = mr %>% mutate(Day = as.factor(Day))
 dds <- DESeqDataSetFromTximport(txi.kallisto.tsv, mr, ~Day)
 
+
+test = DESeq(dds)
+
+
+
 ```
+and now you can go on with the DE similair as the one you did with the feature count table.
+
 
 ### Convert to a edgeR object for analysis
 
-```{r convert into EdgeR object,eval=FALSE,block.title=FALSE}
+```{r,eval=FALSE,block.title=FALSE}
 cts <- txi.kallisto.tsv$counts
 normMat <- txi.kallisto.tsv$length
 normMat <- normMat/exp(rowMeans(log(normMat)))
