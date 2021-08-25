@@ -50,7 +50,7 @@ output:
 packages:
  packages_cran_student:
   - BiocManager
-  - devtools
+  - remotes
   - dplyr
   - enrichR
   - ggplot2
