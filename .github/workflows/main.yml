@@ -64,7 +64,7 @@ jobs:
       - name: Install R dependencies
         if: steps.cache-rp.outputs.cache-hit != 'true'
         env:
-  	  GITHUB_PAT: ${{ secrets.PAT }}
+          GITHUB_PAT: ${{ secrets.PAT }}
         run: |
           Rscript -e 'install.packages(c("yaml","pagedown"))'
           Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)) install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)'
