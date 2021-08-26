@@ -32,6 +32,7 @@ jobs:
           echo "path_export=$(grep -E '^output_dir' _site.yml | sed 's/^output_dir://' | xargs)" >> $GITHUB_ENV
           echo "path_export_canvas=$(grep -E '^output_dir' _site.yml | sed 's/^output_dir://' | xargs)-canvas" >> $GITHUB_ENV
           echo "repo=$(echo $GITHUB_REPOSITORY | sed 's/.*\///')" >> $GITHUB_ENV
+          echo "${{ secrets.PAT }}" >> $GITHUB_PAT
       - name: Check R installation and variables
         run: |
           Rscript -e "print('R installation works!')"
