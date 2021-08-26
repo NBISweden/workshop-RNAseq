@@ -32,7 +32,7 @@ jobs:
           echo "path_export=$(grep -E '^output_dir' _site.yml | sed 's/^output_dir://' | xargs)" >> $GITHUB_ENV
           echo "path_export_canvas=$(grep -E '^output_dir' _site.yml | sed 's/^output_dir://' | xargs)-canvas" >> $GITHUB_ENV
           echo "repo=$(echo $GITHUB_REPOSITORY | sed 's/.*\///')" >> $GITHUB_ENV
-          echo "${{ secrets.PAT }}" >> $GITHUB_PAT
+          ##echo "${{ secrets.PAT }}" >> $GITHUB_PAT
       - name: Check R installation and variables
         run: |
           Rscript -e "print('R installation works!')"
@@ -63,6 +63,8 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.config.r }}-${{ hashFiles('r-packages.txt') }}
       - name: Install R dependencies
         if: steps.cache-rp.outputs.cache-hit != 'true'
+        env:
+  	- GITHUB_PAT=$PAT
         run: |
           Rscript -e 'install.packages(c("yaml","pagedown"))'
           Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)) install.packages(yaml::read_yaml("_site.yml")$packages$packages_cran_repo)'
