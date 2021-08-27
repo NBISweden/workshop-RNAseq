@@ -1,6 +1,6 @@
 /* CSS style for RNA-Seq presentation */
 /* Xaringen, remark.js                  */
-/* 2019 Roy Francis                     */
+/* 2021 Roy Francis                     */
 
 /* define font */
 @import url('https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&subset=latin-ext');
@@ -459,6 +459,7 @@ th,td {padding: 8px; text-align: left;}
 /* SPECIAL ------------------------------------------------------------------ */
 
 /* limit vertical size of a code chunk */
+
 .limity100 {
   max-height: 100px;
   overflow-y: auto;
@@ -505,6 +506,7 @@ th,td {padding: 8px; text-align: left;}
 }
 
 /* horizontal line style */
+
 hr {
   border: 1px solid #808080;
 }

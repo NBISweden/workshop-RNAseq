@@ -3,12 +3,12 @@ title: "&nbsp;"
 ---
 
 <footer class="footer">
-<div class="container container-footer">
+<div class="container footer-container">
 <div class="row">
 
 <div class="col-sm-8" style="text-align:left;vertical-align:middle;">
-<p style="color:#bdbdbd;">
-<b>2020</b> • NBIS • SciLifeLab
+<p class="small" style="color:#bdbdbd;">
+<b>2021</b> • [NBIS](https://nbis.se/) • [SciLifeLab](https://www.scilifelab.se/)
 </p>
 </div>
 
