@@ -34,4 +34,4 @@ For more details about repo organisation, updating and modifying this repo, chec
 
 ---
 
-**2020** NBIS • SciLifeLab
+**2021** • NBIS • SciLifeLab
