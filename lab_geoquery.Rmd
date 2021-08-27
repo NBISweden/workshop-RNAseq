@@ -8,7 +8,7 @@ editor_options:
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-<div class="boxy boxy-exclamation boxy-warning">
+<div class="boxy boxy-exclamation boxy-yellow">
 Create a directory named `data` in your current working directory for input and output files.
 </div>
 

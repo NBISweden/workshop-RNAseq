@@ -6,7 +6,7 @@ subtitle: "Workshop on RNA-Seq"
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-<div class="boxy boxy-exclamation boxy-warning">
+<div class="boxy boxy-exclamation boxy-yellow">
 This lab is to be run on Uppmax <i class="fas fa-cloud"></i>.
 </div>
 
@@ -94,7 +94,7 @@ bowtie -q -v 0 -k 10 -S -t [index.name] [small_rna.fastq] [out.sam]
 
 Here, *index.name* is the bowtie index above, *small_rna.fastq* is the file with the small RNA data (after trimming!) and *out.sam* is the resulting file. This maps the reads with the following settings: input is a fastq file (-q), no mismatches are allowed (-v 0), max 10 hits are reported for each read (-k 10), output is a SAM file (-S) and the time the mapping took is printed to the screen (-t).  Run this command once for every file with trimmed reads. It takes around one minute for each data set.
 
-<div class="optional">
+<div class="boxy boxy-orange boxy-exclamation">
 **Optional**  
 <i class="fas fa-clipboard-list"></i> You can try mapping one of the fastq files where the adaptor was not trimmed, and see what happens.
 </div>
@@ -111,9 +111,10 @@ Type the name of a microRNA, e.g **mir-124**, to go to that locus. You can see t
 
 <i class="fas fa-comments"></i> How many microRNAs do you see in this region?
 
-<div class="optional">
+<div class="boxy boxy-orange boxy-exclamation">
 **Optional**  
-To see something weird, go to **3R:18,118,436-18,118,767**. <i class="fas fa-comments"></i>Do you have any idea what this could be?
+To see something weird, go to **3R:18,118,436-18,118,767**.
+<i class="fas fa-comments"></i> Do you have any idea what this could be?
 </div>
 
 # Quantification
@@ -254,7 +255,7 @@ If the library **pheatmap** isn't installed, you can download and install it wit
 install.packages("pheatmap")
 ```
 
-<div class="boxy boxy-exclamation boxy-warning">
+<div class="boxy boxy-exclamation boxy-yellow">
 There may be some problems displaying plots etc. on UPPMAX when running in interactive mode. If you have trouble viewing the PCA plots and heatmaps, try:
 
 - Log out of UPPMAX

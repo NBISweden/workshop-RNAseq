@@ -8,7 +8,7 @@ editor_options:
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-<div class="boxy boxy-exclamation boxy-warning">
+<div class="boxy boxy-exclamation boxy-yellow">
 Create a directory named `data` in your current working directory for input and output files.
 </div>
 
@@ -54,7 +54,7 @@ The first step is estimating size factors. The data is normalised for sequencing
 d <- DESeq2::estimateSizeFactors(d,type="ratio")
 ```
 
-<div class="boxy boxy-primary boxy-lightbulb">
+<div class="boxy boxy-lightbulb">
 
 **Optional**
 
@@ -126,7 +126,7 @@ head(counts(d,normalized=TRUE))[,1:5]
 
 When it comes to comparing values between groups, some measure of variation is needed to estimate the variability in gene counts within groups. The most common measures of variation such as variance and standard deviation are not a good measure for rnaseq data because these measures correlate with the mean. For negative bionomially distributed data, dispersion is a better measure of variation in the data set. 
 
-<div class="boxy boxy-primary boxy-lightbulb">
+<div class="boxy boxy-lightbulb">
 
 **Optional**
 

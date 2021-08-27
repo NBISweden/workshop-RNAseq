@@ -10,7 +10,7 @@ editor_options:
 
 # Loading data
 
-<div class="boxy boxy-exclamation boxy-warning">
+<div class="boxy boxy-exclamation boxy-yellow">
 Create a directory named `data` in your current working directory.
 </div>
 
@@ -48,7 +48,7 @@ res1 <- na.omit(res)
 selected_genes <- rownames(res1)[(res1$pvalue < 0.001) & (abs(res1$log2FoldChange) > 1)]
 ```
 
-<div class="boxy boxy-lightbulb boxy-primary">
+<div class="boxy boxy-lightbulb">
 There are many ways of selecting gene lists. One could for example select only the top 500 variable genes. CPM counts are converted to log scale and row-wise variance is computed.
 
 ```{r,eval=F,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
@@ -159,7 +159,7 @@ HALLMARK | [h.all.v6.2.symbols.gmt](http://software.broadinstitute.org/gsea/msig
 
 As you could already notice, the differences in gene expression between days 0 to 7 are very clear. Here we will illustrate a gene set enrichment to explore which pathways are UP or DOWN regulated.
 
-<div class="boxy boxy-exclamation boxy-warning">
+<div class="boxy boxy-exclamation boxy-yellow">
 Here you would use the logFC values you obtained from differential expression. But for simplicity and reduce dependency on other parts of the course, we are using a simple difference in mean expression.
 </div>
 

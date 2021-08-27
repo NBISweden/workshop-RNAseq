@@ -104,7 +104,7 @@ Start by installing Conda. We suggest installing Miniconda3 and NOT Anaconda. Af
 
 #### **On Mac OS X**
 
-<div class="boxy boxy-lightbulb boxy-primary">
+<div class="boxy boxy-lightbulb boxy-grey">
 
 <img border="0" src="https://logos-download.com/wp-content/uploads/2020/06/Apple_Mac_OS_Logo-700x670.png" width="50" height="50">
 
@@ -126,7 +126,7 @@ conda install -n base -c conda-forge mamba
 
 #### **On Ubuntu**
 
-<div class="boxy boxy-lightbulb boxy-primary">
+<div class="boxy boxy-lightbulb boxy-grey">
 
 <img border="0" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR2rSSpKVBohI4AXgBaUjFVYqO73ou2l9AOXw&usqp=CAU" width="50" height="50">
 
@@ -148,7 +148,7 @@ conda install -n base -c conda-forge mamba
 
 #### **On Windows 10**
 
-<div class="boxy boxy-lightbulb boxy-primary">
+<div class="boxy boxy-lightbulb boxy-grey">
 
 <img border="0" src="https://seeklogo.com/images/W/windows-10-icon-logo-5BC5C69712-seeklogo.com.png" width="50" height="50">
 
@@ -199,7 +199,7 @@ sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 
 
 #### VirtualBox
 
-<div class="boxy boxy-lightbulb boxy-primary">
+<div class="boxy boxy-lightbulb boxy-grey">
 
 <img border="0" src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Virtualbox_logo.png" width="50" height="50">
 
@@ -248,14 +248,14 @@ sh Miniconda3-latest-Linux-x86_64.sh
 ```{sh,eval=FALSE,block.title=TRUE}
 mkdir ~/Desktop/course
 cd ~/Desktop/course
-wget https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/environment_RNAseq2020.yml
-conda env create -f environment_RNAseq2020.yml
+wget https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env.yml
+conda env create -f env.yml
 ```
 
 11. You can then follow the instructions above to activate/deactivate the environment.
 
 ```{sh,eval=FALSE,block.title=TRUE}
-conda activate RNAseq2020
+conda activate nbis-workshop-rnaseq
 rstudio &
 ```
 
@@ -267,20 +267,20 @@ rstudio &
 
 ### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Create a conda environment from file
 
-To download the `environment_RNAseq2020.yml` file using the command on Terminal:
+To download the `env.yml` file using the command on Terminal:
 
 ```{sh,eval=FALSE,block.title=TRUE}
 #Ubuntu
-wget https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/environment_RNAseq2020.yml
+wget https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env.yml
 
 #MacOSX
-curl -o environment_RNAseq2020.yml https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/environment_RNAseq2020.yml
+curl -o env.yml https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env.yml
 ```
 
-After this, you should have a file named `environment_RNAseq2020.yml` in your directory (it does not matter where). Next, type:
+After this, you should have a file named `env.yml` in your directory (it does not matter where). Next, type:
 
 ```{sh,eval=FALSE,block.title=TRUE}
-mamba env create -f environment_RNAseq2020.yml
+mamba env create -f env.yml
 ```
 
 Several messages will show up on your screen and will tell you about the installation process. This may take a few minutes depending on how many packages are to be installed.
@@ -307,7 +307,7 @@ Several messages will show up on your screen and will tell you about the install
 Once the environment is created, we need to activate it in order to use the softwares and packages inside it. To activate an environment type:
 
 ```{sh,eval=FALSE,block.title=TRUE}
-conda activate RNAseq2020
+conda activate nbis-workshop-rnaseq
 ```
 
 From this point on you can run any of the contents from the workshop. For instance, you can directly launch RStudio by typing `rstudio`. Here it is important to add the `&` symbol in the end to be able to use the command line at the same time if needed. You can open other files from Rstudio later as well.
@@ -341,7 +341,7 @@ Go to your home folder and caunch the course environment:
 ```{sh,eval=FALSE,block.title=TRUE}
 cd ~/
 
-conda activate RNAseq2020
+conda activate nbis-workshop-rnaseq
 ```
 
 Then you can simply run the `wget` command below to download the whole data for the course. This will take a long time since files are quite big.
