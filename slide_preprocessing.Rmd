@@ -149,8 +149,10 @@ name: norm-1
 ## Normalisation
 
 .pull-left-50[
+- Removing technical biases in sequencing data (e.g. sequencing depth and gene length)
 - Make counts comparable across samples
-- Control for sequencing depth
+
+<!-- Control for sequencing depth -->
 
 ![](data/normalization_methods_depth.png)
 
@@ -165,7 +167,8 @@ dfr
 
 ???
 
-Normalisation of raw count data is necessary to make samples comparable. The comparison may be within sample, within groups, between groups and possibly between studies.
+Normalisation of raw count data is necessary to make samples comparable. The comparison may be within sample, within groups, between groups and possibly between studies. 
+Also, by sequencing deep we generate more read counts for a given gene and differences in gene length will result in an uneven counts for genes expressed in the same level.  
 
 **Total count normalisation**
 
@@ -322,7 +325,7 @@ dfr
 
 **MRN**
 
-MRN method assumes most samples are not differentially expressed
+MRN method assumes most samples are not deferentially expressed
 
 - Find a reference sample for each gene.
 - Divide each count by the reference sample to create a ratio
