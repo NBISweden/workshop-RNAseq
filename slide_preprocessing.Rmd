@@ -72,9 +72,9 @@ name: pp
 - Remove genes and samples with low counts
 
 ```{r,echo=TRUE}
-cf1 <- cr[rowSums(cr>0) >= 3, ]
-cf2 <- cr[rowSums(cr>3) >= 3, ]
-cf3 <- cr[rowSums(edgeR::cpm(cr)>5) >= 3, ]
+cf1 <- cr[rowSums(cr>0) >= 3, ] # Keep rows/genes that have at least one read 
+cf2 <- cr[rowSums(cr>3) >= 3, ] # Keep rows/genes that have at least three reads 
+cf3 <- cr[rowSums(edgeR::cpm(cr)>5) >= 3, ] # need at least  three samples to have cpm > 5. 
 ```
 
 - Inspect distribution
@@ -133,13 +133,13 @@ rm(cf1,cf2,cf3)
 
 ???
 
-Lowly expressed genes are removed to improve the signal-to-noise ratio. Genes not expressed in any sample can be removed completely as as they negatively affect multiple testing correction. The stringency of low count filtering can be adjusted based on the researcher's preference. It is a tradeoff between data quality vs data size.
+Lowly expressed genes are removed to improve the signal-to-noise ratio. Genes not expressed in any sample can be removed completely as as they negatively affect multiple testing correction. The stringency of low count filtering can be adjusted based on the researcher's preference. It is a trade-off between data quality vs data size.
 
 In the above example, raw data has a huge number of zeros and the distribution of over higher value counts are barely visible. Three different levels of low count filtering are shown.
 
 In method 1, the detection limit is set at 1 count, ie; any value above 0 is considered as an expressed gene. And we aim to have expression in atleast 3 samples.
 
-In method 2, the detection limit is set at 3 counts, ie; any value above 3 is considered an expressed gene. A value below 3 is considered noise and is disregarded. And we aim to have 3 count expression in atleast 3 samples. Note that changing the minimum limit of detection has a dramatic effect on the count distribution. Notice how many rows (genes) are discarded.
+In method 2, the detection limit is set at 3 counts, ie; any value above 3 is considered an expressed gene. A value below 3 is considered noise and is disregarded. And we aim to have 3 count expression in at least 3 samples. Note that changing the minimum limit of detection has a dramatic effect on the count distribution. Notice how many rows (genes) are discarded.
 
 In method 3, the limit of detection is a bit less subjective. A count that is greater than 5 count per million reads is considered a positive detection. This is a stringent and fairly robust method at the expense of losing the most number of genes.
 
@@ -180,7 +180,7 @@ Quantile normalisation, Upper quartile normalisation and Median normalisation al
 ![](data/normalization_methods_composition.png)
 
 ```{r,echo=FALSE}
-dfr <- data.frame(A=c(0,25,15,100),B=c(20,25,4,2))
+dfr <- data.frame(A=c(10,25,15,100),B=c(20,25,4,2))
 rownames(dfr) <- c("x","y","z","de")
 dfr$A_tc <- round(dfr$A/sum(dfr$A),2)
 dfr$B_tc <- round(dfr$B/sum(dfr$B),2)
@@ -227,7 +227,7 @@ In this example, gene x has higher counts than y. But when controlled for gene l
 
 **Counts per million reads**
 
-The last point with normalisation is to bring the numbers to a human friendly scale. This the reason for the per million part of CPM, RPKM etc. 
+The last point with normalisation is to bring the numbers to a human friendly scale. This is the reason for the per million part of CPM, RPKM etc. 
 
 ---
 name: norm-3a
