@@ -1,6 +1,6 @@
-/* CSS style for RNA-Seq presentation */
-/* Xaringen, remark.js                  */
-/* 2021 Roy Francis                     */
+/* css style for slide */
+/* xaringen, remark.js                */
+/* 2021 Roy Francis                   */
 
 /* define font */
 @import url('https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&subset=latin-ext');
@@ -508,5 +508,6 @@ th,td {padding: 8px; text-align: left;}
 /* horizontal line style */
 
 hr {
-  border: 1px solid #808080;
+  border: 1px solid var(--color-code-bg);
 }
+

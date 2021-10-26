@@ -1,4 +1,4 @@
-/* CSS Bootstrap custom style for workshop */
+/* bootstrap css custom styles for workshop */
 /* 2021 Roy Francis */
 
 /* define font */
@@ -20,11 +20,11 @@
   --font-code: 'Ubuntu Mono';
 }
 
-/* body font */
+/* FONTS -------------------------------------------------------------------- */
+
 /* body font family */
 body,p,h1,h2,h3,h4,h5,h6 {
   font-family: var(--font-base, 'Roboto', 'DIN', 'Helvetica', sans-serif);
-  /*color: var(--color-text);*/
   font-weight: 400;
   font-size: 17px;
   line-height: 1.55;
@@ -33,7 +33,6 @@ body,p,h1,h2,h3,h4,h5,h6 {
 /* title font family, weight and size */
 h1,h2,h3 {
   font-family: var(--font-highlight, 'Roboto', 'DIN', 'Helvetica', sans-serif);
-  /*color: var(--color-text);*/
   font-weight: 600;
 }
 
@@ -87,7 +86,6 @@ pre {
 
 code {
   font-family: var(--font-code,"Menlo","Monaco", "Consolas","Liberation Mono", "Courier New", monospace);
-  font-size: 16px;
   word-break: break-all;
 }
 
@@ -107,7 +105,7 @@ code {
 
 /* report author style */
 .author {
-  font-size: 1em;
+  font-size: 1.6em;
   margin-top: -6px;
   margin-bottom: 5px;
   font-weight: 600;
@@ -115,7 +113,8 @@ code {
 
 /* report date style */
 .date {
-  margin-top: 0;
+  font-size: 1.5em;
+  margin-top: -12px;
   margin-bottom: 10px;
 }
 
@@ -129,13 +128,18 @@ code {
 .smallest{ font-size: 0.579em; }
 
 blockquote {
-  border-left: 5px solid var(--color-primary);
+  display: inline-block;
   background: var(--color-code-bg);
-  padding: 10px;
-  padding-left: 12px;
-  margin-left: 16px;
-  margin-right: 0;
-  border-radius: 0px 4px 4px 0px;
+  padding: 20px;
+  border-radius: 4px 4px 4px 4px;
+}
+
+blockquote::before {
+  content: '"';
+  font-size: 200%;
+  position: absolute;
+  margin-left: -30px;
+  margin-top: -6px;
 }
 
 /* abstract paragraph style */
@@ -144,9 +148,17 @@ blockquote {
 }
 
 /* kbd */
-.kbd {
+kbd, .kbd {
+  background-color: var(--color-text);
+  color: white;
   padding: 2px 5px;
-  font-family: var(--font-code,"Menlo","Monaco", "Consolas","Liberation Mono", "Courier New", monospace);
+  border-radius: 4px;
+  font-size: 85%;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 0em 0.05em;
+  font-family: var(--font-code);
+  text-align: center;
 }
 
 /* danger alert text style */
@@ -587,7 +599,7 @@ button.btn:before
 }
 
 /** top title code **/
-div.block-title {
+div.chunk-title {
   font-weight: bold;
   text-transform: uppercase;
   background-color: var(--color-border);
@@ -668,9 +680,19 @@ ul.nav a:hover {
   border: none;
 }
 
-/* .footer p {
-  color: lightgrey;
-}*/
+.footer-left {
+  text-align: left;
+  vertical-align: middle;
+}
+
+.footer-right {
+  text-align:right;
+  vertical-align:middle;
+}
+
+.footer p {
+  color: #bdbdbd;
+}
 
 .footer a {
   color: #bdbdbd;
@@ -900,3 +922,4 @@ ul.nav a:hover {
  transition: .2s ease;
  filter: none;
 }
+
