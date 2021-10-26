@@ -4,8 +4,8 @@ output_dir: 2111
 # used site-wide wherever uppmax project ids are used
 uppmax_project: g2020006
 uppmax_res_1: g2020006_1
-# location options are linkoping, lund, umea or uppsala
-location: uppsala
+# location options are linkoping, lund, umea, uppsala or online
+location: online
 assistants:
 favicon: assets/favicon.png
 exclude: ["docs","README.md","schedule.csv","LICENSE","LICENSE.md","scripts","tmprepo"]
