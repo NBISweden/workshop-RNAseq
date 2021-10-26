@@ -17,7 +17,7 @@ In our case we are going to use a program called __featureCounts__ that is fast 
 
 Then by providing the mapped read files and the annotation you can quantify how many reads that mapped to your reference. There are many settings that you can use to decide how you want to do the counting. In our case we will count the reads that are in the annotated exons (`-t exon`) and sum them up per gene (`-g gene`) . In __featureCounts__, this is done by the following command.
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 # With only one bam file
 featureCounts -T {threads} -s 2 -t exon -g gene_id -a {input.gtf} -o {output.countTable} bamFiles/file1.bam > results/Counts.featureCount.log
 
@@ -31,7 +31,7 @@ This will create a file that contains a matrix were the rows represents the gene
 
 ***
 
-```{sh ,eval=FALSE,block.title=TRUE}
+```{sh ,eval=FALSE,chunk.title=TRUE}
 
 
 ##########################################

@@ -28,7 +28,7 @@ The aim of the exercise is to show a simple way to process small RNA data and to
 
 Running this on UPPMAX, start by loading the modules you will need:
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 module load bioinfo-tools
 module load samtools
 module load cutadapt
@@ -38,7 +38,7 @@ module load subread/1.5.2
 
 And we create a directory under bonus to work in.
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 mkdir bonus/smallrna
 ```
 
@@ -53,7 +53,7 @@ This includes:
 
 Copy these files in the directory you will use for this exercise. On UPPMAX you can use the following command:
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 cd /bonus/smallrna
 cp -r /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/smallRNA/* .
 ```
@@ -66,7 +66,7 @@ When sequencing small RNAs we are working with very short RNA fragments, typical
 
 Look at any fastq file, e.g. using less:
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 less file.fastq
 ```
 
@@ -74,7 +74,7 @@ Just by looking the nucleotide sequence, can you guess what the adapter is? (Thi
 
 There are many programs available for trimming adapters. We will use a program called [cutadapt](https://cutadapt.readthedocs.org/en/stable/). You can run it with the following command:
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 cutadapt -a [adaptor] --trimmed-only [in.fastq] --minimum-length=17 > [trimmed.fastq]
 ```
 
@@ -88,7 +88,7 @@ Run this program on each of the 6 fastq files. This takes a few minutes per file
 
 The next step is to align (map) the reads to the genome sequence around the microRNA loci. We will use the program [bowtie](http://bowtie-bio.sourceforge.net/index.shtml) to do this. We will map the reads against the entire *Drosophila melanogaster* genome. To be able to map millions of reads very fast, bowtie uses an index of the sequence we map against. You find an index of the *Drosophila* genome at `/sw/data/uppnex/igenomes/Drosophila_melanogaster/UCSC/dm3/Sequence/BowtieIndex/genome`. To map all reads we use the following command: ::
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 bowtie -q -v 0 -k 10 -S -t [index.name] [small_rna.fastq] [out.sam]
 ```
 
@@ -121,7 +121,7 @@ To see something weird, go to **3R:18,118,436-18,118,767**.
 
 We can now summarize the mapped reads to see which microRNAs are expressed in the different samples, and to do some global comparisons. For this, we use the SAM files created by bowtie. If you have not seen a SAM file before, have a look at one of the files, for example by running:
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 less [out.sam]
 ```
 
@@ -129,7 +129,7 @@ Press <kbd>SPACE</kbd> to scroll down into the file and <kbd>Q</kbd> to exit the
 
 We are only interested in the reads mapping to known microRNA loci in [miRBase](http://www.mirbase.org), which is the "official" data base of microRNAs in many different species. The file `/proj/uppstore2017171/courses/RNAseqWorkshop/downloads/smallRNA/mirbase/dme_mirbase_FORMAT2016.gff3` contains the locations of all microRNAs on the fly genome. Use `less` to have a look at this file. [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) is a useful program for counting reads mapping to different genomic regions. Run it like this, for all SAM files at once:
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 featureCounts -t miRNA -g Name -O -s 1 -M -a [mirbasefile] -o [outfile] [samfiles ...]
 ```
 
@@ -141,7 +141,7 @@ Once the reads mapping to each microRNA have been counted, we can analyze the mi
 
 You can run R on UPPMAX by running
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 module load R/3.5.2
 module load R_packages/3.5.2
 R
@@ -153,7 +153,7 @@ Alternatively, you can run RStudio locally on your system. In this case, you nee
 
 To combine the files you just created into an expression table, use the following commands:
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 count.file <- "<path to the output of featureCounts>"
 count.data <- read.table(count.file, sep="\t", header=TRUE)
 exp.data <- count.data[,-1*1:6]      ## remove first 6 columns
@@ -164,51 +164,51 @@ colnames(exp.data) <- gsub("fastq.", "", colnames(exp.data))
 
 You can look at the first 20 rows of the table by typing:
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 exp.data[1:20,]
 ```
 
 Since the log transformation we will do later cannot handle cases with zero reads, we add a dummy value of 1 read to each microRNA:
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 exp.data <- exp.data + 1
 ```
 
 To compare expression levels from different libraries, the read counts have to be normalized to compensate for different sequencing depths etc. For this we will use the TMM normalization. This normalization method uses a trimmed mean of M- values (TMM) between each pair of samples to find a set of scaling factors for the library sizes that minimize the log-fold changes between the samples for most genes (if you are interested in the details, see [this paper](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-3-r25)). To use this method we need to load the edgeR module. edgeR is an R module with many useful functions for normalizing RNA-seq data and finding differentially expressed genes. Here we will only use one of the normalization functions.
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 library(edgeR)
 ```
 
 If you get an error message that the edgeR module is not installed on the computer you are using, you can download and install it with:
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 source("http://bioconductor.org/biocLite.R")
 biocLite("edgeR")
 ```
 
 In the normalization, we start by computing the factors by which the read counts from each library are rescaled:
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 lib.size <- apply(exp.data,2,sum)
 scale.factors <- calcNormFactors(exp.data, method="TMM")
 ```
 
 Next, we apply the rescaling to the read counts for each library:
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 norm.data <- t(t(exp.data)/(scale.factors*lib.size))
 ```
 
 Finally, we log transform all values. This makes the analysis less sensitive to microRNAs with a huge number of reads:
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 norm.data <- log(norm.data)
 ```
 
 We can use principal component analysis (PCA) to get a global look of how similar the microRNA expression profiles are in the different libraries:
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 mir.pca <- prcomp(t(norm.data))     ## compute principal components
 plot(mir.pca$x[,1], mir.pca$x[,2])  ## plot  PC1 and PC2
 text(mir.pca$x[,1], mir.pca$x[,2], rownames(mir.pca$x), cex=0.7, pos=4, col="red")
@@ -218,13 +218,13 @@ You should now see a plot on the screen. **What can we learn from looking at thi
 
 We can also look at the loadings, i.e. how much each microRNA contributes to each principal component. To see which microRNAs are highly expressed in samples with high PC1, type:
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 head(sort(mir.pca$rotation[,1], decreasing=TRUE))
 ```
 
 To see which microRNAs are highly expressed in samples with low PC1, type:
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 head(sort(mir.pca$rotation[,1], decreasing=FALSE))
 ```
 
@@ -234,7 +234,7 @@ head(sort(mir.pca$rotation[,1], decreasing=FALSE))
 
 Another way to get a global overview of the data is to use clustering and plot heatmaps. You can do this with the following command:
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 heatmap(norm.data, scale="none", cexRow=0.2, cexCol=0.6)
 ```
 
@@ -244,14 +244,14 @@ In the resulting plot each library is a column and each microRNA is a row. The c
 
 Another function to create heatmaps R is `pheatmap()` from the **pheatmap** R package. To use it, do
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 library(pheatmap)
 pheatmap(norm.data, scale="none", fontsize_row=3)
 ```
 
 If the library **pheatmap** isn't installed, you can download and install it with
 
-```{r,block.title=TRUE,eval=FALSE}
+```{r,chunk.title=TRUE,eval=FALSE}
 install.packages("pheatmap")
 ```
 

@@ -28,7 +28,7 @@ source("https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/asset
 
 Load the sequencing data and the metadata data with sample information.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 # Load data and metadata
 download_data("data/counts_tpm.csv")
 data <- read.csv("data/counts_tpm.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
@@ -85,7 +85,7 @@ Performing PCA has many useful applications and interpretations, which much depe
 
 Now that the data is prepared, we now proceed with PCA. Since each gene has a different expression level, it means that genes with higher expression values will naturally have higher variation that will be captured by PCA. This means that we need to somehow give each gene a similar weight when performing PCA (see below). The common practice is to center and scale each gene before performing PCA. This exact scaling is called **Z-score** normalization it is very useful for PCA, clustering and plotting heatmaps.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 Znorm <- t(apply(data,1,function(x) scale(x,center=T,scale=T)))
 colnames(Znorm) <- colnames(data)
 
@@ -102,7 +102,7 @@ colnames(Znorm) <- colnames(data)
 
 As you can appreciate above, Z-score normalization have set each gene mean to 0 and changes the variances to a common scale. However, if we normalize all genes to the same scale, even genes that could be considered stable across samples (i.e. that do not vary across your samples) will be used for separation of samples. This might in turn add 'noise' to your data in form of 'variation across samples that are not meaningful'. Therefore, we can also sort the genes by variance and use the top genes to filter/prioritize the data.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 #Compute the mean, variance and cv for each gene and sort them in decreasing order
 gene_stats <- data.frame(row.names=rownames(data))
 means <- apply(data,1,mean)
@@ -125,7 +125,7 @@ boxplot(t(data[top_var[1:15],]),ylim=c(0,12),las=2,col="grey", main="data (top v
 
 Next, we can compute PCA using the `prcomp()` function. As additional parameters, we can already center and scale each gene already inside the function. This the same exact **Z-score** scaling above, but already inside the function.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 {
   mypar(1,2,mar = c(3,3,2,1))
   PC <-  prcomp( t( Znorm[ top_var, ]) ) #Method1
@@ -156,7 +156,7 @@ Next, we can compute PCA using the `prcomp()` function. As additional parameters
 
 The usefulness of PCA is that the principal components do have a meaning: They store the amount of variance in decreasing order, so some PCs are more important than others. Inside the `PC$sdev` object, we can get the standard deviation stored in each PC.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=5}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=5}
 PC_sd <- setNames(PC$sdev,paste0("PC",1:length(PC$sdev)))
 PC_var_expl <- (PC_sd^2)/sum(PC_sd^2)*100
 
@@ -177,7 +177,7 @@ PC_var_expl <- (PC_sd^2)/sum(PC_sd^2)*100
 
 Now that you know that each PC stores a particular structure of the data, we could also explore with genes are more responsible for that separation (a.k.a. leading genes). For that, we can take a look inside the PC object.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 leading_genes <- PC$rotation
 head(leading_genes)
 
@@ -213,7 +213,7 @@ The base R `stats` package already contains a function `dist()` that calculates 
 
 The distance methods available  in `dist()` are: *euclidean*, *maximum*, *manhattan*, *canberra*, *binary* or *minkowski*.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 d <- dist( t(data) , method="euclidean")
 d
 ```
@@ -231,7 +231,7 @@ We can first compute sample correlations using the `cor()` function. As you migh
 
 Once we transformed the correlations to a 0-1 scale, we can simply convert it to a distance object using `as.dist()` function. The transformation does not need to have a maximum of 1, but it is more intuitive to have it at 1, rather than at any other number.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 #Compute sample correlations
 sample_cor <- cor( data )
 round(sample_cor,4)
@@ -261,7 +261,7 @@ After having calculated the distances between samples calculated, we can now pro
 
 The methods available are: *ward.D*, *ward.D2*, *single*, *complete*, *average*, *mcquitty*, *median* or *centroid*.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 #Clustering using euclidean distance
 {
   mypar(1,2,mar=c(6,4,2,1))
@@ -293,7 +293,7 @@ h2 <- hclust(d2,method="complete")
 
 Once your dendrogram is created, the next step is to define which samples belong to a particular cluster. However, the sample groups are already known in this example, so clustering them does not add much information for us. What we can do instead is subdivide the genes into clusters. As for the PCA (above), the ideal scenario is to use the Z-score normalized gene expression table, because in this way we make sure that we are grouping together expression trends (going up vs. down), rather than expression level (genes with more counts vs less counts). This way, we can simply repeat the steps above using the transpose of the Z-score matrix, compute the correlation distances and cluster using ward.D2 linkage method. Since it is time consuming to cluster on all genes, this step is usually done only on the differentially expressed gene list (say up to ~3000 genes). Here, we can for instance cluster on the genes with highest variance `top_var`.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=5}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=5}
 gene_cor  <- cor(t(Znorm[top_var, ]))
 gene_dist <- as.dist(-(gene_cor-1)/2)
 gene_clus <- hclust(gene_dist,method="complete")
@@ -302,7 +302,7 @@ gene_clus <- hclust(gene_dist,method="complete")
 After identifying the dendrogram for the genes (below), we can now literally cut the tree at a fixed threshold (with `cutree`) at different levels to define the clusters.
 
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 HEIGHT <- 0.9
 gene_clusters <- cutree(gene_clus,h=HEIGHT)
 gene_clusters
@@ -328,7 +328,7 @@ gene_clusters
 
 Now that you understand the concepts of hierarchical clustering both at the sample and at the gene level, we can use a heatmap function to explore the visual consequences of clustering. Here, we can make use of the `pheatmap` function, which by default will do the clustering of the rows and columns.
 
-```{r,results='hide',block.title=TRUE,fig.height=5,fig.width=4}
+```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=4}
 pheatmap( data[top_var,] , scale="row" , color = colorRampPalette(c("navy","white","firebrick"))(90), border_color=NA, cluster_cols=F)
 ```
 
@@ -351,7 +351,7 @@ One way to measure **clustering robustness / accuracy** is by selecting part of 
 
 <i class="fas fa-exclamation-circle"></i> Note that bootstrapping procedure is very time consuming and computationally intensive. For this  purpose, we will run it only on the top 100 most variable genes in the dataset.
 
-```{r,eval=T,results='hide',block.title=TRUE,fig.height=5,fig.width=10}
+```{r,eval=T,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 # Clustering on our dataset (this step is slow)
 pvc <- pvclust( data = data[top_var[1:100],] , method.dist = "correlation", method.hclust = "complete")
 

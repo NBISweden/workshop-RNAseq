@@ -19,7 +19,7 @@ The most important parts to look at are the proportion of uniquely mapping, mult
 
 After mapping with star of all samples, we ran MultiQC to summarize all the log-files. In this case we had a folder structure with **sampleName.hisat2_summary.txt**, so to make sure that MultiQC understands what is the sample name, we used the `-dd 2` command (e.g. it splits up the path and names the samples after the second last part).
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 
 multiqc -d -dd 2 .
 ```
@@ -65,7 +65,7 @@ The steps that we are going to run are:
 If you are working on a organism that does not have a annotation file in bed12 that is needed to use this RSeQC it is possible to transform a GTF file to Bed12 file. This is done by using tools from uscs and needs a extra step to first go from GTF to genePred and then from genePred to bed. *gtfToGenePred* and *genePredToBed*  can both be downloaded from ucsc utilities homepage.
 
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 
 #To unzip all annotation files if you don't have
 gunzip references/annotations/*.gz
@@ -89,7 +89,7 @@ MutliQC can also include the information from  RSeQC. Rerun MultiQC after you ha
 
 It was created using commands:
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 multiqc -f -d -dd 2 .
 
 ```
@@ -100,7 +100,7 @@ multiqc -f -d -dd 2 .
 # Code
 
 This is all that is needed to run all the steps above on data on course data.
-```{sh ,eval=FALSE,block.title=TRUE}
+```{sh ,eval=FALSE,chunk.title=TRUE}
 
 
 ##########################################

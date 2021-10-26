@@ -18,13 +18,13 @@ For this exercise we will use the Trinity_200.fasta output that is in the folder
 
 Create a new folder for this exercise:
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 cd ~/RNAseq_assembly_annotation/
 mkdir RNAseq_annotation
 cd RNAseq_annotation
 ```
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 mkdir Trinotate
 ln -s ~/RNAseq_assembly_annotation/assembly_annotation/raw_computes/Trinity_200.fa
 ```
@@ -33,7 +33,7 @@ One of the first thing to do when one want to annotate a transcriptome with trin
 
 If you want to know how to prepare the database, you can look at the following lines (again you do not need to run it) :
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 module load bioinfo-tools
 module load trinotate
 
@@ -42,13 +42,13 @@ module load trinotate
 
 Then there is few step to prepare the protein database for blast searches by:
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 makeblastdb -in uniprot_sprot.pep -dbtype prot
 ```
 
 And uncompress and prepare the Pfam database for use with 'hmmscan':
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 gunzip Pfam-A.hmm.gz
 hmmpress Pfam-A.hmm
 ```
@@ -72,7 +72,7 @@ TransDecoder identifies likely coding sequences based on the following steps:
 
 Running TransDecoder is a two-step process. First run the TransDecoder step that identifies all long ORFs and then the step that predicts which ORFs are likely to be coding.
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 module load bioinfo-tools
 
 module load trinotate
@@ -92,7 +92,7 @@ A 'full' Blast analysis can run for several days and consume several GB of Ram. 
 
 To run Blast on your data, use the Ncbi Blast+ package against a Drosophila-specific database (included in the folder we have provided for you, under `~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa`. Of course, any other NCBI database would also work:
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 blastx -db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -query Trinity_200.fa -max_target_seqs 1 -outfmt 6 -evalue 1e-5 > swissprot.blastx.outfmt6
 
 blastp -db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -query Trinity_200.fa.transdecoder.pep -max_target_seqs 1 -outfmt 6 -evalue 1e-5 > swissprot.blastp.outfmt6
@@ -103,7 +103,7 @@ blastp -db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dme
 ### Pfam database
 Using your predicted protein sequences, we can run a [HMMER](http://hmmer.org/) search against the [Pfam database](http://pfam.xfam.org/), and identify conserved domains that might be indicative or suggestive of function:
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 hmmscan --cpu 5 --domtblout TrinotatePFAM.out ~/RNAseq_assembly_annotation/assembly_annotation/database/trinotate_database/Pfam-A.hmm Trinity_200.fa.transdecoder.pep
 ```
 
@@ -112,7 +112,7 @@ The [signalP tool](http://www.cbs.dtu.dk/services/SignalP/) is very useful for p
 
 To predict signal peptides, run signalP:
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 export SNIC_TMP=$SNIC_TMP:~/RNAseq_assembly_annotation/RNAseq_annotation/trinotate
 signalp -f short -n signalp.out Trinity_200.fa.transdecoder.pep
 ```
@@ -122,7 +122,7 @@ signalp -f short -n signalp.out Trinity_200.fa.transdecoder.pep
 [Tmhmm](http://www.cbs.dtu.dk/~krogh/TMHMM/) software tools is very useful for predicting transmembrane domains.
 Run TMHMM to predict transmembrane regions:
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 tmhmm --short < Trinity_200.fa.transdecoder.pep > tmhmm.out
 ```
 
@@ -130,32 +130,32 @@ tmhmm --short < Trinity_200.fa.transdecoder.pep > tmhmm.out
 
 To load results of your previous analyses you need to copy the database in your folder (otherwise you will not be able to modify it):
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 cp ~/RNAseq_assembly_annotation/assembly_annotation/database/trinotate_database/Trinotate.sqlite .
 ```
 
 You also need the transcript sequences (Trinity_200.fa), the protein sequences (Trinity_200.fa.transdecoder.pep) and a file showing gene/Transcript relationships (tab delimited format: "gene_id(tab)transcript_id"). You are using Trinity assemblies, you can generate this file like this:
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 /sw/apps/bioinfo/trinity/2.8.2/rackham/util/support_scripts/get_Trinity_gene_to_trans_map.pl Trinity_200.fa > Trinity_200.fa.gene_trans_map
 ```
 
 Then you can load those three files into the databases:
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 Trinotate Trinotate.sqlite init --gene_trans_map Trinity_200.fa.gene_trans_map --transcript_fasta Trinity_200.fa --transdecoder_pep Trinity_200.fa.transdecoder.pep
 ```
 
 Load the blast results :
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 Trinotate Trinotate.sqlite LOAD_swissprot_blastp swissprot.blastp.outfmt6
 Trinotate Trinotate.sqlite LOAD_swissprot_blastx swissprot.blastx.outfmt6
 ```
 
 Load the other domains results :
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 Trinotate Trinotate.sqlite LOAD_pfam TrinotatePFAM.out
 Trinotate Trinotate.sqlite LOAD_tmhmm tmhmm.out
 Trinotate Trinotate.sqlite LOAD_signalp signalp.out
@@ -165,7 +165,7 @@ Trinotate Trinotate.sqlite LOAD_signalp signalp.out
 
 From the database you can create a report to visualize the results :
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 Trinotate Trinotate.sqlite report > trinotate_annotation_report.xls
 ```
 

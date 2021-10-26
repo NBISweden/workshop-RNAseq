@@ -59,7 +59,7 @@ if(all(is.na(s$assistant)) | all(s$assistant=="")) s$assistant <- NULL
 
 <div class="table-schedule">
 
-```{r,eval=TRUE,echo=FALSE,block.title=NULL}
+```{r,eval=TRUE,echo=FALSE,chunk.title=NULL}
 # grouping vector
 r <- rle(s$date)$length
 names(r) <- rle(s$date)$values

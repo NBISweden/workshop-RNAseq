@@ -14,7 +14,7 @@ This page contains links to different lectures (slides) and practical exercises 
 <div class="boxy boxy-lightbulb">
 Input code blocks are displayed like shown below. The code language is displayed above the block. Shell scripts (**SH**) are to be executed in the linux terminal. **R** scripts are to be run in R either through the terminal, RGui or RStudio.
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 command
 ```
 

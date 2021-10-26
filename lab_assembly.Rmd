@@ -12,14 +12,14 @@ This exercise is meant to get you acquainted with the type of data you would nor
 
 You can create the folders where you want but I would suggest a folder organisation, if you do not follow this organisation remember to put the correct path to your data.
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 mkdir bonus/assembly
 cd bonus/assembly
 ```
 
 Let's link the raw fastq files.
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 mkdir raw
 cd raw
 ln -s /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/assembly_annotation/raw_computes/* .
@@ -27,7 +27,7 @@ ln -s /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/assembly_annotation
 
 We will clone this Github repo from NBIS annotation team which will be used during this practical.
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 git clone https://github.com/NBISweden/GAAS.git
 ```
 
@@ -48,7 +48,7 @@ Important points to remember before starting working with RNA-Seq:
 
 We run a quick QC to check encoding version and fastq quality score format. We have to use FastQC tool.
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 module load bioinfo-tools
 module load FastQC/0.11.5
 
@@ -58,13 +58,13 @@ fastqc ./raw/ERR305399_1.fastq.gz -o fastqc/
 
 Copy the FastQC report HTML file to your system and inspect the results. You can use `SCP` to copy the file. Run the command below from a **LOCAL** terminal.
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 scp user@rackham.uppmax.uu.se:[path-to-report.html] .
 ```
 
 Next, we check the fastq quality score format. For this, we will be using the scripts libraries available in the git gaas you need first to export the libraries and run the script `fastq_guessMyFormat.pl`.
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 export PERL5LIB=$PERL5LIB:./GAAS/annotation/
 ./GAAS/annotation/Tools/bin/fastq_guessMyFormat.pl -i ./raw/ERR305399_1.fastq.gz
 ```
@@ -81,7 +81,7 @@ In this section, we run a genome-guided transcriptome assembly. We use Trimmomat
 
 [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) performs a variety of useful trimming tasks for illumina paired-end and single ended data.The selection of trimming steps and their associated parameters are supplied on the command line.
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 mkdir trimmomatic
 module load bioinfo-tools
 module load trimmomatic/0.36
@@ -94,7 +94,7 @@ The following command line will perform the following:
 * Scan the read with a 4-base wide sliding window, cutting when the average quality per base drops below 15 (SLIDINGWINDOW:4:15)
 * Drop reads below the 36 bases long (MINLEN:36)
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 java -jar /sw/apps/bioinfo/trimmomatic/0.36/milou/trimmomatic-0.36.jar PE -threads 5 -phred33 ./raw/ERR305399_1.fastq.gz ./raw/ERR305399_2.fastq.gz trimmomatic/ERR305399.left_paired.fastq.gz trimmomatic/ERR305399.left_unpaired.fastq.gz trimmomatic/ERR305399.right_paired.fastq.gz trimmomatic/ERR305399.right_unpaired.fastq.gz ILLUMINACLIP:/sw/apps/bioinfo/trimmomatic/0.36/milou/adapters/TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
 ```
 
@@ -105,7 +105,7 @@ HISAT2 is a fast and sensitive alignment program for mapping next-generation seq
 
 First you need to build an index of your chromosome 4
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 mkdir index
 
 module load HISAT2
@@ -119,13 +119,13 @@ Then you can run HISAT2 :
 * `--novel-splicesite-outfile <path>` In this mode, HISAT2 reports a list of splice sites in the file :
 chromosome name <tab> genomic position of the flanking base on the left side of an intron <tab> genomic position of the flanking base on the right <tab> strand (+, -, and .) '.' indicates an unknown strand for non-canonical splice sites.
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 hisat2 --phred33 --rna-strandness RF --novel-splicesite-outfile hisat2/splicesite.txt -S hisat2/accepted_hits.sam -p 5 -x index/chr4_index -1 trimmomatic/ERR305399.left_paired.fastq.gz -2 trimmomatic/ERR305399.right_paired.fastq.gz
 ```
 
 Finally you need to change the SAM into BAM file and to sort it in order for StringTie to use the bam file to assemble the read into transcripts.
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 samtools view -bS -o hisat2/accepted_hits.bam hisat2/accepted_hits.sam
 samtools sort -o hisat2/accepted_hits.sorted.bam hisat2/accepted_hits.bam
 ```
@@ -136,7 +136,7 @@ samtools sort -o hisat2/accepted_hits.sorted.bam hisat2/accepted_hits.bam
 You can add as input an annotation from GTF/GFF3 file to calculate TPM and FPKM values.
 
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 module load bioinfo-tools
 module load StringTie
 
@@ -149,7 +149,7 @@ You could now also visualise all this information using a genome browser, such a
 
 Transfer the GTF files to your computer using SCP:
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 scp user@rackham.uppmax.uu.se:[path-to-transcripts.gtf] .
 ```
 
@@ -159,7 +159,7 @@ scp user@rackham.uppmax.uu.se:[path-to-transcripts.gtf] .
 
 [Trinity](https://github.com/trinityrnaseq/trinityrnaseq/wiki) assemblies can be used as complementary evidence, particularly when trying to polish a gene build with Pasa. Before you start, check how big the raw read data is that you wish to assemble to avoid unreasonably long run times.
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 module load bioinfo-tools
 module load trinity/2.4.0
 module load samtools
@@ -173,7 +173,7 @@ In order to compare the output of StringTie and the output of Trinity we need to
 
 We'll use the GMAP software to align the Trinity transcripts to our reference genome. Trinity contains a utility that facilitates running GMAP, which first builds an index for the target genome followed by running the gmap aligner:
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 module load gmap-gsnap
 
 mkdir gmap
@@ -189,7 +189,7 @@ We will run BUSCO to check the the quality of the assembly. [BUSCO](https://busc
 
 For the Trinity results :
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 module load BUSCO/3.0.2b
 
 /sw/apps/bioinfo/BUSCO/3.0.2b/rackham/bin/run_BUSCO.py -i /proj/uppstore2017171/courses/RNAseqWorkshop/downloads/assembly_annotation/RNAseq/trinity/Trinity.fasta -o busco_trinity -l $BUSCO_LINEAGE_SETS/arthropoda_odb9 -m tran -c 5
@@ -199,7 +199,7 @@ Busco will take 30 to run so you can check the results in `/proj/uppstore2017171
 
 For the guided assembly results, you need first to extract the transcript sequences from the gtf transcript file :
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 module load BioPerl
 
 export PERL5LIB=$PERL5LIB:./GAAS/annotation/
@@ -208,7 +208,7 @@ export PERL5LIB=$PERL5LIB:./GAAS/annotation/
 
 Then you can run BUSCO again :
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 /sw/apps/bioinfo/BUSCO/3.0.2b/rackham/bin/run_BUSCO.py -i stringtie/transcripts_stringtie.fa -o busco_stringtie -l $BUSCO_LINEAGE_SETS/arthropoda_odb9 -m tran -c 5
 ```
 

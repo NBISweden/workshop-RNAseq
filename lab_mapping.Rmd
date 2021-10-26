@@ -30,7 +30,7 @@ Read below for the flags we use for this exercise. Remember to change filenames 
 
 Now you can map the reads from one of the samples (or several; it's up to you which ones) using a command such as the one below.
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 mkdir outDir
 
 # for paired end reads
@@ -85,13 +85,13 @@ The most commonly used tool for converting from SAM to BAM is [Samtools](http://
 
 The Samtools command to convert from SAM to a sorted BAM file is:
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 samtools sort -o output.bam input.sam
 ```
 
 Remember to use an appropriate filename instead of `output.bam`! Next, we need to index the BAM file.
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 samtools index properName.bam
 ```
 
@@ -99,13 +99,13 @@ The indexing step should create an index file with the suffix `.bai`. This sorte
 
 You can also get a report on your mapped reads using the samtools command *flagstat*:
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 samtools flagstat properName.sorted.bam > properName.sorted.flagstat
 ```
 
 <i class="fas fa-lightbulb"></i> Since the BAM file contains all the information from the original SAM file, remember to remove the SAM file once you are finished, in order to free up disk space.
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 rm input.sam
 ```
 
@@ -115,7 +115,7 @@ rm input.sam
 
 
 # Code to run all the steps above on data on course data
-```{sh ,eval=FALSE,block.title=TRUE}
+```{sh ,eval=FALSE,chunk.title=TRUE}
 
 
 

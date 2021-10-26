@@ -30,13 +30,13 @@ If the file you would like to view is in SAM format (file ends with **.sam**), w
 
 To convert a SAM file to BAM format type:
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 samtools view -bS fileName.sam > fileName.bam
 ```
 
 Before the visualization, you need to sort it and then build a BAM file index (**.bai**).
 
-```{sh,block.title=TRUE,eval=FALSE}
+```{sh,chunk.title=TRUE,eval=FALSE}
 samtools sort fileName.bam fileName.sorted
 samtools index fileName.sorted.bam
 ```

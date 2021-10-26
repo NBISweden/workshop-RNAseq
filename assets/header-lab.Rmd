@@ -23,7 +23,7 @@ options(crayon.enabled = FALSE)
 knitr::opts_knit$set(progress=TRUE,verbose=TRUE)
 knitr::opts_chunk$set(dev="svg",results="hold",fig.show="hold",fig.align="left",
                       echo=TRUE,warning=FALSE,message=FALSE,accordion=NULL,
-                      block.title=NULL)
+                      chunk.title=NULL)
 color_primary <- "#4C979F"
 color_text <- "#424949"
 ```
@@ -58,8 +58,8 @@ knitr::knit_hooks$set(blur=function(before,options,envir) {
   }
 })
 
-## block title for code
-knitr::knit_hooks$set(block.title=function(before,options,envir) {
+## chunk.title for code
+knitr::knit_hooks$set(chunk.title=function(before,options,envir) {
 
 out_class <- NULL
 if(is.null(options$class.output)) {
@@ -70,7 +70,7 @@ if((!options$echo) & (options$results != "hide")) out_class <- "Output"
 }
 
   if(before) {
-    paste0('<div class="block-title-parent"><div class="block-title small">',out_class,'</div>')
+    paste0('<div class="chunk-title-parent"><div class="chunk-title small">',out_class,'</div>')
   }else{
     paste0('</div>')
   }

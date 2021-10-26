@@ -28,7 +28,7 @@ You can read more about the program and have a look at example reports at [the F
 
 
 ## How to run FastQC
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 
 # To see help information on the FastQC package:
 fastqc --help
@@ -54,7 +54,7 @@ fastqc -o outdir /the/folder/where/you/have/your/data/*.fastq(.gz)
 
 MultiQC is a program that creates summaries over all samples for several different types of QC-measures. You can read more about the program [here](http://multiqc.info/). It will automatically look for output files from the supported tools and make a summary of them. You can either go to the folder where you have the Fastqc output or run it with the path to the folder.  
 
-```{sh,eval=FALSE,block.title=TRUE}
+```{sh,eval=FALSE,chunk.title=TRUE}
 
 multiqc /folder/with/FastQC_results/
 
@@ -70,7 +70,7 @@ This should create a folder named `multiqc_data` with some general stats, links 
 
 
 # Code to run all the steps above on data on course data 
-```{sh ,eval=FALSE,block.title=TRUE}
+```{sh ,eval=FALSE,chunk.title=TRUE}
 
 
 ###############################################################################

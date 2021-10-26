@@ -50,7 +50,7 @@ if(loc=="linkoping") {
 }
 ```
 
-```{r,eval=TRUE,echo=FALSE,block.title=NULL}
+```{r,eval=TRUE,echo=FALSE,chunk.title=NULL}
 address <- paste(unlist(strsplit(dfr$venue_address,split=",")),collapse="<br>")
 leaflet(height=450,width="auto") %>%
   addTiles(urlTemplate='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png') %>%
@@ -60,7 +60,7 @@ leaflet(height=450,width="auto") %>%
 
 ## Travel info
 
-```{r,eval=TRUE,echo=FALSE,results="asis",block.title=NULL}
+```{r,eval=TRUE,echo=FALSE,results="asis",chunk.title=NULL}
 cat(dfr$description)
 ```
 
