@@ -125,7 +125,7 @@ jobs:
               sed -E 's/<h1 class="title toc-ignore">[^>.]*<\/h1>//g' $i | \
               sed -E 's/<h3 class="subtitle">[^>.]*<\/h3>//g' | \
               sed -E 's/<h4 class="author">[^>.]*<\/h4>//g' | \
-              sed -E 's/(<a href="[^#][^(https?)&^(www)?].+(html|pdf).*">)([^(a>).]+)(<\/a>)/\2/g' | \
+              sed -E 's/(<a href="[^#][^(https?)&^(www)?].+(html|pdf).*">)([^(a>).]+)(<\/a>)/[link removed]/g' | \
               sed -E 's/(<a href="[^#][-a-zA-Z0-9@:%._\+~#=/?&]+")(>)/\1 target="_blank">/g' > temp
               cat temp > $i
               rm -rf temp
