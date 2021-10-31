@@ -14,14 +14,20 @@ library(yaml)
 upid <- yaml::read_yaml("_site.yml")$uppmax_project
 ```
 
-This workshop is aimed towards biologists, researchers, computer scientists or data analysts planning to run, analyse and interpret an RNA-Seq experiment. Basic knowledge of working on the Unix/Linux command line and in R **is expected**.
+This workshop is aimed towards biologists, researchers, computer scientists or data analysts planning to run, analyse and interpret an RNA-Seq experiment. 
 
-Please follow the instructions below for installations prior to the workshop:
+On this page, you will find information and tasks for you should do to prepare for the course. Please try to do them as soon as possible, so we have time before the course starts to fix installations and other problems you might have.
 
-- Knowledge Requirements
-- Slack
-- Zoom
-- Conda
+Briefly, these entitle to:
+
+- Refresh your memory in basics of Linux and R (requirements for the workshop)
+- Install the latest version of Zoom
+- Install the software and packages required for the course using Conda
+- Download the Data used during the course practicals
+- Download the Code from the course
+- Create your account on Canvas
+
+Feel free to contact us if you encounter any issue. Once you have joined the course in Canvas, you can do so via the Discussions section entitled "installation and pre-course related issues". For any issue related to creating your account on Canvas, please email us at edu.rnaseq [at] nbis.se.
 
 # &nbsp; {.tabset .tabset-fade}
 
@@ -47,28 +53,13 @@ After taking those courses (or any other equivalent course in programming in bas
 
 <br/>
 
-## Slack
-
-<img border="0" src="https://image.flaticon.com/icons/png/512/2111/2111615.png" width="50" height="50">
-
-Make sure that you have [**Slack**](https://slack.com/intl/en-se/downloads) installed because we will use it a lot during the workshop. Communication, troubleshooting and group discussions will happen via **Slack workspace** `NBIS-workshop-RNAseq`. All accepted students will receive an invitation link via email. Please add this workspace to your Slack application on your desktop and do **NOT** use it in the web.
-
-Please join the following channels once you are in the workspace:
-
-- `#software-to-install` for questions about installation and troubleshooting
-- `#general` for general questions about the workshop
-
-Note: Please post your question in the channel and **NOT** directly to the teacher. Any participant that knows the answer to any problem is encouraged to help too.
-
-<br/>
-
 ## Zoom
 
 <img border="0" src="https://simg.nicepng.com/png/small/1008-10087079_zoom-icon-zoom-video-conferencing-logo.png" width="50" height="50">
 
-Make sure that you have the latest [**Zoom (version 5.4.0 or above)**](https://zoom.us/download) installed because we will use it a lot during the workshop for the lecture and groups discussions.
+Make sure that you have the latest [**Zoom**](https://zoom.us/download) installed because we will use it a lot during the workshop for the lecture and groups discussions.
 
-Previous Zoom versions will not work. If you already have Zoom installed, you can also update it by clicking in `Check for Updates ...` button in the main top menu.
+If you already have Zoom installed, you can also update it by clicking in `Check for Updates ...` button in the main top menu.
 
 <br/>
 
@@ -76,7 +67,7 @@ Previous Zoom versions will not work. If you already have Zoom installed, you ca
 
 <img border="0" src="https://hackernoon.com/hn-images/1*rW03Wtue71AKfxnx6XN_iQ.png" width="50" height="50">
 
-During this workshop, you will use conda environments to run the exercises. This is because conda environments allow all users to have the same computing environment, i.e. package versions. This enforces reproducibility for you to run this material without the need to re-install or change your local versions. See and graphical example below:
+During this workshop, you will use conda environments to run the exercises. This is because conda environments allow all users to have the same computing environment, i.e. package versions. This enforces reproducibility for you to run this material without the need to re-install or change your local versions. See a graphical example below:
 
 <img border="0" src="https://nbisweden.github.io/excelerate-scRNAseq/logos/conda_illustration.png" width="600">
 
@@ -97,7 +88,7 @@ You can [read more](https://nbis-reproducible-research.readthedocs.io/en/latest/
 
 ### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Download and install Conda and Mamba {.tabset .tabset-fade}
 
-Start by installing Conda. We suggest installing Miniconda3 and NOT Anaconda. After [installing Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
+Start by installing Conda. We suggest installing Miniconda3 and NOT Anaconda. Follow the instructions for your operating system below (if you need more detailed installation guidelines, you can also check [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
 <br/>
 
@@ -378,3 +369,7 @@ do
   curl -o $i https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/$i
 done
 ```
+
+## Canvas
+
+Canvas is the learning management system (LMS) that we will use for this course (as well as all other NBIS courses). You will receive an email inviting you to create an account on canvas (if you do not already have one) and to join the course there. Please follow instructions on the email and contact us if you encounter any problem (edu.rnaseq [at] nbis.se).
