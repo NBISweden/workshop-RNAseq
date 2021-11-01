@@ -162,7 +162,6 @@ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 5. Inside MobaXterm, type the commands below to install Conda. Follow the instructions for the installation there.
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
-cd ~/Downloads
 sh Miniconda3-latest-Linux-x86_64.sh
 ```
 
@@ -229,7 +228,6 @@ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 9. Inside UBUNTU, open the TERMINAL and type the commands below. Follow the instructions for the installation there.
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
-cd ~/Downloads
 sh Miniconda3-latest-Linux-x86_64.sh
 ```
 
@@ -260,10 +258,10 @@ rstudio &
 To download the `env.yml` file using the command on Terminal:
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
-#Ubuntu
+# Ubuntu/MobaXterm
 wget https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env.yml
 
-#MacOSX
+# MacOSX
 curl -o env.yml https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env.yml
 ```
 
@@ -370,6 +368,12 @@ do
 done
 ```
 
+<br/>
+
+
 ## Canvas
 
 Canvas is the learning management system (LMS) that we will use for this course (as well as all other NBIS courses). You will receive an email inviting you to create an account on canvas (if you do not already have one) and to join the course there. Please follow instructions on the email and contact us if you encounter any problem (edu.rnaseq [at] nbis.se).
+
+<br/>
+
