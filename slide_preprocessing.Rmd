@@ -1,7 +1,7 @@
 ---
 title: "Data Preprocessing"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Roy Francis</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
+author: "`r paste0('<b>Roy Francis and Nima Rafati</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
 institute: NBIS, SciLifeLab
 keywords: bioinformatics, course, scilifelab, nbis
 output:
@@ -183,7 +183,7 @@ Quantile normalisation, Upper quartile normalisation and Median normalisation al
 ![](data/normalization_methods_composition.png)
 
 ```{r,echo=FALSE}
-dfr <- data.frame(A=c(10,25,15,100),B=c(20,25,4,2))
+dfr <- data.frame(A=c(20,25,15,100),B=c(6,6,4,2))
 rownames(dfr) <- c("x","y","z","de")
 dfr$A_tc <- round(dfr$A/sum(dfr$A),2)
 dfr$B_tc <- round(dfr$B/sum(dfr$B),2)
@@ -243,7 +243,7 @@ name: norm-3a
 - Methods include TC, RPKM, FPKM, TPM
 - RPKM, FPKM and TPM control for sequencing depth and gene length
 - Total number of RPKM/FPKM normalized counts for each sample will be different, therefore, you cannot compare the normalized counts for each gene equally between samples.
-- TPM enables better comparison between samples because total per sample sums to equal value
+- TPM is proportional to RPKM and enables better comparison between samples because total per sample sums to equal value
 
 ```{r,echo=FALSE}
 dfr <- data.frame(A=c(20,25,4),B=c(6,6,15),len=c(2*10^4,4*10^4,1*10^4))
@@ -322,6 +322,18 @@ dfr
 ]
 
 ???
+
+
+**Quartile (Q)**
+In this method expression values are scaled in a way to keep the order based on expression values in each sample and expression values are normalized based on mean value of top genes. Then after assigning top genes to calculated mean then this procedure will be repeated for second top genes. It is called Quantile Normalization because the normalized datasets have identical quantile
+**Upper Quartile (UQ)**
+In Upper Quartile normalization, the expressino values are divded by 75th quantile of the counts for each samples
+**Trimmed Mean of M-values (TMM)**
+The assumption of this method is that, there are many genes which are not deferentially expressed. By considering one of the sample as reference TMM is calculated. First the most expressed genes and the genes with the largest log ratios is excluded and then TMM, as the weighted mean of log ratios between reference and other samples, are calculated. TMM values will be used as correction of the library size and should be close to **one**. TMM is implemented in **edgeR**.   
+**TMM with singleton pairing (TMMwsp)**
+It is similar to TMM which recommended for data with a lot of unexpressed genes (zero values).  In TMM, zero counts are ignored while in TMMwsp method the positive counts from such genes are reused to increase the number of features by which the libraries are compared.  
+**Relative Log Expression (RLE)**
+Similar to TMM, in RLE the hypothesis is that majority of the genes are not DE. The scaling factor in RLE is calculated as the median of the ratio of its expression level (read count) over its geometric mean across all samples. This method is implemented in **DESeq** and **DESeq2**.  
 
 **MRN**
 
@@ -416,7 +428,7 @@ count: false
 
 ```{r,include=FALSE,eval=FALSE}
 # manually run this to render this document to HTML
-rmarkdown::render("slide_preprocessing.Rmd")
+#rmarkdown::render("slide_preprocessing.Rmd","xaringan::moon_reader")
 # manually run this to convert HTML to PDF
 #pagedown::chrome_print("presentation_dge.html",output="presentation_dge.pdf")
 ```
