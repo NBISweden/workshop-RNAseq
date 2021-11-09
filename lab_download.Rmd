@@ -24,6 +24,7 @@ You can also go directly to their FTP site [ftp://ftp.ensembl.org/pub/release-96
 In this section, we will download annotation data using R package **biomaRt**. Annotations refer to known features (verified experimentally or predicted) in the genome. Usually, our features of interest in RNA-Seq are genes, their IDs, position in the genome, gene biotype (protein coding, non-coding etc) etc. We will also use the **dplyr** package to pipe data through functions.
 
 ```{r}
+library(biomaRt)
 listMarts()
 ```
 
