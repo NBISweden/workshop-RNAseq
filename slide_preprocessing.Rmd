@@ -262,6 +262,12 @@ rownames(cs) <- "sum"
 rbind(dfr,cs)
 ```
 
+rpm = cpm.  
+
+.citation[
+.cite[<i class="fas fa-link"></i> Evans, Ciaran, Johanna Hardin, and Daniel M. Stoebel. "Selecting between-sample RNA-Seq normalization methods from the perspective of their assumptions." [Briefings in bioinformatics (2017)](https://arxiv.org/abs/1609.00959)]  
+]
+
 ???
 
 Normalisation strategies can be roughly grouped into four approaches: Normalisation by library size, normalisation by distribution, normalisation by testing and normalisation using controls.
@@ -304,7 +310,7 @@ name: norm-3b
 
 
 ```{r,echo=FALSE}
-dfr <- data.frame(A=c(20,25,4),B=c(6,6,15),len=c(2*10^4,4*10^4,1*10^4))
+dfr <- data.frame(A=c(20,25,4),B=c(6,6,15),len=c(2*10^3,4*10^3,1*10^3))
 rownames(dfr) <- c("x","y","z")
 
 dfr$ref <- round(sqrt(dfr$A*dfr$B),2)
@@ -398,7 +404,7 @@ name: norm-5
 **Recommendations**
 
 - Most tools use a mix of many different normalisations
-- For DGE using DGE R packages (DESeq2, edgeR, Limma etc), use raw counts
+- For DGE using DGE R packages (DESeq2, edgeR, Limma etc), use **raw counts**
 - For visualisation (PCA, clustering, heatmaps etc), use VST or RLOG
 - For own analysis with gene length correction, use TPM (maybe geTMM?)
 - Custom solutions: spike-ins/house-keeping genes
