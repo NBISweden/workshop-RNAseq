@@ -333,7 +333,7 @@ dfr
 **Quartile (Q)**
 In this method expression values are scaled in a way to keep the order based on expression values in each sample and expression values are normalized based on mean value of top genes. Then after assigning top genes to calculated mean then this procedure will be repeated for second top genes. It is called Quantile Normalization because the normalized datasets have identical quantile
 **Upper Quartile (UQ)**
-In Upper Quartile normalization, the expressino values are divded by 75th quantile of the counts for each samples
+In Upper Quartile normalization, the expression values are divided by 75th quantile of the counts for each samples
 **Trimmed Mean of M-values (TMM)**
 The assumption of this method is that, there are many genes which are not deferentially expressed. By considering one of the sample as reference TMM is calculated. First the most expressed genes and the genes with the largest log ratios is excluded and then TMM, as the weighted mean of log ratios between reference and other samples, are calculated. TMM values will be used as correction of the library size and should be close to **one**. TMM is implemented in **edgeR**.   
 **TMM with singleton pairing (TMMwsp)**
