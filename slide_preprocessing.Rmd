@@ -303,7 +303,7 @@ name: norm-3b
 - Assumes number of over and under-expressed genes are roughly same across conditions
 - Corrects for compositional bias
 - Methods include Q, UQ, M, RLE, TMM, MRN
-- `edgeR::calcNormFactors()` implements TMM, TMMwzp, RLE & UQ
+- `edgeR::calcNormFactors()` implements TMM, TMMwsp, RLE & UQ
 - `DESeq2::estimateSizeFactors()` implements median ratio method (RLE)
 - Does not correct for gene length
 - **[geTMM](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2246-7)** is gene length corrected TMM
