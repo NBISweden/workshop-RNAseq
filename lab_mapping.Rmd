@@ -6,7 +6,7 @@ subtitle: "Workshop on RNA-Seq"
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-In this tutorial we will use a splice aware aligner HISAT2 that is the best solution when using a laptop or a personal computer with less than 16GB. If you have a computer or access to computer cluster it is worthwhile to consider using STAR and compare the results.
+In this tutorial we will use a splice aware aligner HISAT2 that is the best solution when using a laptop or a personal computer with less than 16GB. If you have a computer with memory >32GB or access to computer cluster it is worthwhile to consider using STAR and compare the results.
 
 
 # HISAT2
@@ -22,7 +22,7 @@ A pre-built mouse genome index for HISAT2 can be found in the  `references/hisat
 Here, you will map the reads to the mouse reference genome using the RNA-seq aligner **HISAT2**.
 
 
-There are many features that can be tweaked using HISAT2. For more information on all flags that can be used go [here](https://ccb.jhu.edu/software/hisat2/manual.shtml).
+There are many features that can be tweaked using HISAT2. For more information on all flags that can be used go [here](https://daehwankimlab.github.io/hisat2/manual/).
 
 Read below for the flags we use for this exercise. Remember to change filenames accordingly so that you can run your program properly and know which files you have used.
 
@@ -67,17 +67,17 @@ If everything worked, HISAT2 should report some statistics about how many reads 
 
 <i class="fas fa-comments"></i> **Try to answer the following:**
 
-* How many RNA-seq read pairs were provided as input to HISAT2?
-* How many of those read pairs were mapped by HISAT2?
+* How many RNA-seq reads were provided as input to HISAT2?
+* How many of those reads were mapped by HISAT2?
 * How many reads were uniquely mapped, i.e. mapped to one genomic location?
 * In general, do the alignments seem to be good? I.e. do they cover the entire reads and contain few mismatches?
 
-To answer these questions, you should look at the input to and output from HISAT2. You may also need to consult the [HISAT2 manual](https://ccb.jhu.edu/software/hisat2/manual.shtml), [information about the FASTQ format](https://en.wikipedia.org/wiki/FASTQ_format) and the [SAM format specification](https://github.com/samtools/hts-specs).
+To answer these questions, you should look at the input to and output from HISAT2. You may also need to consult the [HISAT2 manual](https://daehwankimlab.github.io/hisat2/manual/), [information about the FASTQ format](https://en.wikipedia.org/wiki/FASTQ_format) and the [SAM format specification](https://github.com/samtools/hts-specs).
 
 
 # Convert SAM to BAM
 
-If you were able to run HISAT2 and STAR successfully, this should have produced files with mapped reads in SAM format. These files need to be converted to *sorted* and *indexed* BAM files for efficient downstream analysis.
+If you were able to run HISAT2, this should have produced files with mapped reads in SAM format. These files need to be converted to *sorted* and *indexed* BAM files for efficient downstream analysis.
 
 You should try to give the BAM files representable names, in order to make it easier to manage your files. A good naming scheme for BAM files is to use names that indicate what you mapped and how. As an example, if you mapped sample 12 using HISAT2 you could create a file named `sample12.mmusculus.HISAT2.bam`.
 
