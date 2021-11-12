@@ -262,7 +262,7 @@ To download the `env.yml` file using the command on Terminal:
 wget https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env.yml
 
 # MacOSX
-curl -o env.yml https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env.yml
+curl -o env.yml https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/envMacOSX.yml
 ```
 
 After this, you should have a file named `env.yml` in your directory (it does not matter where). Next, type:
