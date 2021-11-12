@@ -72,7 +72,7 @@ If everything worked, HISAT2 should report some statistics about how many reads 
 * How many reads were uniquely mapped, i.e. mapped to one genomic location?
 * In general, do the alignments seem to be good? I.e. do they cover the entire reads and contain few mismatches?
 
-To answer these questions, you should look at the input to and output from HISAT2. You may also need to consult the [HISAT2 manual](https://daehwankimlab.github.io/hisat2/manual/), [information about the FASTQ format](https://en.wikipedia.org/wiki/FASTQ_format) and the [SAM format specification](https://github.com/samtools/hts-specs).
+To answer these questions, you should look at the input and output from HISAT2. You may also need to consult the [HISAT2 manual](https://daehwankimlab.github.io/hisat2/manual/), [information about the FASTQ format](https://en.wikipedia.org/wiki/FASTQ_format) and the [SAM format specification](https://github.com/samtools/hts-specs).
 
 
 # Convert SAM to BAM
