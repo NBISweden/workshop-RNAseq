@@ -1,4 +1,4 @@
-name: RNAseq2020_clean
+name: nbis-workshop-rnaseq
 channels:
   - bioconda
   - conda-forge
