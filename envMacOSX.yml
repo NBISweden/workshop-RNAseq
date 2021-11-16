@@ -24,7 +24,7 @@ dependencies:
   - r-bookdown=0.21=r40h142f84f_0
   - r-captioner=2.2.3=r40h6115d3f_1004
   - r-devtools=2.3.2=r40h6115d3f_0
-  - r-dplyr=1.0.2=r40h710217c_0
+  - r-dplyr=1.0.4
   - r-enrichr=2.1=r40h6115d3f_1
   - r-fastqcr=0.1.2=r40h6115d3f_1
   - r-formattable=0.2.0.1=r40_1002
