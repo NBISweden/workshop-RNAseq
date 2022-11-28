@@ -246,7 +246,7 @@ name: norm-3a
 - TPM is proportional to RPKM and enables better comparison between samples because total per sample sums to equal value
 
 ```{r,echo=FALSE}
-dfr <- data.frame(A=c(20,25,4),B=c(6,6,15),len=c(2*10^4,4*10^4,1*10^4))
+dfr <- data.frame(A=c(20,25,4),B=c(6,6,15),len=c(2*10^3,4*10^3,1*10^3))
 rownames(dfr) <- c("x","y","z")
 dfr$A_rpm <- round(dfr$A/(sum(dfr$A)/(10^6)))
 dfr$B_rpm <- round(dfr$B/(sum(dfr$B)/(10^6)))
@@ -261,6 +261,12 @@ cs <- as.data.frame(t(as.data.frame(colSums(dfr))))
 rownames(cs) <- "sum"
 rbind(dfr,cs)
 ```
+
+rpm = cpm.  
+
+.citation[
+.cite[<i class="fas fa-link"></i> Evans, Ciaran, Johanna Hardin, and Daniel M. Stoebel. "Selecting between-sample RNA-Seq normalization methods from the perspective of their assumptions." [Briefings in bioinformatics (2017)](https://arxiv.org/abs/1609.00959)]  
+]
 
 ???
 
@@ -297,14 +303,14 @@ name: norm-3b
 - Assumes number of over and under-expressed genes are roughly same across conditions
 - Corrects for compositional bias
 - Methods include Q, UQ, M, RLE, TMM, MRN
-- `edgeR::calcNormFactors()` implements TMM, TMMwzp, RLE & UQ
-- `DESeq2::estimateSizeFactors()` implements median ratio method (RLE)
+- `edgeR::calcNormFactors()` implements TMM, TMMwsp, RLE & UQ
+- `DESeq2::estimateSizeFactors()` implements relative log expression (RLE)
 - Does not correct for gene length
 - **[geTMM](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2246-7)** is gene length corrected TMM
 
 
 ```{r,echo=FALSE}
-dfr <- data.frame(A=c(20,25,4),B=c(6,6,15),len=c(2*10^4,4*10^4,1*10^4))
+dfr <- data.frame(A=c(20,25,4),B=c(6,6,15),len=c(2*10^3,4*10^3,1*10^3))
 rownames(dfr) <- c("x","y","z")
 
 dfr$ref <- round(sqrt(dfr$A*dfr$B),2)
@@ -327,7 +333,7 @@ dfr
 **Quartile (Q)**
 In this method expression values are scaled in a way to keep the order based on expression values in each sample and expression values are normalized based on mean value of top genes. Then after assigning top genes to calculated mean then this procedure will be repeated for second top genes. It is called Quantile Normalization because the normalized datasets have identical quantile
 **Upper Quartile (UQ)**
-In Upper Quartile normalization, the expressino values are divded by 75th quantile of the counts for each samples
+In Upper Quartile normalization, the expression values are divided by 75th quantile of the counts for each samples
 **Trimmed Mean of M-values (TMM)**
 The assumption of this method is that, there are many genes which are not deferentially expressed. By considering one of the sample as reference TMM is calculated. First the most expressed genes and the genes with the largest log ratios is excluded and then TMM, as the weighted mean of log ratios between reference and other samples, are calculated. TMM values will be used as correction of the library size and should be close to **one**. TMM is implemented in **edgeR**.   
 **TMM with singleton pairing (TMMwsp)**
@@ -398,7 +404,7 @@ name: norm-5
 **Recommendations**
 
 - Most tools use a mix of many different normalisations
-- For DGE using DGE R packages (DESeq2, edgeR, Limma etc), use raw counts
+- For DGE using DGE R packages (DESeq2, edgeR, Limma etc), use **raw counts**
 - For visualisation (PCA, clustering, heatmaps etc), use VST or RLOG
 - For own analysis with gene length correction, use TPM (maybe geTMM?)
 - Custom solutions: spike-ins/house-keeping genes

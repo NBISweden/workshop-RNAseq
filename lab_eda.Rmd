@@ -116,7 +116,7 @@ vars <- apply(data,1,var)
 
 #Sort and select the top 500 highly variable genes from the data
 vars <- sort(vars,decreasing=T)
-top_var <- names(vars)[1:100]
+top_var <- names(vars)[1:500]
 boxplot(t(data[top_var[1:15],]),ylim=c(0,12),las=2,col="grey", main="data (top var genes)",cex=.2)
 ```
 

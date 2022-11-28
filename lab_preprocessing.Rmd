@@ -123,8 +123,8 @@ On the boxplot, the median values are zero across all samples. This means that h
 We can check if any samples need to be discarded based on the number of genes detected. We create a barplot of genes detected across samples.
 
 ```{r}
-{barplot(colSums(cr>3),ylab="Number of detected genes",las=2)
-abline(h=median(colSums(cr>3)))}
+barplot(colSums(cr>3),ylab="Number of detected genes",las=2)
+abline(h=median(colSums(cr>3)))
 ```
 
 On average, about `r sprintf("%0.5f",mean(colSums(cr>3)))` genes are detected. All samples are more or less close to the average. None of the samples look bad enough to be removed.
@@ -144,7 +144,7 @@ This is hard to see. It's perhaps easier to plot a histogram.
 hist(rowSums(cr>3))
 ```
 
-There are a lot of genes that are not expressed (ie; zero on x-axis) in any sample. These can be removed completely. We are mostly interested in the peak on the right. These are genes that are expressed in all samples. We don't want to be too restrictive, so we will choose to keep genes that are expressed in atleast 3 samples since our groups have 3 samples each.
+There are a lot of genes that are not expressed (ie; zero on x-axis) in any sample. These can be removed completely. We are mostly interested in the peak on the right. These are genes that are expressed in all samples. We don't want to be too stringent, so we will choose to keep genes that are expressed in at least 3 samples since our groups have 3 samples each.
 
 Below, rather than using zero as the minimum value for detection, we used minimum of 5 reads in at least 3 samples (since each of test groups consist of 3 samples).
 
@@ -154,7 +154,7 @@ keep_genes <- rowSums( cr > 5 ) >= 3
 cf <- cr[keep_genes,]
 ```
 
-<i class="fas fa-comments"></i> How would the results change if we used total number of samples (ie; 12 for this dataset) in the code above? Are there any drawbacks to doing that?
+<i class="fas fa-comments"></i> How would the results change if we used total number of samples (ie; 6 for this dataset) in the code above? Are there any drawbacks to doing that?
 
 Distribution of the filtered counts looks like below. Compare this to the previous boxplot above.
 
@@ -170,7 +170,7 @@ hist(rowSums(cf>3))
 
 The missingness in the data set is reduced. The filtering process has removed `r nrow(cr)-nrow(cf)` genes with low counts.
 
-Since no samples were discarded, the metadata file will remain the same. And we can check that the labels are the same order in counts and metadata.
+Since no samples were discarded, the metadata file will remain the same. And we can check that the labels are in the same order in counts and metadata.
 
 ```{r}
 all.equal(colnames(cf),rownames(mr))
@@ -184,7 +184,7 @@ write.csv(cf,"./data/counts_filtered.csv",quote=F)
 
 # Normalisation
 
-The raw count data needs to be corrected for various biases before statistical inference. If the data set is to be used in an R package for differential gene expression such as **DESeq2**, **edgeR** or **Limma**, you must provide the **raw data** directly. This is because, these packages handle the correction and transformation internally. In addition, these packages do not control for gene length. Therefore, for custom analyses and gene-to-gene comparison, the raw data needs to be normalised.
+The raw count data needs to be corrected for various biases before statistical inference. If the dataset is to be used in an R package for differential gene expression such as **DESeq2**, **edgeR** or **Limma**, you must provide the **raw data** directly. This is because, these packages handle the correction and transformation internally. In addition, these packages do not control for gene length. Therefore, for custom analyses and gene-to-gene comparison, the raw data needs to be normalised.
 
 ## CPM/TPM
 
@@ -310,10 +310,10 @@ Finally, we can compare all of the various transformations in a single plot.
 
 ```{r,fig.height=3.5,fig.width=9}
 rafalib::mypar(1,4,mar=c(6,2.5,2.5,1) )
-boxplot(as.matrix(cc),ylab=expression('Log'[2]~'Read counts'),las=2,main="CPM")
-boxplot(as.matrix(ct),ylab=expression('Log'[2]~'Read counts'),las=2,main="TPM")
-boxplot(as.matrix(cd),ylab=expression('Log'[2]~'Read counts'),las=2,main="DESeq2")
-boxplot(as.matrix(cv),ylab=expression('Log'[2]~'Read counts'),las=2,main="VST")
+boxplot(as.matrix(cc),ylab=expression('Log'[2]~'Read counts'),las=2,main="CPM", ylim = c(0,16))
+boxplot(as.matrix(ct),ylab=expression('Log'[2]~'Read counts'),las=2,main="TPM", ylim = c(0,16))
+boxplot(as.matrix(cd),ylab=expression('Log'[2]~'Read counts'),las=2,main="DESeq2", ylim = c(0,16))
+boxplot(as.matrix(cv),ylab=expression('Log'[2]~'Read counts'),las=2,main="VST", ylim = c(0,16))
 rafalib::mypar(mar=c(6,2.5,2.5,1))
 ```
 
