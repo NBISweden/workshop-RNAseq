@@ -1,11 +1,11 @@
 name: Analysis of RNA-Seq data
 # output directory used on gh-pages branch. format: YYMM
-output_dir: 2111
+output_dir: 2203
 # used site-wide wherever uppmax project ids are used
 uppmax_project: g2020006
 uppmax_res_1: g2020006_1
 # location options are linkoping, lund, umea, uppsala or online
-location: online
+location: uppsala
 assistants:
 favicon: assets/favicon.png
 exclude: ["docs","README.md","schedule.csv","LICENSE","LICENSE.md","scripts","tmprepo"]
