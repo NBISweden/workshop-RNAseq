@@ -13,10 +13,10 @@ jobs:
     runs-on: ${{ matrix.config.os }}
     steps:
       - uses: actions/checkout@v1
-      - uses: r-lib/actions/setup-r@v2
+      - uses: r-lib/actions/setup-r@old
         with:
           r-version: ${{ matrix.config.r }}
-      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-pandoc@old
         with:
           r-version: ${{ matrix.config.r }}
       - name: Install linux dependencies
