@@ -1,6 +1,6 @@
 name: Analysis of RNA-Seq data
 # output directory used on gh-pages branch. format: YYMM
-output_dir: 2203
+output_dir: 2303
 # used site-wide wherever uppmax project ids are used
 uppmax_project: g2020006
 uppmax_res_1: g2020006_1
