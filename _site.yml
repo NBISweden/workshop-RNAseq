@@ -80,6 +80,7 @@ packages:
   - rmarkdown
   - xaringan
   - yaml
+  - locfit
  packages_bioc_repo:
  packages_github_repo:
   - rstudio/fontawesome
