@@ -6,7 +6,7 @@ uppmax_project: g2020006
 uppmax_res_1: g2020006_1
 # location options are linkoping, lund, umea, uppsala or online
 location: uppsala
-assistants: Lucile Soler
+assistants: 
 favicon: assets/favicon.png
 exclude: ["docs","README.md","schedule.csv","LICENSE","LICENSE.md","scripts","tmprepo"]
 navbar:

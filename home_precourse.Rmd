@@ -21,13 +21,12 @@ On this page, you will find information and tasks for you should do to prepare f
 Briefly, these entitle to:
 
 - Refresh your memory in basics of Linux and R (requirements for the workshop)
-- Install the latest version of Zoom
 - Install the software and packages required for the course using Conda
 - Download the Data used during the course practicals
 - Download the Code from the course
 - Create your account on Canvas
 
-Feel free to contact us if you encounter any issue. Once you have joined the course in Canvas, you can do so via the Discussions section entitled "installation and pre-course related issues". For any issue related to creating your account on Canvas, please email us at edu.rnaseq [at] nbis.se.
+Feel free to contact us if you encounter any issue. Once you have joined the course in Canvas, you can do so via the Discussions section entitled "installation and pre-course related issues". For any issue related to creating your account on Canvas, please email us at edu.rnaseq [at] nbis.se. We have also created an FAQ with solutions to issues from previous course participants (access it by clicking "Next" as the bottom of this page), please have a look as you might encounter the same.
 
 # &nbsp; {.tabset .tabset-fade}
 
@@ -50,16 +49,6 @@ After taking those courses (or any other equivalent course in programming in bas
 - using Rmarkdown for reports in R
 - editing and writing files in the command line and in R
 - and much more ...
-
-<br/>
-
-## Zoom
-
-<img border="0" src="https://simg.nicepng.com/png/small/1008-10087079_zoom-icon-zoom-video-conferencing-logo.png" width="50" height="50">
-
-Make sure that you have the latest [**Zoom**](https://zoom.us/download) installed because we will use it a lot during the workshop for the lecture and groups discussions.
-
-If you already have Zoom installed, you can also update it by clicking in `Check for Updates ...` button in the main top menu.
 
 <br/>
 
@@ -345,8 +334,6 @@ Do not rename nor place those folder elsewhere, since they will be used as is. Y
 ls ~/RNAseq/
 ```
 
-You now have 3 main folders there with data.
-
 <br/>
 
 
@@ -362,7 +349,7 @@ But it is much easier to do it from the command line:
 mkdir ~/RNAseq   #Run this line if you have not downloaded the data for the course yet
 cd ~/RNAseq
 
-for i in lab_annotation.Rmd lab_dge.Rmd lab_download.Rmd lab_eda.Rmd lab_functional.Rmd lab_preprocessing.Rmd lab_geoquery.Rmd
+for i in lab_dge.Rmd lab_download.Rmd lab_eda.Rmd lab_functional.Rmd lab_preprocessing.Rmd lab_geoquery.Rmd lab_kallisto.Rmd
 do
   curl -o $i https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/$i
 done
