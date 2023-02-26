@@ -220,21 +220,7 @@ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 sh Miniconda3-latest-Linux-x86_64.sh
 ```
 
-10. Close Terminal to apply the CONDA updates. Then you can create a course folder, download the environment file and create the environment:
-
-```{sh,eval=FALSE,chunk.title=TRUE}
-mkdir ~/Desktop/course
-cd ~/Desktop/course
-wget https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env.yml
-conda env create -f env.yml
-```
-
-11. You can then follow the instructions above to activate/deactivate the environment.
-
-```{sh,eval=FALSE,chunk.title=TRUE}
-conda activate nbis-workshop-rnaseq
-rstudio &
-```
+10. Close Terminal to apply the CONDA updates. 
 
 </div>
 
@@ -244,20 +230,24 @@ rstudio &
 
 ### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Create a conda environment from file
 
-To download the `env.yml` file using the command on Terminal:
+<br/>
+
+#### **On Mac OS X**
+
+<div class="boxy boxy-lightbulb boxy-grey">
+
+<img border="0" src="https://logos-download.com/wp-content/uploads/2020/06/Apple_Mac_OS_Logo-700x670.png" width="50" height="50">
+
+To download the environment definition file using the command on Terminal:
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
-# Ubuntu/MobaXterm
-wget https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env.yml
-
-# MacOSX
-curl -o env.yml https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/envMacOSX.yml
+curl -o env_MacOSX.yml https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env_MacOSX.yml
 ```
 
-After this, you should have a file named `env.yml` in your directory (it does not matter where). Next, type:
+After this, you should have a file named `env_MacOSX.yml` in your directory (it does not matter where). Next, type:
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
-mamba env create -f env.yml
+mamba env create -f env_MacOSX.yml
 ```
 
 Several messages will show up on your screen and will tell you about the installation process. This may take a few minutes depending on how many packages are to be installed.
@@ -275,13 +265,108 @@ Several messages will show up on your screen and will tell you about the install
 ##Executing transaction: done
 ```
 
+</div>
+
+<br/>
+
+#### **On Ubuntu**
+
+<div class="boxy boxy-lightbulb boxy-grey">
+
+<img border="0" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR2rSSpKVBohI4AXgBaUjFVYqO73ou2l9AOXw&usqp=CAU" width="50" height="50">
+
+To download the environment definition file using the command on Terminal:
+
+```{sh,eval=FALSE,chunk.title=TRUE}
+curl -o env_linuxOrMobaXTerm.yml https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env_linuxOrMobaXTerm.yml
+```
+
+After this, you should have a file named `env_linuxOrMobaXTerm.yml` in your directory (it does not matter where). Next, type:
+
+```{sh,eval=FALSE,chunk.title=TRUE}
+mamba env create -f env_linuxOrMobaXTerm.yml
+```
+
+Several messages will show up on your screen and will tell you about the installation process. This may take a few minutes depending on how many packages are to be installed.
+
+```{sh,eval=FALSE,chunk.title=TRUE}
+##Collecting package metadata: done
+##Solving environment: done
+##
+##Downloading and Extracting Packages
+##libcblas-3.8.0       | 6 KB      | ############################################################################# | 100%
+##liblapack-3.8.0      | 6 KB      | ############################################################################# | 100%
+##...
+##Preparing transaction: done
+##Verifying transaction: done
+##Executing transaction: done
+```
+
+</div>
+
+<br/>
+
+#### **On Windows 10**
+
+<div class="boxy boxy-lightbulb boxy-grey">
+
+<img border="0" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR2rSSpKVBohI4AXgBaUjFVYqO73ou2l9AOXw&usqp=CAU" width="50" height="50">
+
+To download the environment definition file type the command inside MobaXTerm on Terminal:
+
+```{sh,eval=FALSE,chunk.title=TRUE}
+curl -o env_linuxOrMobaXTerm.yml https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env_linuxOrMobaXTerm.yml
+```
+
+After this, you should have a file named `env_linuxOrMobaXTerm.yml` in your directory (it does not matter where). Next, type:
+
+```{sh,eval=FALSE,chunk.title=TRUE}
+mamba env create -f env_linuxOrMobaXTerm.yml
+```
+
+Several messages will show up on your screen and will tell you about the installation process. This may take a few minutes depending on how many packages are to be installed.
+
+```{sh,eval=FALSE,chunk.title=TRUE}
+##Collecting package metadata: done
+##Solving environment: done
+##
+##Downloading and Extracting Packages
+##libcblas-3.8.0       | 6 KB      | ############################################################################# | 100%
+##liblapack-3.8.0      | 6 KB      | ############################################################################# | 100%
+##...
+##Preparing transaction: done
+##Verifying transaction: done
+##Executing transaction: done
+```
+
+</div>
+
+<br/>
+
+#### VirtualBox
+
+<div class="boxy boxy-lightbulb boxy-grey">
+
+<img border="0" src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Virtualbox_logo.png" width="50" height="50">
+
+You can create a course folder, download the environment file and create the environment as follows:
+
+```{sh,eval=FALSE,chunk.title=TRUE}
+mkdir ~/Desktop/course
+cd ~/Desktop/course
+wget https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/env_linuxOrMobaXTerm.yml
+conda env create -f env_linuxOrMobaXTerm.yml
+```
+
+</div>
+
 <br/>
 
 ***
 
 ### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Activate the environment
 
-Once the environment is created, we need to activate it in order to use the softwares and packages inside it. To activate an environment type:
+Once the environment is created, we need to activate it in order to use the software and packages inside it. To activate an environment type:
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
 conda activate nbis-workshop-rnaseq
