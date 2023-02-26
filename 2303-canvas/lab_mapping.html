@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Mapping</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link id="font-awesome-1-attachment" rel="attachment" href="site_libs/font-awesome-5.1.0/fonts/fontawesome-webfont.ttf"/>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+#TOC {
+  display: none !important;
+}
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+
+
+
+</div>
+
+
+<!-- rmd lab header -->
+<p><br></p>
+<p>In this tutorial we will use a splice aware aligner HISAT2 that is the best solution when using a laptop or a personal computer with less than 16GB. If you have a computer with memory &gt;32GB or access to computer cluster it is worthwhile to consider using STAR and compare the results.</p>
+<div id="hisat2" class="section level1">
+<h1><span class="header-section-number">1</span> HISAT2</h1>
+<div id="data" class="section level2">
+<h2><span class="header-section-number">1.1</span> Data</h2>
+<p>All FASTQ files that you will need for this exercise can be found in the <code>fastq</code> subfolder of your data folder.</p>
+<p>A pre-built mouse genome index for HISAT2 can be found in the <code>references/hisat2_build</code> subfolder of your data folder.</p>
+</div>
+<div id="mapping" class="section level2">
+<h2><span class="header-section-number">1.2</span> Mapping</h2>
+<p>Here, you will map the reads to the mouse reference genome using the RNA-seq aligner <strong>HISAT2</strong>.</p>
+<p>There are many features that can be tweaked using HISAT2. For more information on all flags that can be used go <a href="https://daehwankimlab.github.io/hisat2/manual/" target="_blank">here</a>.</p>
+<p>Read below for the flags we use for this exercise. Remember to change filenames accordingly so that you can run your program properly and know which files you have used.</p>
+<p>Now you can map the reads from one of the samples (or several; it’s up to you which ones) using a command such as the one below.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>mkdir outDir
+
+# for paired end reads
+hisat2 -p N -x path/to/index/fileName \
+  -1 path/to/reads/sample_1.fastq \
+  -2 path/to/reads/sample_2.fastq \
+  -S outDir/hisat2.sam \
+  --summary-file outDir/hisat2_summary.txt
+
+
+# for single end reads
+hisat2 -p N  -x path/to/index/fileName \
+  -U path/to/reads/sample.fastq \
+  -S outDir/hisat2.sam \
+  --summary-file outDir/hisat2_summary.txt
+</code></pre>
+</div>
+<p>The flags used are:</p>
+<ul>
+<li><code>-p N</code> specifies the number of threads that will be used by the program</li>
+<li><code>-x /path/to/index/fileName</code> specifies the path to the pre-built genome index. Note that the index consists of multiple files ending in <code>.ht2</code>, and only the shared part of the filename should be indicated (e.g. <code>genome</code> if the files are called <code>genome.1.ht2</code>, <code>genome.2.ht2</code>, etc).</li>
+<li><code>-1 /path/to/reads/sample_1.fastq</code> is where you should list the first-read FASTQ file of paired end reads that you wish to map</li>
+<li><code>-2 /path/to/reads/sample_2.fastq</code> is where you should list the second-read FASTQ file of paired end reads that you wish to map</li>
+<li><code>-U /path/to/reads/sample.fastq</code> is where you should list the single end read FASTQ file that you wish to map</li>
+<li><code>-S outDir/hisat2.sam</code> is the name of the result file that will be created</li>
+<li><code>--summary-file outDir/hisat2_summary.txt</code> is the name of a file for summary information about the alignments</li>
+</ul>
+<p>This should run fairly quickly and create the files you specified with <code>-S</code> and <code>--summary-file</code>.</p>
+<p>If everything worked, HISAT2 should report some statistics about how many reads were mapped, on your terminal and in the summary file.</p>
+<p><i class="fas fa-comments"></i> <strong>Try to answer the following:</strong></p>
+<ul>
+<li>How many RNA-seq reads were provided as input to HISAT2?</li>
+<li>How many of those reads were mapped by HISAT2?</li>
+<li>How many reads were uniquely mapped, i.e. mapped to one genomic location?</li>
+<li>In general, do the alignments seem to be good? I.e. do they cover the entire reads and contain few mismatches?</li>
+</ul>
+<p>To answer these questions, you should look at the input and output from HISAT2. You may also need to consult the <a href="https://daehwankimlab.github.io/hisat2/manual/" target="_blank">HISAT2 manual</a>, <a href="https://en.wikipedia.org/wiki/FASTQ_format" target="_blank">information about the FASTQ format</a> and the <a href="https://github.com/samtools/hts-specs" target="_blank">SAM format specification</a>.</p>
+</div>
+</div>
+<div id="convert-sam-to-bam" class="section level1">
+<h1><span class="header-section-number">2</span> Convert SAM to BAM</h1>
+<p>If you were able to run HISAT2, this should have produced files with mapped reads in SAM format. These files need to be converted to <em>sorted</em> and <em>indexed</em> BAM files for efficient downstream analysis.</p>
+<p>You should try to give the BAM files representable names, in order to make it easier to manage your files. A good naming scheme for BAM files is to use names that indicate what you mapped and how. As an example, if you mapped sample 12 using HISAT2 you could create a file named <code>sample12.mmusculus.HISAT2.bam</code>.</p>
+<p>The most commonly used tool for converting from SAM to BAM is <a href="http://www.htslib.org/doc/samtools.html" target="_blank">Samtools</a> (follow the link for more information about Samtools).</p>
+<p>The Samtools command to convert from SAM to a sorted BAM file is:</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>samtools sort -o output.bam input.sam</code></pre>
+</div>
+<p>Remember to use an appropriate filename instead of <code>output.bam</code>! Next, we need to index the BAM file.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>samtools index properName.bam</code></pre>
+</div>
+<p>The indexing step should create an index file with the suffix <code>.bai</code>. This sorted, indexed BAM file can be viewed in the Integrative Genomics Viewer (IGV).</p>
+<p>You can also get a report on your mapped reads using the samtools command <em>flagstat</em>:</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>samtools flagstat properName.sorted.bam &gt; properName.sorted.flagstat</code></pre>
+</div>
+<p><i class="fas fa-lightbulb"></i> Since the BAM file contains all the information from the original SAM file, remember to remove the SAM file once you are finished, in order to free up disk space.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>rm input.sam</code></pre>
+</div>
+<hr />
+</div>
+<div id="code-to-run-all-the-steps-above-on-data-on-course-data" class="section level1">
+<h1><span class="header-section-number">3</span> Code to run all the steps above on data on course data</h1>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>
+
+
+###############################################################################
+###          MAP READS TO REFERENCE                                       #####
+###############################################################################
+
+
+######################################
+###  BUILD A HISAT2 REFERENCE     ####
+######################################
+
+
+
+
+
+###########################
+###  ALIGN WITH HISAT2  ###
+###########################
+mkdir hisat2_results
+
+#map all the small files
+ for i in $(ls fastq/*.clean.fq.gz.1M_reads.fq.gz); do
+
+    file=${i#fastq/}
+    sample=${file%.clean.fq.gz.1M_reads.fq.gz}
+   #Single-end read
+   hisat2 -p 4 \
+    -x references/hisat2_build/mm10 \
+    -U $i \
+    -S hisat2_results/$sample.1M.sam \
+    --summary-file hisat2_results/$sample.hisat2_summary.txt
+
+
+ done
+
+
+#map  the large file
+ for i in $(ls fastq/*.clean.fq.gz); do
+
+    file=${i#fastq/}
+    sample=${file%.clean.fq.gz}
+   #Single-end read
+   hisat2 -p 4 \
+    -x references/hisat2_build/mm10 \
+    -U $i \
+    -S hisat2_results/$sample.10M.sam \
+    --summary-file hisat2_results/$sample.10M.hisat2_summary.txt
+
+
+
+ done
+
+
+
+
+############################
+####   CONVERT TO BAM   ####
+
+############################
+
+
+for i in $(ls hisat2_results/*.sam); do
+
+    file=${i#hisat2_results/}
+    sample=${file%.sam}
+ 
+ 
+ # This is how it was done in a older version of samtools  (Version: 0.1.19-44428cd)
+  #samtools view -bS -o hisat2_results/$sample.bam hisat2_results/$sample.sam 
+  #samtools sort  hisat2_results/$sample.bam hisat2_results/$sample.sorted
+  
+ # This is how it should be done in the version that is used in our conda enviroment (Version: 1.10 (using htslib 1.10.2))
+  samtools sort -o hisat2_results/$sample.sorted.bam hisat2_results/$sample.sam
+  samtools index hisat2_results/$sample.sorted.bam
+  samtools flagstat hisat2_results/$sample.sorted.bam &gt; $sample.sorted.flagstat
+
+done
+
+############################
+####   REMOVE SAM FILES ####
+############################
+
+
+# Remove the intermediate sam and bamfiles.
+for i in $(ls hisat2_results/*.sorted.bam); do
+
+    file=${i#hisat2_results/}
+    sample=${file%.sorted.bam}
+
+ if test -f &quot;hisat2_results/$sample.sorted.bam&quot;; then
+    echo &quot;$sample.sorted.bam exists. Removing $sample.sam and $sample.bam&quot;
+    rm hisat2_results/$sample.sam
+
+    # This intermediate step is no longer needed anymore 
+    #rm hisat2_results/$sample.bam
+ fi
+
+done
+</code></pre>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
