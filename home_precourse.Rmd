@@ -228,7 +228,7 @@ sh Miniconda3-latest-Linux-x86_64.sh
 
 ***
 
-### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Create a conda environment from file
+### <img border="0" src="https://www.svgrepo.com/show/4795/installation-symbol.svg" width="20" height="20"> Create a conda environment from file {.tabset .tabset-fade}
 
 <br/>
 
