@@ -38,11 +38,13 @@ This will create a file that contains a matrix were the rows represents the gene
 ###  RUN featureCounts     ###
 #########################################
 
-mkdir featureCounts
+cd ~/RNAseq/
+
+gunzip rawData/references/annotations/Mus_musculus.GRCm38.101.gtf.gz
 
 featureCounts -T 4 -s 2 -t exon -g gene_id \
--a references/annotations/Mus_musculus.GRCm38.101.gtf \
--o featureCounts/allSamples.featureCounts \
-hisat2_results/*1M.sorted.bam \
-> featureCounts/allSamples.featureCounts.log
+-a rawData/references/annotations/Mus_musculus.GRCm38.101.gtf \
+-o results/04-quantificationFeatureCounts/allSamples.featureCounts \
+results/02-mapping/*1M.sorted.bam \
+> results/04-quantificationFeatureCounts/allSamples.featureCounts.log
 

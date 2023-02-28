@@ -398,7 +398,7 @@ conda deactivate
 
 The data being used in this workshop is available [here](https://export.uppmax.uu.se/uppstore2017171/workshops/RNAseq). However, we recommend you to download it using terminal, which simplify things a lot.
 
-Go to your home folder and caunch the course environment:
+Go to your home folder and launch the course environment:
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
 cd ~/
@@ -409,7 +409,7 @@ conda activate nbis-workshop-rnaseq
 Then you can simply run the `wget` command below to download the whole data for the course. This will take a long time since files are quite big.
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
-wget -r -nH --cut-dirs=2 --no-parent --reject="index.html*" https://export.uppmax.uu.se/uppstore2017171/workshops/RNAseq
+wget -r -nH --cut-dirs=2 --no-parent --reject="index.html*" --reject "RNAseq.tar.gz" https://export.uppmax.uu.se/uppstore2017171/workshops/RNAseq
 ```
 
 After downloading, you will have a folder
@@ -431,8 +431,8 @@ The code from the course can be downloaded directly from [Github](https://github
 But it is much easier to do it from the command line:
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
-mkdir ~/RNAseq   #Run this line if you have not downloaded the data for the course yet
-cd ~/RNAseq
+mkdir ~/RNAseq ~/RNAseq/labs  #Run this line IF you have not downloaded the data for the course yet
+cd ~/RNAseq/labs
 
 for i in lab_dge.Rmd lab_download.Rmd lab_eda.Rmd lab_functional.Rmd lab_preprocessing.Rmd lab_geoquery.Rmd lab_kallisto.Rmd
 do

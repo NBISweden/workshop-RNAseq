@@ -81,14 +81,12 @@ This should create a folder named `multiqc_data` with some general stats, links 
 ###  FASTQC  ###
 ################
 
-cd /path/to/data/directory
+cd ~/RNAseq
 
-mkdir fastqc_results
-
-for i in $(ls fastq/*.fq.gz); do
+for i in $(ls rawData/fastqFiles/*.fq.gz); do
 
     fastqc \
-      -o fastqc_results \
+      -o results/01-preAlignmentQC/ \
       $i &
 
 done
@@ -101,7 +99,7 @@ wait
 ###  MultiQC  ###
 ################
 
-cd fastqc_results
+cd ~/RNAseq/results/01-preAlignmentQC/
 multiqc .  
 
 

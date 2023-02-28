@@ -107,49 +107,51 @@ This is all that is needed to run all the steps above on data on course data.
 ###  RUN RSEQC scripts on bamfiles     ###
 #########################################
 
-mkdir RSeQCresults
-mkdir RSeQCresults/geneBody_coverage
+cd ~/RNAseq/
 
-head -n 500 references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.bed > references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.first500.bed
+mkdir results/03-postAlignmentQC/geneBody_coverage
 
-geneBody_coverage.py -r references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.first500.bed \
-  -i hisat2_results/  -o RSeQCresults/geneBody_coverage/allSamples
+gunzip rawData/references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.bed.gz  
+head -n 500 rawData/references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.bed > rawData/references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.first500.bed
+
+geneBody_coverage.py -r rawData/references/annotations/Mus_musculus.GRCm38.101.HouseKeepingGenes.first500.bed \
+  -i results/02-mapping/ -o results/03-postAlignmentQC/geneBody_coverage/allSamples
+
+mkdir results/03-postAlignmentQC/read_distribution
+mkdir results/03-postAlignmentQC/infer_experiment
+mkdir results/03-postAlignmentQC/junction_saturation
+mkdir results/03-postAlignmentQC/junction_annotation
+
+gunzip rawData/references/annotations/Mus_musculus.GRCm38.101.bed  
+
+for i in $(ls results/02-mapping/*.sorted.bam); do
+
+  sample=${i%.sorted.bam}
+  sample=${sample#results/02-mapping/}
 
 
- mkdir RSeQCresults/read_distribution
- mkdir RSeQCresults/infer_experiment
- mkdir RSeQCresults/junction_saturation
- mkdir RSeQCresults/junction_annotation
+  echo "running read distribution on $sample"
 
+  read_distribution.py  -i $i \
+  -r rawData/references/annotations/Mus_musculus.GRCm38.101.bed \
+  >results/03-postAlignmentQC/read_distribution/$sample.readCoverage.txt
 
+  infer_experiment.py  -i $i  \
+  -r rawData/references/annotations/Mus_musculus.GRCm38.101.bed \
+  >results/03-postAlignmentQC/infer_experiment/$sample.infer_experiment.txt
 
-for i in $(ls hisat2_results/*.sorted.bam); do
+  junction_saturation.py -i $i  \
+  -r rawData/references/annotations/Mus_musculus.GRCm38.101.bed \
+  -o results/03-postAlignmentQC/junction_saturation/$sample
 
- sample=${i%.sorted.bam}
- sample=${sample#hisat2_results/}
-
-
- ECHO "running read distribution on $sample"
-
- read_distribution.py  -i $i \
- -r references/annotations/Mus_musculus.GRCm38.101.bed \
- >RSeQCresults/read_distribution/$sample.readCoverage.txt
-
- infer_experiment.py  -i $i  \
- -r references/annotations/Mus_musculus.GRCm38.101.bed \
- >RSeQCresults/infer_experiment/$sample.infer_experiment.txt
-
-junction_saturation.py -i $i  \
--r references/annotations/Mus_musculus.GRCm38.101.bed \
- -o RSeQCresults/junction_saturation/$sample
-
-junction_annotation.py -i $i  \
--r references/annotations/Mus_musculus.GRCm38.101.bed \
--o RSeQCresults/junction_annotation/$sample
+  junction_annotation.py -i $i  \
+  -r rawData/references/annotations/Mus_musculus.GRCm38.101.bed \
+  -o results/03-postAlignmentQC/junction_annotation/$sample
 
 
 done
 
+cd ~/RNAseq/results/
 
 multiqc -f -d -dd 2 .
 

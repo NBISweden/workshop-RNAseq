@@ -135,39 +135,37 @@ rm input.sam
 ###########################
 ###  ALIGN WITH HISAT2  ###
 ###########################
-mkdir hisat2_results
+
+cd ~/RNAseq/
 
 #map all the small files
- for i in $(ls fastq/*.clean.fq.gz.1M_reads.fq.gz); do
+for i in $(ls rawData/fastqFiles/*.clean.fq.gz.1M_reads.fq.gz); do
 
-    file=${i#fastq/}
-    sample=${file%.clean.fq.gz.1M_reads.fq.gz}
-   #Single-end read
-   hisat2 -p 4 \
-    -x references/hisat2_build/mm10 \
+  file=${i#rawData/fastqFiles/}
+  sample=${file%.clean.fq.gz.1M_reads.fq.gz}
+  #Single-end read
+  hisat2 -p 4 \
+    -x rawData/references/hisat2_build/mm10 \
     -U $i \
-    -S hisat2_results/$sample.1M.sam \
-    --summary-file hisat2_results/$sample.hisat2_summary.txt
+    -S results/02-mapping/$sample.1M.sam \
+    --summary-file results/02-mapping/$sample.hisat2_summary.txt
+
+done
 
 
- done
+#map the large file
+for i in $(ls rawData/fastqFiles/*.clean.fq.gz); do
 
-
-#map  the large file
- for i in $(ls fastq/*.clean.fq.gz); do
-
-    file=${i#fastq/}
-    sample=${file%.clean.fq.gz}
-   #Single-end read
-   hisat2 -p 4 \
-    -x references/hisat2_build/mm10 \
+  file=${i#rawData/fastqFiles/}
+  sample=${file%.clean.fq.gz}
+  #Single-end read
+  hisat2 -p 4 \
+    -x rawData/references/hisat2_build/mm10 \
     -U $i \
-    -S hisat2_results/$sample.10M.sam \
-    --summary-file hisat2_results/$sample.10M.hisat2_summary.txt
+    -S results/02-mapping/$sample.10M.sam \
+    --summary-file results/02-mapping/$sample.10M.hisat2_summary.txt
 
-
-
- done
+done
 
 
 
@@ -178,20 +176,20 @@ mkdir hisat2_results
 ############################
 
 
-for i in $(ls hisat2_results/*.sam); do
+for i in $(ls results/02-mapping/*.sam); do
 
-    file=${i#hisat2_results/}
-    sample=${file%.sam}
- 
- 
- # This is how it was done in a older version of samtools  (Version: 0.1.19-44428cd)
-  #samtools view -bS -o hisat2_results/$sample.bam hisat2_results/$sample.sam 
-  #samtools sort  hisat2_results/$sample.bam hisat2_results/$sample.sorted
-  
- # This is how it should be done in the version that is used in our conda enviroment (Version: 1.10 (using htslib 1.10.2))
-  samtools sort -o hisat2_results/$sample.sorted.bam hisat2_results/$sample.sam
-  samtools index hisat2_results/$sample.sorted.bam
-  samtools flagstat hisat2_results/$sample.sorted.bam > $sample.sorted.flagstat
+  file=${i#results/02-mapping/}
+  sample=${file%.sam}
+
+
+  # This is how it was done in a older version of samtools  (Version: 0.1.19-44428cd)
+  #samtools view -bS -o results/02-mapping/$sample.bam results/02-mapping/$sample.sam 
+  #samtools sort  results/02-mapping/$sample.bam results/02-mapping/$sample.sorted
+
+  # This is how it should be done in the version that is used in our conda enviroment (Version: 1.10 (using htslib 1.10.2))
+  samtools sort -o results/02-mapping/$sample.sorted.bam results/02-mapping/$sample.sam
+  samtools index results/02-mapping/$sample.sorted.bam
+  samtools flagstat results/02-mapping/$sample.sorted.bam > results/02-mapping/$sample.sorted.flagstat
 
 done
 
@@ -201,18 +199,16 @@ done
 
 
 # Remove the intermediate sam and bamfiles.
-for i in $(ls hisat2_results/*.sorted.bam); do
+for i in $(ls results/02-mapping/*.sorted.bam); do
 
-    file=${i#hisat2_results/}
-    sample=${file%.sorted.bam}
+  file=${i#results/02-mapping/}
+  sample=${file%.sorted.bam}
 
- if test -f "hisat2_results/$sample.sorted.bam"; then
+  if test -f "results/02-mapping/$sample.sorted.bam"; then
     echo "$sample.sorted.bam exists. Removing $sample.sam and $sample.bam"
-    rm hisat2_results/$sample.sam
+    rm results/02-mapping/$sample.sam
 
-    # This intermediate step is no longer needed anymore 
-    #rm hisat2_results/$sample.bam
- fi
+  fi
 
 done
 
