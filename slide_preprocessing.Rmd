@@ -1,7 +1,7 @@
 ---
 title: "Data Preprocessing"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Roy Francis and Nima Rafati</b>`"
+author: "`r paste0('<b>Roy Francis and Nima Rafati</b>)`"
 institute: NBIS, SciLifeLab
 keywords: bioinformatics, course, scilifelab, nbis
 output:
@@ -393,8 +393,8 @@ exclude: true
 | CPM/RPM	| counts scaled by total number of reads 	| sequencing depth |	compare counts between replicates of the same group; NOT for within sample comparisons or DE analysis |
 | TPM|	counts per length of transcript (kb) per million reads mapped |	sequencing depth and gene length |	gene count comparisons within a sample or between samples of the same sample group; NOT for DE analysis |
 | RPKM/FPKM |	similar to TPM |	sequencing depth and gene length	| compare counts between genes within a sample; NOT for between sample comparisons or DE analysis |
-| DESeq2 MRN |	counts divided by sample-specific size factors determined by median ratio of gene counts relative to geometric mean per gene |	sequencing depth and RNA composition 	| compare counts between samples and for DE analysis; NOT for within sample comparisons |
-| EdgeR TMM |	uses a weighted trimmed mean of the log expression ratios between samples |	sequencing depth, RNA composition, and gene length |	compare counts between and within samples and for DE analysis |
+| DESeq2 MRN |	counts divided by sample-specific size factors determined by median ratio of gene counts relative to geometric mean per gene |	sequencing depth and RNA composition | compare counts between samples and for DE analysis; NOT for within sample comparisons |
+| edgeR TMM |	uses a weighted trimmed mean of the log expression ratios between samples |	sequencing depth, RNA composition, and gene length |	compare counts between and within samples and for DE analysis |
 
 ---
 name: norm-5
