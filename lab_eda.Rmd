@@ -9,7 +9,7 @@ editor_options:
 ```
 
 <div class="boxy boxy-exclamation boxy-yellow">
-Create a directory named `data` in your current working directory for input and output files.
+Set `~/RNAseq/labs/` as your working directory (i.e. your working directory should be the directory where you saved this .Rmd file). Create a subdirectory named `data` in this directory (`~/RNAseq/labs/data/`) for input and output files.
 </div>
 
 Load R packages.
@@ -32,6 +32,7 @@ Load the sequencing data and the metadata data with sample information.
 # Load data and metadata
 download_data("data/counts_tpm.csv")
 data <- read.csv("data/counts_tpm.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+data <- log2( data + 1 )
 
 # if file doesn't exist, download it
 download_data("data/metadata_raw.csv")

@@ -9,7 +9,7 @@ editor_options:
 ```
 
 <div class="boxy boxy-exclamation boxy-yellow">
-Create a directory named `data` in your current working directory for input and output files.
+Set `~/RNAseq/labs/` as your working directory (i.e. your working directory should be the directory where you saved this .Rmd file). Create a subdirectory named `data` in this directory (`~/RNAseq/labs/data/`) for input and output files.
 </div>
 
 Load R packages and source the download function.

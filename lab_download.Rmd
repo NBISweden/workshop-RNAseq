@@ -6,6 +6,10 @@ subtitle: Workshop on RNA-Seq
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
+<div class="boxy boxy-exclamation boxy-yellow">
+Set `~/RNAseq/labs/` as your working directory (i.e. your working directory should be the directory where you saved this .Rmd file). Create a subdirectory named `data` in this directory (`~/RNAseq/labs/data/`) for input and output files.
+</div>
+
 ```{r,include=FALSE}
 library(dplyr)
 library(biomaRt)
