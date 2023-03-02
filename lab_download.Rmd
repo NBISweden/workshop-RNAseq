@@ -6,10 +6,6 @@ subtitle: Workshop on RNA-Seq
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-<div class="boxy boxy-exclamation boxy-yellow">
-Set `~/RNAseq/labs/` as your working directory (i.e. your working directory should be the directory where you saved this .Rmd file). Create a subdirectory named `data` in this directory (`~/RNAseq/labs/data/`) for input and output files.
-</div>
-
 ```{r,include=FALSE}
 library(dplyr)
 library(biomaRt)
@@ -183,16 +179,32 @@ Here is an example where we convert a few mouse ensembl IDs to Human Hugo gene I
 
 ```{r,eval=FALSE}
 mouse_genes <- c("ENSMUSG00000035847","ENSMUSG00000000214")
-mouse <- useMart("ensembl",dataset="mmusculus_gene_ensembl")
-human <- useMart("ensembl",dataset="hsapiens_gene_ensembl")
-getLDS(attributes=c("ensembl_gene_id"),filters="ensembl_gene_id",values=mouse_genes,mart=mouse, attributesL=c("external_gene_name"),martL=human,valuesL="external_gene_name",uniqueRows=F)
+human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+mart <- useMart("ensembl", dataset = "mmusculus_gene_ensembl")
+attributes = c("external_gene_name", "ensembl_gene_id", "description") 
+attributesL = c("hgnc_symbol", "ensembl_gene_id") 
+getLDS(attributes, attributesL = attributesL, uniqueRows = T, filters = 'ensembl_gene_id', values= mouse_genes, mart = mart, martL = human)
 ```
 
+If you get this error:
+`Error: biomaRt has encountered an unexpected server error.
+Consider trying one of the Ensembl mirrors (for more details look at ?useEnsembl)` 
+Try the following chunk instead.  
+```{r, eval = FALSE}
+mouse_genes <- c("ENSMUSG00000035847","ENSMUSG00000000214")
+human <- useMart("ensembl", dataset = "hsapiens_gene_ensembl", host = "https://dec2021.archive.ensembl.org/") 
+mart <- useMart("ensembl", dataset = "mmusculus_gene_ensembl", host = "https://dec2021.archive.ensembl.org/")
+attributes = c("external_gene_name", "ensembl_gene_id", "description") 
+attributesL = c("hgnc_symbol", "ensembl_gene_id") 
+getLDS(attributes, attributesL = attributesL, uniqueRows = T, filters = 'ensembl_gene_id', values= mouse_genes, mart = mart, martL = human)
 ```
-      Gene.stable.ID  Gene.name
-1 ENSMUSG00000000214         TH
-2 ENSMUSG00000035847        IDS
-3 ENSMUSG00000035847 AC244197.3
+
+
+```
+  Gene.name     Gene.stable.ID                                        Gene.description HGNC.symbol Gene.stable.ID.1
+1       Ids ENSMUSG00000035847 iduronate 2-sulfatase [Source:MGI Symbol;Acc:MGI:96417]         IDS  ENSG00000010404
+2       Ids ENSMUSG00000035847 iduronate 2-sulfatase [Source:MGI Symbol;Acc:MGI:96417]              ENSG00000241489
+3        Th ENSMUSG00000000214  tyrosine hydroxylase [Source:MGI Symbol;Acc:MGI:98735]          TH  ENSG00000180176
 ```
 
 ***
