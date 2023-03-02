@@ -20,7 +20,7 @@ dependencies:
   - bioconductor-tximport=1.14.0
   - bioconductor-rhdf5=2.30.0
   - r-biocmanager=1.30.15
-  - r-dplyr=1.0.6
+  - r-dplyr
   - r-enrichr=3.0
   - r-gridextra=2.3
   - r-pvclust=2.2
