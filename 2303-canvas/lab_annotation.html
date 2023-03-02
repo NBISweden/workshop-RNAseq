@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Transcriptome annotation</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link id="font-awesome-1-attachment" rel="attachment" href="site_libs/font-awesome-5.1.0/fonts/fontawesome-webfont.ttf"/>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+#TOC {
+  display: none !important;
+}
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+
+
+
+</div>
+
+
+<!-- rmd lab header -->
+<p><br></p>
+<div id="functional-annotation" class="section level1">
+<h1><span class="header-section-number">1</span> Functional annotation</h1>
+<p>Functional annotation is the process during which we try to put names to faces - what do the transcript that we have assemble do? Basically all existing approaches accomplish this by means of similarity. If a translation product has strong similarity to a protein that has previously been assigned a function, the function in this newly annotated transcript is probably the same. Of course, this thinking is a bit problematic (where do other functional annotations come from…?) and the method will break down the more distant a newly annotated genome is to existing reference data. A complementary strategy is to scan for more limited similarity - specifically to look for the motifs of functionally characterized protein domains. It doesn’t directly tell you what the protein is doing exactly, but it can provide some first indication.</p>
+<p>In this exercise we will use an approach that combines the search for full-sequence similarity by means of ‘Blast’ against large public databases with more targeted characterization of functional elements through the trinotate pipeline<a href="https://github.com/Trinotate/Trinotate.github.io/wiki" target="_blank">trinotate</a>. Trinotate is a suite of tools designed for automatic functional annotation of transcriptomes, particularly de novo assembled transcriptomes, from model or non-model organisms. It uses homology search to known sequence data (BLAST+/SwissProt), protein domain identification (HMMER/PFAM), protein signal peptide and transmembrane domain prediction (signalP/tmHMM).</p>
+<div id="prepare-the-input-data" class="section level2">
+<h2><span class="header-section-number">1.1</span> Prepare the input data</h2>
+<p>For this exercise we will use the Trinity_200.fasta output that is in the folder /assembly_annotation/raw_computes/. It is the first 200 sequences of the Trinity.fasta file that you created (we create this file so the running time will fit this practical).</p>
+<p>Create a new folder for this exercise:</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>cd ~/RNAseq_assembly_annotation/
+mkdir RNAseq_annotation
+cd RNAseq_annotation</code></pre>
+</div>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>mkdir Trinotate
+ln -s ~/RNAseq_assembly_annotation/assembly_annotation/raw_computes/Trinity_200.fa</code></pre>
+</div>
+<p>One of the first thing to do when one want to annotate a transcriptome with trinotate is is to prepare the database. I prepared it for you as it is taking 50 minutes to run. You will find it there : ~/RNAseq_assembly_annotation/RNAseq_assembly_annotation/assembly_annotation/database/trinotate_database</p>
+<p>If you want to know how to prepare the database, you can look at the following lines (again you do not need to run it) :</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>module load bioinfo-tools
+module load trinotate
+
+/sw/apps/bioinfo/trinotate/3.1.1/rackham/admin/Build_Trinotate_Boilerplate_SQLite_db.pl Trinotate</code></pre>
+</div>
+<p>Then there is few step to prepare the protein database for blast searches by:</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>makeblastdb -in uniprot_sprot.pep -dbtype prot</code></pre>
+</div>
+<p>And uncompress and prepare the Pfam database for use with ‘hmmscan’:</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>gunzip Pfam-A.hmm.gz
+hmmpress Pfam-A.hmm</code></pre>
+</div>
+</div>
+<div id="determining-longest-open-reading-frames-orf" class="section level2">
+<h2><span class="header-section-number">1.2</span> Determining longest Open Reading Frames (ORF)</h2>
+<p>The second step of the annotation of transcript is to determine open reading frame, they will be then annotated.
+In order to perform this work we use <a href="https://github.com/TransDecoder/TransDecoder/wiki" target="_blank">TransDecoder</a>
+This tool has proved to be worth particularly within the Trinotate pipeline.</p>
+<p>TransDecoder identifies likely coding sequences based on the following steps:</p>
+<ol style="list-style-type: decimal">
+<li><p>All open reading frames (ORFs) above a minimum length (default: 100 amino acids) are identified across all transcripts. Incomplete ORFs are accepted (no start or/and no stop)</p></li>
+<li><p>The top 500 longest ORFs are selected and a reading frame-specific
+5th-order Markov model is trained based on these coding sequences.</p></li>
+<li><p>All previously identified ORFs are scored as a sum of the log odds ratio across the length of the putative coding sequence. This log-likelihood score is similar to what is computed by the GeneID software.</p></li>
+<li><p>In addition to reporting ORFs meeting the score requirements, any ORF found to exceed a minimum length of 300 amino acids is reported.</p></li>
+</ol>
+<p>Running TransDecoder is a two-step process. First run the TransDecoder step that identifies all long ORFs and then the step that predicts which ORFs are likely to be coding.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>module load bioinfo-tools
+
+module load trinotate
+TransDecoder.LongOrfs -t Trinity_200.fa
+TransDecoder.Predict -t Trinity_200.fa</code></pre>
+</div>
+<p>Once you have the sequences you can start looking for sequence or domain homologies.</p>
+</div>
+<div id="blast-approach" class="section level2">
+<h2><span class="header-section-number">1.3</span> BLAST approach</h2>
+<p>Blast searches provide an indication about potential homology to known proteins.
+A ‘full’ Blast analysis can run for several days and consume several GB of Ram. Consequently, for a huge amount of data it is recommended to parallelize this step doing analysis of chunks of tens or hundreds proteins. This approach can be used to give a name to the genes and a function to the transcripts. We will first run a blastx on our transcripts and then a blastp on the proteins we obtained from the transdecoder tool.</p>
+<div id="perform-blast-searches-from-the-command-line-on-uppmax" class="section level3">
+<h3><span class="header-section-number">1.3.1</span> Perform Blast searches from the command line on Uppmax:</h3>
+<p>To run Blast on your data, use the Ncbi Blast+ package against a Drosophila-specific database (included in the folder we have provided for you, under <code>~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa</code>. Of course, any other NCBI database would also work:</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>blastx -db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -query Trinity_200.fa -max_target_seqs 1 -outfmt 6 -evalue 1e-5 &gt; swissprot.blastx.outfmt6
+
+blastp -db ~/RNAseq_assembly_annotation/assembly_annotation/database/uniprot_dmel/uniprot_dmel.fa -query Trinity_200.fa.transdecoder.pep -max_target_seqs 1 -outfmt 6 -evalue 1e-5 &gt; swissprot.blastp.outfmt6</code></pre>
+</div>
+</div>
+</div>
+<div id="domainprofiles-homology-searches" class="section level2">
+<h2><span class="header-section-number">1.4</span> Domain/profiles homology searches</h2>
+<div id="pfam-database" class="section level3">
+<h3><span class="header-section-number">1.4.1</span> Pfam database</h3>
+<p>Using your predicted protein sequences, we can run a <a href="http://hmmer.org/" target="_blank">HMMER</a> search against the <a href="http://pfam.xfam.org/" target="_blank">Pfam database</a>, and identify conserved domains that might be indicative or suggestive of function:</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>hmmscan --cpu 5 --domtblout TrinotatePFAM.out ~/RNAseq_assembly_annotation/assembly_annotation/database/trinotate_database/Pfam-A.hmm Trinity_200.fa.transdecoder.pep</code></pre>
+</div>
+</div>
+<div id="signal-peptide" class="section level3">
+<h3><span class="header-section-number">1.4.2</span> Signal peptide</h3>
+<p>The <a href="http://www.cbs.dtu.dk/services/SignalP/" target="_blank">signalP tool</a> is very useful for predicting signal peptides (secretion signals).</p>
+<p>To predict signal peptides, run signalP:</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>export SNIC_TMP=$SNIC_TMP:~/RNAseq_assembly_annotation/RNAseq_annotation/trinotate
+signalp -f short -n signalp.out Trinity_200.fa.transdecoder.pep</code></pre>
+</div>
+</div>
+<div id="transmembrane-region" class="section level3">
+<h3><span class="header-section-number">1.4.3</span> Transmembrane region</h3>
+<p><a href="http://www.cbs.dtu.dk/~krogh/TMHMM/" target="_blank">Tmhmm</a> software tools is very useful for predicting transmembrane domains.
+Run TMHMM to predict transmembrane regions:</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>tmhmm --short &lt; Trinity_200.fa.transdecoder.pep &gt; tmhmm.out</code></pre>
+</div>
+</div>
+</div>
+<div id="load-results-into-the-database" class="section level2">
+<h2><span class="header-section-number">1.5</span> Load results into the database</h2>
+<p>To load results of your previous analyses you need to copy the database in your folder (otherwise you will not be able to modify it):</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>cp ~/RNAseq_assembly_annotation/assembly_annotation/database/trinotate_database/Trinotate.sqlite .</code></pre>
+</div>
+<p>You also need the transcript sequences (Trinity_200.fa), the protein sequences (Trinity_200.fa.transdecoder.pep) and a file showing gene/Transcript relationships (tab delimited format: “gene_id(tab)transcript_id”). You are using Trinity assemblies, you can generate this file like this:</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>/sw/apps/bioinfo/trinity/2.8.2/rackham/util/support_scripts/get_Trinity_gene_to_trans_map.pl Trinity_200.fa &gt; Trinity_200.fa.gene_trans_map</code></pre>
+</div>
+<p>Then you can load those three files into the databases:</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>Trinotate Trinotate.sqlite init --gene_trans_map Trinity_200.fa.gene_trans_map --transcript_fasta Trinity_200.fa --transdecoder_pep Trinity_200.fa.transdecoder.pep</code></pre>
+</div>
+<p>Load the blast results :</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>Trinotate Trinotate.sqlite LOAD_swissprot_blastp swissprot.blastp.outfmt6
+Trinotate Trinotate.sqlite LOAD_swissprot_blastx swissprot.blastx.outfmt6</code></pre>
+</div>
+<p>Load the other domains results :</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>Trinotate Trinotate.sqlite LOAD_pfam TrinotatePFAM.out
+Trinotate Trinotate.sqlite LOAD_tmhmm tmhmm.out
+Trinotate Trinotate.sqlite LOAD_signalp signalp.out</code></pre>
+</div>
+</div>
+<div id="output-and-annotation-report" class="section level2">
+<h2><span class="header-section-number">1.6</span> Output and Annotation Report</h2>
+<p>From the database you can create a report to visualize the results :</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+sh
+</div>
+<pre class="sh"><code>Trinotate Trinotate.sqlite report &gt; trinotate_annotation_report.xls</code></pre>
+</div>
+<p>You can have a look at the parameters if you want to select by evalue or Pfam cutoff.</p>
+<p>The output is a 14 columns tabulated file, you can read more about it <a href="https://github.com/Trinotate/Trinotate.github.io/wiki/Loading-generated-results-into-a-Trinotate-SQLite-Database-and-Looking-the-Output-Annotation-Report" target="_blank">here</a>.</p>
+<p>Have a look at the results, you can retrieve them on your computer to have a better view at it.
+what do you see? How many transcripts are annotated? What kind of information do you get?</p>
+</div>
+<div id="whats-next" class="section level2">
+<h2><span class="header-section-number">1.7</span> What’s next?</h2>
+<p>You have executed part of the trinotate pipeline step by step but it is now possible to run it as a real pipeline with all the step automated <a href="https://github.com/Trinotate/Trinotate.github.io/wiki/Automated-Execution-of-Trinotate:-Running-computes-and-loading-results" target="_blank">see</a>.</p>
+<p>You can run other analyses with the pipeline such as <a href="https://wiki.gacrc.uga.edu/wiki/RNAmmer" target="_blank">RNAMMER</a> to look for RNA (there was none in this sequence).</p>
+<p>You can also load expression data, expression clusters and some other annotated text into the database created <a href="https://github.com/Trinotate/Trinotate.github.io/wiki/TrinotateWeb" target="_blank">see</a>.</p>
+<p>Finally, you can visualize all those data using the TrinotateWeb tool to visualize the annotation results and differential expression data <a href="https://github.com/Trinotate/Trinotate.github.io/wiki/TrinotateWeb" target="_blank">same link as before</a>.</p>
+<p>One alternative to annotate transcripts or protein is Interproscan. <a href="https://github.com/ebi-pf-team/interproscan/wiki" target="_blank">InterproScan</a> combines a number of searches for conserved motifs and curated data sets of protein clusters etc. This step may take fairly long time. It is recommended to parallelize it for huge amount of data by doing analysis of chunks of tens or hundreds proteins.</p>
+<p>The annotated transcripts can be used in different way in annotation. It can be used to help in the first annotation round to map annotated transcripts to the genome and then help for the genes annotation. It can also be used after the annotation to complement and improve this one if RNAseq data were not available when the genome annotation was done.</p>
+<hr />
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
