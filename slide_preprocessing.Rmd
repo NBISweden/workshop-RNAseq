@@ -1,7 +1,7 @@
 ---
 title: "Data Preprocessing"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Roy Francis and Nima Rafati</b>)`"
+author: "`r paste0('<b>Roy Francis and Nima Rafati</b>')`"
 institute: NBIS, SciLifeLab
 keywords: bioinformatics, course, scilifelab, nbis
 output:
