@@ -6,7 +6,7 @@ subtitle: Workshop on RNA-Seq
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-```{r,include=FALSE}
+```{r,include=FALSE, eval = FALSE}
 library(dplyr)
 library(biomaRt)
 ```
@@ -29,14 +29,22 @@ include_graphics("data/Core.assembly_tables.png")
 ## Genes
 In core database we can download annotation data. Annotations refer to known features (verified experimentally or predicted) in the genome. Usually, our features of interest in RNA-Seq are genes, their IDs, position in the genome, gene biotype (protein coding, non-coding etc) etc. We will also use the **dplyr** package to pipe data through functions.
 
-```{r}
+```{r, eval = FALSE}
 library(biomaRt)
 listMarts()
 ```
 
-We will use the code below to find the name of the Mouse ensembl genes dataset under ensembl mart.
+```
+               biomart                version
+1 ENSEMBL_MART_ENSEMBL      Ensembl Genes 109
+2   ENSEMBL_MART_MOUSE      Mouse strains 109
+3     ENSEMBL_MART_SNP  Ensembl Variation 109
+4 ENSEMBL_MART_FUNCGEN Ensembl Regulation 109
+```
 
-```{r}
+We will use the code below to find the name of mouse ensembl genes dataset under ensembl mart.
+
+```{r, eval = FALSE}
 mart <- useMart("ENSEMBL_MART_ENSEMBL")
 ds <- as.data.frame(listDatasets(mart=mart))
 
@@ -44,23 +52,51 @@ ds <- as.data.frame(listDatasets(mart=mart))
 ds %>% filter(grepl("mouse",tolower(description)))
 ```
 
+```
+                   dataset                                      description         version
+1     mcaroli_gene_ensembl             Ryukyu mouse genes (CAROLI_EIJ_v1.1) CAROLI_EIJ_v1.1
+2    mmurinus_gene_ensembl                     Mouse Lemur genes (Mmur_3.0)        Mmur_3.0
+3   mmusculus_gene_ensembl                             Mouse genes (GRCm39)          GRCm39
+4     mpahari_gene_ensembl              Shrew mouse genes (PAHARI_EIJ_v1.1) PAHARI_EIJ_v1.1
+5 mspicilegus_gene_ensembl                     Steppe mouse genes (MUSP714)         MUSP714
+6    mspretus_gene_ensembl              Algerian mouse genes (SPRET_EiJ_v1)    SPRET_EiJ_v1
+7   pmbairdii_gene_ensembl Northern American deer mouse genes (HU_Pman_2.1)     HU_Pman_2.1
+```
+
 Now that we know the name of the dataset, we can list all the columns (filters) in this dataset.
 
-```{r}
+```{r, eval = FALSE}
 mart <- useMart("ENSEMBL_MART_ENSEMBL")
 mart <- useDataset(mart=mart,dataset="mmusculus_gene_ensembl")
 la <- listAttributes(mart=mart)
 head(la)
 ```
 
+```
+                           name                  description         page
+1               ensembl_gene_id               Gene stable ID feature_page
+2       ensembl_gene_id_version       Gene stable ID version feature_page
+3         ensembl_transcript_id         Transcript stable ID feature_page
+4 ensembl_transcript_id_version Transcript stable ID version feature_page
+5            ensembl_peptide_id            Protein stable ID feature_page
+6    ensembl_peptide_id_version    Protein stable ID version feature_page
+```
+
 One can also search for attributes of interest.
 
-```{r}
+```{r, eval = FALSE}
 searchAttributes(mart=mart,pattern="entrez")
 ```
 
-We create a vector of our columns of interest.
+```
+                     name                                 description         page
+52  entrezgene_trans_name               EntrezGene transcript name ID feature_page
+65 entrezgene_description NCBI gene (formerly Entrezgene) description feature_page
+66   entrezgene_accession   NCBI gene (formerly Entrezgene) accession feature_page
+67          entrezgene_id          NCBI gene (formerly Entrezgene) ID feature_page
+```
 
+We create a vector of our columns of interest.
 ```{r,eval=FALSE}
 myattributes <- c("ensembl_gene_id",
                   "entrezgene_id",
@@ -116,15 +152,33 @@ sum(duplicated(bdata$external_gene_name))
 ```
 
 ```
-[1] 292
-[1] 35207
-[1] 1103
+[1] 375
+[1] 29854
+[1] 2130
 ```
 
 ```{r,eval=FALSE}
 # arrange table by chr name and start position
 bdata <- dplyr::arrange(bdata,chromosome_name,start_position)
 write.table(bdata,"./data/mouse_genes.txt",sep="\t",dec=".",row.names=FALSE,quote=FALSE)
+head(bdata)
+```
+
+```
+     ensembl_gene_id entrezgene_id external_gene_name chromosome_name start_position end_position strand         gene_biotype
+1 ENSMUSG00000102693            NA      4933401J01Rik               1        3143476      3144545      1                  TEC
+2 ENSMUSG00000064842     115487594            Gm26206               1        3172239      3172348      1                snRNA
+3 ENSMUSG00000051951        497097               Xkr4               1        3276124      3741721     -1       protein_coding
+4 ENSMUSG00000102851            NA            Gm18956               1        3322980      3323459      1 processed_pseudogene
+5 ENSMUSG00000103377            NA            Gm37180               1        3435954      3438772     -1                  TEC
+6 ENSMUSG00000104017            NA            Gm37363               1        3445779      3448011     -1                  TEC
+                                                            description
+1        RIKEN cDNA 4933401J01 gene [Source:MGI Symbol;Acc:MGI:1918292]
+2             predicted gene, 26206 [Source:MGI Symbol;Acc:MGI:5455983]
+3 X-linked Kx blood group related 4 [Source:MGI Symbol;Acc:MGI:3528744]
+4             predicted gene, 18956 [Source:MGI Symbol;Acc:MGI:5011141]
+5             predicted gene, 37180 [Source:MGI Symbol;Acc:MGI:5610408]
+6             predicted gene, 37363 [Source:MGI Symbol;Acc:MGI:5610591]
 ```
 
 ## Transcript
@@ -135,6 +189,17 @@ Here we download transcript to gene mappings. Notice that we can specify the `ma
 mart <- useMart(biomart="ensembl",dataset="mmusculus_gene_ensembl")
 t2g <- getBM(attributes=c("ensembl_transcript_id","ensembl_gene_id","external_gene_name"),mart=mart,useCache=FALSE)
 write.table(t2g,"./data/mouse_transcripts.txt",sep="\t",dec=".",row.names=F,quote=F)
+head(t2g)
+```
+
+```
+  ensembl_transcript_id    ensembl_gene_id external_gene_name
+1    ENSMUST00000082387 ENSMUSG00000064336              mt-Tf
+2    ENSMUST00000082388 ENSMUSG00000064337            mt-Rnr1
+3    ENSMUST00000082389 ENSMUSG00000064338              mt-Tv
+4    ENSMUST00000082390 ENSMUSG00000064339            mt-Rnr2
+5    ENSMUST00000082391 ENSMUSG00000064340             mt-Tl1
+6    ENSMUST00000082392 ENSMUSG00000064341             mt-Nd1
 ```
 
 The transcipt information file is saved to a file and will be used in the lab on [Kallisto](lab_kallisto.html).
@@ -171,6 +236,16 @@ bdata <- getBM(mart=mart,attributes=c("entrezgene_id","go_id","go_linkage_type")
 write.table(bdata,"./data/mouse_go.txt",sep="\t",dec=".",row.names=FALSE,quote=FALSE)
 ```
 
+```
+  entrezgene_id      go_id go_linkage_type
+1            NA GO:0006414             TAS
+2            NA GO:0030533             IEA
+3            NA GO:0030533             ISS
+4            NA GO:0005739             TAS
+5            NA GO:0000028             TAS
+6            NA GO:0006412             TAS
+```
+
 ## ID conversion
 
 We can also take a quick look at converting IDs. It is often desirable to convert a certain gene identifier to another (ensembl gene ID, entrez gene ID, gene ID). Sometimes, it may be necessary to convert gene IDs of one organism to another. biomaRt has a convenient function for this called `getLDS()`.
@@ -186,9 +261,9 @@ attributesL = c("hgnc_symbol", "ensembl_gene_id")
 getLDS(attributes, attributesL = attributesL, uniqueRows = T, filters = 'ensembl_gene_id', values= mouse_genes, mart = mart, martL = human)
 ```
 
-If you get this error:
+If you get this error:  
 `Error: biomaRt has encountered an unexpected server error.
-Consider trying one of the Ensembl mirrors (for more details look at ?useEnsembl)` 
+Consider trying one of the Ensembl mirrors (for more details look at ?useEnsembl)`  
 Try the following chunk instead.  
 ```{r, eval = FALSE}
 mouse_genes <- c("ENSMUSG00000035847","ENSMUSG00000000214")
