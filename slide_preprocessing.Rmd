@@ -73,7 +73,7 @@ name: pp
 
 ```{r,echo=TRUE}
 cf1 <- cr[rowSums(cr>0) >= 3, ] # Keep rows/genes that have at least one read 
-cf2 <- cr[rowSums(cr>2) >= 3, ] # Keep rows/genes that have at least two reads 
+cf2 <- cr[rowSums(cr>2) >= 3, ] # Keep rows/genes that have at least three reads 
 cf3 <- cr[rowSums(edgeR::cpm(cr)>5) >= 3, ] # need at least  three samples to have cpm > 5. 
 ```
 _count/read per million (cpm/rpm): a normalized value for sequencing depth._  
