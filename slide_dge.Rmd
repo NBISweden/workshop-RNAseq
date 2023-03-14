@@ -101,7 +101,7 @@ name: dge-sf
 
 - Objective of the differential gene expression: compare concentration of cDNA fragments from each gene between conditions/samples.
 - Data we have: read counts which depend on these concentration, but also on sequencing depth
-- Total count can be very influenced by very few highly variable genes
+- Total count can be influenced by a few highly variable genes
 - For this reason, DESeq2 uses size factors (median-of-ratios) instead of total count as normalization factors to account for differences in sequencing depth
 - Normalisation factors are computed as follows:
 
