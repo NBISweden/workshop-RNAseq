@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Differential Gene Expression</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link id="font-awesome-1-attachment" rel="attachment" href="site_libs/font-awesome-5.1.0/fonts/fontawesome-webfont.ttf"/>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+#TOC {
+  display: none !important;
+}
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+
+
+
+</div>
+
+
+<!-- rmd lab header -->
+<p><br></p>
+<div class="boxy boxy-exclamation boxy-yellow">
+<p>Set <code>~/RNAseq/labs/</code> as your working directory (i.e. your working directory should be the directory where you saved this .Rmd file). Create a subdirectory named <code>data</code> in this directory (<code>~/RNAseq/labs/data/</code>) for input and output files.</p>
+</div>
+<p>Load R packages and source the download function.</p>
+<pre class="r"><code>library(dplyr) # data wrangling
+library(ggplot2) # plotting
+library(DESeq2) # rna-seq
+library(edgeR) # rna-seq
+
+# source download function
+source(&quot;https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/assets/scripts.R&quot;)</code></pre>
+<div id="preparation" class="section level1">
+<h1><span class="header-section-number">1</span> Preparation</h1>
+<p>For differential gene expression, we use the <strong>DESeq2</strong> package. We use the raw filtered counts and metadata.</p>
+<pre class="r"><code>download_data(&quot;data/gene_counts.csv&quot;)
+cf &lt;- as.matrix( read.csv(&quot;data/gene_counts.csv&quot;,header=TRUE,stringsAsFactors=FALSE,row.names=1) )
+
+download_data(&quot;data/metadata_raw.csv&quot;)
+mr &lt;- read.csv(&quot;data/metadata_raw.csv&quot;,header=TRUE,stringsAsFactors=F,row.names=1)</code></pre>
+<p>The data is converted to a DESeq2 object. The GLM model we use is simple since we only have one variable of interest <code>~Group</code>.</p>
+<p>If we had other covariates to control for, we would add them to the model like so <code>~var+Group</code>. The variable of interest appears in the end. This model asks to find differentially expressed genes between groups under ‘Group’ variable while controlling for the effect of ‘var’. Similarily, batch effects can be controlled by specifying them in the model <code>~batch+Group</code>.</p>
+<pre class="r"><code>library(DESeq2)
+mr$Group &lt;- factor(mr$Group)
+d &lt;- DESeqDataSetFromMatrix(countData=cf,colData=mr,design=~Group)</code></pre>
+</div>
+<div id="size-factors" class="section level1">
+<h1><span class="header-section-number">2</span> Size factors</h1>
+<p>The first step is estimating size factors. The data is normalised for sequencing depth and compositional bias as done for the VST step. DESeq2 uses a method called <em>median-of-ratios</em> for this step.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>d &lt;- DESeq2::estimateSizeFactors(d,type=&quot;ratio&quot;)</code></pre>
+</div>
+<div class="boxy boxy-lightbulb">
+<p><strong>Optional</strong></p>
+<p>For those interested in the details of the <em>median-of-ratios</em> method, click below.</p>
+<p>
+<button class="btn btn-sm btn-collapse btn-collapse-normal collapsed" type="button" data-toggle="collapse" data-target="#dge-size-factor" aria-expanded="false" aria-controls="dge-size-factor">
+</button>
+</p>
+<div id="dge-size-factor" class="collapse">
+<div class="card card-body">
+<p>This is a step-by-step guide to computing normalisation factors (size factors) using the <em>median-of-ratios</em> method.</p>
+<ol style="list-style-type: decimal">
+<li>The geometric mean is computed across all samples for each gene.</li>
+</ol>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>gm_mean = function(x, na.rm=TRUE){
+  exp(sum(log(x[x &gt; 0]), na.rm=na.rm) / length(x))
+}
+
+gmean &lt;- apply(cf,1,gm_mean)
+head(gmean)</code></pre>
+<pre><code>## 0610005C13Rik 0610009B22Rik 0610012G03Rik 0610030E20Rik 0610039K10Rik 
+##      15.04279      10.23104      39.84286      18.12785      18.12647 
+## 0610040J01Rik 
+##      48.83312</code></pre>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>Read counts for each gene is divided by the geometric mean of that gene to create a ratio.</li>
+</ol>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>ratio &lt;- cf/gmean
+head(ratio)[,1:5]</code></pre>
+<pre><code>##                DSSd00_1  DSSd00_2  DSSd00_3  DSSd07_1  DSSd07_2
+## 0610005C13Rik 1.8613574 2.1937427 1.2630640 0.7312476 0.3988623
+## 0610009B22Rik 0.7819344 0.7819344 0.9774180 0.7819344 1.5638688
+## 0610012G03Rik 1.5059158 1.1545355 1.0541411 0.8784509 0.8533523
+## 0610030E20Rik 0.8826196 0.8826196 1.3239295 1.0481108 0.8826196
+## 0610039K10Rik 0.9930228 1.2688624 1.5447021 0.5516793 0.9378548
+## 0610040J01Rik 1.2081964 0.7576825 0.9419836 1.0648511 1.0853290</code></pre>
+</div>
+<ol start="3" style="list-style-type: decimal">
+<li>The median ratio for each sample (across all genes) is taken as the size factor for that sample.</li>
+</ol>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>sf &lt;- apply(ratio,2,median)
+sf</code></pre>
+<pre><code>##  DSSd00_1  DSSd00_2  DSSd00_3  DSSd07_1  DSSd07_2  DSSd07_3 
+## 1.0135869 0.9572580 0.9963975 1.0358819 1.0788712 1.0024171</code></pre>
+</div>
+<p>We can verify that these values are correct by comparing with size factors generated by DESeq2.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code># deseq2 size factors
+sizeFactors(d)</code></pre>
+<pre><code>##  DSSd00_1  DSSd00_2  DSSd00_3  DSSd07_1  DSSd07_2  DSSd07_3 
+## 1.0135429 0.9571279 0.9965885 1.0355834 1.0780833 1.0018528</code></pre>
+</div>
+<p>If we plot the size factors for each sample against the total counts for each sample, we get the plot below. We can see that they correlate very well. Size factors are mostly correcting for total counts, ie; sequencing depth.</p>
+<pre class="r"><code>plot(sizeFactors(d),colSums(cf),xlab=&quot;Size factors&quot;,ylab=&quot;Total counts&quot;)</code></pre>
+<p><img src="lab_dge_files/figure-html/unnamed-chunk-10-1.svg" width="432" style="display: block; margin: auto auto auto 0;" /></p>
+<p>The raw counts can then be divided by the size factor to yield normalised read counts.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code># custom
+head(t(t(cf)/sf))[,1:5]
+# deseq2
+head(counts(d,normalized=TRUE))[,1:5]</code></pre>
+<pre><code>##                DSSd00_1  DSSd00_2 DSSd00_3  DSSd07_1  DSSd07_2
+## 0610005C13Rik 27.624667 34.473465 19.06869 10.618971  5.561368
+## 0610009B22Rik  7.892762  8.357204 10.03616  7.722888 14.830315
+## 0610012G03Rik 59.195716 48.053921 42.15185 33.787635 31.514420
+## 0610030E20Rik 15.785524 16.714407 24.08677 18.341859 14.830315
+## 0610039K10Rik 17.758715 24.026960 28.10123  9.653610 15.757210
+## 0610040J01Rik 58.209120 38.652067 46.16631 50.198772 49.125420
+##                DSSd00_1  DSSd00_2 DSSd00_3  DSSd07_1  DSSd07_2
+## 0610005C13Rik 27.625865 34.478149 19.06504 10.622032  5.565433
+## 0610009B22Rik  7.893104  8.358339 10.03423  7.725114 14.841154
+## 0610012G03Rik 59.198283 48.060450 42.14377 33.797375 31.537451
+## 0610030E20Rik 15.786209 16.716678 24.08216 18.347147 14.841154
+## 0610039K10Rik 17.759485 24.030225 28.09585  9.656393 15.768726
+## 0610040J01Rik 58.211645 38.657319 46.15746 50.213244 49.161321</code></pre>
+</div>
+</div>
+</div>
+</div>
+<p><i class="fas fa-comments"></i> The function <code>estimateSizeFactors()</code> has options to set a custom <code>locfunc</code> other than the median. Why is this useful? What happens if you change it to “shorth”. Check out the help page for <code>estimateSizeFactors()</code>.</p>
+</div>
+<div id="gene-dispersion" class="section level1">
+<h1><span class="header-section-number">3</span> Gene dispersion</h1>
+<p>When it comes to comparing values between groups, some measure of variation is needed to estimate the variability in gene counts within groups. The most common measures of variation such as variance and standard deviation are not a good measure for rnaseq data because these measures correlate with the mean. For negative bionomially distributed data, dispersion is a better measure of variation in the data set.</p>
+<div class="boxy boxy-lightbulb">
+<p><strong>Optional</strong></p>
+<p>For some more clarification on dispersion, click below.</p>
+<p>
+<button class="btn btn-sm btn-collapse btn-collapse-normal collapsed" type="button" data-toggle="collapse" data-target="#dge-dispersion" aria-expanded="false" aria-controls="dge-dispersion">
+</button>
+</p>
+<div id="dge-dispersion" class="collapse">
+<div class="card card-body">
+<p>We can create a mean counts vs variance plot for all genes in our data set.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>dm &lt;- apply(cf,1,mean)
+dv &lt;- apply(cf,1,var)
+
+ggplot(data.frame(mean=log10(dm+1),var=log10(dv+1)),
+       aes(mean,var))+
+  geom_point(alpha=0.2)+
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(x=expression(&#39;Log&#39;[10]~&#39;Mean counts&#39;),y=expression(&#39;Log&#39;[10]~&#39;Variance&#39;))+
+  theme_bw()</code></pre>
+<img src="lab_dge_files/figure-html/unnamed-chunk-12-1.svg" width="432" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>We see a mostly linear relationship on the log scale. The blue line denotes a linear fit. Genes that have larger read counts show higher variance. It’s hard to say which genes are more variable based on this alone. Therefore, variance is not a good measure to identify variation in read counts. A measure that controls for this mean-variance relationship is what we need.</p>
+<p>One option is the coefficient of variation (CV). Let’s compute the CV for each gene and plot CV vs the mean.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>cva &lt;- function(x) sd(x)/mean(x)
+dc &lt;- apply(cf,1,cva)
+
+ggplot(data.frame(mean=log10(dm+1),var=dc),
+       aes(mean,var))+
+  geom_point(alpha=0.2)+
+  geom_smooth()+
+  labs(x=expression(&#39;Log&#39;[10]~&#39;Mean counts&#39;),y=&quot;Coefficient of variation&quot;)+
+  theme_bw()</code></pre>
+<img src="lab_dge_files/figure-html/unnamed-chunk-13-1.svg" width="432" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>Now, we see that genes with lower counts have higher variability and genes with larger counts have lower variability. A measure like CV is taking the ratio of ‘variation’ to mean. <code>cv=sd(x)/mean(x)</code>.</p>
+<p>This becomes even more apparent if we compute the CV and mean over replicates within sample groups (Time).</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>dx1 &lt;- data.frame(day00=apply(cf[,1:3],1,cva),day07=apply(cf[,4:6],1,cva))
+dx1$gene &lt;- rownames(dx1)
+dx1 &lt;- tidyr::gather(dx1,key=sample,value=cv,-gene)
+rownames(dx1) &lt;- paste0(dx1$gene,&quot;-&quot;,dx1$sample)
+
+dx2 &lt;- data.frame(day00=apply(cf[,1:3],1,mean),day07=apply(cf[,4:6],1,mean))
+dx2$gene &lt;- rownames(dx2)
+dx2 &lt;- tidyr::gather(dx2,key=sample,value=mean,-gene)
+rownames(dx2) &lt;- paste0(dx2$gene,&quot;-&quot;,dx2$sample)
+
+dx3 &lt;- merge(dx1,dx2,by=0)
+
+ggplot(dx3,aes(x=log10(mean+1),y=cv))+
+  geom_point(alpha=0.2)+
+  geom_smooth()+
+  facet_wrap(~sample.x)+
+  labs(x=expression(&#39;Log&#39;[10]~&#39;Mean counts&#39;),y=&quot;Coefficient of variation&quot;)+
+  theme_bw()</code></pre>
+<img src="lab_dge_files/figure-html/unnamed-chunk-14-1.svg" width="480" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>We find that CV strongly declines with increasing counts. Genes with low counts show higher variability. For the sake of completeness, we can also plot the relationship between CV and variance for the same sample groups.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>dx1 &lt;- data.frame(day00=apply(cf[,1:3],1,cva),day07=apply(cf[,4:6],1,cva))
+dx1$gene &lt;- rownames(dx1)
+dx1 &lt;- tidyr::gather(dx1,key=sample,value=cv,-gene)
+rownames(dx1) &lt;- paste0(dx1$gene,&quot;-&quot;,dx1$sample)
+
+dx2 &lt;- data.frame(day00=apply(cf[,1:3],1,var),day07=apply(cf[,4:6],1,var))
+dx2$gene &lt;- rownames(dx2)
+dx2 &lt;- tidyr::gather(dx2,key=sample,value=var,-gene)
+rownames(dx2) &lt;- paste0(dx2$gene,&quot;-&quot;,dx2$sample)
+
+dx3 &lt;- merge(dx1,dx2,by=0)
+
+ggplot(dx3,aes(x=log10(var+1),y=cv))+
+  geom_point(alpha=0.2)+
+  geom_smooth()+
+  facet_wrap(~sample.x)+
+  labs(x=expression(&#39;Log&#39;[10]~&#39;Variance&#39;),y=&quot;Coefficient of variation&quot;)+
+  theme_bw()</code></pre>
+<img src="lab_dge_files/figure-html/unnamed-chunk-15-1.svg" width="480" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>And we see that they have a weak relationship.</p>
+</div>
+</div>
+</div>
+<p>DESeq2 computes it’s own version of dispersion in a more robust manner taking into account low count values. The DESeq2 dispersion estimates are inversely related to the mean and directly related to variance. The dispersion estimate is a good measure of the variation in gene expression for a certain mean value.</p>
+<p>Now, the variance or dispersion estimate for genes with low counts is unreliable when there are too few replicates. To overcome this, DESeq2 borrows information from other genes. DESeq2 assumes that genes with similar expression levels have similar dispersion values. Dispersion estimates are computed for each gene separately using maximum likelihood estimate. A curve is fitted to these gene-wise dispersion estimates. The gene-wise estimates are then ‘shrunk’ to the fitted curve.</p>
+<p>Gene-wide dispersions, fitted curve and shrinkage can be visualised using the <code>plotDispEsts()</code> function.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>d &lt;- DESeq2::estimateDispersions(d)
+plotDispEsts(d)</code></pre>
+<img src="lab_dge_files/figure-html/unnamed-chunk-16-1.svg" width="480" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>The black points denote the maximum likelihood dispersion estimate for each gene. The red curve denote the fitted curve. The blue points denote the new gene dispersion estimates after shrunk towards the curve. The circled blue points denote estimates that are not shrunk as they are too far away from the curve. Thus, shrinkage method is important to reduce false positives in DGE analysis involving too few replicates.</p>
+<p><i class='fas fa-lightbulb'></i> It is a good idea to visually check the dispersion shrinkage plot to verify that the method works for your data set.</p>
+</div>
+<div id="testing" class="section level1">
+<h1><span class="header-section-number">4</span> Testing</h1>
+<p>Overdispersion is the reason why RNA-Seq data is better modelled as negative-binomial distribution rather than poisson distribution. Poisson distribution has a mean = variance relationship, while negative-binomial distribution has a variance &gt; mean relationship. The last step in the DESeq2 workflow is fitting the Negative Binomial model for each gene and performing differential expression testing. This is based on the log fold change values computed on the corrected count estimates between groups.</p>
+<p>The log fold change is computed from the corrected count values as such:</p>
+<pre><code>FC = corrected counts group B / corrected counts group A
+logFC = log2(FC)</code></pre>
+<p>and the fold-change can be computed back from the log fold-change as such:</p>
+<pre><code>FC = 2^logFC</code></pre>
+<p>The most commonly used testing for comparing two groups in DESeq2 is the Walds’s test. The null hypothesis is that the groups are not different and <code>logFC=0</code>. The list of contrasts can be seen using <code>resultsNames()</code>. Then we can pick our comparisons of interest.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>dg &lt;- nbinomWaldTest(d)
+resultsNames(dg)</code></pre>
+<pre><code>## [1] &quot;Intercept&quot;            &quot;Group_day07_vs_day00&quot;</code></pre>
+</div>
+<p>And we can get the result tables for the three different comparisons. The summary of the result object shows the number of genes that are differentially expressed with positive or negative fold-change and outliers.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>res &lt;- results(dg,name=&quot;Group_day07_vs_day00&quot;,alpha=0.05)
+res$padj[is.na(res$padj)] &lt;- 1
+# res &lt;- na.omit(res)
+summary(res)
+write.csv(res,&quot;data/dge_results.csv&quot;,row.names=T)</code></pre>
+<pre><code>## 
+## out of 10554 with nonzero total read count
+## adjusted p-value &lt; 0.05
+## LFC &gt; 0 (up)       : 193, 1.8%
+## LFC &lt; 0 (down)     : 239, 2.3%
+## outliers [1]       : 1, 0.0095%
+## low counts [2]     : 0, 0%
+## (mean count &lt; 21)
+## [1] see &#39;cooksCutoff&#39; argument of ?results
+## [2] see &#39;independentFiltering&#39; argument of ?results</code></pre>
+</div>
+<p>You can also build up the comparison using <strong>contrasts</strong>. Contrasts need the condition, level to compare and the reference level (base level). For example, <code>results(dg,contrast=c("Group","day07","day00"),alpha=0.05)</code>.</p>
+<p>Note that <code>day00</code> is the reference level and other levels are compared to this. Therefore, a fold-change of 2 would mean that, a gene is 2 fold higher expressed in <code>day07</code> compared to <code>day00</code>.</p>
+<p>The <code>results()</code> function has many useful arguments. One can set a threshold on the logFC values using <code>lfcThreshold</code>. By default, no filtering is performed based on logFC values. Outliers are detected and p-values are set to NA automatically using <code>cooksCutoff</code>. <code>independentFiltering=TRUE</code> remove genes with low counts.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>head(res)</code></pre>
+<pre><code>## log2 fold change (MLE): Group day07 vs day00 
+## Wald test p-value: Group day07 vs day00 
+## DataFrame with 6 rows and 6 columns
+##                baseMean log2FoldChange     lfcSE      stat      pvalue
+##               &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;
+## 0610005C13Rik   17.8897     -1.6369287  0.453210 -3.611856 0.000304013
+## 0610009B22Rik   10.4710      0.4759540  0.534043  0.891228 0.372806681
+## 0610012G03Rik   40.6139     -0.6643556  0.288235 -2.304912 0.021171501
+## 0610030E20Rik   18.1230     -0.1200284  0.408173 -0.294062 0.768710152
+## 0610039K10Rik   18.8796     -0.6876276  0.413052 -1.664750 0.095962740
+## 0610040J01Rik   48.5517      0.0498725  0.266022  0.187475 0.851288173
+##                    padj
+##               &lt;numeric&gt;
+## 0610005C13Rik  1.000000
+## 0610009B22Rik  1.000000
+## 0610012G03Rik  0.160172
+## 0610030E20Rik  1.000000
+## 0610039K10Rik  1.000000
+## 0610040J01Rik  0.960401</code></pre>
+</div>
+<p>The result table contains mean expression value (baseMean), log2 fold change (log2FoldChange), log2 fold change standard error (lfcSE), wald test statistic (stat), wald test p-value (pvalue) and BH adjusted p-value (padj) for each gene.</p>
+<p><i class='fas fa-lightbulb'></i> Note that the results object is a <code>DESeqResults</code> class object and not a data.frame. It can be converted to a data.frame using <code>as.data.frame()</code> for exporting to a file.</p>
+<p>It is a good idea to look at the distribution of unadjusted p-values.</p>
+<pre class="r"><code>hist(res$pvalue,main=&quot;Pval distribution&quot;,xlab=&quot;P-values&quot;)</code></pre>
+<p><img src="lab_dge_files/figure-html/unnamed-chunk-20-1.svg" width="480" style="display: block; margin: auto auto auto 0;" /></p>
+<p>This is the kind of distribution to be expected when the p-values are “well-behaved”. For more explanation on p-value distributions, see <a href="http://varianceexplained.org/statistics/interpreting-pvalue-histogram/" target="_blank">here</a>. If this distribution is very different or strange, then it might indicate an underlying problem.</p>
+<p>We can filter the results table as needed.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code># all genes
+nrow(as.data.frame(res))
+# only genes with padj &lt;0.05
+nrow(dplyr::filter(as.data.frame(res),padj&lt;0.05))
+# only genes with padj &lt;0.05 and an absolute fold change &gt;2
+nrow(dplyr::filter(as.data.frame(res),padj&lt;0.05,abs(log2FoldChange)&gt;2))</code></pre>
+<pre><code>## [1] 10554
+## [1] 432
+## [1] 23</code></pre>
+</div>
+<p>Note that manually filtering by <strong>log2FoldChange</strong> on the results table is not the same as setting the <code>lfcThreshold</code> argument in the <code>results()</code> function.</p>
+<div id="lfcshrink" class="section level3">
+<h3><span class="header-section-number">4.0.1</span> lfcShrink</h3>
+<p>This is an optional extra step to generate more accurate log2 fold changes. This step corrects the log2 fold changes for genes with high dispersion. This does not change the p-values or the list of DE genes.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>lres &lt;- lfcShrink(dg,coef=&quot;Group_day07_vs_day00&quot;,res=res,type=&quot;normal&quot;)
+summary(lres)</code></pre>
+<pre><code>## 
+## out of 10554 with nonzero total read count
+## adjusted p-value &lt; 0.05
+## LFC &gt; 0 (up)       : 193, 1.8%
+## LFC &lt; 0 (down)     : 239, 2.3%
+## outliers [1]       : 1, 0.0095%
+## low counts [2]     : 0, 0%
+## (mean count &lt; 21)
+## [1] see &#39;cooksCutoff&#39; argument of ?results
+## [2] see &#39;independentFiltering&#39; argument of ?results</code></pre>
+</div>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>head(lres)</code></pre>
+<pre><code>## log2 fold change (MAP): Group day07 vs day00 
+## Wald test p-value: Group day07 vs day00 
+## DataFrame with 6 rows and 6 columns
+##                baseMean log2FoldChange     lfcSE      stat      pvalue
+##               &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;
+## 0610005C13Rik   17.8897     -0.8683133  0.236895 -3.611856 0.000304013
+## 0610009B22Rik   10.4710      0.2109389  0.236385  0.891228 0.372806681
+## 0610012G03Rik   40.6139     -0.4862187  0.210486 -2.304912 0.021171501
+## 0610030E20Rik   18.1230     -0.0691196  0.235074 -0.294062 0.768710152
+## 0610039K10Rik   18.8796     -0.3925318  0.235285 -1.664750 0.095962740
+## 0610040J01Rik   48.5517      0.0379948  0.202637  0.187475 0.851288173
+##                    padj
+##               &lt;numeric&gt;
+## 0610005C13Rik  1.000000
+## 0610009B22Rik  1.000000
+## 0610012G03Rik  0.160172
+## 0610030E20Rik  1.000000
+## 0610039K10Rik  1.000000
+## 0610040J01Rik  0.960401</code></pre>
+</div>
+<p>We see that the number of genes up and down has not changed. But, we can see that the logFC distribution has changed in the density plot below.</p>
+<pre class="r"><code>par(mfrow=c(1,2))
+plot(density(na.omit(res$log2FoldChange)),main=&quot;log2FC&quot;)
+plot(density(na.omit(lres$log2FoldChange)),main=&quot;log2FC lfcShrink&quot;)
+par(mfrow=c(1,1))</code></pre>
+<p><img src="lab_dge_files/figure-html/unnamed-chunk-24-1.svg" width="768" style="display: block; margin: auto auto auto 0;" /></p>
+<p>This step does not change the total number of DE genes. This may be useful in downstream steps where genes need to be filtered down based on fold change or if fold change values are used in functional analyses such as GSEA.</p>
+<p><i class="fas fa-comments"></i> How many DE genes do you get?</p>
+</div>
+</div>
+<div id="visualisation" class="section level1">
+<h1><span class="header-section-number">5</span> Visualisation</h1>
+<p>In this section, we can explore some useful visualisation of the differential gene expression output.</p>
+<div id="ma-plot" class="section level2">
+<h2><span class="header-section-number">5.1</span> MA plot</h2>
+<p>The MA plot shows mean expression vs log fold change for all genes. The <code>plotMA()</code> function from DESeq2 takes a results object as input. Differentially expressed genes are marked in bright colour.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>DESeq2::plotMA(res)</code></pre>
+<img src="lab_dge_files/figure-html/unnamed-chunk-25-1.svg" width="480" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> How does this plot change if you set log fold change filtering to minimum value of 1. How does the plot change when you use <code>lfcShrink()</code>?</p>
+</div>
+<div id="volcano-plot" class="section level2">
+<h2><span class="header-section-number">5.2</span> Volcano plot</h2>
+<p>A volcano plot is similar to the MA plot. It plots log fold change vs adjusted p-values.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>ggplot()+
+  geom_point(data=as.data.frame(res),aes(x=log2FoldChange,y=-log10(padj)),col=&quot;grey80&quot;,alpha=0.5)+
+  geom_point(data=filter(as.data.frame(res),padj&lt;0.05),aes(x=log2FoldChange,y=-log10(padj)),col=&quot;red&quot;,alpha=0.7)+
+  geom_hline(aes(yintercept=-log10(0.05)),alpha=0.5)+
+  theme_bw()</code></pre>
+<img src="lab_dge_files/figure-html/unnamed-chunk-26-1.svg" width="480" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p>X axis denotes log fold change and the y axis denotes -log10 adjusted p-value. The adjusted p-value is transformed so that the smallest p-values appears at the top. The horizontal grey line denotes the significance threshold line. All genes above this line (coloured red as well) are considered significant.</p>
+<p><i class="fas fa-comments"></i> Why is the y-axis (p-value) on a -log scale?</p>
+</div>
+<div id="counts-plot" class="section level2">
+<h2><span class="header-section-number">5.3</span> Counts plot</h2>
+<p>It can be a good idea to manually verify some of these genes by plotting out it’s actual read count values. We can use the function <code>plotCounts()</code> to visualise the data points for a gene of interest. Below, we see the counts before and after normalisation.</p>
+<div class="chunk-title-parent">
+<div class="chunk-title small">
+R
+</div>
+<pre class="r"><code>plotCounts(d,gene=rownames(res)[1],intgroup=&quot;Group&quot;,normalized=F)
+plotCounts(d,gene=rownames(res)[1],intgroup=&quot;Group&quot;,normalized=T)</code></pre>
+<img src="lab_dge_files/figure-html/unnamed-chunk-27-1.svg" width="480" style="display: block; margin: auto auto auto 0;" /><img src="lab_dge_files/figure-html/unnamed-chunk-27-2.svg" width="480" style="display: block; margin: auto auto auto 0;" />
+</div>
+<p><i class="fas fa-comments"></i> By looking at the count plots, do you agree that the top DE genes differ significantly between the groups compared? Does the fold change make sense given the reference group?</p>
+<hr />
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
