@@ -310,7 +310,7 @@ Several messages will show up on your screen and will tell you about the install
 
 <div class="boxy boxy-lightbulb boxy-grey">
 
-<img border="0" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR2rSSpKVBohI4AXgBaUjFVYqO73ou2l9AOXw&usqp=CAU" width="50" height="50">
+<img border="0" src="https://seeklogo.com/images/W/windows-10-icon-logo-5BC5C69712-seeklogo.com.png" width="50" height="50">
 
 To download the environment definition file type the command inside MobaXTerm on Terminal:
 
