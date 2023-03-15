@@ -212,14 +212,27 @@ name: dge-test-4
 
 ![](data/lfc_shrink.png)
 
-<!-- --------------------- Do not edit this and below --------------------- -->
 
 ---
+name: acknowl
 
-# Acknowledgements
+## Acknowledgements
 
 - RNA-seq analysis [Bioconductor vignette](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html)
 - [DGE Workshop](https://github.com/hbctraining/DGE_workshop/tree/master/lessons) by HBC training
+
+
+
+<!-- --------------------- Do not edit this and below --------------------- -->
+
+---
+name: acknowl
+
+## Acknowledgements
+
+- RNA-seq analysis [Bioconductor vignette](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html)
+- [DGE Workshop](https://github.com/hbctraining/DGE_workshop/tree/master/lessons) by HBC training
+
 
 ---
 name: end_slide
