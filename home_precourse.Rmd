@@ -95,11 +95,11 @@ Start by installing Conda. We suggest installing Miniconda3 and NOT Anaconda. Fo
 
 <br/>
 
-#### **On Mac OS X**
+#### On Mac OS X
 
 <div class="boxy boxy-lightbulb boxy-grey">
 
-<img border="0" src="https://logos-download.com/wp-content/uploads/2020/06/Apple_Mac_OS_Logo-700x670.png" width="50" height="50">
+<img border="0" src="https://cdn.mos.cms.futurecdn.net/6bTF6C2QiWXvhi33fJi3AC-970-80.jpg.webp" height="50">
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
 curl -o Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
@@ -117,7 +117,7 @@ conda install -n base -c conda-forge mamba
 
 <br/>
 
-#### **On Ubuntu**
+#### On Ubuntu
 
 <div class="boxy boxy-lightbulb boxy-grey">
 
@@ -139,7 +139,7 @@ conda install -n base -c conda-forge mamba
 
 <br/>
 
-#### **On Windows 10**
+#### On Windows 10
 
 <div class="boxy boxy-lightbulb boxy-grey">
 
@@ -246,11 +246,11 @@ sh Miniconda3-latest-Linux-x86_64.sh
 
 <br/>
 
-#### **On Mac OS X**
+#### On Mac OS X
 
 <div class="boxy boxy-lightbulb boxy-grey">
 
-<img border="0" src="https://logos-download.com/wp-content/uploads/2020/06/Apple_Mac_OS_Logo-700x670.png" width="50" height="50">
+<img border="0" src="https://cdn.mos.cms.futurecdn.net/6bTF6C2QiWXvhi33fJi3AC-970-80.jpg.webp" height="50">
 
 To download the environment definition file using the command on Terminal:
 
@@ -320,7 +320,7 @@ Several messages will show up on your screen and will tell you about the install
 
 <br/>
 
-#### **On Windows 10**
+#### On Windows 10
 
 <div class="boxy boxy-lightbulb boxy-grey">
 

@@ -1,7 +1,7 @@
 ---
 title: "Differential Gene Expression"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Roy Francis, Julie Lorent</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
+author: "`r paste0('<b>Julie Lorent</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
 institute: NBIS, SciLifeLab
 keywords: bioinformatics, course, scilifelab, nbis
 output:

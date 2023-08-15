@@ -66,10 +66,11 @@ if(all(is.na(s$assistant)) | all(s$assistant=="")) s$assistant <- NULL
 
 <div style="display:inline-block">
 
-<!-- comment this out when finalised -->
+<!-- comment this out when finalised
 <div class="boxy boxy-yellow boxy-exclamation">
 **Note:** The schedule and materials are not final and are subject to change.
 </div>
+-->
 
 <div class="table-schedule">
 
