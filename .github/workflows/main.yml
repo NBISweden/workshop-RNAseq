@@ -103,7 +103,7 @@ jobs:
           echo "Removing lab and slide links from schedule for canvas ..."
           Rscript -e 'x <- read.csv("schedule.csv",sep=";",header=T,stringsAsFactors=F);x$link_lab <- x$link_slide <- NA;write.table(x,"schedule.csv",sep=";",col.names=T,row.names=F,quote=FALSE,na="")'
           echo "Fixing _site.yml for canvas ..."
-          Rscript -e 'y <- yaml::read_yaml("_site.yml"); y$exclude <- append(y$exclude,y$output_dir); y$output_dir <- paste0(y$output_dir,"-canvas"); y$navbar <- NULL; y$output$`bookdown::html_document2`$include <- NULL; yaml::write_yaml(y,"_site.yml");'
+          Rscript -e 'y <- yaml::read_yaml("_site.yml"); y$exclude <- append(y$exclude,y$output_dir); y$output_dir <- paste0(y$output_dir,"-canvas"); y$navbar <- NULL; yaml::write_yaml(y,"_site.yml");'
 
           ls -lh
           cat _site.yml
