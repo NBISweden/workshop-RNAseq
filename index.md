@@ -1,4 +1,4 @@
-All current and previous workshop materials are listed below.
-
-<div style='display:block;'><p style='line-height:2;'>
-<span style='display:block;'><a href='https://NBISweden.github.io/workshop-RNAseq/2303/'>2023 Mar</a></span><span style='display:block;'><a href='https://NBISweden.github.io/workshop-RNAseq/2111/'>2021 Nov</a></span><span style='display:block;'><a href='https://NBISweden.github.io/workshop-RNAseq/2011/'>2020 Nov</a></span><span style='display:block;'><a href='https://NBISweden.github.io/workshop-RNAseq/1911/'>2019 Nov</a></span><span style='display:block;'><a href='https://NBISweden.github.io/workshop-RNAseq/1906/'>2019 Jun</a></span><span style='display:block;'><a href='https://NBISweden.github.io/workshop-RNAseq/1905/'>2019 May</a></span><span style='display:block;'><a href='https://NBISweden.github.io/workshop-RNAseq/1811/'>2018 Nov</a></span></p></div>
+<div class='wrapper-logo'><img class='logo' src='assets/logo.svg'></div>The current and all previous instances of this workshop are listed below.
+<hr>
+<div class='workshop-list'>
+<h3><a href='https://NBISweden.github.io/workshop-RNAseq/2403/'>2024 Mar</a></h3><h3><a href='https://NBISweden.github.io/workshop-RNAseq/2303/'>2023 Mar</a></h3><h3><a href='https://NBISweden.github.io/workshop-RNAseq/2111/'>2021 Nov</a></h3><h3><a href='https://NBISweden.github.io/workshop-RNAseq/2011/'>2020 Nov</a></h3><h3><a href='https://NBISweden.github.io/workshop-RNAseq/1911/'>2019 Nov</a></h3><h3><a href='https://NBISweden.github.io/workshop-RNAseq/1906/'>2019 Jun</a></h3><h3><a href='https://NBISweden.github.io/workshop-RNAseq/1905/'>2019 May</a></h3><h3><a href='https://NBISweden.github.io/workshop-RNAseq/1811/'>2018 Nov</a></h3></div>
