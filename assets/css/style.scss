@@ -1,0 +1,107 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+/* font */
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;0,600;1,400&family=Ubuntu+Mono&display=swap');
+
+body {
+ background-color: #f7f9f8;
+}
+
+body, h1, h2, h3, h4, h5, h6 {
+ font-family: "Source Sans Pro", "Open Sans", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+ color: #424949
+}
+
+pre, code {
+ font-family: "Ubuntu Mono", "monospace";
+}
+
+.main-content h1,
+.main-content h2,
+.main-content h3,
+.main-content h4,
+.main-content h5,
+.main-content h6 {
+ color: #424949;
+}
+
+a {
+ color: #95b540;
+}
+
+a:hover, a:focus {
+ text-decoration: underline;
+}
+
+.page-header h1,
+.page-header h2,
+.page-header h3,
+.page-header h4,
+.page-header h5,
+.page-header h6 {
+ color: #f7f9f8;
+}
+
+.page-header {
+ color: #f7f9f8;
+ text-align: center;
+ background-color: #159957;
+ background-image: linear-gradient(120deg, #aac366, #95b540);
+ text-align: left;
+}
+
+.project-tagline {
+ margin-top: 0;
+ margin-bottom: 1rem;
+}
+
+.badge {
+ border-radius: 4px;
+ padding: 3px 4px 3px 4px;
+ margin: 2px 2px 2px 2px;
+ margin-top: 2px;
+ font-size: x-small;
+ font-weight: bold;
+ background-color: #dadddb;
+}
+
+.workshop-list {
+ line-height: 0.4;
+ margin-top: 2em;
+}
+
+/* logo */
+
+.logo {
+ height: 25px;
+}
+
+/* layout */
+
+@media (min-width: 64em) {
+ .page-header {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+    padding-left: calc((100vw/2) - 26rem);
+    margin: 0 auto;
+ }
+}
+
+@media (min-width: 42em) and (max-width: 64em) {
+.page-header {
+    padding: 2rem 4rem;
+ }
+}
+
+
+@media screen and (min-width: 64em) {
+ .project-name {
+   font-size: 2.5rem;
+ }
+}
+
+

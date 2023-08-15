@@ -1,0 +1,6 @@
+title: Introduction to Bioinformatics using NGS data
+description: NBIS Workshop
+repository: NBISweden/workshop-ngsintro
+theme: jekyll-theme-cayman
+github:
+  is_project_page: false
