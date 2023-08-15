@@ -9,20 +9,24 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-18.04, r: '4.1'}
+          - {os: ubuntu-20.04, r: '4.2'}
     runs-on: ${{ matrix.config.os }}
     steps:
-      - uses: actions/checkout@v1
-      - uses: r-lib/actions/setup-r@old
+      - name: Set time zone  
+        uses: szenius/set-timezone@v1.0
+        with:
+          timezoneLinux: "Europe/Stockholm"
+          timezoneMacos: "Europe/Stockholm"
+          timezoneWindows: "W. Europe Standard Time"
+      - uses: actions/checkout@v3
+      - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
-      - uses: r-lib/actions/setup-pandoc@old
-        with:
-          r-version: ${{ matrix.config.r }}
+      - uses: r-lib/actions/setup-pandoc@v2
       - name: Install linux dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev libudunits2-dev libopenblas-base
+          sudo apt-get install libxml2-dev libssl-dev libcurl4-openssl-dev libudunits2-dev libopenblas-base libgdal-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install ./google-chrome-stable_current_amd64.deb
           rm -rf google-chrome-stable_current_amd64.deb
@@ -49,14 +53,14 @@ jobs:
           sed --version
       - name: Print R packages
         run: |
-          # parse r packages from Rmd amd md files
+          # parse r packages from Rmd and md files
           # grep -Eroh "(^library\([A-Za-z0-9]+\))|(^require\([A-Za-z0-9]+\))" *md | sed 's/library\|(\|)//g' | sort | uniq > r-packages.txt
           # parse r packages from _site.yml
           awk '/^[^ ]/{ f=/^packages:/; next } f{ if (sub(/:$/,"")) pkg=$2; else print pkg, $2 }' _site.yml | uniq | sort > r-packages.txt
           cat r-packages.txt
       - name: Cache R packages
         id: cache-rp
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ matrix.config.r }}-${{ hashFiles('r-packages.txt') }}
@@ -72,7 +76,7 @@ jobs:
           Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_bioc_student)) BiocManager::install(as.character(yaml::read_yaml("_site.yml")$packages$packages_bioc_student))'
           Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_github_repo)) remotes::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_repo)'
           Rscript -e 'if(!is.null(yaml::read_yaml("_site.yml")$packages$packages_github_student)) remotes::install_github(yaml::read_yaml("_site.yml")$packages$packages_github_student)'
-          Rscript -e 'installed.packages()'
+          Rscript -e 'rownames(installed.packages())'
           echo "R directory size:"
           du -sh ${{ env.R_LIBS_USER }}
       - name: Render site, pull repo, copy folder, create index, push repo
@@ -170,8 +174,11 @@ jobs:
           repo=$(basename ${GITHUB_REPOSITORY})
           echo "Repo: $repo"
 
-          printf "All current and previous workshop materials are listed below.\n\n" > index.md
-          printf "<div style='display:block;'><p style='line-height:2;'>\n" >> index.md
+          # create index file
+          printf "<div class='wrapper-logo'><img class='logo' src='assets/logo.svg'></div>" > index.md
+          printf "The current and all previous instances of this workshop are listed below.\n" >> index.md
+          printf "<hr>\n" >> index.md
+          printf "<div class='workshop-list'>\n" >> index.md
           dirs=$(ls -d [0-9]*[0-9]/ | sed 's/\///' | tac)
           for i in ${dirs[@]}
           do
@@ -182,9 +189,11 @@ jobs:
           	printf -v thedate '2000-01-01 +%s years +%s months -1 day' "${i:0:2}" "${i:2}"
           	dt=$(date -d "$thedate" +'%Y %b')
           	echo $dt
-          	printf "<span style='display:block;'><a href='https://${str_user}.github.io/${repo}/${i}/'>$dt</a></span>" >> index.md
+          	printf "<h3><a href='https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo}/${i}/'>$dt</a></h3>" >> index.md
           done
-          printf "</p></div>" >> index.md
+          printf "</div>\n" >> index.md
+          # printf "<hr>\n" >> index.md
+          # printf "$(date +'%Y') • NBIS\n" >> index.md
 
           echo "Folder contents at $(pwd):"
           ls -lh
