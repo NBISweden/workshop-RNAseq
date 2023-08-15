@@ -3,6 +3,24 @@ title: "Data preprocessing"
 subtitle: Workshop on RNA-Seq
 editor_options:
   chunk_output_type: console
+output:
+  bookdown::html_document2:
+    highlight: textmate
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+    toc_depth: 4
+    number_sections: true
+    df_print: default
+    code_folding: none
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+    include:
+      after_body: assets/footer-lab.html
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
