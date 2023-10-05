@@ -1,4 +1,8 @@
 .Rhistory
+.Rproj.user
+[0-9]*
+data/.DS*
+*.Rproj
 libs/
 *_files/
 *.html
