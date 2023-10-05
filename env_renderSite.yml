@@ -208,7 +208,6 @@ dependencies:
   - r-bslib=0.4.2
   - r-cachem=1.0.7
   - r-callr=3.7.3
-  - r-captioner=2.2.3
   - r-catools=1.18.2
   - r-cli=3.6.0
   - r-clipr=0.8.0

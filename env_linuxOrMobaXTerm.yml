@@ -28,7 +28,6 @@ dependencies:
   - r-stringr=1.4.0
   - r-tidyr=1.1.3
   - r-bookdown=0.22
-  - r-captioner=2.2.3
   - r-formattable=0.2.1
   - r-kableextra=1.3.4
   - r-knitr=1.33

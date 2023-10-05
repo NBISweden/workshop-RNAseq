@@ -52,7 +52,6 @@ packages:
  packages_github_student:
  packages_cran_repo:
   - bookdown
-  - captioner
   - formattable
   - kableExtra
   - knitr
