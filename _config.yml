@@ -1,6 +1,6 @@
-title: Introduction to Bioinformatics using NGS data
+title: Analysis of bulk RNA-Seq data
 description: NBIS Workshop
-repository: NBISweden/workshop-ngsintro
+repository: NBISweden/workshop-rnaseq
 theme: jekyll-theme-cayman
 github:
   is_project_page: false
