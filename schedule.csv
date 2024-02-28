@@ -1,5 +1,5 @@
 "date";"room";"start_time";"end_time";"topic";"teacher";"assistant";"link_slide";"link_lab";"link_room"
-11/03/24;"Experimental classroom (10:203)";"09:00";"09:15";"Welcome";"Johan Reimegård";;;;
+"11/03/2024";"Experimental classroom (10:203)";"09:00";"09:15";"Welcome";"Johan Reimegård";;;;
 ;;"09:15";"10:00";"RNA Introduction";"Johan Reimegård";;"slide_rna_intro.pdf";;
 ;;"10:00";"10:30";"Coffee Break";;;;;
 ;;"10:30";"12:00";"RNA-Seq Introduction";"Johan Reimegård";;"slide_rnaseq_intro.pdf";;
@@ -7,7 +7,7 @@
 ;;"13:00";"14:00";"Pre-alignment QC";"Johan Reimegård";;"slide_after_sequencing_qc.pdf";"lab_qc_beforemapping.html";
 ;;"14:00";"14:30";"Coffee Break";;;;;
 ;;"14:30";"16:00";"Mapping";"Johan Reimegård";;"slide_rnaseq_aligners.pdf";"lab_mapping.html";
-12/03/24;"Experimental classroom (10:203)";"09:00";"10:00";"Post-alignment QC";"Johan Reimegård";;"slide_after_mapping_qc.pdf";"lab_qc_aftermapping.html";
+"12/03/2024";"Experimental classroom (10:203)";"09:00";"10:00";"Post-alignment QC";"Johan Reimegård";;"slide_after_mapping_qc.pdf";"lab_qc_aftermapping.html";
 ;;"10:00";"10:30";"Coffee Break";;;;;
 ;;"10:30";"12:00";"Post-alignment QC";"Johan Reimegård";;"slide_after_mapping_qc.pdf";"lab_qc_aftermapping.html";
 ;;"12:00";"13:00";"Lunch";;;;;
