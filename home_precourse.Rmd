@@ -420,10 +420,12 @@ cd ~/
 conda activate nbis-workshop-rnaseq
 ```
 
-Then you can simply run the `wget` command below to download the whole data for the course. This will take a long time since files are quite big.
+Then you can simply run the `curl` command below to download the whole data for the course. This will take a long time since files are quite big.
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
-wget -r -nH --cut-dirs=2 --no-parent --reject="index.html*" --reject "RNAseq.tar.gz" https://export.uppmax.uu.se/uppstore2017171/workshops/RNAseq
+curl https://export.uppmax.uu.se/uppstore2017171/workshops/RNAseq.2024.tar -o RNAseq.2024.tar
+
+tar -xf RNAseq.2024.tar
 ```
 
 After downloading, you will have a folder
