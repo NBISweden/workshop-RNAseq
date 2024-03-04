@@ -117,8 +117,8 @@ head(data[genes_cluster2, ])
 ### GO enrichment
 
 ```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
-go_cluster <- enrichr(genes = genes_cluster2,databases = "GO_Biological_Process_2018")
-go_cluster <- go_cluster$GO_Biological_Process_2018
+go_cluster <- enrichr(genes = genes_cluster2,databases = "GO_Biological_Process_2023")
+go_cluster <- go_cluster$GO_Biological_Process_2023
 go_cluster <- go_cluster[order(go_cluster$P.value),]
 go_cluster[1:5,]
 
@@ -141,8 +141,8 @@ What is the percentage of genes out of the total list that defines the GO term?
 ### KEGG enrichment
 
 ```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
-kegg_cluster <- enrichr(genes=genes_cluster2,databases="KEGG_2019_Human")
-kegg_cluster <- kegg_cluster$KEGG_2019_Human
+kegg_cluster <- enrichr(genes=genes_cluster2,databases="KEGG_2023_Human")
+kegg_cluster <- kegg_cluster$KEGG_2023_Human
 kegg_cluster <- kegg_cluster[order(kegg_cluster$P.value),]
 kegg_cluster[1:5,]
 
