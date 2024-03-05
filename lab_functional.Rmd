@@ -141,8 +141,8 @@ What is the percentage of genes out of the total list that defines the GO term?
 ### KEGG enrichment
 
 ```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
-kegg_cluster <- enrichr(genes=genes_cluster2,databases="KEGG_2023_Human")
-kegg_cluster <- kegg_cluster$KEGG_2023_Human
+kegg_cluster <- enrichr(genes=genes_cluster2,databases="KEGG_2019_Human")
+kegg_cluster <- kegg_cluster$KEGG_2019_Human
 kegg_cluster <- kegg_cluster[order(kegg_cluster$P.value),]
 kegg_cluster[1:5,]
 
