@@ -141,7 +141,7 @@ all.equal(colnames(cr),rownames(mr))
 Let's visualise the distribution of counts using a boxplot and density plot.
 
 ```{r}
-rafalib::mypar(1,2,mar=c(6,3,3,2))
+rafalib::mypar(1,2, mar=c(6,3,3,2))
 boxplot(log2(as.matrix(cr)+1),
         ylab = expression('Log'[2]~'Read counts'), las=2, main="Raw data")
 hist(log2(as.matrix(cr)+1),
@@ -154,7 +154,8 @@ On the boxplot, the median values are zero across all samples. This means that h
 We can check if any samples need to be discarded based on the number of genes detected. We create a barplot of genes detected across samples.
 
 ```{r}
-barplot(colSums(cr>3), ylab = "Number of detected genes", las = 2)
+barplot(colSums(cr > 3), las = 2) # Remove ylab from here
+mtext("Number of detected genes", side = 2, line = 3) # Add ylab manually
 abline(h = median(colSums(cr>3)))
 ```
 
@@ -236,9 +237,9 @@ all.equal(colnames(cf),rownames(mr))
 ```
 
 ```{r}
-cc <- t( t(cf) / colSums(cf) * 1e6 )
+cc <- cf / colSums(cf) * 1e6 
 log2_cc <- log2( cc + 1 )
-boxplot(log2_cc,ylab=expression('Log'[2]~'Read counts'),las=2,main="Log2 CPM")
+boxplot(log2_cc,ylab=expression('Log'[2]~'Read counts'), las=2, main="Log2 CPM")
 ```
 
 But, CPM data has some drawbacks. It is not suitable for within-sample comparisons. The total number of reads per sample varies from sample to sample. This also makes it harder to compare one experiment to another. In addition, gene length is not controlled for in this correction. RPKM/FPKM normalisations correct for gene length, but they are not recommended because they are not comparable between samples.
@@ -254,7 +255,7 @@ A better correction method that resolves sequencing depth and gene length is TPM
 #'
 tpm <- function(counts,len) {
   x <- counts/(len/1000)
-  return(t(t(x)*1e6/colSums(x)))
+  return(x*1e6/colSums(x))
 }
 ```
 
