@@ -23,12 +23,7 @@ output:
 
 ```{r, include = FALSE}
 #Load the  packages
-library(factoextra)
-library(mclust)
-library(MASS) # For mvrnorm to generate multivariate normal samples
 library(ggplot2)
-library(dbscan)
-library(DT)
 
 # functions
 calculate_wcss <- function(data, k) {
@@ -57,15 +52,15 @@ ggplot(ora_results, aes(x=reorder(Category, `log10.p.value`), y=`log10.p.value`)
 name: intro
 ## Introduction
 
-- What do the identified DEG do?
+- What do the identified DEGs do?
 
-- How can we link them to phenotype/diseases/biological feature we study?
+- How can we link them to phenotypes/diseases/biological features we study?
 
 - We can do that by exploring their function and in which pathways they are involved. 
 
-- Although differential expression analyses result into some genes but can we manually do that for all of them?
+- While differential expression analysis identifies certain genes, is it feasible to manually explore the function of each gene?
 
-- There are different approaches and dependent on available data we can expand it.  
+- There are different    approaches and dependent on available data we can expand it.  
 
 - At transcriptome level:
 
@@ -115,7 +110,7 @@ knitr::include_graphics('data/PPI.png')
 ---
 name: GO
 # Gene Ontology
-- It is a resource to unify the representation of gene/gene products in to hierarchical categories:
+- It is a resource to unify the representation of gene/gene products into hierarchical categories:
   - Biological Process (BP); _Cell cycle, Signal transduction_. 
   - Molecular Function (MF); _Phosphorylation, DNA binding_. 
   - Cellular Component (CC); _Nucleus, Cytoplasm_. 
@@ -227,7 +222,7 @@ name: GSA
   
 - Gene Set Enrichment Analysis (GSEA):
 
-  - A statistical method for evaluating the distribution of genes across a ranked list of gene showing the same signature (upregulated or downregulated) which happen to be involved in a given category (e.g. pathway).    
+  - A statistical method for evaluating the distribution of genes across a ranked list of genes showing the same signature (upregulated or downregulated) which happen to be involved in a given category (e.g. pathway).    
 ---
 name: ORA
 # ORA 
@@ -257,7 +252,7 @@ name: GSEA1
 
 - In GSEA we do not have any prior selection of the genes (such as DEG)
 
-- Genes are listed by logFC and their distribution is tested with a statistical test adapted from Kolmogrov-smirinov test. This test calculates an enrichment score (ES) for each predefined gene set wjocj reflects the degree to which the genes in the set are overrepresented at the extremes (top or bottom) of the ranked list. In other words, it tries to identify maximum deviation form zero. 
+- Genes are listed by logFC and their distribution is tested with a statistical test adapted from Kolmogrov-smirinov test. This test calculates an enrichment score (ES) for each predefined gene set which reflects the degree to which the genes in the set are overrepresented at the extremes (top or bottom) of the ranked list. In other words, it tries to identify maximum deviation form zero. 
 
 ```{r gsea-example, echo=FALSE, fig.align='center', out.width='60%'}
 knitr::include_graphics('data/GSEA.png')
