@@ -23,6 +23,7 @@ output:
 
 ```{r, include = FALSE}
 #Load the  packages
+library(knitr)
 library(factoextra)
 library(mclust)
 library(MASS) # For mvrnorm to generate multivariate normal samples
@@ -35,10 +36,20 @@ calculate_wcss <- function(data, k) {
   kmeans_model <- kmeans(data, centers = k, nstart = 20)
   return(kmeans_model$tot.withinss)
 }
+
+# Creating synthetic data
+set.seed(123)
+data <- rbind(
+  matrix(rnorm(90, mean=0), ncol=3),
+  matrix(rnorm(90, mean=5), ncol=3),
+  matrix(rnorm(90, mean=10), ncol=3)
+)
+groups <- rep(c('Group1', 'Group2', 'Group3'), each=3)
+
 ```
 
 
----
+---   
 name: intro
 ## Clustering
 
@@ -48,7 +59,7 @@ name: intro
 
 -   Why do we use clustering?
 
-    -   For exploring the data
+    -   For     exploring the data
 
     -   To discover patterns in our data set
 
@@ -223,10 +234,9 @@ print(plot)
 
 ```
 
---- 
-name: Centroid-based
+---
+name: Centroid-based1
 ## Centroid-based: K-means clustering
-
 -   One of the most commonly used clustering methods
 
 -   In this method the distance between data points and centroids is calculated
@@ -235,46 +245,111 @@ name: Centroid-based
 
 -   Square distance
 
-
-```{r data-generation, echo = F, fig.align='center'}
-set.seed(123) # For reproducibility
-# Creating synthetic data
-gene_expression <- rbind(
-  matrix(rnorm(90, mean=0), ncol=3),
-  matrix(rnorm(90, mean=5), ncol=3),
-  matrix(rnorm(90, mean=10), ncol=3)
-)
-groups <- rep(c('Group1', 'Group2', 'Group3'), each=3)
-```
-
-```{r kmeans, echo = F, fig.align='center'}
+<div style="text-align: center;">
+  <img src="data/kmeans.gif" alt="Alt text for the GIF" style="width: 65%; height: auto;">
+</div>
 
 
-# Perform K-means clustering
+
+```{r kmeans-create, echo = F, eval = F, fig.align='center'}
+# Load necessary libraries
+library(ggplot2)
+
 set.seed(123)
-kmeans_result <- kmeans(gene_expression, centers=3)
+kmeans_result <- kmeans(data, centers=3)
 
 k_values <- 1:5
+pdf('data/kmeans_3.pdf', width = 10, height = 8)
 for(k in k_values){
-  kmeans_result <- kmeans(gene_expression, centers = k, nstart = 20)
-  df_kmeans <- data.frame(PC1 = gene_expression[,1], PC2 = gene_expression[,2], Cluster = as.factor(kmeans_result$cluster))
-  plot(df_kmeans$PC1, df_kmeans$PC2, col = df_kmeans$Cluster, pch = 16, 
-       main = paste("K-Means Clustering (K =", k, ")"), xlab = 'Dim1', ylab = 'Dim2')
-  points(kmeans_result$centers, col = 1:k, pch = 8, cex = 2)
-  Sys.sleep(2)
+  kmeans_result <- kmeans(data, centers = k, nstart = 20)
+  df_kmeans <- data.frame(PC1 = data[,1], PC2 = data[,2], Cluster = as.factor(kmeans_result$cluster))
+  
+  # Adding centroid coordinates to the dataframe
+  centroids <- as.data.frame(kmeans_result$centers)
+  names(centroids) <- c("Centroid_PC1", "Centroid_PC2")
+  centroids$Cluster <- as.factor(1:k)
+  
+  # Merging the centroids back into the dataframe for plotting
+  df_plot <- merge(df_kmeans, centroids, by = "Cluster")
+  
+  # Plotting with ggplot
+  p <- ggplot(df_plot, aes(x = PC1, y = PC2, color = Cluster)) +
+    geom_point() +
+    geom_point(data = centroids, aes(x = Centroid_PC1, y = Centroid_PC2), color = "black", size = 3, shape = 8) +
+    geom_segment(aes(xend = Centroid_PC1, yend = Centroid_PC2), alpha = 0.5) +
+    scale_color_discrete(name = "Cluster") +
+    labs(title = paste("K-Means Clustering (K =", k, ")"), x = "Dim1", y = "Dim2") +
+    theme_minimal()
+  
+  print(p)
+  # Sys.sleep(2)
   
 }
+dev.off()
+
+# # Create a synthetic dataset
+# set.seed(123) # For reproducibility
+# # data <- data.frame(x = rnorm(90, mean = 0),
+# #                    y = rnorm(90, mean = 0))
+# data <- data.frame(data)
+# names(data) <- c("x", "y", "z")
+# k <- 3 # Number of clusters
+# 
+# # Initial centroids (randomly selecting 3 points from the dataset in this example)
+# set.seed(123) # For reproducibility
+# initial_centroids <- data[sample(nrow(data), k), ]
+# 
+# # K-means clustering step-by-step
+# 
+# n_iterations <- k # Number of iterations to perform (for demonstration)
+# pdf('data/kmeans_3.pdf', width = 10, height = 8)
+# for (i in 1:n_iterations) {
+#     # Assign points to the nearest centroid
+#     distances <- as.matrix(dist(rbind(data, initial_centroids)))
+#     distances <- distances[1:nrow(data), (nrow(data)+1):(nrow(data)+k)]
+#     cluster_assignment <- apply(distances, 1, which.min)
+#     
+#     # Update centroids
+#     new_centroids <- aggregate(data[,c("x", "y", "z")], by = list(cluster_assignment), FUN = mean)
+#     new_centroids <- new_centroids[, -1] # Removing the grouping column
+#     
+#     
+#     # Plotting
+#     p <- ggplot(as.data.frame(data), aes(x = x, y = y)) +
+#         geom_point(aes(color = factor(cluster_assignment))) +
+#         geom_point(data = new_centroids, aes(x = x, y = y), color = 'black', size = 5) +
+#         geom_segment(data = data, aes(xend = new_centroids[cluster_assignment, "x"], 
+#                                       yend = new_centroids[cluster_assignment, "y"],
+#                                       x = x, y = y), color = 'grey', alpha = 0.5) +
+#         labs(title = paste("Iteration:", i)) +
+#         theme_minimal()
+#     
+#     print(p)
+#     # For the next iteration
+#     initial_centroids <- new_centroids
+# }
+# dev.off()
 
 ```
 ---
-name: Centroid-based1
+name: optimal k
 ## What is optimal K?
 
 - The user needs to define the number of clusters:
   - **Elbow method**. 
   - Gap statistics. 
   - Average Silhouette method
+  
 ```{r optimal-k, echo = F, fig.align='center', fig.height=5, fig.width=10}
+set.seed(123) # For reproducibility
+data <- rbind(
+  matrix(rnorm(90, mean=0), ncol=3),
+  matrix(rnorm(90, mean=5), ncol=3),
+  matrix(rnorm(90, mean=10), ncol=3)
+)
+groups <- rep(c('Group1', 'Group2', 'Group3'), each=3)
+
+
 par(mfrow = c(1, 2))
 k_values <- 1:10
 wcss_values <- sapply(k_values, function(k) calculate_wcss(data, k))
@@ -282,11 +357,12 @@ wcss_values <- sapply(k_values, function(k) calculate_wcss(data, k))
 plot(k_values, wcss_values, type = "b", pch = 16, col = "blue", 
      xlab = "Number of Clusters (K)", ylab = "Within-Cluster Sum of Squares (WCSS)",
      main = "Elbow Method for Optimal K")
+# knitr::include_graphics('data/kmeans_3.pdf')
 k <- 3
-kmeans_result <- kmeans(gene_expression, centers = k, nstart = 20)
-  df_kmeans <- data.frame(PC1 = gene_expression[,1], PC2 = gene_expression[,2], Cluster = as.factor(kmeans_result$cluster))
-  plot(df_kmeans$PC1, df_kmeans$PC2, col = df_kmeans$Cluster, pch = 16, 
-       main = paste("K-Means Clustering (K =", k, ")"), xlab = 'Dim1', ylab = 'Dim2')
+kmeans_result <- kmeans(data, centers = k, nstart = 20)
+df_kmeans <- data.frame(PC1 = data[,1], PC2 = data[,2], Cluster = as.factor(kmeans_result$cluster))
+plot(df_kmeans$PC1, df_kmeans$PC2, col = df_kmeans$Cluster, pch = 16,
+     main = paste("K-Means Clustering (K =", k, ")"), xlab = 'Dim1', ylab = 'Dim2')
 par(mfrow = c(1, 1))
 ``` 
 ???
@@ -301,13 +377,13 @@ name: DBSCAN
 
 -   This method identifies regions within your data distribution that exhibits high density of data points.
 
-```{r dbdscan, echo = F, fig.align='center'}
+```{r dbscan, echo = F, fig.align='center', eval = F}
 
 # Perform DBSCAN clustering
-dbscan_result <- dbscan(gene_expression, eps = 2, minPts = 2)
+dbscan_result <- dbscan(data, eps = 2, minPts = 2)
 
 # Visualization
-df_dbscan <- data.frame(PC1 = gene_expression[,1], PC2 = gene_expression[,2], Cluster = as.factor(dbscan_result$cluster))
+df_dbscan <- data.frame(PC1 = data[,1], PC2 = data[,2], Cluster = as.factor(dbscan_result$cluster))
 ggplot(df_dbscan, aes(x = PC1, y = PC2, color = Cluster)) + geom_point() + ggtitle("DBSCAN Clustering")
 
 ```
@@ -323,18 +399,15 @@ name: GMM
 
 ???
 Distribution-based clustering involves modeling the data points using probability distributions, with the Gaussian Mixture Model (GMM) being one of the most commonly used methods in this category. In a GMM, each cluster is modeled as a Gaussian distribution, and the algorithm iteratively updates the parameters of these distributions (mean, covariance) and the probability of each point belonging to each cluster.
----
 
-```{r gmm, echo = F, fig.align='center'}
+```{r gmm, echo = F, fig.align='center', eval = F}
 
 # Perform GMM clustering
-gmm_result <- Mclust(gene_expression)
+gmm_result <- Mclust(data)
 
 # Visualization
-df_gmm <- data.frame(PC1 = gene_expression[,1], PC2 = gene_expression[,2], Cluster = as.factor(gmm_result$classification))
+df_gmm <- data.frame(PC1 = data[,1], PC2 = data[,2], Cluster = as.factor(gmm_result$classification))
 ggplot(df_gmm, aes(x = PC1, y = PC2, color = Cluster)) + geom_point() + ggtitle("Gaussian Mixture Model Clustering") + xlab('Dim1') + ylab('Dim2')
-
-
 ```
 ---
 name: hclust
@@ -383,15 +456,23 @@ pltree(hc_divisive, cex = 0.6, main = "Divisive Hierarchical Clustering")
 
 ```{r hc, eval = F, echo = F, fig.align='center'}
 # Perform hierarchical clustering
-hc_result <- hclust(dist(gene_expression), method = "ward.D2")
+hc_result <- hclust(dist(data), method = "complete")
 
 # Cut tree into 3 clusters
 cutree_result <- cutree(hc_result, k=3)
 
 # Visualization
 
-fviz_cluster(list(data = gene_expression, cluster = cutree_result)) + ggtitle("Hierarchical Clustering")
+fviz_cluster(list(data = data, cluster = cutree_result)) + ggtitle("Hierarchical Clustering")
 
+```
+---
+name: linkage
+## Linkage methods. 
+To combine clusters, it's essential to establish their positions relative to one another. The technique used to determine these positions is known as **Linkage**.  
+
+```{r linkage, echo = F, eval = T, out.width = '60%', fig.align='center'}
+knitr::include_graphics('data/Linkages.png')
 ```
 ---
 name: linear-clustering-summary
@@ -410,7 +491,10 @@ name: linear-clustering-summary
 - On hierarchical clustering, some distance metrics need to be used with a certain
 linkage method.  
 
-_Ronan et al (2016) Science Signaling_.  
+- Checking clustering Robustness (a.k.a  Ensemble perturbations):
+    - Most clustering techniques will cluster random noise.  
+    - One way of testing this is by clustering on parts of the data (clustering bootstrapping)
+    - Read more in [Ronan et al (2016) Science Signaling](https://www.science.org/doi/10.1126/scisignal.aad1932?url_ver=Z39.88-2003&rfr_id=ori:rid:crossref.org&rfr_dat=cr_pub%20%200pubmed)).  
 ---
 name: Know more
 ## Do you want to know more
