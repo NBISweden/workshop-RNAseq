@@ -324,7 +324,7 @@ d <- DESeq2::estimateSizeFactors(d,type="ratio")
 d <- DESeq2::estimateDispersions(d)
 cv <- as.data.frame(assay(varianceStabilizingTransformation(d,blind=T)),check.names=F)
 
-#write.csv(cv,"data/gene_counts_vst.csv",quote=FALSE)
+write.csv(cv,"data/counts_vst.csv",quote=FALSE)
 
 boxplot(cv,ylab=expression('Log'[2]~'Read counts'),las=2,main="VST")
 ```
