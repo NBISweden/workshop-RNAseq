@@ -222,6 +222,7 @@ dependencies:
   - r-data.table=1.14.8
   - r-dbi=1.1.3
   - r-dbplyr=2.3.1
+  - r-dbscan
   - r-desc=1.4.2
   - r-devtools=2.4.5
   - r-diffobj=0.3.5
@@ -233,6 +234,7 @@ dependencies:
   - r-enrichr=3.1
   - r-etrunct=0.1
   - r-evaluate=0.20
+  - r-factoextra
   - r-fansi=1.0.4
   - r-farver=2.1.1
   - r-fastmap=1.1.1
@@ -286,6 +288,7 @@ dependencies:
   - r-mass=7.3_58.2
   - r-matrix=1.5_3
   - r-matrixstats=0.63.0
+  - r-mclust
   - r-memoise=2.0.1
   - r-mgcv=1.8_41
   - r-mime=0.12
