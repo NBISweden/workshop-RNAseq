@@ -48,9 +48,8 @@ Load the sequencing data and the metadata data with sample information.
 
 ```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 # Load data and metadata
-download_data("data/counts_tpm.csv")
-data <- read.csv("data/counts_tpm.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
-data <- log2( data + 1 )
+download_data("data/counts_vst.csv")
+data <- read.csv("data/counts_vst.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 
 # if file doesn't exist, download it
 download_data("data/metadata_raw.csv")
@@ -84,7 +83,7 @@ dim(data)
 We can now save this counts for later use
 
 ```{r}
-write.csv(data ,"data/gene_tpm_counts.csv",row.names=T)
+write.csv(data ,"data/gene_vst_counts.csv",row.names=T)
 
 cf <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 cf <- rowsum(cf, group = as.character(gene_names) ) #assign gene names and sum duplicates
@@ -284,13 +283,13 @@ The methods available are: *ward.D*, *ward.D2*, *single*, *complete*, *average*,
 #Clustering using euclidean distance
 {
   mypar(1,2,mar=c(6,4,2,1))
-  h <- hclust(d,method="complete")
+  h <- hclust(d,method="ward.D2")
   plot( as.dendrogram(h),las=1,main="d=euclidean\nh=complete")
   points(1:ncol(data),rep(0,ncol(data)),pch=16,cex=2,col=metadata$Group[h$order])
 }
 
 
-h2 <- hclust(d2,method="complete")
+h2 <- hclust(d2,method="ward.D2")
 {
   plot( as.dendrogram(h2),las=1, main="d=correlation\nh=complete")
   points(1:ncol(data),rep(0,ncol(data)),pch=16,cex=2, col=metadata$Group[h2$order])
