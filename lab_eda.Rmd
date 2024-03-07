@@ -61,11 +61,18 @@ metadata <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=TRUE,r
 
 A useful step is to convert ENSEMBL gene/transcript IDs into meaningful gene names. This can be done in many way using a gtf file or using the `biomaRt` function in R.
 
-```{r}
-download_data("data/mouse_genes.txt")
+If the `biomaRt` did not work run the next chunk.  
+```{r biomart-download, echo = T, eval=FALSE}
 mouse <- biomaRt::useMart(biomart="ensembl", dataset="mmusculus_gene_ensembl")
 annot <- biomaRt::getBM(attributes = c("ensembl_gene_id","external_gene_name"),mart = mouse,useCache=FALSE)
+gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
+gene_names[is.na(gene_names) ] <- ""
+```
 
+
+```{r}
+download_data("data/mouse_genes.txt")
+annot <- read.table('data/mouse_genes.txt', header = T, sep = '\t', fill = T, quote = '"')
 gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
 gene_names[is.na(gene_names) ] <- ""
 ```
