@@ -243,9 +243,10 @@ name: Centroid-based1
 
 -   Dependent on number of K (clusters) new centroids are created
 
-<div style="text-align: center;">
-<img src="data/kmeans.gif" alt="Alt text for the GIF" style="width: 65%; height: auto;">
-</div>
+<!-- <div style="text-align: center;"> -->
+<!-- <img src="data/kmeans.gif" alt="Alt text for the GIF" style="width: 65%; height: auto;"> -->
+<!-- </div> -->
+![](data/kmeans_DS.gif)
 
 ```{r kmeans-create, echo = F, eval = F, fig.align='center'}
 # Load necessary libraries
@@ -294,10 +295,10 @@ name: Centroid-based2
 
 -   Dependent on number of K (clusters) new centroids are created
 
-<div style="text-align: center;">
-<img src="data/kmeans_3.gif" alt="Alt text for the GIF" style="width: 65%; height: auto;">
-</div>
-
+<!-- <div style="text-align: center;"> -->
+<!-- <img src="data/kmeans_3.gif" alt="Alt text for the GIF" style="width: 65%; height: auto;"> -->
+<!-- </div> -->
+![](data/Kmeans_3_DS.gif)
 
 ```{r kmeans-create-k-3, echo = F, eval = F, fig.align='center'}
 # # Create a synthetic dataset
