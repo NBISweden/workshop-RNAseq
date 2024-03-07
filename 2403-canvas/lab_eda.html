@@ -269,9 +269,8 @@ source(&quot;https://raw.githubusercontent.com/NBISweden/workshop-RNAseq/master/
 R
 </div>
 <pre class="r"><code># Load data and metadata
-download_data(&quot;data/counts_tpm.csv&quot;)
-data &lt;- read.csv(&quot;data/counts_tpm.csv&quot;,header=TRUE,stringsAsFactors=FALSE,row.names=1)
-data &lt;- log2( data + 1 )
+download_data(&quot;data/counts_vst.csv&quot;)
+data &lt;- read.csv(&quot;data/counts_vst.csv&quot;,header=TRUE,stringsAsFactors=FALSE,row.names=1)
 
 # if file doesn&#39;t exist, download it
 download_data(&quot;data/metadata_raw.csv&quot;)
@@ -280,10 +279,13 @@ metadata &lt;- read.csv(&quot;data/metadata_raw.csv&quot;,header=TRUE,stringsAsF
 <div id="convert-ensembl-ids-to-gene-names" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Convert ensembl IDs to gene names</h1>
 <p>A useful step is to convert ENSEMBL gene/transcript IDs into meaningful gene names. This can be done in many way using a gtf file or using the <code>biomaRt</code> function in R.</p>
-<pre class="r"><code>download_data(&quot;data/mouse_genes.txt&quot;)
-mouse &lt;- biomaRt::useMart(biomart=&quot;ensembl&quot;, dataset=&quot;mmusculus_gene_ensembl&quot;)
+<p>If the <code>biomaRt</code> did not work run the next chunk.</p>
+<pre class="r"><code>mouse &lt;- biomaRt::useMart(biomart=&quot;ensembl&quot;, dataset=&quot;mmusculus_gene_ensembl&quot;)
 annot &lt;- biomaRt::getBM(attributes = c(&quot;ensembl_gene_id&quot;,&quot;external_gene_name&quot;),mart = mouse,useCache=FALSE)
-
+gene_names &lt;- as.character ( annot[match(rownames(data),annot[,&quot;ensembl_gene_id&quot;]),&quot;external_gene_name&quot;] )
+gene_names[is.na(gene_names) ] &lt;- &quot;&quot;</code></pre>
+<pre class="r"><code>download_data(&quot;data/mouse_genes.txt&quot;)
+annot &lt;- read.table(&#39;data/mouse_genes.txt&#39;, header = T, sep = &#39;\t&#39;, fill = T, quote = &#39;&quot;&#39;)
 gene_names &lt;- as.character ( annot[match(rownames(data),annot[,&quot;ensembl_gene_id&quot;]),&quot;external_gene_name&quot;] )
 gene_names[is.na(gene_names) ] &lt;- &quot;&quot;</code></pre>
 <p>Remove missing or fuse duplicated annotations and sum transcripts into genes.</p>
@@ -292,9 +294,9 @@ data &lt;- data[ rownames(data) != &quot;&quot; , ] #remove blank annotation
 data &lt;- data[ rownames(data) != &quot;NA&quot; , ] #remove blank annotation
 data &lt;- data[ order(rownames(data)),]  #order genes alphabetically
 dim(data)</code></pre>
-<pre><code>## [1] 10549     6</code></pre>
+<pre><code>## [1] 10554     6</code></pre>
 <p>We can now save this counts for later use</p>
-<pre class="r"><code>write.csv(data ,&quot;data/gene_tpm_counts.csv&quot;,row.names=T)
+<pre class="r"><code>write.csv(data ,&quot;data/gene_vst_counts.csv&quot;,row.names=T)
 
 cf &lt;- read.csv(&quot;data/counts_filtered.csv&quot;,header=TRUE,stringsAsFactors=FALSE,row.names=1)
 cf &lt;- rowsum(cf, group = as.character(gene_names) ) #assign gene names and sum duplicates
@@ -508,13 +510,13 @@ R
 <pre class="r"><code>#Clustering using euclidean distance
 {
   mypar(1,2,mar=c(6,4,2,1))
-  h &lt;- hclust(d,method=&quot;complete&quot;)
+  h &lt;- hclust(d,method=&quot;ward.D2&quot;)
   plot( as.dendrogram(h),las=1,main=&quot;d=euclidean\nh=complete&quot;)
   points(1:ncol(data),rep(0,ncol(data)),pch=16,cex=2,col=metadata$Group[h$order])
 }
 
 
-h2 &lt;- hclust(d2,method=&quot;complete&quot;)
+h2 &lt;- hclust(d2,method=&quot;ward.D2&quot;)
 {
   plot( as.dendrogram(h2),las=1, main=&quot;d=correlation\nh=complete&quot;)
   points(1:ncol(data),rep(0,ncol(data)),pch=16,cex=2, col=metadata$Group[h2$order])

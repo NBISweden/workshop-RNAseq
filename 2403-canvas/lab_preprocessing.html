@@ -432,7 +432,7 @@ str(mr)</code></pre>
 <pre class="r"><code>all.equal(colnames(cr),rownames(mr))</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <p>Let’s visualise the distribution of counts using a boxplot and density plot.</p>
-<pre class="r"><code>rafalib::mypar(1,2,mar=c(6,3,3,2))
+<pre class="r"><code>rafalib::mypar(1,2, mar=c(6,3,3,2))
 boxplot(log2(as.matrix(cr)+1),
         ylab = expression(&#39;Log&#39;[2]~&#39;Read counts&#39;), las=2, main=&quot;Raw data&quot;)
 hist(log2(as.matrix(cr)+1),
@@ -441,7 +441,8 @@ par(mfrow=c(1,1))</code></pre>
 <p><img src="lab_preprocessing_files/figure-html/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto auto auto 0;" /></p>
 <p>On the boxplot, the median values are zero across all samples. This means that half the values in each sample are zeros. On the histogram, we see a huge peak of zeros. This data set would benefit from a low count filtering.</p>
 <p>We can check if any samples need to be discarded based on the number of genes detected. We create a barplot of genes detected across samples.</p>
-<pre class="r"><code>barplot(colSums(cr&gt;3), ylab = &quot;Number of detected genes&quot;, las = 2)
+<pre class="r"><code>barplot(colSums(cr &gt; 3), las = 2) # Remove ylab from here
+mtext(&quot;Number of detected genes&quot;, side = 2, line = 3) # Add ylab manually
 abline(h = median(colSums(cr&gt;3)))</code></pre>
 <p><img src="lab_preprocessing_files/figure-html/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto auto auto 0;" /></p>
 <p>On average, about 11502.00000 genes are detected. All samples are more or less close to the average. None of the samples look bad enough to be removed.</p>
@@ -490,9 +491,9 @@ if(!exists(&quot;mr&quot;)) mr &lt;- read.csv(&quot;data/metadata_raw.csv&quot;,
 
 all.equal(colnames(cf),rownames(mr))</code></pre>
 <pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>cc &lt;- t( t(cf) / colSums(cf) * 1e6 )
+<pre class="r"><code>cc &lt;- cf / colSums(cf) * 1e6 
 log2_cc &lt;- log2( cc + 1 )
-boxplot(log2_cc,ylab=expression(&#39;Log&#39;[2]~&#39;Read counts&#39;),las=2,main=&quot;Log2 CPM&quot;)</code></pre>
+boxplot(log2_cc,ylab=expression(&#39;Log&#39;[2]~&#39;Read counts&#39;), las=2, main=&quot;Log2 CPM&quot;)</code></pre>
 <p><img src="lab_preprocessing_files/figure-html/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto auto auto 0;" /></p>
 <p>But, CPM data has some drawbacks. It is not suitable for within-sample comparisons. The total number of reads per sample varies from sample to sample. This also makes it harder to compare one experiment to another. In addition, gene length is not controlled for in this correction. RPKM/FPKM normalisations correct for gene length, but they are not recommended because they are not comparable between samples.</p>
 <p>A better correction method that resolves sequencing depth and gene length is TPM (transcripts-per-million). The code for computing TPM is simple.</p>
@@ -504,7 +505,7 @@ boxplot(log2_cc,ylab=expression(&#39;Log&#39;[2]~&#39;Read counts&#39;),las=2,ma
 #&#39;
 tpm &lt;- function(counts,len) {
   x &lt;- counts/(len/1000)
-  return(t(t(x)*1e6/colSums(x)))
+  return(x*1e6/colSums(x))
 }</code></pre>
 <p>We read in the gene length information.</p>
 <pre class="r"><code>co &lt;- read.delim(&quot;data/gene_counts_original.tsv&quot;,
@@ -554,7 +555,7 @@ d &lt;- DESeq2::estimateSizeFactors(d,type=&quot;ratio&quot;)
 d &lt;- DESeq2::estimateDispersions(d)
 cv &lt;- as.data.frame(assay(varianceStabilizingTransformation(d,blind=T)),check.names=F)
 
-#write.csv(cv,&quot;data/gene_counts_vst.csv&quot;,quote=FALSE)
+write.csv(cv,&quot;data/counts_vst.csv&quot;,quote=FALSE)
 
 boxplot(cv,ylab=expression(&#39;Log&#39;[2]~&#39;Read counts&#39;),las=2,main=&quot;VST&quot;)</code></pre>
 <p><img src="lab_preprocessing_files/figure-html/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto auto auto 0;" /></p>

@@ -276,7 +276,7 @@ dim(data)
 # read metadata
 download_data(&quot;data/metadata_raw.csv&quot;)
 metadata &lt;- read.csv(&quot;data/metadata_raw.csv&quot;,row.names = 1,stringsAsFactors=T)</code></pre>
-<pre><code>## [1] 10549     6</code></pre>
+<pre><code>## [1] 10554     6</code></pre>
 <p>Here you would select genes based on p-values and logFC you obtained from differential expression.</p>
 <div class="chunk-title-parent">
 <div class="chunk-title small">
@@ -383,8 +383,8 @@ head(data[genes_cluster2, ])</code></pre>
 <div class="chunk-title small">
 R
 </div>
-<pre class="r"><code>go_cluster &lt;- enrichr(genes = genes_cluster2,databases = &quot;GO_Biological_Process_2018&quot;)
-go_cluster &lt;- go_cluster$GO_Biological_Process_2018
+<pre class="r"><code>go_cluster &lt;- enrichr(genes = genes_cluster2,databases = &quot;GO_Biological_Process_2023&quot;)
+go_cluster &lt;- go_cluster$GO_Biological_Process_2023
 go_cluster &lt;- go_cluster[order(go_cluster$P.value),]
 go_cluster[1:5,]
 
