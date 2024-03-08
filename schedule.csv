@@ -27,9 +27,9 @@
 ;;"12:00";"13:00";"Lunch";;;;;
 ;;"13:00";"14:00";"GSA & GSEA";"Nima Rafati";;"slide_functional.html";"lab_functional.html";
 ;;"14:00";"14:30";"Coffee Break";;;;;
-;;"14:30";"15:30";"GSA & GSEA";"Nima Rafati";;"slide_functional.html";"lab_functional.html";
-;;"15:30";"16:00";"Online Repositories";"Johan Reimegård";;"slide_repositories.pdf";"lab_geoquery.html";
-"15/03/2024";"Experimental classroom (10:203)";"09:00";"10:00";"Reading Bioinformatics";"Johan Reimegård";;"slide_reading_bioinformatics.pdf";;
+;;"14:30";"16:00";"GSA & GSEA";"Nima Rafati";;"slide_functional.html";"lab_functional.html";
+"15/03/2024";"Experimental classroom (10:203)";"09:00";"09:30";"Online Repositories";"Johan Reimegård";;"slide_repositories.pdf";"lab_geoquery.html";
+;;"09:30";"10:00";"Reading Bioinformatics";"Johan Reimegård";;"slide_reading_bioinformatics.pdf";;
 ;;"10:00";"10:30";"Coffee Break";;;;;
 ;;"10:30";"12:00";"Pseudoaligners";"Johan Reimegård";;"slide_pseudoaligners.pdf";"lab_kallisto.html";
 ;;"12:00";"13:30";"Lunch";;;;;
