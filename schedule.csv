@@ -20,14 +20,14 @@
 ;;"12:00";"13:00";"Lunch";;;;;
 ;;"13:00";"14:00";"PCA";"Julie Lorent";;"slide_pca.pdf";"lab_eda.html";
 ;;"14:00";"14:30";"Coffee Break";;;;;
-;;"15:00";"16:00";"Hierarchical Clustering";"Nima Rafati";;"slide_clustering.pdf";"lab_eda.html";
+;;"15:00";"16:00";"Hierarchical Clustering";"Nima Rafati";;"slide_clustering.html;"lab_eda.html";
 "14/03/2024";"Experimental classroom (10:203)";"09:00";"10:00";"DGE";"Julie Lorent";;"slide_dge.html";"lab_dge.html";
 ;;"10:00";"10:30";"Coffee Break";;;;;
 ;;"10:30";"12:00";"DGE advanced";"Julie Lorent";;"slide_dge_advanced.pdf";;
 ;;"12:00";"13:00";"Lunch";;;;;
-;;"13:00";"14:00";"GSA & GSEA";"Nima Rafati";;"slide_functional.pdf";"lab_functional.html";
+;;"13:00";"14:00";"GSA & GSEA";"Nima Rafati";;"slide_functional.html";"lab_functional.html";
 ;;"14:00";"14:30";"Coffee Break";;;;;
-;;"14:30";"15:30";"GSA & GSEA";"Nima Rafati";;"slide_functional.pdf";"lab_functional.html";
+;;"14:30";"15:30";"GSA & GSEA";"Nima Rafati";;"slide_functional.html";"lab_functional.html";
 ;;"15:30";"16:00";"Online Repositories";"Johan Reimegård";;"slide_repositories.pdf";"lab_geoquery.html";
 "15/03/2024";"Experimental classroom (10:203)";"09:00";"10:00";"Reading Bioinformatics";"Johan Reimegård";;"slide_reading_bioinformatics.pdf";;
 ;;"10:00";"10:30";"Coffee Break";;;;;
