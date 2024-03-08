@@ -244,61 +244,11 @@ name: Centroid-based1
 -   Dependent on number of K (clusters) new centroids are created
 
 <!-- <div style="text-align: center;"> -->
-<!-- <img src="data/kmeans.gif" alt="Alt text for the GIF" style="width: 65%; height: auto;"> -->
-<!-- </div> -->
-![](data/kmeans_DS.gif)
-
-```{r kmeans-create, echo = F, eval = F, fig.align='center'}
-# Load necessary libraries
-library(ggplot2)
-
-set.seed(123)
-kmeans_result <- kmeans(data, centers=3)
-
-k_values <- 1:5
-png('data/kmeans_3.png', width = 10, height = 1000)
-for(k in k_values){
-  kmeans_result <- kmeans(data, centers = k, nstart = 20)
-  df_kmeans <- data.frame(PC1 = data[,1], PC2 = data[,2], Cluster = as.factor(kmeans_result$cluster))
-  
-  # Adding centroid coordinates to the dataframe
-  centroids <- as.data.frame(kmeans_result$centers)
-  names(centroids) <- c("Centroid_PC1", "Centroid_PC2")
-  centroids$Cluster <- as.factor(1:k)
-  
-  # Merging the centroids back into the dataframe for plotting
-  df_plot <- merge(df_kmeans, centroids, by = "Cluster")
-  
-  # Plotting with ggplot
-  p <- ggplot(df_plot, aes(x = PC1, y = PC2, color = Cluster)) +
-    geom_point() +
-    geom_point(data = centroids, aes(x = Centroid_PC1, y = Centroid_PC2), color = "black", size = 3, shape = 8) +
-    geom_segment(aes(xend = Centroid_PC1, yend = Centroid_PC2), alpha = 0.5) +
-    scale_color_discrete(name = "Cluster") +
-    labs(title = paste("K-Means Clustering (K =", k, ")"), x = "Dim1", y = "Dim2") +
-    theme_minimal()
-  
-  print(p)
-  # Sys.sleep(2)
-  
-}
-dev.off()
-```
----
-name: Centroid-based2
-## Centroid-based: K-means clustering
--   One of the most commonly used clustering methods
-
--   In this method the distance between data points and centroids is calculated
-
--   Each data point is assigned to a cluster based on Euclidean distance from centroid.
-
--   Dependent on number of K (clusters) new centroids are created
-
-<!-- <div style="text-align: center;"> -->
 <!-- <img src="data/kmeans_3.gif" alt="Alt text for the GIF" style="width: 65%; height: auto;"> -->
 <!-- </div> -->
-![](data/Kmeans_3_DS.gif)
+---
+name: Centroid-based2
+![](data/Kmeans_3_DS.gif){width=50%}
 
 ```{r kmeans-create-k-3, echo = F, eval = F, fig.align='center'}
 # # Create a synthetic dataset
@@ -345,7 +295,56 @@ for (i in 1:n_iterations) {
 dev.off()
 ```
 ---
+name: Centroid-based3
+## Centroid-based: K-means clustering
+-   One of the most commonly used clustering methods
 
+-   In this method the distance between data points and centroids is calculated
+
+-   Each data point is assigned to a cluster based on Euclidean distance from centroid.
+
+-   Dependent on number of K (clusters) new centroids are created
+---
+name: Centroid-based4
+![](data/kmeans_DS.gif){width=50%}
+
+```{r kmeans-create, echo = F, eval = F, fig.align='center'}
+# Load necessary libraries
+library(ggplot2)
+
+set.seed(123)
+kmeans_result <- kmeans(data, centers=3)
+
+k_values <- 1:5
+png('data/kmeans_3.png', width = 10, height = 1000)
+for(k in k_values){
+  kmeans_result <- kmeans(data, centers = k, nstart = 20)
+  df_kmeans <- data.frame(PC1 = data[,1], PC2 = data[,2], Cluster = as.factor(kmeans_result$cluster))
+  
+  # Adding centroid coordinates to the dataframe
+  centroids <- as.data.frame(kmeans_result$centers)
+  names(centroids) <- c("Centroid_PC1", "Centroid_PC2")
+  centroids$Cluster <- as.factor(1:k)
+  
+  # Merging the centroids back into the dataframe for plotting
+  df_plot <- merge(df_kmeans, centroids, by = "Cluster")
+  
+  # Plotting with ggplot
+  p <- ggplot(df_plot, aes(x = PC1, y = PC2, color = Cluster)) +
+    geom_point() +
+    geom_point(data = centroids, aes(x = Centroid_PC1, y = Centroid_PC2), color = "black", size = 3, shape = 8) +
+    geom_segment(aes(xend = Centroid_PC1, yend = Centroid_PC2), alpha = 0.5) +
+    scale_color_discrete(name = "Cluster") +
+    labs(title = paste("K-Means Clustering (K =", k, ")"), x = "Dim1", y = "Dim2") +
+    theme_minimal()
+  
+  print(p)
+  # Sys.sleep(2)
+  
+}
+dev.off()
+```
+---
 name: optimal k
 ## What is optimal K?
 
