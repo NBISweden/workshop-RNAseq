@@ -33,9 +33,18 @@ library(biomaRt)
 
 Reference genomic data for your projects are available from Ensembl. This is usually the latest build of the genome, transcriptome etc as well as the annotations in GTF or GFF format. Most common organisms are available from [ensembl.org](https://www.ensembl.org/index.html). You can select the organism and then click on **Download FASTA**/**Download GTF/GFF** which takes you to the FTP site.
 
-You can also go directly to their FTP site [ftp://ftp.ensembl.org/pub/release-96](ftp://ftp.ensembl.org/pub/release-96) where you can select the type of data you need, and then select the organism. For eg; **homo_sapiens**, under which you find **cdna**, **cds**, **dna**, **dna_index**, **ncrna** and **pep**. Under **dna**, the FASTA files are available as full genome or as separate chromosomes. Each of them are again available as regular (repeat content as normal bases), soft-masked (sm, repeat content in lowercase) or repeat-masked (rm, repeat content as Ns). Full genomes are also available as **primary assembly** or **top-level**. **Primary assembly** is what most people would need. The **top-level** is much larger in size and contains non-chromosomal contigs, patches, haplotypes etc. This is significantly larger in size compared to the primary assembly.
+
+You can also go directly to their FTP site [https://www.ensembl.org/info/data/ftp/index.html](https://www.ensembl.org/info/data/ftp/index.html) where you can select the type of data you need, and then select the organism. For eg; **homo_sapiens**, under which you find **cdna**, **cds**, **dna**, **dna_index**, **ncrna** and **pep**. Under **dna**, the FASTA files are available as full genome or as separate chromosomes. Each of them are again available as regular (repeat content as normal bases), soft-masked (sm, repeat content in lowercase) or repeat-masked (rm, repeat content as Ns). Full genomes are also available as **primary assembly** or **top-level**. **Primary assembly** is what most people would need. The **top-level** is much larger in size and contains non-chromosomal contigs, patches, haplotypes etc. This is significantly larger in size compared to the primary assembly.
 
 <i class="fas fa-exclamation-circle"></i> Clades such as metazoa, protists, bacteria, fungi and plants are available through separate ensembl websites. These are listed on [http://ensemblgenomes.org/](http://ensemblgenomes.org/).
+
+## GTF/GFF
+The GTF  (General Transfer Format) format is one line per feature, described in 9 columns of data.  
+The GFF (General Feature Format) (GFF3) is identical to GTF version 2.  
+
+![](data/GTF_Example.png)
+
+For conversions and extracting features from either of them you can use [AGAT](https://github.com/NBISweden/AGAT).  
 
 # Biomart
 By using biomaRt you can access three main databases available in Ensembl (core, compara, and variation). Ensembl uses MySQL to store information and the tables within each database is accessible and searchable by using R package **biomaRt**. 
