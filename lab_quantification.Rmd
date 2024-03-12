@@ -62,3 +62,5 @@ featureCounts -T 4 -s 2 -t exon -g gene_id \
 results/02-mapping/*1M.sorted.bam \
 > results/04-quantificationFeatureCounts/allSamples.featureCounts.log
 
+```
+
