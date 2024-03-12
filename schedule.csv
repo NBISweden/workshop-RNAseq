@@ -14,9 +14,9 @@
 ;;"13:00";"14:00";"Quantification";"Johan Reimegård";;"slide_quantification.pdf";"lab_quantification.html";
 ;;"14:00";"14:30";"Coffee Break";;;;;
 ;;"15:30";"16:00";"QC examples";"Johan Reimegård";;;;
-"13/03/2024";"Experimental classroom (10:203)";"09:00";"10:00";"Data preprocessing";"Nima Rafati";;"slide_preprocessing.html";"lab_preprocessing.html";
+"13/03/2024";"Experimental classroom (10:203)";"09:00";"10:00";"Annotation data";"Nima Rafati";;;"lab_download.html";
 ;;"10:00";"10:30";"Coffee Break";;;;;
-;;"10:30";"12:00";"Annotation data";"Nima Rafati";;;"lab_download.html";
+;;"10:30";"12:00";"Data preprocessing";"Nima Rafati";;"slide_preprocessing.html";"lab_preprocessing.html";
 ;;"12:00";"13:00";"Lunch";;;;;
 ;;"13:00";"14:00";"PCA";"Julie Lorent";;"slide_pca.pdf";"lab_eda.html";
 ;;"14:00";"14:30";"Coffee Break";;;;;
