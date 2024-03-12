@@ -63,12 +63,11 @@ name: intro
 - Step by step description of DESeq2 analysis
 
 
-## What Paulo will discuss tomorrow
+## What we will discuss in the next lecture
 
 - More information on count data distributions 
 - Batch effects
 - Advanced designs
-- Reminder about p-values and multiple testing
 
 
 ---
