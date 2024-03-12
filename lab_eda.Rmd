@@ -179,7 +179,7 @@ Next, we can compute PCA using the `prcomp()` function. As additional parameters
 ***
 ## Computing PC variance
 
-The usefulness of PCA is that the principal components do have a meaning: They store the amount of variance in decreasing order, so some PCs are more important than others. Inside the `PC$sdev` object, we can get the standard deviation stored in each PC.
+The usefulness of PCA is that the principal components can have a meaning: They store the amount of variance in decreasing order, so some PCs are more important than others. Inside the `PC$sdev` object, we can get the standard deviation stored in each PC.
 
 ```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=5}
 PC_sd <- setNames(PC$sdev,paste0("PC",1:length(PC$sdev)))
