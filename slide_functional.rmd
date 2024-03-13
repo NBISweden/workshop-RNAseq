@@ -115,8 +115,10 @@ name: GO
   - Molecular Function (MF); _Phosphorylation, DNA binding_. 
   - Cellular Component (CC); _Nucleus, Cytoplasm_. 
 - Genes can belong to multiple GO *terms*
-```{r GO-example, echo = F, out.width='60%', fig.align='center'}
-knitr::include_graphics('data/GO_SHOX.png')
+
+
+```{r GO-example, echo = F, out.width='100%', fig.align='center'}
+knitr::include_graphics('data/GO_ORA_results.png')
 ```
 
 ---
