@@ -1,6 +1,0 @@
-.end-text[
-<p class="smaller">
-<span class="small" style="line-height: 1.2;">Graphics from </span><img src="./assets/freepik.jpg" style="max-height:20px; vertical-align:middle;"><br>
-`r paste0("Created: ",format(Sys.time(),format='%d-%b-%Y'))` • <a href="https://www.scilifelab.se/">SciLifeLab</a> • <a href="https://nbis.se/">NBIS</a> 
-</p>
-]
