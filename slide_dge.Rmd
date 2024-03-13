@@ -71,6 +71,22 @@ name: intro
 
 
 ---
+name: intro2
+
+## Couldn’t we just use a Student’s t test for each gene?
+
+
+```{r, echo=FALSE, out.width="30%", fig.align='center'}
+knitr::include_graphics("data/boxplot.png")
+```
+
+- May have few replicates -> "borrow" information from other genes
+- Multiple testing issues -> Correction
+- Distribution is not normal -> negative binomial methods
+
+
+
+---
 name: prep
 
 ## Preparation
