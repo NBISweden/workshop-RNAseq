@@ -72,8 +72,8 @@ name: pp
 - Remove genes and samples with low counts
 
 ```{r,echo=TRUE}
-cf1 <- cr[rowSums(cr>0) >= 3, ] # Keep rows/genes that have at least one read 
-cf2 <- cr[rowSums(cr>2) >= 3, ] # Keep rows/genes that have at least three reads 
+cf1 <- cr[rowSums(cr>0) >= 3, ] # Keep rows/genes that have at least one read in +3 samples 
+cf2 <- cr[rowSums(cr>3) >= 3, ] # Keep rows/genes that have at least three reads in +3 samples 
 cf3 <- cr[rowSums(edgeR::cpm(cr)>5) >= 3, ] # need at least  three samples to have cpm > 5. 
 ```
 _count/read per million (cpm/rpm): a normalized value for sequencing depth._  
@@ -146,6 +146,7 @@ name: norm-1
 
 .pull-left-50[
 - Removing technical biases in sequencing data (e.g. sequencing depth and gene length)
+- Make counts comparable across features (genes). 
 - Make counts comparable across samples
 
 <!-- Control for sequencing depth -->
@@ -202,7 +203,7 @@ name: norm-2
 
 ## Normalisation
 
-- Make counts comparable across features (genes). It can be useful for gene to gene comparisons.
+- Controlling for gene length: It can be useful for gene to gene comparisons.
 .size-60[![](data/normalization_methods_length.png)]
 
 ```{r,echo=FALSE}

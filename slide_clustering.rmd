@@ -428,7 +428,7 @@ name: hclust
 - Well suited for hierarchical data (e.g. taxonomies). 
 - Final output is a dendrogram representing the order decisions at each merge/division of clusters.  
 - Two approaches:
-  - Agglomerative (Bottom-up): All data points are treated as clusters and the joins similar ones. 
+  - Agglomerative (Bottom-up): All data points are treated as clusters and then joins similar ones. 
   - Divisive (Top-down): All data points are in one large clusters and recursively splits the most heterogeneous clusters.  
 - Number of clusters are decided after generating the tree.  
 ---
@@ -488,24 +488,24 @@ knitr::include_graphics('data/Linkages.png')
 name: linear-clustering-summary
 ## Summary 
 
-- For bulk RNASeq you can perform clusteirng on raw or Z-Score scaled data. 
+- For bulk RNASeq you can perform clustering on raw, Z-Score scaled data or on top PC coordinates. 
 
-- For the sample size is large (>10,000) you can perform clustering on PC. For instance in scRNASeq data. 
+- For the sample large size (>10,000) you can perform clustering on PC. For instance in scRNASeq data. 
 
 - You always need to tune some parameters.  
 
 - K-means performs poorly on unbalanced data. 
 
-- On hierarchical clustering, some distance metrics need to be used with a certain
+- In hierarchical clustering, some distance metrics need to be used with a certain
 linkage method.  
 
 - Checking clustering Robustness (a.k.a  Ensemble perturbations):
     - Most clustering techniques will cluster random noise.  
     - One way of testing this is by clustering on parts of the data (clustering bootstrapping)
-    - Read more in [Ronan et al (2016) Science Signaling](https://www.science.org/doi/10.1126/scisignal.aad1932?url_ver=Z39.88-2003&rfr_id=ori:rid:crossref.org&rfr_dat=cr_pub%20%200pubmed)).  
+    - Read more in [Ronan et al (2016) Science Signaling](https://www.science.org/doi/10.1126/scisignal.aad1932?url_ver=Z39.88-2003&rfr_id=ori:rid:crossref.org&rfr_dat=cr_pub%20%200pubmed).  
 ---
 name: Know more
-## Do you want to know more
+## Do you want to know more?  
 Please check the following links:
 - [Avoiding common pitfalls when clustering biological data](https://www.science.org/doi/10.1126/scisignal.aad1932?url_ver=Z39.88-2003&rfr_id=ori:rid:crossref.org&rfr_dat=cr_pub%20%200pubmed)
 - [Clustering with Scikit with GIFs](https://dashee87.github.io/data%20science/general/Clustering-with-Scikit-with-GIFs/) (Note, this is based on python but provide nice illustration).  
