@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Annotation data</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+<link id="font-awesome-1-attachment" rel="attachment" href="site_libs/font-awesome-6.4.2/fonts/fontawesome-webfont.ttf"/>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="assets/lab.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+#TOC {
+  display: none !important;
+}
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><img src="assets/logo.svg" id="logo" style="height:22px;margin:0;"/></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="home_schedule.html">Schedule</a>
+</li>
+<li>
+  <a href="home_content.html">Content</a>
+</li>
+<li>
+  <a href="home_precourse.html">Precourse</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Annotation data</h1>
+<h3 class="subtitle">Workshop on RNA-Seq</h3>
+
+</div>
+
+
+<!-- rmd lab header -->
+<p><br></p>
+<div id="genomic-data" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Genomic data</h1>
+<p>Reference genomic data for your projects are available from Ensembl. This is usually the latest build of the genome, transcriptome etc as well as the annotations in GTF or GFF format. Most common organisms are available from <a href="https://www.ensembl.org/index.html">ensembl.org</a>. You can select the organism and then click on <strong>Download FASTA</strong>/<strong>Download GTF/GFF</strong> which takes you to the FTP site.</p>
+<p>You can also go directly to their FTP site <a href="https://www.ensembl.org/info/data/ftp/index.html">https://www.ensembl.org/info/data/ftp/index.html</a> where you can select the type of data you need, and then select the organism. For eg; <strong>homo_sapiens</strong>, under which you find <strong>cdna</strong>, <strong>cds</strong>, <strong>dna</strong>, <strong>dna_index</strong>, <strong>ncrna</strong> and <strong>pep</strong>. Under <strong>dna</strong>, the FASTA files are available as full genome or as separate chromosomes. Each of them are again available as regular (repeat content as normal bases), soft-masked (sm, repeat content in lowercase) or repeat-masked (rm, repeat content as Ns). Full genomes are also available as <strong>primary assembly</strong> or <strong>top-level</strong>. <strong>Primary assembly</strong> is what most people would need. The <strong>top-level</strong> is much larger in size and contains non-chromosomal contigs, patches, haplotypes etc. This is significantly larger in size compared to the primary assembly.</p>
+<p><i class="fas fa-exclamation-circle"></i> Clades such as metazoa, protists, bacteria, fungi and plants are available through separate ensembl websites. These are listed on <a href="http://ensemblgenomes.org/">http://ensemblgenomes.org/</a>.</p>
+<div id="gtfgff" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> GTF/GFF</h2>
+<p>The GTF (General Transfer Format) format is one line per feature, described in 9 columns of data.<br />
+The GFF (General Feature Format) (GFF3) is identical to GTF version 2.</p>
+<p><img src="data/GTF_Example.png" /></p>
+<p>For conversions and extracting features from either of them you can use <a href="https://github.com/NBISweden/AGAT">AGAT</a>.</p>
+</div>
+</div>
+<div id="biomart" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Biomart</h1>
+By using biomaRt you can access three main databases available in Ensembl (core, compara, and variation). Ensembl uses MySQL to store information and the tables within each database is accessible and searchable by using R package <strong>biomaRt</strong>.
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-3"></span>
+<img src="data/Core.assembly_tables.png" alt="Ensembl core schema." width="85%" />
+<p class="caption">
+Figure 2.1: Ensembl core schema.
+</p>
+</div>
+<div id="genes" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Genes</h2>
+<p>In core database we can download annotation data. Annotations refer to known features (verified experimentally or predicted) in the genome. Usually, our features of interest in RNA-Seq are genes, their IDs, position in the genome, gene biotype (protein coding, non-coding etc) etc. We will also use the <strong>dplyr</strong> package to pipe data through functions.</p>
+<pre class="r"><code>library(biomaRt)
+listMarts()</code></pre>
+<pre><code>               biomart                version
+1 ENSEMBL_MART_ENSEMBL      Ensembl Genes 109
+2   ENSEMBL_MART_MOUSE      Mouse strains 109
+3     ENSEMBL_MART_SNP  Ensembl Variation 109
+4 ENSEMBL_MART_FUNCGEN Ensembl Regulation 109</code></pre>
+<p>We will use the code below to find the name of mouse ensembl genes dataset under ensembl mart.</p>
+<pre class="r"><code>mart &lt;- useMart(&quot;ENSEMBL_MART_ENSEMBL&quot;)
+ds &lt;- as.data.frame(listDatasets(mart=mart))
+
+# find all rows in dataset &#39;ds&#39; where column &#39;description&#39; contains the string &#39;mouse&#39;
+ds %&gt;% filter(grepl(&quot;mouse&quot;,tolower(description)))</code></pre>
+<pre><code>                   dataset                                      description         version
+1     mcaroli_gene_ensembl             Ryukyu mouse genes (CAROLI_EIJ_v1.1) CAROLI_EIJ_v1.1
+2    mmurinus_gene_ensembl                     Mouse Lemur genes (Mmur_3.0)        Mmur_3.0
+3   mmusculus_gene_ensembl                             Mouse genes (GRCm39)          GRCm39
+4     mpahari_gene_ensembl              Shrew mouse genes (PAHARI_EIJ_v1.1) PAHARI_EIJ_v1.1
+5 mspicilegus_gene_ensembl                     Steppe mouse genes (MUSP714)         MUSP714
+6    mspretus_gene_ensembl              Algerian mouse genes (SPRET_EiJ_v1)    SPRET_EiJ_v1
+7   pmbairdii_gene_ensembl Northern American deer mouse genes (HU_Pman_2.1)     HU_Pman_2.1</code></pre>
+<p>Now that we know the name of the dataset, we can list all the columns (filters) in this dataset.</p>
+<pre class="r"><code>mart &lt;- useMart(&quot;ENSEMBL_MART_ENSEMBL&quot;)
+mart &lt;- useDataset(mart=mart,dataset=&quot;mmusculus_gene_ensembl&quot;)
+la &lt;- listAttributes(mart=mart)
+head(la)</code></pre>
+<pre><code>                           name                  description         page
+1               ensembl_gene_id               Gene stable ID feature_page
+2       ensembl_gene_id_version       Gene stable ID version feature_page
+3         ensembl_transcript_id         Transcript stable ID feature_page
+4 ensembl_transcript_id_version Transcript stable ID version feature_page
+5            ensembl_peptide_id            Protein stable ID feature_page
+6    ensembl_peptide_id_version    Protein stable ID version feature_page</code></pre>
+<p>One can also search for attributes of interest.</p>
+<pre class="r"><code>searchAttributes(mart=mart,pattern=&quot;entrez&quot;)</code></pre>
+<pre><code>                     name                                 description         page
+52  entrezgene_trans_name               EntrezGene transcript name ID feature_page
+65 entrezgene_description NCBI gene (formerly Entrezgene) description feature_page
+66   entrezgene_accession   NCBI gene (formerly Entrezgene) accession feature_page
+67          entrezgene_id          NCBI gene (formerly Entrezgene) ID feature_page</code></pre>
+<p>We create a vector of our columns of interest.</p>
+<pre class="r"><code>myattributes &lt;- c(&quot;ensembl_gene_id&quot;,
+                  &quot;entrezgene_id&quot;,
+                  &quot;external_gene_name&quot;,
+                  &quot;chromosome_name&quot;,
+                  &quot;start_position&quot;,
+                  &quot;end_position&quot;,
+                  &quot;strand&quot;,
+                  &quot;gene_biotype&quot;,
+                  &quot;description&quot;)</code></pre>
+<p>We then use this to download our data. Note that this can be a slow step.</p>
+<pre class="r"><code>mart &lt;- useMart(&quot;ENSEMBL_MART_ENSEMBL&quot;)
+mart &lt;- useDataset(mart=mart,dataset=&quot;mmusculus_gene_ensembl&quot;)
+bdata &lt;- getBM(mart=mart,attributes=myattributes,uniqueRows=T,
+               useCache=FALSE)
+head(bdata)</code></pre>
+<pre><code>     ensembl_gene_id entrezgene_id external_gene_name chromosome_name start_position
+1 ENSMUSG00000064336            NA              mt-Tf              MT              1
+2 ENSMUSG00000064337            NA            mt-Rnr1              MT             70
+3 ENSMUSG00000064338            NA              mt-Tv              MT           1025
+4 ENSMUSG00000064339            NA            mt-Rnr2              MT           1094
+5 ENSMUSG00000064340            NA             mt-Tl1              MT           2676
+6 ENSMUSG00000064341         17716             mt-Nd1              MT           2751
+  end_position strand   gene_biotype
+1           68      1        Mt_tRNA
+2         1024      1        Mt_rRNA
+3         1093      1        Mt_tRNA
+4         2675      1        Mt_rRNA
+5         2750      1        Mt_tRNA
+6         3707      1 protein_coding
+                                                                      description
+1   mitochondrially encoded tRNA phenylalanine [Source:MGI Symbol;Acc:MGI:102487]
+2             mitochondrially encoded 12S rRNA [Source:MGI Symbol;Acc:MGI:102493]
+3          mitochondrially encoded tRNA valine [Source:MGI Symbol;Acc:MGI:102472]
+4             mitochondrially encoded 16S rRNA [Source:MGI Symbol;Acc:MGI:102492]
+5       mitochondrially encoded tRNA leucine 1 [Source:MGI Symbol;Acc:MGI:102482]
+6 mitochondrially encoded NADH dehydrogenase 1 [Source:MGI Symbol;Acc:MGI:101787]</code></pre>
+<p>We find that there are several duplicates for all the IDs. This needs to be fixed when this information is to be used downstream.</p>
+<pre class="r"><code>sum(duplicated(bdata$ensembl_gene_id))
+sum(duplicated(bdata$entrezgene_id))
+sum(duplicated(bdata$external_gene_name))</code></pre>
+<pre><code>[1] 375
+[1] 29854
+[1] 2130</code></pre>
+<pre class="r"><code># arrange table by chr name and start position
+bdata &lt;- dplyr::arrange(bdata,chromosome_name,start_position)
+write.table(bdata,&quot;./data/mouse_genes.txt&quot;,sep=&quot;\t&quot;,dec=&quot;.&quot;,row.names=FALSE,quote=FALSE)
+head(bdata)</code></pre>
+<pre><code>     ensembl_gene_id entrezgene_id external_gene_name chromosome_name start_position end_position strand         gene_biotype
+1 ENSMUSG00000102693            NA      4933401J01Rik               1        3143476      3144545      1                  TEC
+2 ENSMUSG00000064842     115487594            Gm26206               1        3172239      3172348      1                snRNA
+3 ENSMUSG00000051951        497097               Xkr4               1        3276124      3741721     -1       protein_coding
+4 ENSMUSG00000102851            NA            Gm18956               1        3322980      3323459      1 processed_pseudogene
+5 ENSMUSG00000103377            NA            Gm37180               1        3435954      3438772     -1                  TEC
+6 ENSMUSG00000104017            NA            Gm37363               1        3445779      3448011     -1                  TEC
+                                                            description
+1        RIKEN cDNA 4933401J01 gene [Source:MGI Symbol;Acc:MGI:1918292]
+2             predicted gene, 26206 [Source:MGI Symbol;Acc:MGI:5455983]
+3 X-linked Kx blood group related 4 [Source:MGI Symbol;Acc:MGI:3528744]
+4             predicted gene, 18956 [Source:MGI Symbol;Acc:MGI:5011141]
+5             predicted gene, 37180 [Source:MGI Symbol;Acc:MGI:5610408]
+6             predicted gene, 37363 [Source:MGI Symbol;Acc:MGI:5610591]</code></pre>
+</div>
+<div id="transcript" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Transcript</h2>
+<p>Here we download transcript to gene mappings. Notice that we can specify the <code>mart</code> and <code>dataset</code> in the <code>useMart()</code> function.</p>
+<pre class="r"><code>mart &lt;- useMart(biomart=&quot;ensembl&quot;,dataset=&quot;mmusculus_gene_ensembl&quot;)
+t2g &lt;- getBM(attributes=c(&quot;ensembl_transcript_id&quot;,&quot;ensembl_gene_id&quot;,&quot;external_gene_name&quot;),mart=mart,useCache=FALSE)
+write.table(t2g,&quot;./data/mouse_transcripts.txt&quot;,sep=&quot;\t&quot;,dec=&quot;.&quot;,row.names=F,quote=F)
+head(t2g)</code></pre>
+<pre><code>  ensembl_transcript_id    ensembl_gene_id external_gene_name
+1    ENSMUST00000082387 ENSMUSG00000064336              mt-Tf
+2    ENSMUST00000082388 ENSMUSG00000064337            mt-Rnr1
+3    ENSMUST00000082389 ENSMUSG00000064338              mt-Tv
+4    ENSMUST00000082390 ENSMUSG00000064339            mt-Rnr2
+5    ENSMUST00000082391 ENSMUSG00000064340             mt-Tl1
+6    ENSMUST00000082392 ENSMUSG00000064341             mt-Nd1</code></pre>
+<p>The transcipt information file is saved to a file and will be used in the lab on <a href="lab_kallisto.html">Kallisto</a>.</p>
+</div>
+<div id="gene-ontology" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Gene ontology</h2>
+<p>Similarly, we can get entrez gene ID to GO ID relationships. List all the GO related filters:</p>
+<pre class="r"><code>mart &lt;- biomaRt::useMart(biomart=&quot;ensembl&quot;,dataset=&quot;mmusculus_gene_ensembl&quot;)
+la &lt;- listAttributes(mart=mart)
+
+# find all rows in dataset &#39;lf&#39; where column &#39;name&#39; contains the string &#39;go&#39;
+head(la[grepl(&quot;go&quot;,tolower(la$name)),])</code></pre>
+<pre><code>                     name                           description
+18                with_go                         With GO ID(s)
+19        with_goslim_goa                 With GOSlim GOA ID(s)
+70                     go            GO ID(s) [e.g. GO:0000002]
+71             goslim_goa    GOSlim GOA ID(s) [e.g. GO:0000003]
+169        go_parent_term                 Parent term accession
+170        go_parent_name                      Parent term name
+171      go_evidence_code                      GO Evidence code
+212   with_cgobio_homolog Orthologous Channel bull blenny Genes
+233  with_cldingo_homolog               Orthologous Dingo Genes
+257 with_ggorilla_homolog             Orthologous Gorilla Genes</code></pre>
+<pre class="r"><code>mart &lt;- biomaRt::useMart(biomart=&quot;ensembl&quot;,dataset=&quot;mmusculus_gene_ensembl&quot;)
+bdata &lt;- getBM(mart=mart,attributes=c(&quot;entrezgene_id&quot;,&quot;go_id&quot;,&quot;go_linkage_type&quot;),uniqueRows=T,useCache=FALSE)
+write.table(bdata,&quot;./data/mouse_go.txt&quot;,sep=&quot;\t&quot;,dec=&quot;.&quot;,row.names=FALSE,quote=FALSE)</code></pre>
+<pre><code>  entrezgene_id      go_id go_linkage_type
+1            NA GO:0006414             TAS
+2            NA GO:0030533             IEA
+3            NA GO:0030533             ISS
+4            NA GO:0005739             TAS
+5            NA GO:0000028             TAS
+6            NA GO:0006412             TAS</code></pre>
+</div>
+<div id="id-conversion" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> ID conversion</h2>
+<p>We can also take a quick look at converting IDs. It is often desirable to convert a certain gene identifier to another (ensembl gene ID, entrez gene ID, gene ID). Sometimes, it may be necessary to convert gene IDs of one organism to another. biomaRt has a convenient function for this called <code>getLDS()</code>.</p>
+<p>Here is an example where we convert a few mouse ensembl IDs to Human Hugo gene IDs.</p>
+<pre class="r"><code>mouse_genes &lt;- c(&quot;ENSMUSG00000035847&quot;,&quot;ENSMUSG00000000214&quot;)
+human &lt;- useMart(&quot;ensembl&quot;, dataset = &quot;hsapiens_gene_ensembl&quot;)
+mart &lt;- useMart(&quot;ensembl&quot;, dataset = &quot;mmusculus_gene_ensembl&quot;)
+attributes = c(&quot;external_gene_name&quot;, &quot;ensembl_gene_id&quot;, &quot;description&quot;) 
+attributesL = c(&quot;hgnc_symbol&quot;, &quot;ensembl_gene_id&quot;) 
+getLDS(attributes, attributesL = attributesL, uniqueRows = T, filters = &#39;ensembl_gene_id&#39;, values= mouse_genes, mart = mart, martL = human)</code></pre>
+<p>If you get this error:<br />
+<code>Error: biomaRt has encountered an unexpected server error. Consider trying one of the Ensembl mirrors (for more details look at ?useEnsembl)</code><br />
+Try the following chunk instead.</p>
+<pre class="r"><code>mouse_genes &lt;- c(&quot;ENSMUSG00000035847&quot;,&quot;ENSMUSG00000000214&quot;)
+human &lt;- useMart(&quot;ensembl&quot;, dataset = &quot;hsapiens_gene_ensembl&quot;, host = &quot;https://dec2021.archive.ensembl.org/&quot;) 
+mart &lt;- useMart(&quot;ensembl&quot;, dataset = &quot;mmusculus_gene_ensembl&quot;, host = &quot;https://dec2021.archive.ensembl.org/&quot;)
+attributes = c(&quot;external_gene_name&quot;, &quot;ensembl_gene_id&quot;, &quot;description&quot;) 
+attributesL = c(&quot;hgnc_symbol&quot;, &quot;ensembl_gene_id&quot;) 
+getLDS(attributes, attributesL = attributesL, uniqueRows = T, filters = &#39;ensembl_gene_id&#39;, values= mouse_genes, mart = mart, martL = human)</code></pre>
+<pre><code>  Gene.name     Gene.stable.ID                                        Gene.description HGNC.symbol Gene.stable.ID.1
+1       Ids ENSMUSG00000035847 iduronate 2-sulfatase [Source:MGI Symbol;Acc:MGI:96417]         IDS  ENSG00000010404
+2       Ids ENSMUSG00000035847 iduronate 2-sulfatase [Source:MGI Symbol;Acc:MGI:96417]              ENSG00000241489
+3        Th ENSMUSG00000000214  tyrosine hydroxylase [Source:MGI Symbol;Acc:MGI:98735]          TH  ENSG00000180176</code></pre>
+<hr />
+</div>
+</div>
+
+
+<footer class="footer">
+<div class="container footer-container">
+<div class="row">
+
+<div class="footer-left col-sm-6">
+<p class="small">
+<b>2024</b> • <a href="https://nbis.se/">NBIS</a> • <a href="https://www.scilifelab.se/">SciLifeLab</a>
+</p>
+</div>
+
+<div class="footer-right col-sm-6">
+<p>
+<span>
+  <span class="footericon" style="padding-right:4px; padding-left:4px">
+    <a href="https://nbis.se/">
+      <svg style="height:0.8em;top:.04em;position:relative;fill:#bdbdbd;" viewBox="0 0 496 512"><path d="M248 8C111.03 8 0 119.03 0 256s111.03 248 248 248 248-111.03 248-248S384.97 8 248 8zm82.29 357.6c-3.9 3.88-7.99 7.95-11.31 11.28-2.99 3-5.1 6.7-6.17 10.71-1.51 5.66-2.73 11.38-4.77 16.87l-17.39 46.85c-13.76 3-28 4.69-42.65 4.69v-27.38c1.69-12.62-7.64-36.26-22.63-51.25-6-6-9.37-14.14-9.37-22.63v-32.01c0-11.64-6.27-22.34-16.46-27.97-14.37-7.95-34.81-19.06-48.81-26.11-11.48-5.78-22.1-13.14-31.65-21.75l-.8-.72a114.792 114.792 0 0 1-18.06-20.74c-9.38-13.77-24.66-36.42-34.59-51.14 20.47-45.5 57.36-82.04 103.2-101.89l24.01 12.01C203.48 89.74 216 82.01 216 70.11v-11.3c7.99-1.29 16.12-2.11 24.39-2.42l28.3 28.3c6.25 6.25 6.25 16.38 0 22.63L264 112l-10.34 10.34c-3.12 3.12-3.12 8.19 0 11.31l4.69 4.69c3.12 3.12 3.12 8.19 0 11.31l-8 8a8.008 8.008 0 0 1-5.66 2.34h-8.99c-2.08 0-4.08.81-5.58 2.27l-9.92 9.65a8.008 8.008 0 0 0-1.58 9.31l15.59 31.19c2.66 5.32-1.21 11.58-7.15 11.58h-5.64c-1.93 0-3.79-.7-5.24-1.96l-9.28-8.06a16.017 16.017 0 0 0-15.55-3.1l-31.17 10.39a11.95 11.95 0 0 0-8.17 11.34c0 4.53 2.56 8.66 6.61 10.69l11.08 5.54c9.41 4.71 19.79 7.16 30.31 7.16s22.59 27.29 32 32h66.75c8.49 0 16.62 3.37 22.63 9.37l13.69 13.69a30.503 30.503 0 0 1 8.93 21.57 46.536 46.536 0 0 1-13.72 32.98zM417 274.25c-5.79-1.45-10.84-5-14.15-9.97l-17.98-26.97a23.97 23.97 0 0 1 0-26.62l19.59-29.38c2.32-3.47 5.5-6.29 9.24-8.15l12.98-6.49C440.2 193.59 448 223.87 448 256c0 8.67-.74 17.16-1.82 25.54L417 274.25z"></path>
+      </svg>
+    </a>
+    </span>
+    <span class="footericon" style="padding-right:4px; padding-left:4px">
+      <a href="https://twitter.com/NBISwe"><svg style="height:0.8em;top:.04em;position:relative;fill:#bdbdbd;" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path>
+    </svg>
+    </a>
+    </span>
+    <span class="footericon" style="padding-left:4px">
+      <a href="https://www.linkedin.com/company/nbisweden/">
+        <svg style="height:0.8em;top:.04em;position:relative;fill:#bdbdbd;" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path>
+        </svg>
+    </a>
+    </span>
+  </span>
+</p>
+</div>
+
+</div>
+</div>
+</footer>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
