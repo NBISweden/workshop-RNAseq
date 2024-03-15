@@ -1,6 +1,24 @@
 ---
 title: "Mapping"
 subtitle: "Workshop on RNA-Seq"
+output:
+  bookdown::html_document2:
+    highlight: textmate
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+    toc_depth: 4
+    number_sections: true
+    df_print: default
+    code_folding: none
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+    include:
+      after_body: assets/footer-lab.html
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -141,8 +159,9 @@ cd ~/RNAseq/
 #map all the small files
 for i in $(ls rawData/fastqFiles/*.clean.fq.gz.1M_reads.fq.gz); do
 
-  file=${i#rawData/fastqFiles/}
-  sample=${file%.clean.fq.gz.1M_reads.fq.gz}
+  file=${i#rawData/fastqFiles/} # This line removes "rawData/fastqFiles/" from the paht stoded in "i".  
+  sample=${file%.clean.fq.gz.1M_reads.fq.gz} # Here the suffix ".clean.fq.gz.1M_reads.fq.gz" is removed from "file" variable and assigned to the variable "sample"
+  echo -e "mapping sample $sample"
   #Single-end read
   hisat2 -p 4 \
     -x rawData/references/hisat2_build/mm10 \
@@ -158,6 +177,7 @@ for i in $(ls rawData/fastqFiles/*.clean.fq.gz); do
 
   file=${i#rawData/fastqFiles/}
   sample=${file%.clean.fq.gz}
+  echo -e "mapping sample $sample"
   #Single-end read
   hisat2 -p 4 \
     -x rawData/references/hisat2_build/mm10 \
@@ -180,6 +200,7 @@ for i in $(ls results/02-mapping/*.sam); do
 
   file=${i#results/02-mapping/}
   sample=${file%.sam}
+  echo -e "converting sam to bam, sample $sample"
 
 
   # This is how it was done in a older version of samtools  (Version: 0.1.19-44428cd)

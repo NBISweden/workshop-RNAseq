@@ -5,10 +5,10 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,600,600i|Ubuntu+Mono&display=swap&subset=latin-ext');
 
 :root {
-  --color-primary: #4c979f;
-  --color-primary-light: #dbeaeb;
-  --color-primary-lighter: #edf4f5;
-  --color-primary-dark: #44878f;
+  --color-primary: #95b540;
+  --color-primary-light: #E9F2D1;
+  --color-primary-lighter: #f6f9ec;
+  --color-primary-dark: #96b43f;
   --color-border: #ccc;
   --color-text: #424949;
   --color-code-bg:  #f4f6f6;
@@ -60,19 +60,19 @@ h6 {
   font-size: 1.125em;
 }
 
-.section .level1 {
+.level1 {
   margin-bottom: 2.5em;
 }
 
-.section .level2 {
+.level2 {
   margin-bottom: 1.8em;
 }
 
-.section .level3 {
+.level3 {
   margin-bottom: 1.3em;
 }
 
-.section .level4 {
+.level4 {
   margin-bottom: 1em;
 }
 
@@ -84,6 +84,10 @@ pre {
   font-size: 16px;
 }
 
+pre > code.sourceCode {
+    white-space: pre-wrap;
+}
+
 code {
   font-family: var(--font-code,"Menlo","Monaco", "Consolas","Liberation Mono", "Courier New", monospace);
   word-break: break-all;
@@ -91,7 +95,6 @@ code {
 
 /* report title style */
 .title {
-  /* margin-top: 11px; */
   margin-bottom: 0;
   font-size: 1.9em;
 }
@@ -142,11 +145,6 @@ blockquote::before {
   margin-top: -6px;
 }
 
-/* abstract paragraph style */
-.abstract {
-    line-height: 170%;
-}
-
 /* kbd */
 kbd, .kbd {
   background-color: var(--color-text);
@@ -159,17 +157,6 @@ kbd, .kbd {
   margin: 0em 0.05em;
   font-family: var(--font-code);
   text-align: center;
-}
-
-/* danger alert text style */
-
-.danger {
-  color: #721c24;
-  display: block;
-  background: #f8d7da;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: bold;
 }
 
 /* div styles --------------------------------------------------------------- */
@@ -598,7 +585,7 @@ button.btn:before
     font-size: 80%;
 }
 
-/** top title code **/
+/* top title code */
 div.chunk-title {
   font-weight: bold;
   text-transform: uppercase;
@@ -607,7 +594,7 @@ div.chunk-title {
   border-left: 1px solid var(--color-border);
   border-right: 1px solid var(--color-border);
   border-radius: 4px;
-  padding: 2px 2px 2px 10px;
+  padding: 0 0 0 10px;
   margin-top: auto;
   margin-bottom: auto;
   color: white;
@@ -624,8 +611,6 @@ div.navbar-inverse {
 }
 
 .navbar-default {
-  /*border-bottom: 1px solid var(--color-border);
-  background-color: var(--color-boxy-bg);*/
   border: none;
   background-color: white;
 }
@@ -637,10 +622,6 @@ ul.nav a:hover {
 .navbar-header a:hover {
   color: lightgrey !important;
 }
-
-/*.navbar-inverse .navbar-brand {
-  color: white;
-}*/
 
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
@@ -656,15 +637,7 @@ ul.nav a:hover {
   background-color: #566573;
 }
 
-.navbar .container {
-  max-width: 940px !important;
-}
-
 /* footer ------------------------------------------------------------------- */
-
-.footer-container {
-  max-width: 940px !important;
-}
 
 .footer {
   color: #bdbdbd;
@@ -674,8 +647,6 @@ ul.nav a:hover {
   left: 0;
   right: 0;
   height: 35px;
-  /*border-top: 1px solid var(--color-border);
-  background-color: var(--color-boxy-bg);*/
   background-color: white;
   border: none;
 }
@@ -700,56 +671,70 @@ ul.nav a:hover {
 }
 
 .footer a:hover {
-  /*color: lightgrey;*/
   text-decoration: underline;
 }
 
 /* homepage -------------------------------------------------------------------- */
 
-.landing-container {
-  max-width: 940px !important;
+.container {
+  max-width: 940px;
 }
 
-.landing-div {
-  background-image: url('landing.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: left bottom;
-  height: 480px;
+.landing {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-weight: 300;
 }
+
+.landing-title h1 {
+  font-size: 2.5em;
+  line-height: 1.1;
+  font-weight: 300;
+  margin-bottom: 0.5em;
+}
+
+.landing-subtitle h2 {
+  font-size: 1.5em;
+  font-weight: 300;
+  letter-spacing: 2px;
+}
+
+.landing-features {
+  font-size: 120%;
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.landing-features ul {
+  padding-left: 1em;
+}
+
+.landing-right {
+  align-self: center;
+}
+
+.landing-left {
+  align-self: center;
+}
+
 
 @media only screen and (max-width: 575px) {
-  .flex-box {
-    text-align: center;
-  }
-  .landing-update {
-    text-align: center;
-  }
-  .landing-div {
-    height: 600px;
-  }
+
+ .landing {
+   grid-template-columns: 100%;
+   text-align: center;
+ }
+
+ .landing-update {
+   text-align: center;
+ }
+
+ .landing-right {
+   padding: 2em;
+ }
+
 }
 
-.landing-subtitle {
-  font-size: 1.3em;
-  font-weight: 200;
-  line-height: 1;
-  margin-bottom: 1em;
-  margin-left: 2px;
-}
-
-.landing-title {
-  font-size: 2.8em;
-  font-weight: 200;
-  line-height: 1.2;
-  margin-bottom: 0.7em;
-}
-
-.landing-bullets {
-  font-size:1.5em;
-  font-weight:200;
-  line-height:1.4;
-}
 
 /* tocify ---------------------------------------------------------------------- */
 

@@ -1,7 +1,7 @@
 ---
 title: "Data Preprocessing"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Roy Francis and Nima Rafati</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
+author: "`r paste0('<b>Roy Francis and Nima Rafati</b>')`"
 institute: NBIS, SciLifeLab
 keywords: bioinformatics, course, scilifelab, nbis
 output:
@@ -62,7 +62,7 @@ mr[1:6,]
 
 ???
 
-A glimpse into the count table and metadata table. It is important to make sure before any analyses that the count column names match the metadata row names exactly. Make sure the column in both tables are of the correct data type; ie; numbers are numeric and groups are factors.
+A glimpse into the count table and metadata table. Before any downstream analyses, it is important to make sure that the count column names match the metadata row names. Make sure the column in both tables are of the correct data type; ie; numbers are numeric and groups are factors.
 
 ---
 name: pp
@@ -72,17 +72,16 @@ name: pp
 - Remove genes and samples with low counts
 
 ```{r,echo=TRUE}
-cf1 <- cr[rowSums(cr>0) >= 3, ] # Keep rows/genes that have at least one read 
-cf2 <- cr[rowSums(cr>3) >= 3, ] # Keep rows/genes that have at least three reads 
+cf1 <- cr[rowSums(cr>0) >= 3, ] # Keep rows/genes that have at least one read in +3 samples 
+cf2 <- cr[rowSums(cr>3) >= 3, ] # Keep rows/genes that have at least three reads in +3 samples 
 cf3 <- cr[rowSums(edgeR::cpm(cr)>5) >= 3, ] # need at least  three samples to have cpm > 5. 
 ```
-
+_count/read per million (cpm/rpm): a normalized value for sequencing depth._  
 - Inspect distribution
 
 ```{r,fig.height=2.7,fig.width=9,echo=FALSE}
 h0 <- cr %>%
-  mutate(gene=rownames(.)) %>%
-  gather(key="sample",value="value",-gene) %>%
+  gather(key="sample",value="value") %>%
   ggplot(aes(x=log2(value+1),group=sample))+
   geom_density()+
   labs(x=expression('Log'[10]~'Read counts'),y="Density",title="Raw")+
@@ -91,8 +90,7 @@ h0 <- cr %>%
         axis.ticks=element_blank())
 
 h1 <- cf1 %>%
-  mutate(gene=rownames(.)) %>%
-  gather(key="sample",value="value",-gene) %>%
+  gather(key="sample",value="value") %>%
   ggplot(aes(x=log2(value+1),group=sample))+
   geom_density()+
   labs(x=expression('Log'[10]~'Read counts'),y="Density",title="Method 1")+
@@ -101,8 +99,7 @@ h1 <- cf1 %>%
         axis.ticks=element_blank())
 
 h2 <- cf2 %>%
-  mutate(gene=rownames(.)) %>%
-  gather(key="sample",value="value",-gene) %>%
+  gather(key="sample",value="value") %>%
   ggplot(aes(x=log2(value+1),group=sample))+
   geom_density()+
   labs(x=expression('Log'[10]~'Read counts'),y="Density",title="Method 2")+
@@ -111,8 +108,7 @@ h2 <- cf2 %>%
         axis.ticks=element_blank())
 
 h3 <- cf3 %>%
-  mutate(gene=rownames(.)) %>%
-  gather(key="sample",value="value",-gene) %>%
+  gather(key="sample",value="value") %>%
   ggplot(aes(x=log2(value+1),group=sample))+
   geom_density()+
   labs(x=expression('Log'[10]~'Read counts'),y="Density",title="Method 3")+
@@ -133,13 +129,13 @@ rm(cf1,cf2,cf3)
 
 ???
 
-Lowly expressed genes are removed to improve the signal-to-noise ratio. Genes not expressed in any sample can be removed completely as as they negatively affect multiple testing correction. The stringency of low count filtering can be adjusted based on the researcher's preference. It is a trade-off between data quality vs data size.
+Lowly expressed genes are removed to improve the signal-to-noise ratio. Genes not expressed in any sample can be removed completely as they negatively affect multiple testing correction. The stringency of low count filtering can be adjusted based on the researcher's preference. It is a trade-off between data quality vs data size.
 
 In the above example, raw data has a huge number of zeros and the distribution of over higher value counts are barely visible. Three different levels of low count filtering are shown.
 
 In method 1, the detection limit is set at 1 count, ie; any value above 0 is considered as an expressed gene. And we aim to have expression in atleast 3 samples.
 
-In method 2, the detection limit is set at 3 counts, ie; any value above 3 is considered an expressed gene. A value below 3 is considered noise and is disregarded. And we aim to have 3 count expression in at least 3 samples. Note that changing the minimum limit of detection has a dramatic effect on the count distribution. Notice how many rows (genes) are discarded.
+In method 2, the detection limit is set at 2 counts, ie; any value above 2 is considered an expressed gene. A value below 2 is considered noise and is discarded and we aim to have 2 count expression in at least 3 samples. Note that changing the minimum limit of detection has a dramatic effect on the count distribution. Notice how many rows (genes) are discarded.
 
 In method 3, the limit of detection is a bit less subjective. A count that is greater than 5 count per million reads is considered a positive detection. This is a stringent and fairly robust method at the expense of losing the most number of genes.
 
@@ -150,6 +146,7 @@ name: norm-1
 
 .pull-left-50[
 - Removing technical biases in sequencing data (e.g. sequencing depth and gene length)
+- Make counts comparable across features (genes). 
 - Make counts comparable across samples
 
 <!-- Control for sequencing depth -->
@@ -206,7 +203,7 @@ name: norm-2
 
 ## Normalisation
 
-- Make counts comparable across features (genes)
+- Controlling for gene length: It can be useful for gene to gene comparisons.
 .size-60[![](data/normalization_methods_length.png)]
 
 ```{r,echo=FALSE}
@@ -250,10 +247,10 @@ dfr <- data.frame(A=c(20,25,4),B=c(6,6,15),len=c(2*10^3,4*10^3,1*10^3))
 rownames(dfr) <- c("x","y","z")
 dfr$A_rpm <- round(dfr$A/(sum(dfr$A)/(10^6)))
 dfr$B_rpm <- round(dfr$B/(sum(dfr$B)/(10^6)))
-dfr$A_rpkm <- round(dfr$A_rpm/dfr$len,2)
-dfr$B_rpkm <- round(dfr$B_rpm/dfr$len,2)
-dfr$A_rpk <- dfr$A/dfr$len
-dfr$B_rpk <- dfr$B/dfr$len
+dfr$A_rpkm <- round(dfr$A_rpm * 10^3/dfr$len,2)
+dfr$B_rpkm <- round(dfr$B_rpm * 10^3/dfr$len,2)
+dfr$A_rpk <- dfr$A * 10^3/dfr$len
+dfr$B_rpk <- dfr$B * 10^3/dfr$len
 dfr$A_tpm <- round((dfr$A_rpk*10^6)/sum(dfr$A_rpk))
 dfr$B_tpm <- round((dfr$B_rpk*10^6)/sum(dfr$B_rpk))
 
@@ -270,28 +267,28 @@ rpm = cpm.
 
 ???
 
-Normalisation strategies can be roughly grouped into four approaches: Normalisation by library size, normalisation by distribution, normalisation by testing and normalisation using controls.
+Normalisation strategies can be roughly grouped into four approaches: Normalisation by library size, normalisation by distribution, normalisation by testing and normalisation by using controls.
 
 Normalisation by library size is the most basic. TPM is probably the only method that must be used.
 
 **RPKM**
 
-RPKM in each sample sums up to different totals which make it hard to compare a gene from one sample to another sample.
+RPKM (Reads per kilo base of transcript per million mapped reads) in each sample sums up to different total values which make it hard to compare a gene from one sample to another sample.
 
 ```
-RPM = count / (total_counts / 10^6)
-RPKM = RPM / transcript_length
+RPM or CPM = number of reads mapped to gene * 10^6 / total number of mapped reads
+RPKM = RPM * 10^3/ features length
 ```
-
+Features length can be transcript or gene. 10^3 is for gene length in Kb and 10^6 is for million reads.  
 **TPM**
 
-TPM in every sample sums up to 1 million. This makes it easier to compare a gene from one sample to another.
+TPM (Transcripts per million) in every sample sums up to 1 million. This makes it easier to compare a gene from one sample to another.
 
 ```
-RPK = count / transcript length
+RPK = count * 10^3 / feature length
 TPM = (RPK * 10^6)/total_RPK
 ```
-
+Features length can be transcript or gene. 10^3 is for gene length in Kb and 10^6 is for million reads.  
 ---
 name: norm-3b
 
@@ -330,22 +327,26 @@ dfr
 ???
 
 
-**Quartile (Q)**
-In this method expression values are scaled in a way to keep the order based on expression values in each sample and expression values are normalized based on mean value of top genes. Then after assigning top genes to calculated mean then this procedure will be repeated for second top genes. It is called Quantile Normalization because the normalized datasets have identical quantile
-**Upper Quartile (UQ)**
-In Upper Quartile normalization, the expression values are divided by 75th quantile of the counts for each samples
-**Trimmed Mean of M-values (TMM)**
+**Quartile (Q)**  
+In this method expression values are scaled in a way to keep the order based on expression values in each sample and expression values are normalized based on mean value of top genes. Then after assigning top genes to calculated mean then this procedure will be repeated for second top genes. It is called Quantile Normalization because the normalized datasets have identical quantile.  
+
+**Upper Quartile (UQ)**  
+In Upper Quartile normalization, the expression values are divided by 75th quantile of the counts for each samples.  
+
+**Trimmed Mean of M-values (TMM)**  
 The assumption of this method is that, there are many genes which are not deferentially expressed. By considering one of the sample as reference TMM is calculated. First the most expressed genes and the genes with the largest log ratios is excluded and then TMM, as the weighted mean of log ratios between reference and other samples, are calculated. TMM values will be used as correction of the library size and should be close to **one**. TMM is implemented in **edgeR**.   
-**TMM with singleton pairing (TMMwsp)**
+
+**TMM with singleton pairing (TMMwsp)**  
 It is similar to TMM which recommended for data with a lot of unexpressed genes (zero values).  In TMM, zero counts are ignored while in TMMwsp method the positive counts from such genes are reused to increase the number of features by which the libraries are compared.  
-**Relative Log Expression (RLE)**
+
+**Relative Log Expression (RLE)**  
 Similar to TMM, in RLE the hypothesis is that majority of the genes are not DE. The scaling factor in RLE is calculated as the median of the ratio of its expression level (read count) over its geometric mean across all samples. This method is implemented in **DESeq** and **DESeq2**.  
 
 **MRN**
 
 MRN method assumes most samples are not deferentially expressed
 
-- Find a reference sample for each gene.
+- Find a reference sample for each gene  
 - Divide each count by the reference sample to create a ratio
 - Compute median of this ratio for each sample
 - Divide counts by this median ratio
@@ -359,7 +360,7 @@ name: norm-3c
 
 **Normalisation by testing**
 
-- A more robust version of normalisation by distribution.
+- A more robust version of normalisation by distribution 
 - A set of non-DE genes are detected through hypothesis testing
 - Tolerates a larger difference in number of over and under expressed genes between conditions
 - Methods include PoissonSeq, DEGES
@@ -390,11 +391,11 @@ exclude: true
 
 | Method |	Description |	Accounted factors	| Recommendation |
 | ---- | ---- | ---- | ---- |
-| CPM	| counts scaled by total number of reads 	| sequencing depth |	compare counts between replicates of the same group; NOT for within sample comparisons or DE analysis |
+| CPM/RPM	| counts scaled by total number of reads 	| sequencing depth |	compare counts between replicates of the same group; NOT for within sample comparisons or DE analysis |
 | TPM|	counts per length of transcript (kb) per million reads mapped |	sequencing depth and gene length |	gene count comparisons within a sample or between samples of the same sample group; NOT for DE analysis |
 | RPKM/FPKM |	similar to TPM |	sequencing depth and gene length	| compare counts between genes within a sample; NOT for between sample comparisons or DE analysis |
-| DESeq2 MRN |	counts divided by sample-specific size factors determined by median ratio of gene counts relative to geometric mean per gene |	sequencing depth and RNA composition 	| compare counts between samples and for DE analysis; NOT for within sample comparisons |
-| EdgeR TMM |	uses a weighted trimmed mean of the log expression ratios between samples |	sequencing depth, RNA composition, and gene length |	compare counts between and within samples and for DE analysis |
+| DESeq2 MRN |	counts divided by sample-specific size factors determined by median ratio of gene counts relative to geometric mean per gene |	sequencing depth and RNA composition | compare counts between samples and for DE analysis; NOT for within sample comparisons |
+| edgeR TMM |	uses a weighted trimmed mean of the log expression ratios between samples |	sequencing depth, RNA composition, and gene length |	compare counts between and within samples and for DE analysis |
 
 ---
 name: norm-5

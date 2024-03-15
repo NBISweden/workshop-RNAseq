@@ -1,7 +1,7 @@
 ---
 title: "Differential Gene Expression"
 subtitle: "Workshop on RNA-Seq"
-author: "`r paste0('<b>Roy Francis</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
+author: "`r paste0('<b>Julie Lorent</b> | ',format(Sys.time(), '%d-%b-%Y'))`"
 institute: NBIS, SciLifeLab
 keywords: bioinformatics, course, scilifelab, nbis
 output:
@@ -52,10 +52,46 @@ mr <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=FALSE,row.na
 ```
 
 ---
-name: dge
+name: intro
+
+## What I'll talk about in this lecture
+
+- Compare gene expression between 2 groups of samples 
+  - while accounting for differences in sequencing depth
+  - by testing for differences in means with appropriate estimation of count data variability
+- Calculate log fold changes
+- Step by step description of DESeq2 analysis
+
+
+## What we will discuss in the next lecture
+
+- More information on count data distributions 
+- Batch effects
+- Advanced designs
+
+
+---
+name: intro2
+
+## Couldn’t we just use a Student’s t test for each gene?
+
+
+```{r, echo=FALSE, out.width="30%", fig.align='center'}
+knitr::include_graphics("data/boxplot.png")
+```
+
+- May have few replicates -> "borrow" information from other genes
+- Multiple testing issues -> Correction
+- Distribution is not normal -> negative binomial methods
+
+
+
+---
+name: prep
 
 ## Preparation
 
+- DEseq2 (and edgeR) take as input raw counts and metadata.
 - Create the DESeq2 object
 
 ```{r}
@@ -78,7 +114,11 @@ name: dge-sf
 
 ## Size factors
 
-- Normalisation factors are computed
+- Objective of the differential gene expression: compare concentration of cDNA fragments from each gene between conditions/samples.
+- Data we have: read counts which depend on these concentration, but also on sequencing depth
+- Total count can be influenced by a few highly variable genes
+- For this reason, DESeq2 uses size factors (median-of-ratios) instead of total count as normalization factors to account for differences in sequencing depth
+- Normalisation factors are computed as follows:
 
 ```{r}
 d <- DESeq2::estimateSizeFactors(d,type="ratio")
@@ -86,12 +126,22 @@ sizeFactors(d)
 ```
 
 ---
+name: neg-binom
+
+## Negative binomial distribution
+
+- RNAseq data is not normally distributed neither as raw counts nor using simple transformations
+- DESeq2 and edgeR instead assume negative binomial distributions. 
+- Given this assumption, to test for differential expression, one need to get a good estimate of the dispersion (variability given the mean).
+
+---
 name: dge-dispersion-1
 
 ## Dispersion
 
-- Dispersion is a measure of variability in gene expression for a given mean
-- Dispersion is unreliable for low mean counts
+- Dispersion is a measure of spread or variability in the data. 
+- Variance is a classical measure of dispersion which is usually not used for negative binomial distributions because of its relationship to the mean 
+- The DESeq2 dispersion approximates the coefficient of variation for genes with moderate to high count values and is corrected for genes with low count values 
 
 ```{r,fig.height=4,fig.width=8,echo=FALSE}
 cv <- function(x) sd(x)/mean(x)
@@ -111,17 +161,14 @@ name: dge-dispersion-2
 
 ## Dispersion
 
-- Genes with similar mean values must have similar dispersion
-- Estimate likely (ML) dispersion for each gene based on counts
-- Fit a curve through the gene-wise estimates
-- Shrink dispersion towards the curve
+- RNAseq experiments typically have few replicates
+- To improve the dispersion estimation in this case, we "borrow" information from other genes with similar mean values
 
 ```{r,fig.height=3,fig.width=3}
 d <- DESeq2::estimateDispersions(d)
 ```
 
 ![](data/deseq_dispersion.png)
-
 ---
 name: dge-test
 
@@ -180,14 +227,27 @@ name: dge-test-4
 
 ![](data/lfc_shrink.png)
 
-<!-- --------------------- Do not edit this and below --------------------- -->
 
 ---
+name: acknowl
 
-# Acknowledgements
+## Acknowledgements
 
 - RNA-seq analysis [Bioconductor vignette](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html)
 - [DGE Workshop](https://github.com/hbctraining/DGE_workshop/tree/master/lessons) by HBC training
+
+
+
+<!-- --------------------- Do not edit this and below --------------------- -->
+
+---
+name: acknowl
+
+## Acknowledgements
+
+- RNA-seq analysis [Bioconductor vignette](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html)
+- [DGE Workshop](https://github.com/hbctraining/DGE_workshop/tree/master/lessons) by HBC training
+
 
 ---
 name: end_slide

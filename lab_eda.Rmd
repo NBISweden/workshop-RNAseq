@@ -3,13 +3,31 @@ title: "PCA and Clustering"
 subtitle: "Workshop on RNA-Seq"
 editor_options:
   chunk_output_type: console
+output:
+  bookdown::html_document2:
+    highlight: textmate
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+    toc_depth: 4
+    number_sections: true
+    df_print: default
+    code_folding: none
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+    include:
+      after_body: assets/footer-lab.html
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
 <div class="boxy boxy-exclamation boxy-yellow">
-Create a directory named `data` in your current working directory for input and output files.
+Set `~/RNAseq/labs/` as your working directory (i.e. your working directory should be the directory where you saved this .Rmd file). Create a subdirectory named `data` in this directory (`~/RNAseq/labs/data/`) for input and output files.
 </div>
 
 Load R packages.
@@ -30,8 +48,8 @@ Load the sequencing data and the metadata data with sample information.
 
 ```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 # Load data and metadata
-download_data("data/counts_tpm.csv")
-data <- read.csv("data/counts_tpm.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
+download_data("data/counts_vst.csv")
+data <- read.csv("data/counts_vst.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 
 # if file doesn't exist, download it
 download_data("data/metadata_raw.csv")
@@ -43,11 +61,18 @@ metadata <- read.csv("data/metadata_raw.csv",header=TRUE,stringsAsFactors=TRUE,r
 
 A useful step is to convert ENSEMBL gene/transcript IDs into meaningful gene names. This can be done in many way using a gtf file or using the `biomaRt` function in R.
 
-```{r}
-download_data("data/mouse_genes.txt")
+If the `biomaRt` did not work run the next chunk.  
+```{r biomart-download, echo = T, eval=FALSE}
 mouse <- biomaRt::useMart(biomart="ensembl", dataset="mmusculus_gene_ensembl")
 annot <- biomaRt::getBM(attributes = c("ensembl_gene_id","external_gene_name"),mart = mouse,useCache=FALSE)
+gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
+gene_names[is.na(gene_names) ] <- ""
+```
 
+
+```{r}
+download_data("data/mouse_genes.txt")
+annot <- read.table('data/mouse_genes.txt', header = T, sep = '\t', fill = T, quote = '"')
 gene_names <- as.character ( annot[match(rownames(data),annot[,"ensembl_gene_id"]),"external_gene_name"] )
 gene_names[is.na(gene_names) ] <- ""
 ```
@@ -65,7 +90,7 @@ dim(data)
 We can now save this counts for later use
 
 ```{r}
-write.csv(data ,"data/gene_tpm_counts.csv",row.names=T)
+write.csv(data ,"data/gene_vst_counts.csv",row.names=T)
 
 cf <- read.csv("data/counts_filtered.csv",header=TRUE,stringsAsFactors=FALSE,row.names=1)
 cf <- rowsum(cf, group = as.character(gene_names) ) #assign gene names and sum duplicates
@@ -154,7 +179,7 @@ Next, we can compute PCA using the `prcomp()` function. As additional parameters
 ***
 ## Computing PC variance
 
-The usefulness of PCA is that the principal components do have a meaning: They store the amount of variance in decreasing order, so some PCs are more important than others. Inside the `PC$sdev` object, we can get the standard deviation stored in each PC.
+The usefulness of PCA is that the principal components can have a meaning: They store the amount of variance in decreasing order, so some PCs are more important than others. Inside the `PC$sdev` object, we can get the standard deviation stored in each PC.
 
 ```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=5}
 PC_sd <- setNames(PC$sdev,paste0("PC",1:length(PC$sdev)))
@@ -265,13 +290,13 @@ The methods available are: *ward.D*, *ward.D2*, *single*, *complete*, *average*,
 #Clustering using euclidean distance
 {
   mypar(1,2,mar=c(6,4,2,1))
-  h <- hclust(d,method="complete")
+  h <- hclust(d,method="ward.D2")
   plot( as.dendrogram(h),las=1,main="d=euclidean\nh=complete")
   points(1:ncol(data),rep(0,ncol(data)),pch=16,cex=2,col=metadata$Group[h$order])
 }
 
 
-h2 <- hclust(d2,method="complete")
+h2 <- hclust(d2,method="ward.D2")
 {
   plot( as.dendrogram(h2),las=1, main="d=correlation\nh=complete")
   points(1:ncol(data),rep(0,ncol(data)),pch=16,cex=2, col=metadata$Group[h2$order])

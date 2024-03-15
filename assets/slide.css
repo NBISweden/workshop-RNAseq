@@ -6,11 +6,11 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto|Source+Sans+Pro:300,400,600|Ubuntu+Mono&subset=latin-ext');
 
 :root {
-  --color-primary: #4C979F;
+  --color-primary: #95b540;
   --color-border: #e8e8e8;
-  --color-text: #202020;
+  --color-text: #424949;
   --color-code-bg: #f9f9f9;
-  --color-code-inline: #d72b3f;
+  --color-code-inline: #ff665d;
   --font-base: 'Source Sans Pro';
   --font-highlight: 'Source Sans Pro';
   --font-code: 'Ubuntu Mono';
@@ -19,59 +19,64 @@
 /* FONTS -------------------------------------------------------------------- */
 
 /* body font family */
-body,p,h1,h2,h3,h4,h5,h6 {
+body, p, h1, h2, h3, h4, h5, h6,
+.remark-slide-content, .remark-slide-content body,
+.remark-slide-content p, .remark-slide-content h1,
+.remark-slide-content h2, .remark-slide-content h3,
+.remark-slide-content h4, .remark-slide-content h5,
+.remark-slide-content h6 {
   font-family: var(--font-base, 'Roboto', 'DIN', 'Helvetica', sans-serif);
   color: var(--color-text);
   font-weight: 400;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 /* title font family, weight and size */
-h1,h2 {
+h1, h2, .remark-slide-content h1, .remark-slide-content h2 {
   font-family: var(--font-highlight, 'Roboto', 'DIN', 'Helvetica', sans-serif);
   color: var(--color-text);
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.02rem;
 }
 
-h1 {
-  font-size: 1.802em !important;
+h1, .remark-slide-content h1 {
+  font-size: 1.802rem;
   color: var(--color-text);
-  margin-top: 0.9em;
-  margin-bottom: 0.8em;
+  margin-top: 0.9rem;
+  margin-bottom: 0.8rem;
 }
 
-h2 {
-  font-size: 1.602em !important;
+h2, .remark-slide-content h2 {
+  font-size: 1.602rem;
   color: var(--color-text);
-  margin-top: 0.2em;
-  margin-bottom: 0.6em;
+  margin-top: 0.2rem;
+  margin-bottom: 0.6rem;
   /* border-left: var(--color-primary) 6px solid; */
   /* padding-left: 0.5em; */
 }
 
-h3 {
-  font-size: 1.424em !important;
-  margin-top: 0.6em;
-  margin-bottom: 0.4em;
+h3, .remark-slide-content h3 {
+  font-size: 1.424rem;
+  margin-top: 0.6rem;
+  margin-bottom: 0.4rem;
 }
 
-h4 {
-  font-size: 1.266em !important;
-  margin-top: 0.5em;
-  margin-bottom: 0.3em;
+h4, .remark-slide-content h4 {
+  font-size: 1.266rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 
-h5 {
-  font-size: 1.266em !important;
-  margin-top: 0.5em;
-  margin-bottom: 0.3em;
+h5, .remark-slide-content h5 {
+  font-size: 1.266rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 
-h6 {
-  font-size: 1.125em !important;
-  margin-top: 0.5em;
-  margin-bottom: 0.3em;
+h6, .remark-slide-content h6 {
+  font-size: 1.125rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 
 /* code font family */
@@ -81,7 +86,6 @@ h6 {
 
 /* code font size */
 .remark-code {
-  /*font-size: 80% !important;*/
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -95,30 +99,87 @@ h6 {
   border-radius: 3px;
   margin-right: 2px;
   padding: 2px 3px 1px;
-  /*font-size: 80% !important;*/
   color: var(--color-code-inline);
+  font-size: 90%;
 }
 
 /* new font size classes */
-.largest { font-size: 2.488em; }
-.larger { font-size: 2.074em; }
-.large { font-size: 1.44em;}
-.small { font-size: 0.833em; }
-.smaller { font-size: 0.694em; }
-.smallest{ font-size: 0.579em; }
+.largest { font-size: 2.488rem !important; }
+.larger { font-size: 2.074rem !important; }
+.large { font-size: 1.44rem; !important}
+.small { font-size: 0.833rem !important; }
+.smaller { font-size: 0.694rem !important; }
+.smallest{ font-size: 0.579rem !important; }
 
 .highlight {color: var(--color-primary);}
+
 .altcol {color: #a8b0bb;}
-.citation {
-  line-height: 12px;
-  position: fixed;
-  bottom: 5px;
-  margin-right: 6em;
-  display: block;
-  font-size: 70%;
-}
 
 .cite {
+  display: inline;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 4px;
+  background-color: #b3cde3;
+  color: white;
+  border-radius: 4px;
+  text-align: center;
+  vertical-align: middle;
+  transition-duration: 0.3s;
+}
+
+.cite a, .cite a:hover {
+  color: white;
+}
+
+.cite:before {
+  content: '\f02e';
+  font-family: "Font Awesome 5 Free";
+  margin-right: 4px;
+  font-size: 0.5rem;
+  font-weight: 900;
+}
+
+.cite:hover {
+  opacity: 0.8;
+  text-align: center;
+  vertical-align: middle;
+  transition-duration: 0.3s;
+}
+
+.tool {
+  display: inline;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 4px;
+  background-color: #decbe4;
+  color: white;
+  border-radius: 4px;
+  text-align: center;
+  vertical-align: middle;
+  transition-duration: 0.3s;
+}
+
+.tool a, .tool a:hover {
+  color: white;
+}
+
+.tool:before {
+  content: '\f1b2';
+  font-family: "Font Awesome 5 Free";
+  margin-right: 4px;
+  font-size: 0.5rem;
+  font-weight: 900;
+}
+
+.tool:hover {
+  opacity: 0.8;
+  text-align: center;
+  vertical-align: middle;
+  transition-duration: 0.3s;
+}
+
+.references li, .references p {
   font-size: 60%;
 }
 
@@ -130,20 +191,22 @@ h6 {
 /* text on end slide */
 .end-text {
   opacity: 0.6;
-  text-indent: 0.5rem;
+  position: fixed;
+  bottom: 2rem;
+  line-height: 1rem;
 }
 
 /* blockquote */
 blockquote {
   border-left: 5px solid var(--color-primary);
+  display: inline-block;
   background: var(--color-code-bg);
-  padding: 0.1em;
-  padding-left: 12px;
-  margin-left: 16px;
-  margin-right: 0;
-  border-radius: 0 4px 4px 0;
+  padding: 0.01rem;
+  padding-left: 0.6rem;
+  padding-right: 0.7rem;
+  border-radius: 4px 4px 4px 4px;
+  margin: 0;
 }
-
 
 /* links */
 a {
@@ -157,66 +220,88 @@ a:hover {
   text-decoration: underline;
 }
 
+.hljs-github .hljs-string, .hljs-github .hljs-doctag {
+    color: var(--color-code-inline);
+}
+
+/* keyboard keys display */
+.kbd {
+  background-color: var(--color-text);
+  color: white;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 75%;
+  font-weight: 600;
+  letter-spacing: 0.04rem;
+  margin: 0em 0.05rem;
+  font-family: var(--font-code);
+  text-align: center;
+}
+
 /* MARGINS ------------------------------------------------------------------ */
 
 /* slide margin */
 .remark-slide-content {
-  padding-top: 2em;
-  padding-left: 2.5em;
-  padding-right: 2.5em;
-  padding-bottom: 2em;
+  padding-top: 1.8rem;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  padding-bottom: 2rem;
 }
 
 /* list margin */
 ul {
-  margin-top: 0.8em;
-  margin-bottom: 0.8em;
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
 }
 
 /* pre margin */
 pre {
-  margin-top: 0.8em;
-  margin-bottom: 0.8em;
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
 }
 
 /* p margin */
 p {
-  margin-top: 0.8em;
-  margin-bottom: 0.8em;
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
 }
 
 /* COVER SLIDES ------------------------------------------------------------- */
 
 /* title slide image */
-.title-slide {
-  background-image: url(cover.jpg);
+.remark-slide .title-slide {
+  background-image: url(cover.png);
   background-size: cover;
-  vertical-align: bottom !important; 
-  text-align: left !important;
-  padding-bottom: 3em;
+  text-align: left;
+  vertical-align: bottom;
+}
+
+.title-slide a {
+  color: #808080;
 }
 
 /* end slide image */
-.end-slide {
-  background-image: url(end.jpg);
+.remark-slide .end-slide {
+  background-image: url(end.png);
   background-size: cover;
-  vertical-align: bottom !important; 
-  text-align: left !important;
-  padding-bottom: 2em;
-  padding-left: 80px;
+  text-align: left;
+  padding-bottom: 2rem;
   line-height: 12px;
+  vertical-align: middle;
 }
 
-/* logo right */
+.end-slide a {
+  color: #808080;
+}
+
+/* logo */
 .title-slide.remark-slide-content:before{
   position: absolute;
   content:url(logo.svg);
-  /* height:96px; */
-  width:300px;
-  margin-top: 1em;
-  right: 2.5em;
-  /* -webkit-filter: drop-shadow(1px 1px 3px grey); */
-  /* filter: drop-shadow(1px 1px 3px grey); */
+  width:80px;
+  margin-top: 2.5rem;
+  left: 2.5rem;
+  top: 0;
 }
 
 .end-slide.remark-slide-content:before{
@@ -227,27 +312,27 @@ p {
 .title-slide h1 {
   text-align: left;
   font-weight: 600;
-  border-bottom-style: solid;
-  border-bottom-color: var(--color-primary);
-  padding-bottom: 0.3em;
-  margin-bottom: 0.3em;
+  padding-bottom: 0;
+  margin-bottom: 0;
   color: var(--color-primary);
+  font-size: 2rem;
 }
 
 .title-slide h2 {
   text-align: left;
-  font-weight: 500;
+  font-weight: 600;
   color: #808080;
-  margin-bottom: 0.5em;
-  margin-top: 0.3em;
+  margin-bottom: 0.1rem;
+  margin-top: 0.1rem;
+  letter-spacing: 2px;
 }
 
 .title-slide h3 {
-  font-size: 120% !important;
   text-align: left;
   font-weight: 500;
+  color: #808080;
   margin-bottom: 0;
-  margin-top: 0.1em;
+  margin-top: 0.1rem;
 }
 
 /* hide slide number on cover slide */
@@ -288,11 +373,8 @@ img, video, iframe {
 /* logo every slide top right */
 .remark-slide-content:before {
   content: url(logo.svg);
-  width: 180px;
   float: right;
-  right: 4em;
-  top: 0;
-  margin-top: 0.4em;
+  transform: scale(0.6);
 }
 
 /* image size classes */
@@ -460,47 +542,47 @@ th,td {padding: 8px; text-align: left;}
 
 /* limit vertical size of a code chunk */
 
-.limity100 {
+.limity-100 {
   max-height: 100px;
   overflow-y: auto;
 }
 
-.limity150 {
+.limity-150 {
   max-height: 150px;
   overflow-y: auto;
 }
 
-.limity200 {
+.limity-200 {
   max-height: 200px;
   overflow-y: auto;
 }
 
-.limity250 {
+.limity-250 {
   max-height: 250px;
   overflow-y: auto;
 }
 
-.limity300 {
+.limity-300 {
   max-height: 300px;
   overflow-y: auto;
 }
 
-.limity350 {
+.limity-350 {
   max-height: 350px;
   overflow-y: auto;
 }
 
-.limity400 {
+.limity-400 {
   max-height: 400px;
   overflow-y: auto;
 }
 
-.limity450 {
+.limity-450 {
   max-height: 450px;
   overflow-y: auto;
 }
 
-.limity500 {
+.limity-500 {
   max-height: 500px;
   overflow-y: auto;
 }
@@ -508,6 +590,6 @@ th,td {padding: 8px; text-align: left;}
 /* horizontal line style */
 
 hr {
-  border: 1px solid var(--color-code-bg);
+  border: 2px solid var(--color-code-bg);
 }
 

@@ -3,6 +3,24 @@ title: "Gene Function Annotation"
 subtitle: Workshop on RNA-Seq
 editor_options:
   chunk_output_type: console
+output:
+  bookdown::html_document2:
+    highlight: textmate
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+    toc_depth: 4
+    number_sections: true
+    df_print: default
+    code_folding: none
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+    include:
+      after_body: assets/footer-lab.html
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -11,7 +29,7 @@ editor_options:
 # Loading data
 
 <div class="boxy boxy-exclamation boxy-yellow">
-Create a directory named `data` in your current working directory.
+Set `~/RNAseq/labs/` as your working directory (i.e. your working directory should be the directory where you saved this .Rmd file). Create a subdirectory named `data` in this directory (`~/RNAseq/labs/data/`) for input and output files.
 </div>
 
 Loading packages and data.
@@ -99,8 +117,8 @@ head(data[genes_cluster2, ])
 ### GO enrichment
 
 ```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
-go_cluster <- enrichr(genes = genes_cluster2,databases = "GO_Biological_Process_2018")
-go_cluster <- go_cluster$GO_Biological_Process_2018
+go_cluster <- enrichr(genes = genes_cluster2,databases = "GO_Biological_Process_2023")
+go_cluster <- go_cluster$GO_Biological_Process_2023
 go_cluster <- go_cluster[order(go_cluster$P.value),]
 go_cluster[1:5,]
 
@@ -183,7 +201,7 @@ gene_rank <- setNames( res$log2FoldChange,casefold(rownames(res),upper=T) )
 hallmark_pathways <- gmtPathways("data/MSigDB_files/h.all.v6.2.symbols.gmt.txt")
 ```
 
-Once our list of genes are sorted (from highest to lowest expression in day 7), we can proceed with the enrichment itself. Here, we will be using the `fgsea()` function. This will result in a table containing information for several pathways. We can then sort and filter those pathways to visualize only the top ones. You can select/filter them by either `p-value` or normalized enrichemnet score (`NES`).
+Once our list of genes are sorted (from highest to lowest expression in day 7), we can proceed with the enrichment itself. Here, we will be using the `fgsea()` function. This will result in a table containing information for several pathways. We can then sort and filter those pathways to visualize only the top ones. You can select/filter them by either `p-value` or normalized enrichment score (`NES`).
 
 ```{r,results='hide',chunk.title=TRUE,fig.height=5,fig.width=10}
 # Perform enrichemnt analysis
@@ -202,7 +220,7 @@ plotGseaTable(hallmark_pathways[topPathways], gene_rank, fgseaRes, gseaParam = 0
 
 * Which is the most significantly up-regulated pathway at day 7?
 * What do the length of the black bars mean?
-* Is there any pathway that is significantly down-regulated at 0? Which columns tells you what is Up of downregulated?
+* Is there any pathway that is significantly down-regulated at 0? 
 * Which is the most enriched pathway at day 0?
 * What happens if we use `-res$log2FoldChange` as gene rank ? What changes and why?
 
@@ -225,12 +243,12 @@ for (i in c(topPathwaysUp[1:3],topPathwaysDown[3:1])){
 <i class="fas fa-comments"></i> **Exploratory Questions**
 
 * What do the black lines in the X-axis mean?
-* By looking at the green line distribution, and the comparison made (day00 - day07), at which time point is this pathways enriched.
+* By looking at the green line distribution, and the comparison made (day00 - day07), at which time point is this pathways enriched?
 
 <i class="fas fa-comments"></i> **Exploratory Questions (optional)**
 
 * What if instead of the hallmark gene set, you use the GO? Try that.
-* How different are the results from EnrichR and GSEA using GO annotation? Remember to use the same comparison (i.e. day07 vs day00).
+* How different are the results from EnrichR and GSEA using GO annotation? Remember to use the same comparison (i.e. day00 vs day07).
 
 ## Online enrichment tools:
 

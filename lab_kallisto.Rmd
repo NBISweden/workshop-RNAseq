@@ -1,6 +1,24 @@
 ---
 title: 'Kallisto '
 subtitle: Workshop on RNA-Seq
+output:
+  bookdown::html_document2:
+    highlight: textmate
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+    toc_depth: 4
+    number_sections: true
+    df_print: default
+    code_folding: none
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+    include:
+      after_body: assets/footer-lab.html
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -22,9 +40,10 @@ Download the cDNA reference and create a index file to run on (This has already 
 
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
-#mkdir references/ref_kallisto
+#cd ~/RNAseq/
+#mkdir rawData/references/ref_kallisto
    
-#cd references/ref_kallisto
+#cd rawData/references/ref_kallisto
 
 #wget ftp://ftp.ensembl.org/pub/release-101/fasta/mus_musculus/cdna/Mus_musculus.GRCm38.cdna.all.fa.gz
 
@@ -35,7 +54,7 @@ Download the cDNA reference and create a index file to run on (This has already 
 #  Mus_musculus.GRCm38.cdna.all.fa.gz
 
 
-# cd ../..
+#cd ~/RNAseq/
 
 ```
 
@@ -45,33 +64,31 @@ It takes less than 10 minutes.
 
 ## Pseudoalign reads
 
-Now you can pseudoalign all your reads to the Kalisto index using Kalisto quantification
+Now you can pseudoalign all your reads to the Kallisto index using Kallisto quantification
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
 
+cd ~/RNAseq/
 
-  mkdir kallisto_quantification
+for sample_name in $(ls rawData/fastqFiles/*.clean.fq.gz.1M_reads.fq.gz); do
 
- for sample_name in $(ls fastq/*.clean.fq.gz.1M_reads.fq.gz); do
-
-    file=${sample_name#fastq/}
-    sample=${file%.clean.fq.gz.1M_reads.fq.gz}
+  file=${sample_name#rawData/fastqFiles/}
+  sample=${file%.clean.fq.gz.1M_reads.fq.gz}
    
-   echo $sample
+  echo $sample
 
-     
-    mkdir kallisto_quantification/$sample
+  mkdir results/05-kallisto/$sample
 
-    kallisto quant \
-      --index references/ref_kallisto/kallisto_mm10_transcriptome_index.idx \
-      --output-dir kallisto_quantification/$sample \
-      --threads 3 \
-      --single \
-      --fragment-length 200 \
-      --sd 20 \
-     $sample_name
+  kallisto quant \
+    --index rawData/references/ref_kallisto/kallisto_mm10_transcriptome_index.idx \
+    --output-dir results/05-kallisto/$sample \
+    --threads 3 \
+    --single \
+    --fragment-length 200 \
+    --sd 20 \
+    $sample_name
 
-  done
+done
 
 ```
 
@@ -79,9 +96,9 @@ Now you can pseudoalign all your reads to the Kalisto index using Kalisto quanti
 # Quantification
 
 ## Get gene quantifications
-Since Kalisto uses transcripts estimates and many programs, like DEseq and EdgeR, works better with gene counts there are programs to get gene counts from transctipt estimates in our case we will use txImport. TxImport can import estimates from a lot of different sources. You can read more about it in the [txImport vignette](https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html)
+Since Kallisto uses transcripts estimates and many programs, like DEseq and EdgeR, works better with gene counts there are programs to get gene counts from transcript estimates in our case we will use txImport. TxImport can import estimates from a lot of different sources. You can read more about it in the [txImport vignette](https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html)
 
-For the program to work it needs a two column file that assigns each transcript to a gene. This can found using ensembl database or other public databases. In our case the relationship between the transcripts and gene is found in the sequencenames in the cDNA file that we downloaded. By using awk we can extract the transcript gene dependency and write it to a file. 
+For the program to work, it needs a two-column-file that assigns each transcript to a gene. This can found using ensembl database or other public databases. In our case the relationship between the transcripts and gene is found in the sequencenames in the cDNA file that we downloaded. By using awk we can extract the transcript gene dependency and write it to a file. 
 
 
 ```{sh,eval=FALSE,chunk.title=FALSE}
@@ -89,18 +106,18 @@ For the program to work it needs a two column file that assigns each transcript 
 #  >ENSMUST00000177564.1 cdna chromosome:GRCm38:14:54122226:54122241:1 gene:ENSMUSG00000096176.1 gene_biotype:TR_D_gene transcript_biotype:TR_D_gene gene_symbol:Trdd2 description:T cell receptor delta diversity 2 [Source:MGI Symbol;Acc:MGI:4439546]
 
 
-# Extract all transcriptnames (1st) and genenames (4th) from  sequence names and write to a file.   
-gzcat references/ref_kallisto/Mus_musculus.GRCm38.cdna.all.fa.gz| \
+# Extract all transcriptnames (1st) and genenames (4th) from  sequence names and write to a file. If "gzcat" does not work, you can try replacing it by "gunzip -c"  
+gzcat rawData/references/ref_kallisto/Mus_musculus.GRCm38.cdna.all.fa.gz| \
 grep '>' |
 awk '{FS= " "}BEGIN{ print "TXNAME,GENEID"};{print substr($1,2) "," substr($4,6)};' \
->references/ref_kallisto/tx2gene.mm.GRCm38.cdna.csv 
+>rawData/references/ref_kallisto/tx2gene.mm.GRCm38.cdna.csv 
 
 ```
 
 
 ## TxImport
 
-The next steps are carried out in R so make sure you start R with the correct packages. 
+The next steps are carried out in R so make sure you start R in the conda environment. 
 
 ```{r ,eval=FALSE,chunk.title=FALSE}
 library(dplyr) # data wrangling
@@ -143,22 +160,27 @@ mr
 
 ###  Convert to gene counts 
 
-Read in the Kalisto transcript abundances and and convert the TxImport.
+Read in the Kallisto transcript abundances and convert the TxImport.
 
 TxImport is created to 
 
 ```{r  ,eval=FALSE,chunk.title=FALSE}
 setwd("~/RNAseq")
-files <- paste("kallisto_quantification" ,  
-               list.files(path = "kallisto_quantification",pattern = "abundance.tsv", recursive = TRUE),
+files <- paste("results/05-kallisto" ,  
+               list.files(path = "results/05-kallisto",
+                          pattern = "abundance.tsv", 
+                          recursive = TRUE),
                sep = "/")
 names(files) <- mr$SampleName
 
 
-tx2gene <- read_csv("references/ref_kallisto/tx2gene.mm.GRCm38.cdna.csv")
+tx2gene <- read_csv("rawData/references/ref_kallisto/tx2gene.mm.GRCm38.cdna.csv")
 
 
-txi.kallisto.tsv <- tximport(files, type = "kallisto", tx2gene = tx2gene, ignoreAfterBar = TRUE)
+txi.kallisto.tsv <- tximport(files, 
+                             type = "kallisto", 
+                             tx2gene = tx2gene, 
+                             ignoreAfterBar = TRUE)
 ```
 
 
@@ -174,7 +196,7 @@ test = DESeq(dds)
 
 
 ```
-and now you can go on with the DE similair as the one you did with the feature count table.
+and now you can go on with the differential gene expression in a similar way as the one you did with the feature count table.
 
 
 ### Convert to a edgeR object for analysis

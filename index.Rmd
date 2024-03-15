@@ -2,41 +2,52 @@
 title: "&nbsp;"
 output:
   bookdown::html_document2:
+    highlight: textmate
     toc: false
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+    toc_depth: 4
     number_sections: false
+    df_print: default
+    code_folding: none
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+    include:
+      after_body: assets/footer-lab.html
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
 ```
 
-<div class="container landing-container">
-<div class="row landing-div" style="position:relative;">
-<div class="col" style="align-self:center">
-<div class="row">
+```{css,echo=FALSE}
+.title{
+  display: none;
+}
+```
 
-<div class="col-md-12 flex-box">
-<p class="landing-subtitle">
-<span style="display:block;">NBIS • Workshop</span>
-</p>
+<div class="container">
+<div class="landing">
+<div class="landing-left">
+<div class="landing-subtitle">
+## NBIS • Workshop
 </div>
-
-<div class="col-md-12 flex-box">
-<p class="landing-title">
-<span style="display:block;">Analysis of RNA-Seq Data</span>
-</p>
+<div class="landing-title">
+# Analysis of RNA-Seq Data
 </div>
-
-<div class="col-md-12 flex-box">
-<p class="medium landing-bullets">
-<span style="display:block;">Quality control</span>
-<span style="display:block;">Mapping of short reads</span>
-<span style="display:block;">Quantification of gene expression</span>
-<span style="display:block;">Exploratory data analyses</span>
-<span style="display:block;">Differential gene expression</span>
-</p>
+<div class="landing-features">
+- Quality control
+- Mapping of short reads
+- Quantification of gene expression
+- Exploratory data analyses
+- Differential gene expression
 </div>
-
 </div>
+<div class="landing-right">
+<img src="assets/landing.png">
 </div>
 </div>
 

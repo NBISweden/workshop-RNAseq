@@ -1,6 +1,6 @@
 name: Analysis of RNA-Seq data
 # output directory used on gh-pages branch. format: YYMM
-output_dir: 2303
+output_dir: 2403
 # used site-wide wherever uppmax project ids are used
 uppmax_project: g2020006
 uppmax_res_1: g2020006_1
@@ -24,24 +24,7 @@ navbar:
       href: home_content.html
     - text: Precourse
       href: home_precourse.html
-output:
-  bookdown::html_document2:
-    highlight: textmate
-    toc: true
-    toc_float:
-      collapsed: true
-      smooth_scroll: true
-      print: false
-    toc_depth: 4
-    number_sections: true
-    df_print: default
-    code_folding: none
-    self_contained: false
-    keep_md: false
-    encoding: 'UTF-8'
-    css: "assets/lab.css"
-    include:
-      after_body: assets/footer-lab.html
+
 # r packages needed for the workshop
 # used in home_precourse.Rmd
 # split into cran and bioc packages
@@ -69,7 +52,6 @@ packages:
  packages_github_student:
  packages_cran_repo:
   - bookdown
-  - captioner
   - formattable
   - kableExtra
   - knitr

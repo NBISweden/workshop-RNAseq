@@ -4,7 +4,6 @@
 # load libraries
 library(knitr) # runs pandoc
 library(bookdown) # for markdown
-library(captioner) # for table and figure captions
 library(fontawesome) # icons
 
 # fontawesome dependency
@@ -12,19 +11,15 @@ fa <- rmarkdown::html_dependency_font_awesome()
 fa$attachment <- "fonts/fontawesome-webfont.ttf"
 htmltools::tagList(fa)
 
-# prepare captions
-tc <- captioner::captioner(prefix="<b>Tab. </b>")
-fc <- captioner::captioner(prefix="<b>Fig. </b>")
-
 # turn off terminal colors
 options(crayon.enabled = FALSE)
 
 # knitr options
 knitr::opts_knit$set(progress=TRUE,verbose=TRUE)
-knitr::opts_chunk$set(dev="svg",results="hold",fig.show="hold",fig.align="left",
+knitr::opts_chunk$set(dev="png",fig.retina=2,results="hold",fig.show="hold",fig.align="left",
                       echo=TRUE,warning=FALSE,message=FALSE,accordion=NULL,
                       chunk.title=NULL)
-color_primary <- "#4C979F"
+color_primary <- "#95b540"
 color_text <- "#424949"
 ```
 

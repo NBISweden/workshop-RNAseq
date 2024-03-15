@@ -22,7 +22,6 @@ dependencies:
   - r-base=4.0.2=hc30ca75_1
   - r-biocmanager=1.30.10=r40h6115d3f_1
   - r-bookdown=0.21=r40h142f84f_0
-  - r-captioner=2.2.3=r40h6115d3f_1004
   - r-devtools=2.3.2=r40h6115d3f_0
   - r-dplyr
   - r-enrichr=2.1=r40h6115d3f_1

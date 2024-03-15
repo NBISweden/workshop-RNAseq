@@ -2,15 +2,16 @@
 
 #' @title download_data
 #' @description Used for externally imported objects. Checks if the object is available, else downloads it from the github master repo.
-#' @param path Full path to object. Example: data/count_raw.txt
-#' @param repo A full github repo name. Example: NBISweden/workshop-RNAseq
+#' @param path Full path of the object to download. Example: data/count_raw.txt
+#' @param repo A full github repo name. Example: NBISweden/workshop-RNAseq (default)
 #' @param branch Github repo branch name. Defaults to "master".
 #' @example
 #' 
-#' download_data("data/metadata_raw.txt","NBISweden/workshop-RNAseq")
+#' download_data(path = "data/count_raw.txt", repo = "NBISweden/workshop-RNAseq")
+#' 
 #' 
 download_data <- function(path=NULL,repo="NBISweden/workshop-RNAseq",branch="master"){
-
+  
   if(!is.null(path) && !is.null(repo)){
     path <- gsub("^/|^./","",path)
     
@@ -27,4 +28,3 @@ download_data <- function(path=NULL,repo="NBISweden/workshop-RNAseq",branch="mas
     }
   }
 }
-

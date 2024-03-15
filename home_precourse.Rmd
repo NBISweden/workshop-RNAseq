@@ -2,8 +2,22 @@
 title: "Precourse"
 output:
   bookdown::html_document2:
+    highlight: textmate
     toc: false
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+      print: false
+    toc_depth: 4
     number_sections: false
+    df_print: default
+    code_folding: none
+    self_contained: false
+    keep_md: false
+    encoding: 'UTF-8'
+    css: "assets/lab.css"
+    include:
+      after_body: assets/footer-lab.html
 ---
 
 ```{r,child="assets/header-lab.Rmd"}
@@ -81,11 +95,11 @@ Start by installing Conda. We suggest installing Miniconda3 and NOT Anaconda. Fo
 
 <br/>
 
-#### **On Mac OS X**
+#### On Mac OS X
 
 <div class="boxy boxy-lightbulb boxy-grey">
 
-<img border="0" src="https://logos-download.com/wp-content/uploads/2020/06/Apple_Mac_OS_Logo-700x670.png" width="50" height="50">
+<img border="0" src="https://cdn.mos.cms.futurecdn.net/6bTF6C2QiWXvhi33fJi3AC-970-80.jpg.webp" height="50">
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
 curl -o Miniconda3-latest-MacOSX-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
@@ -103,7 +117,7 @@ conda install -n base -c conda-forge mamba
 
 <br/>
 
-#### **On Ubuntu**
+#### On Ubuntu
 
 <div class="boxy boxy-lightbulb boxy-grey">
 
@@ -125,7 +139,7 @@ conda install -n base -c conda-forge mamba
 
 <br/>
 
-#### **On Windows 10**
+#### On Windows 10
 
 <div class="boxy boxy-lightbulb boxy-grey">
 
@@ -232,11 +246,11 @@ sh Miniconda3-latest-Linux-x86_64.sh
 
 <br/>
 
-#### **On Mac OS X**
+#### On Mac OS X
 
 <div class="boxy boxy-lightbulb boxy-grey">
 
-<img border="0" src="https://logos-download.com/wp-content/uploads/2020/06/Apple_Mac_OS_Logo-700x670.png" width="50" height="50">
+<img border="0" src="https://cdn.mos.cms.futurecdn.net/6bTF6C2QiWXvhi33fJi3AC-970-80.jpg.webp" height="50">
 
 To download the environment definition file using the command on Terminal:
 
@@ -306,11 +320,11 @@ Several messages will show up on your screen and will tell you about the install
 
 <br/>
 
-#### **On Windows 10**
+#### On Windows 10
 
 <div class="boxy boxy-lightbulb boxy-grey">
 
-<img border="0" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR2rSSpKVBohI4AXgBaUjFVYqO73ou2l9AOXw&usqp=CAU" width="50" height="50">
+<img border="0" src="https://seeklogo.com/images/W/windows-10-icon-logo-5BC5C69712-seeklogo.com.png" width="50" height="50">
 
 To download the environment definition file type the command inside MobaXTerm on Terminal:
 
@@ -406,10 +420,12 @@ cd ~/
 conda activate nbis-workshop-rnaseq
 ```
 
-Then you can simply run the `wget` command below to download the whole data for the course. This will take a long time since files are quite big.
+Then you can simply run the `curl` command below to download the whole data for the course. This will take a long time since files are quite big.
 
 ```{sh,eval=FALSE,chunk.title=TRUE}
-wget -r -nH --cut-dirs=2 --no-parent --reject="index.html*" --reject "RNAseq.tar.gz" https://export.uppmax.uu.se/uppstore2017171/workshops/RNAseq
+curl https://export.uppmax.uu.se/uppstore2017171/workshops/RNAseq.2024.tar -o RNAseq.2024.tar
+
+tar -xf RNAseq.2024.tar
 ```
 
 After downloading, you will have a folder
